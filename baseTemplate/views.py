@@ -829,24 +829,17 @@ def analyzeSSHSecurity(request):
         
         alerts = []
         
-        # Detect which firewall is in use
-        firewall_cmd = ''
+        # Use firewalld (CSF has been discontinued)
+        firewall_cmd = 'firewalld'
         try:
-            # Check for CSF
-            csf_check = ProcessUtilities.outputExecutioner('which csf')
-            if csf_check and '/csf' in csf_check:
-                firewall_cmd = 'csf'
+            # Verify firewalld is active
+            firewalld_check = ProcessUtilities.outputExecutioner('systemctl is-active firewalld')
+            if not (firewalld_check and 'active' in firewalld_check):
+                # Firewalld not active, but continue analysis with firewalld commands
+                pass
         except:
+            # Continue with firewalld as default
             pass
-        
-        if not firewall_cmd:
-            try:
-                # Check for firewalld
-                firewalld_check = ProcessUtilities.outputExecutioner('systemctl is-active firewalld')
-                if firewalld_check and 'active' in firewalld_check:
-                    firewall_cmd = 'firewalld'
-            except:
-                firewall_cmd = 'firewalld'  # Default to firewalld
         
         # Determine log path
         distro = ProcessUtilities.decideDistro()
@@ -950,10 +943,7 @@ def analyzeSSHSecurity(request):
         # High severity: Brute force attacks
         for ip, count in failed_passwords.items():
             if count >= 10:
-                if firewall_cmd == 'csf':
-                    recommendation = f'Block this IP immediately:\ncsf -d {ip} "Brute force attack - {count} failed attempts"'
-                else:
-                    recommendation = f'Block this IP immediately:\nfirewall-cmd --permanent --add-rich-rule="rule family=ipv4 source address={ip} drop" && firewall-cmd --reload'
+                recommendation = f'Block this IP immediately:\nfirewall-cmd --permanent --add-rich-rule="rule family=ipv4 source address={ip} drop" && firewall-cmd --reload'
                 
                 alerts.append({
                     'title': 'Brute Force Attack Detected',
@@ -1116,6 +1106,104 @@ def analyzeSSHSecurity(request):
         
     except Exception as e:
         return HttpResponse(json.dumps({'error': str(e)}), content_type='application/json', status=500)
+
+@csrf_exempt
+@require_POST
+def blockIPAddress(request):
+    """
+    Block an IP address using the appropriate firewall (CSF or firewalld)
+    """
+    try:
+        user_id = request.session.get('userID')
+        if not user_id:
+            return HttpResponse(json.dumps({'error': 'Not logged in'}), content_type='application/json', status=403)
+        
+        currentACL = ACLManager.loadedACL(user_id)
+        if not currentACL.get('admin', 0):
+            return HttpResponse(json.dumps({'error': 'Admin only'}), content_type='application/json', status=403)
+        
+        # Check if user has CyberPanel addons
+        if not ACLManager.CheckForPremFeature('all'):
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': 'Premium feature required'
+            }), content_type='application/json', status=403)
+        
+        data = json.loads(request.body)
+        ip_address = data.get('ip_address', '').strip()
+        
+        if not ip_address:
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': 'IP address is required'
+            }), content_type='application/json', status=400)
+        
+        # Validate IP address format
+        import re
+        ip_pattern = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+        if not re.match(ip_pattern, ip_address):
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': 'Invalid IP address format'
+            }), content_type='application/json', status=400)
+        
+        # Use firewalld (CSF has been discontinued)
+        firewall_cmd = 'firewalld'
+        try:
+            # Verify firewalld is active
+            firewalld_check = ProcessUtilities.outputExecutioner('systemctl is-active firewalld')
+            if not (firewalld_check and 'active' in firewalld_check):
+                return HttpResponse(json.dumps({
+                    'status': 0,
+                    'error': 'Firewalld is not active. Please enable firewalld service.'
+                }), content_type='application/json', status=500)
+        except Exception as e:
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': f'Cannot check firewalld status: {str(e)}'
+            }), content_type='application/json', status=500)
+        
+        # Block the IP address using firewalld
+        success = False
+        error_message = ''
+        
+        try:
+            # Use firewalld to block IP
+            command = f'firewall-cmd --permanent --add-rich-rule="rule family=ipv4 source address={ip_address} drop"'
+            result = ProcessUtilities.executioner(command)
+            if result == 0:
+                # Reload firewall rules
+                reload_result = ProcessUtilities.executioner('firewall-cmd --reload')
+                if reload_result == 0:
+                    success = True
+                else:
+                    error_message = 'Failed to reload firewall rules'
+            else:
+                error_message = 'Failed to add firewall rule'
+        except Exception as e:
+            error_message = f'Firewall command failed: {str(e)}'
+        
+        if success:
+            # Log the action
+            import plogical.CyberCPLogFileWriter as logging
+            logging.CyberCPLogFileWriter.writeToFile(f'IP address {ip_address} blocked via CyberPanel dashboard by user {user_id}')
+            
+            return HttpResponse(json.dumps({
+                'status': 1,
+                'message': f'Successfully blocked IP address {ip_address}',
+                'firewall': firewall_cmd
+            }), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': error_message or 'Failed to block IP address'
+            }), content_type='application/json', status=500)
+        
+    except Exception as e:
+        return HttpResponse(json.dumps({
+            'status': 0,
+            'error': f'Server error: {str(e)}'
+        }), content_type='application/json', status=500)
 
 @csrf_exempt
 @require_POST

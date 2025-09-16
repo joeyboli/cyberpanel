@@ -14,7 +14,7 @@ Web Hosting Control Panel powered by OpenLiteSpeed, designed to simplify hosting
 - 📧 **Email Support** (SnappyMail).
 - 🕌 **File Manager** for quick file access.
 - 🌐 **PHP Management** made easy.
-- 🔒 **Firewall** (FirewallD & ConfigServer Firewall Integration).
+- 🔒 **Firewall** (FirewallD Integration with One-Click IP Blocking).
 - 📀 **One-click Backups and Restores**.
 - 🐳 **Docker Management** with command execution capabilities.
 - 🤖 **AI-Powered Security Scanner** for enhanced protection.
@@ -31,6 +31,7 @@ CyberPanel comes with comprehensive documentation and step-by-step guides:
 - 🤖 **[AI Scanner Setup](guides/AIScannerDocs.md)** - Configure AI-powered security scanning
 - 📧 **[Mautic Installation](guides/MAUTIC_INSTALLATION_GUIDE.md)** - Email marketing platform setup
 - 🎨 **[Custom CSS Guide](guides/CUSTOM_CSS_GUIDE.md)** - Create custom themes for CyberPanel 2.5.5-dev
+- 🛡️ **[Firewall Blocking Feature](guides/FIREWALL_BLOCKING_FEATURE.md)** - One-click IP blocking from dashboard
 
 ---
 
@@ -163,6 +164,7 @@ sh <(curl https://raw.githubusercontent.com/usmannasir/cyberpanel/stable/preUpgr
 - 🤖 [AI Scanner Setup](guides/AIScannerDocs.md) - Configure AI-powered security scanning
 - 📧 [Mautic Installation](guides/MAUTIC_INSTALLATION_GUIDE.md) - Email marketing platform setup
 - 🎨 [Custom CSS Guide](guides/CUSTOM_CSS_GUIDE.md) - Create custom themes for CyberPanel 2.5.5+
+- 🛡️ [Firewall Blocking Feature](guides/FIREWALL_BLOCKING_FEATURE.md) - One-click IP blocking from dashboard
 - 📚 [All Guides Index](guides/INDEX.md) - Complete documentation hub
 
 ### 🔗 **Direct Guide Links**
@@ -171,6 +173,7 @@ sh <(curl https://raw.githubusercontent.com/usmannasir/cyberpanel/stable/preUpgr
 | ------------ | ---------------------------------------------------------- | ---------------------------------- |
 | 🐳 Docker    | [Command Execution](guides/Docker_Command_Execution_Guide.md) | Execute commands in containers     |
 | 🤖 Security  | [AI Scanner](guides/AIScannerDocs.md)                         | AI-powered security scanning       |
+| 🛡️ Firewall  | [Firewall Blocking Feature](guides/FIREWALL_BLOCKING_FEATURE.md)     | One-click IP blocking from dashboard |
 | 📧 Email     | [Mautic Setup](guides/MAUTIC_INSTALLATION_GUIDE.md)           | Email marketing platform           |
 | 🎨 Design    | [Custom CSS Guide](guides/CUSTOM_CSS_GUIDE.md)                | Create custom themes for 2.5.5-dev |
 | 📊 Bandwidth | [Reset Fix Guide](to-do/cyberpanel-bandwidth-reset-fix.md)    | Fix bandwidth reset issues         |

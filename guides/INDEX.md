@@ -11,6 +11,9 @@ Welcome to the CyberPanel documentation hub! This folder contains all guides, tu
 ### 🤖 AI & Security
 - **[AI Scanner Documentation](AIScannerDocs.md)** - Complete guide for CyberPanel's AI-powered security scanner
 
+### 🛡️ Firewall & Security
+- **[Firewall Blocking Feature](FIREWALL_BLOCKING_FEATURE.md)** - One-click IP blocking from dashboard with firewalld integration
+
 ### 📧 Email & Marketing
 - **[Mautic Installation Guide](MAUTIC_INSTALLATION_GUIDE.md)** - Step-by-step guide for installing and configuring Mautic email marketing platform
 
@@ -31,7 +34,8 @@ Welcome to the CyberPanel documentation hub! This folder contains all guides, tu
 3. **Need Docker help?** Check the [Docker Command Execution Guide](Docker_Command_Execution_Guide.md)
 4. **Setting up email marketing?** Follow the [Mautic Installation Guide](MAUTIC_INSTALLATION_GUIDE.md)
 5. **Want to customize the interface?** Check the [Custom CSS Guide](CUSTOM_CSS_GUIDE.md)
-6. **Want to contribute?** Read the [Contributing Guide](CONTRIBUTING.md)
+6. **Need firewall protection?** Check the [Firewall Blocking Feature](FIREWALL_BLOCKING_FEATURE.md)
+7. **Want to contribute?** Read the [Contributing Guide](CONTRIBUTING.md)
 
 ## 🔍 Finding What You Need
 
@@ -39,6 +43,7 @@ Welcome to the CyberPanel documentation hub! This folder contains all guides, tu
 - **Debian 13 Installation**: [Debian 13 Installation Guide](DEBIAN_13_INSTALLATION_GUIDE.md)
 - **Docker Features**: [Docker Command Execution Guide](Docker_Command_Execution_Guide.md)
 - **Security Features**: [AI Scanner Documentation](AIScannerDocs.md)
+- **Firewall Protection**: [Firewall Blocking Feature](FIREWALL_BLOCKING_FEATURE.md)
 - **Email Marketing**: [Mautic Installation Guide](MAUTIC_INSTALLATION_GUIDE.md)
 - **Customization & Design**: [Custom CSS Guide](CUSTOM_CSS_GUIDE.md)
 - **Development**: [Contributing Guide](CONTRIBUTING.md)
@@ -49,6 +54,7 @@ Welcome to the CyberPanel documentation hub! This folder contains all guides, tu
 - Docker container management
 - Command execution
 - Security scanning
+- Firewall IP blocking
 
 ### 🔧 **Integrations**
 - Mautic email marketing
