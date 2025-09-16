@@ -80,23 +80,56 @@ firewall-cmd --reload
 
 1. **Admin-Only Access**: Feature restricted to administrators
 2. **Premium Feature**: Requires CyberPanel addons
-3. **IP Validation**: Validates IP address format before blocking
-4. **Firewalld Verification**: Ensures firewalld service is active
-5. **Audit Logging**: All blocking actions are logged
-6. **Error Handling**: Comprehensive error handling and user feedback
+3. **Enhanced IP Validation**: Validates IP address format and prevents blocking private/reserved ranges
+4. **Command Injection Protection**: Uses subprocess with explicit argument lists
+5. **Timeout Protection**: Prevents hanging processes with configurable timeouts
+6. **Firewalld Verification**: Ensures firewalld service is active
+7. **Audit Logging**: All blocking actions are logged
+8. **Comprehensive Error Handling**: Detailed error messages with captured stderr
 
 ## Error Handling
 
 The feature includes robust error handling for:
-- Invalid IP addresses
+- Invalid IP addresses and formats
+- Private/reserved IP address ranges
 - Firewalld service not active
-- Firewall command failures
+- Firewall command failures and timeouts
 - Network connectivity issues
 - Permission errors
+- Command injection attempts
+- Process timeouts
 
 ## Testing
 
-A test script is provided (`test_firewall_blocking.py`) for manual testing, though the feature is best tested through the web interface.
+A test script is provided for basic functionality testing:
+- `test_firewall_blocking.py` - Basic functionality testing
+
+The feature is best tested through the web interface with various IP address types.
+
+## Enhanced Security Features
+
+### IP Range Validation
+The system now prevents blocking of:
+- **Private IP ranges**: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+- **Loopback addresses**: 127.0.0.0/8
+- **Link-local addresses**: 169.254.0.0/16
+- **Multicast addresses**: 224.0.0.0/4
+- **Broadcast addresses**: 255.255.255.255
+- **Reserved addresses**: 0.0.0.0
+
+### Command Execution Security
+- **Subprocess with explicit arguments**: Prevents command injection
+- **Timeout protection**: 10s for status checks, 30s for firewall commands
+- **Error capture**: Captures both stdout and stderr for better debugging
+- **No shell interpretation**: Eliminates shell injection vulnerabilities
+
+### Example Error Messages
+```
+"Cannot block private, loopback, link-local, or reserved IP addresses"
+"Cannot block system or reserved IP addresses"
+"Timeout checking firewalld status"
+"Firewall command timed out"
+```
 
 ## Browser Compatibility
 

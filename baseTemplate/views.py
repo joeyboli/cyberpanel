@@ -1138,8 +1138,9 @@ def blockIPAddress(request):
                 'error': 'IP address is required'
             }), content_type='application/json', status=400)
         
-        # Validate IP address format
+        # Validate IP address format and check for private/reserved ranges
         import re
+        import ipaddress
         ip_pattern = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
         if not re.match(ip_pattern, ip_address):
             return HttpResponse(json.dumps({
@@ -1147,39 +1148,78 @@ def blockIPAddress(request):
                 'error': 'Invalid IP address format'
             }), content_type='application/json', status=400)
         
+        # Check for private/reserved IP ranges to prevent self-blocking
+        try:
+            ip_obj = ipaddress.ip_address(ip_address)
+            if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local or ip_obj.is_reserved:
+                return HttpResponse(json.dumps({
+                    'status': 0,
+                    'error': 'Cannot block private, loopback, link-local, or reserved IP addresses'
+                }), content_type='application/json', status=400)
+            
+            # Additional check for common problematic ranges
+            if (ip_address.startswith('127.') or  # Loopback
+                ip_address.startswith('169.254.') or  # Link-local
+                ip_address.startswith('224.') or  # Multicast
+                ip_address.startswith('255.') or  # Broadcast
+                ip_address in ['0.0.0.0', '::1']):  # Invalid/loopback
+                return HttpResponse(json.dumps({
+                    'status': 0,
+                    'error': 'Cannot block system or reserved IP addresses'
+                }), content_type='application/json', status=400)
+                
+        except ValueError:
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': 'Invalid IP address'
+            }), content_type='application/json', status=400)
+        
         # Use firewalld (CSF has been discontinued)
         firewall_cmd = 'firewalld'
         try:
-            # Verify firewalld is active
-            firewalld_check = ProcessUtilities.outputExecutioner('systemctl is-active firewalld')
-            if not (firewalld_check and 'active' in firewalld_check):
+            # Verify firewalld is active using subprocess for better security
+            import subprocess
+            firewalld_check = subprocess.run(['systemctl', 'is-active', 'firewalld'], 
+                                           capture_output=True, text=True, timeout=10)
+            if not (firewalld_check.returncode == 0 and 'active' in firewalld_check.stdout):
                 return HttpResponse(json.dumps({
                     'status': 0,
                     'error': 'Firewalld is not active. Please enable firewalld service.'
                 }), content_type='application/json', status=500)
+        except subprocess.TimeoutExpired:
+            return HttpResponse(json.dumps({
+                'status': 0,
+                'error': 'Timeout checking firewalld status'
+            }), content_type='application/json', status=500)
         except Exception as e:
             return HttpResponse(json.dumps({
                 'status': 0,
                 'error': f'Cannot check firewalld status: {str(e)}'
             }), content_type='application/json', status=500)
         
-        # Block the IP address using firewalld
+        # Block the IP address using firewalld with subprocess for better security
         success = False
         error_message = ''
         
         try:
-            # Use firewalld to block IP
-            command = f'firewall-cmd --permanent --add-rich-rule="rule family=ipv4 source address={ip_address} drop"'
-            result = ProcessUtilities.executioner(command)
-            if result == 0:
+            # Use subprocess with explicit argument lists to prevent injection
+            rich_rule = f'rule family=ipv4 source address={ip_address} drop'
+            add_rule_cmd = ['firewall-cmd', '--permanent', '--add-rich-rule', rich_rule]
+            
+            # Execute the add rule command
+            result = subprocess.run(add_rule_cmd, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0:
                 # Reload firewall rules
-                reload_result = ProcessUtilities.executioner('firewall-cmd --reload')
-                if reload_result == 0:
+                reload_cmd = ['firewall-cmd', '--reload']
+                reload_result = subprocess.run(reload_cmd, capture_output=True, text=True, timeout=30)
+                if reload_result.returncode == 0:
                     success = True
                 else:
-                    error_message = 'Failed to reload firewall rules'
+                    error_message = f'Failed to reload firewall rules: {reload_result.stderr}'
             else:
-                error_message = 'Failed to add firewall rule'
+                error_message = f'Failed to add firewall rule: {result.stderr}'
+        except subprocess.TimeoutExpired:
+            error_message = 'Firewall command timed out'
         except Exception as e:
             error_message = f'Firewall command failed: {str(e)}'
         
