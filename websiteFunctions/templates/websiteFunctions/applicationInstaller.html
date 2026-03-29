@@ -7,56 +7,58 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-
-<div class="container">
-
-    <div id="page-title">
-       <h2 id="domainNamePage">{% trans "Application Installer" %}</h2>
-       <p>{% trans "One-click application install." %}</p>
+<div class="w-full p-4 md:p-12">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                <i data-lucide="package" class="h-8 w-8"></i>
+                <span ng-hide="applicationInstallerLoading" class="absolute -top-2 -right-2 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center animate-spin">
+                    <i data-lucide="loader-2" class="h-4 w-4"></i>
+                </span>
+            </div>
+            <div>
+                <h1 id="domainNamePage" class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Application Installer" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "One-click application installation for your website." %}
+                </p>
+            </div>
+        </div>
     </div>
 
-<div class="example-box-wrapper">
+    <!-- Installer Section -->
+    <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+        <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+            <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+            {% trans "Available Applications" %}
+        </h2>
 
-       <div style="border-radius: 25px;border-color:#3498db" class="content-box">
-           <h3 class="content-box-header bg-blue">
-               {% trans "Application Installer" %} <img  ng-hide="applicationInstallerLoading" src="/static/images/loading.gif">
-           </h3>
-
-           <div class="content-box-wrapper">
-               <div class="row">
-
-                    <a  ng-click="installationDetails()" href="" title="{% trans 'Install wordpress with LSCache' %}">
-                       <div class="col-md-4" style="margin-bottom: 2%;">
-
-                                    <a  ng-click="installationDetails()" href="" title="{% trans 'Install wordpress with LSCache' %}">
-                                        <img  src="{% static 'images/icons/wordpress.png'  %}">
-                                    </a>
-                                    <a ng-click="installationDetails()" href="" title="{% trans 'Install wordpress with LSCache' %}">
-                                        <span style='font-size: 21px;font-family: "Times New Roman", Times, serif; padding-left: 2%'>{% trans "Wordpress with LSCache" %}</span>
-                                    </a>
-
-                        </div>
-                    </a>
-
-                    <a  ng-click="installationDetailsJoomla()" href="" title="{% trans 'Install Joomla with(?) LSCache' %}">
-                       <div class="col-md-4" style="margin-bottom: 2%;">
-
-                                    <a  ng-click="installationDetailsJoomla()" href="" title="{% trans 'Install Joomla with LSCache' %}">
-                                        <img  src="{% static 'images/icons/joomla-logo.png'  %}">
-                                    </a>
-                                    <a ng-click="installationDetailsJoomla()" href="" title="{% trans 'Install Joomla with LSCache' %}">
-                                        <span style='font-size: 21px;font-family: "Times New Roman", Times, serif; padding-left: 2%'>{% trans "Joomla" %}</span>
-                                    </a>
-
-                        </div>
-                    </a>
-
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- WordPress -->
+            <a ng-click="installationDetails()" href="" class="group flex items-center p-8 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-8 hover:border-primary/40">
+                <div class="h-20 w-20 rounded-2xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all">
+                    <img src="{% static 'images/icons/wordpress.png' %}" class="h-12 w-12" alt="WordPress">
                 </div>
-           </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "WordPress" %}</h3>
+                    <p class="text-lg text-muted-foreground font-medium">{% trans "with LSCache" %}</p>
+                </div>
+            </a>
 
-       </div>
-   </div>
-
-
+            <!-- Joomla -->
+            <a ng-click="installationDetailsJoomla()" href="" class="group flex items-center p-8 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-8 hover:border-primary/40">
+                <div class="h-20 w-20 rounded-2xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all">
+                    <img src="{% static 'images/icons/joomla-logo.png' %}" class="h-12 w-12" alt="Joomla">
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Joomla" %}</h3>
+                    <p class="text-lg text-muted-foreground font-medium">{% trans "Content Management" %}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

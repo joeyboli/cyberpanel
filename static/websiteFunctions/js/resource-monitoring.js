@@ -1,128 +1,105 @@
-// Resource Monitoring
+// Resource Monitoring with ApexCharts
 let cpuChart, memoryChart, diskChart;
 let cpuData = [], memoryData = [], diskData = [];
-const maxDataPoints = 30;
+const maxDataPoints = 20;
 
-function initializeCharts() {
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 100,
-                ticks: {
-                    callback: function(value) {
-                        return value + '%';
-                    }
-                }
+function createChartOptions(label, color, height) {
+    return {
+        series: [{
+            name: label,
+            data: []
+        }],
+        chart: {
+            type: 'area',
+            height: height,
+            toolbar: { show: false },
+            zoom: { enabled: false },
+            animations: {
+                enabled: true,
+                easing: 'linear',
+                dynamicAnimation: { speed: 1000 }
+            },
+            sparkline: { enabled: false }
+        },
+        colors: [color],
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.4,
+                opacityTo: 0.1,
+                stops: [0, 90, 100]
             }
         },
-        animation: {
-            duration: 750
+        grid: {
+            borderColor: 'rgba(144, 144, 144, 0.05)',
+            padding: { left: 0, right: 0 }
+        },
+        xaxis: {
+            type: 'datetime',
+            range: 100000, // Show last 100 seconds
+            labels: { show: false },
+            axisBorder: { show: false },
+            axisTicks: { show: false }
+        },
+        yaxis: {
+            max: 100,
+            min: 0,
+            tickAmount: 4,
+            labels: {
+                style: { colors: '#888', fontSize: '10px' },
+                formatter: (val) => val.toFixed(0) + '%'
+            }
+        },
+        tooltip: {
+            theme: 'dark',
+            x: { format: 'HH:mm:ss' }
         }
     };
+}
 
-    // CPU Chart
-    const cpuCtx = document.getElementById('cpuChart').getContext('2d');
-    cpuChart = new Chart(cpuCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'CPU Usage (%)',
-                data: [],
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: chartOptions
-    });
+function initializeCharts() {
+    if (!document.getElementById('cpuChart')) return;
 
-    // Memory Chart
-    const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-    memoryChart = new Chart(memoryCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Memory Usage (%)',
-                data: [],
-                borderColor: '#00b894',
-                backgroundColor: 'rgba(0, 184, 148, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: chartOptions
-    });
+    cpuChart = new ApexCharts(document.querySelector("#cpuChart"), createChartOptions('CPU', '#3b82f6', 250));
+    memoryChart = new ApexCharts(document.querySelector("#memoryChart"), createChartOptions('Memory', '#10b981', 250));
+    diskChart = new ApexCharts(document.querySelector("#diskChart"), createChartOptions('Disk', '#f59e0b', 250));
 
-    // Disk Chart
-    const diskCtx = document.getElementById('diskChart').getContext('2d');
-    diskChart = new Chart(diskCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Disk Usage (%)',
-                data: [],
-                borderColor: '#ff9800',
-                backgroundColor: 'rgba(255, 152, 0, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: chartOptions
-    });
+    cpuChart.render();
+    memoryChart.render();
+    diskChart.render();
 }
 
 function updateCharts(data) {
-    const now = new Date();
-    const timeLabel = now.toLocaleTimeString();
+    const now = new Date().getTime();
 
-    // Update CPU Chart
-    cpuData.push(data.cpu_usage);
+    cpuData.push({ x: now, y: data.cpu_usage });
+    memoryData.push({ x: now, y: data.memory_usage });
+    diskData.push({ x: now, y: data.disk_percent });
+
     if (cpuData.length > maxDataPoints) cpuData.shift();
-    cpuChart.data.labels.push(timeLabel);
-    if (cpuChart.data.labels.length > maxDataPoints) cpuChart.data.labels.shift();
-    cpuChart.data.datasets[0].data = cpuData;
-    cpuChart.update('none'); // Use 'none' mode for better performance
-
-    // Update Memory Chart
-    memoryData.push(data.memory_usage);
     if (memoryData.length > maxDataPoints) memoryData.shift();
-    memoryChart.data.labels.push(timeLabel);
-    if (memoryChart.data.labels.length > maxDataPoints) memoryChart.data.labels.shift();
-    memoryChart.data.datasets[0].data = memoryData;
-    memoryChart.update('none');
-
-    // Update Disk Chart
-    diskData.push(data.disk_percent);
     if (diskData.length > maxDataPoints) diskData.shift();
-    diskChart.data.labels.push(timeLabel);
-    if (diskChart.data.labels.length > maxDataPoints) diskChart.data.labels.shift();
-    diskChart.data.datasets[0].data = diskData;
-    diskChart.update('none');
+
+    if (cpuChart) cpuChart.updateSeries([{ data: cpuData }]);
+    if (memoryChart) memoryChart.updateSeries([{ data: memoryData }]);
+    if (diskChart) diskChart.updateSeries([{ data: diskData }]);
 }
 
 function fetchResourceUsage() {
+    const domain = $('#domainNamePage').text().trim();
+    if (!domain) return;
+
     $.ajax({
         url: '/websites/get_website_resources/',
         type: 'POST',
-        data: JSON.stringify({
-            'domain': $('#domainNamePage').text().trim()
-        }),
+        data: JSON.stringify({ 'domain': domain }),
         contentType: 'application/json',
         success: function(data) {
             if (data.status === 1) {
                 updateCharts(data);
-            } else {
-                console.error('Error fetching resource data:', data.error_message);
             }
         },
         error: function(xhr, status, error) {
@@ -131,13 +108,10 @@ function fetchResourceUsage() {
     });
 }
 
-// Initialize charts when the page loads
 $(document).ready(function() {
+    initializeCharts();
     if (document.getElementById('cpuChart')) {
-        initializeCharts();
-        // Fetch resource usage every 5 seconds
         setInterval(fetchResourceUsage, 5000);
-        // Initial fetch
         fetchResourceUsage();
     }
-}); 
+});

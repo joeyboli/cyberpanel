@@ -10,14 +10,60 @@
     {% load static %}
     <link rel="icon" type="image/png" href="{% static 'baseTemplate/assets/finalBase/favicon.png' %}">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'filemanager/images/fonts/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'filemanager/css/fileManager.css' %}">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              border: 'hsl(240 5.9% 90%)',
+              input: 'hsl(240 5.9% 90%)',
+              ring: 'hsl(240 5.9% 10%)',
+              background: 'hsl(0 0% 100%)',
+              foreground: 'hsl(240 10% 3.9%)',
+              primary: {
+                DEFAULT: 'hsl(240 5.9% 10%)',
+                foreground: 'hsl(0 0% 98%)',
+              },
+              secondary: {
+                DEFAULT: 'hsl(240 4.8% 95.9%)',
+                foreground: 'hsl(240 5.9% 10%)',
+              },
+              muted: {
+                DEFAULT: 'hsl(240 4.8% 95.9%)',
+                foreground: 'hsl(240 3.8% 46.1%)',
+              },
+              accent: {
+                DEFAULT: 'hsl(240 4.8% 95.9%)',
+                foreground: 'hsl(240 5.9% 10%)',
+              },
+              destructive: {
+                DEFAULT: 'hsl(0 84.2% 60.2%)',
+                foreground: 'hsl(0 0% 98%)',
+              },
+              card: {
+                DEFAULT: 'hsl(0 0% 100%)',
+                foreground: 'hsl(240 10% 3.9%)',
+              },
+              popover: {
+                DEFAULT: 'hsl(0 0% 100%)',
+                foreground: 'hsl(240 10% 3.9%)',
+              }
+            }
+          }
+        }
+      }
+    </script>
 
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Angular JS -->
-
     <script src = "https://code.angularjs.org/1.6.5/angular.min.js"></script>
     <script src="{% static 'filemanager/js/fileManager.js' %}"></script>
 
@@ -26,629 +72,654 @@
     <script src="{% static 'filemanager/js/es5-sham.min.js' %}"></script>
     <script src="{% static 'filemanager/js/jquery-1.8.3.min.js' %}"></script>
     <script src="{% static 'filemanager/js/console-sham.js' %}"></script>
-
-    <!--<script src="../bower_components/angular/angular.js"></script>-->
     <script src="{% static 'filemanager/js/angular-file-upload.min.js' %}"></script>
 
+    <!-- Bootstrap CSS (required for modals) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
 
+    <style>
+        :root {
+            --border: 240 5.9% 90%;
+            --input: 240 5.9% 90%;
+            --ring: 240 5.9% 10%;
+            --background: 0 0% 100%;
+            --foreground: 240 10% 3.9%;
+            --primary: 240 5.9% 10%;
+            --primary-foreground: 0 0% 98%;
+            --secondary: 240 4.8% 95.9%;
+            --secondary-foreground: 240 5.9% 10%;
+            --muted: 240 4.8% 95.9%;
+            --muted-foreground: 240 3.8% 46.1%;
+            --accent: 240 4.8% 95.9%;
+            --accent-foreground: 240 5.9% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 0 0% 98%;
+            --card: 0 0% 100%;
+            --card-foreground: 240 10% 3.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 240 10% 3.9%;
+        }
 
-    <!-- HTML Editor Include -->
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
 
+        .file-browser {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 120px);
+            min-height: 600px;
+        }
+
+        #treeView {
+            width: 320px;
+            overflow-y: auto;
+        }
+
+        .file-list-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .file-table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            border-radius: 0.75rem;
+            border-width: 1px;
+            border-color: hsl(var(--border));
+            background-color: hsl(var(--card));
+        }
+
+        /* Right-click context menu - shadcn inspired */
+        #rightClick {
+            position: absolute;
+            z-index: 1000;
+            display: none;
+            min-width: 12rem;
+            background-color: hsl(var(--popover));
+            color: hsl(var(--popover-foreground));
+            border-radius: 0.5rem;
+            border: 1px solid hsl(var(--border));
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 0.25rem;
+        }
+
+        #rightClick .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        #rightClick .context-menu-item:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        #rightClick .context-menu-item i {
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Fix for Lucide icons rendering */
+        svg {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
 </head>
-<body ng-app="fileManager" ng-controller="fileManagerCtrl">
+<body ng-app="fileManager" ng-controller="fileManagerCtrl" class="text-foreground">
 
-<!--- navigation bar ---->
-
-<nav id="navBar" class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="header-logo">
-        <a href="{% url 'index' %}"><img src="{% static 'filemanager/images/fileManager.png' %}"> <span style="display: none" id="domainNameInitial">{{ domainName }}</span></a>
+<nav class="bg-card border-b px-6 py-3 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+    <div class="flex items-center gap-4">
+        <a href="{% url 'index' %}" class="flex items-center gap-2">
+            <img src="{% static 'filemanager/images/fileManager.png' %}" class="h-8">
+            <span style="display: none" id="domainNameInitial">{{ domainName }}</span>
+        </a>
     </div>
-    <!--- second bar ---->
 
-    <div class="">
-        <div class="flex-wrap">
-            <!--div class="text-white h4 mt-5 mx-10">
-                 {% trans " File Manager" %}
-            </div-->
-            <ul class="nav mr-10">
-                <li class="nav-item">
-                    <a onclick="return false;" ng-click="showUploadBox()" class="nav-link point-events" href="#"><i class="fa fa-upload" aria-hidden="true"></i>  {% trans "Upload" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a onclick="return false;" ng-click="showCreateFileModal()" class="nav-link point-events" href="#"><i class="fa fa-plus-square" aria-hidden="true"></i>  {% trans "New File" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a onclick="return false;" ng-click="showCreateFolderModal()" class="nav-link point-events" href="#"><i class="fa fa-folder" aria-hidden="true"></i>  {% trans "New Folder" %}</a>
-                </li>
-                <li id="deleteFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showDeleteModal()" class="nav-link point-events" href="#"><i class="fa fa-trash-o" aria-hidden="true"></i>  {% trans "Delete" %}</a>
-                </li>
-                <li id="copyFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showCopyModal()" class="nav-link point-events" href="#"><i class="fa fa-files-o" aria-hidden="true"></i>  {% trans "Copy" %}</a>
-                </li>
-                <li id="moveFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showMoveModal()" class="nav-link point-events" href="#"><i class="fa fa-arrows-alt" aria-hidden="true"></i>  {% trans "Move" %}</a>
-                </li>
-                <li id="renameFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showRenameModal()" class="nav-link point-events" href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i>  {% trans "Rename" %}</a>
-                </li>
-                <li id="editFile" class="nav-item" >
-                    <a onclick="return false;" ng-click="showHTMLEditorModal()"  class="nav-link point-events" href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>  {% trans "Edit" %}</a>
-                </li>
-                <li id="compressFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showCompressionModal()" class="nav-link point-events" href="#"><i class="fa fa-compress" aria-hidden="true"></i>  {% trans "Compress" %}</a>
-                </li>
-                <li id="extractFile" class="nav-item">
-                    <a onclick="return false;" ng-click="showExtractionModal()" class="nav-link point-events" href="#"><i class="fa fa-expand" aria-hidden="true"></i>  {% trans "Extract" %}</a>
-                </li>
+    <div class="flex-1 flex justify-center">
+        <div class="flex flex-wrap gap-1 md:gap-2 items-center">
+            <button ng-click="showUploadBox()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-all shadow-sm">
+                <i data-lucide="upload" class="h-4 w-4"></i> <span class="hidden md:inline">{% trans "Upload" %}</span>
+            </button>
+            <button ng-click="showCreateFileModal()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-all border shadow-sm">
+                <i data-lucide="file-plus" class="h-4 w-4"></i> <span class="hidden md:inline">{% trans "New File" %}</span>
+            </button>
+            <button ng-click="showCreateFolderModal()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-all border shadow-sm">
+                <i data-lucide="folder-plus" class="h-4 w-4"></i> <span class="hidden md:inline">{% trans "New Folder" %}</span>
+            </button>
 
-            </ul>
+            <div class="h-6 w-px bg-border mx-1"></div>
+
+            <button id="deleteFile" ng-click="showDeleteModal()" class="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all" title="{% trans "Delete" %}">
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+            </button>
+            <button id="copyFile" ng-click="showCopyModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Copy" %}">
+                <i data-lucide="copy" class="h-4 w-4"></i>
+            </button>
+            <button id="moveFile" ng-click="showMoveModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Move" %}">
+                <i data-lucide="move" class="h-4 w-4"></i>
+            </button>
+            <button id="renameFile" ng-click="showRenameModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Rename" %}">
+                <i data-lucide="edit-3" class="h-4 w-4"></i>
+            </button>
+            <button id="editFile" ng-click="showHTMLEditorModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Edit" %}">
+                <i data-lucide="code" class="h-4 w-4"></i>
+            </button>
+            <button id="compressFile" ng-click="showCompressionModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Compress" %}">
+                <i data-lucide="archive" class="h-4 w-4"></i>
+            </button>
+            <button id="extractFile" ng-click="showExtractionModal()" class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="{% trans "Extract" %}">
+                <i data-lucide="unarchive" class="h-4 w-4"></i>
+            </button>
         </div>
-    </div>
-
-    <!--- second bar ends ---->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-
-        </ul>
     </div>
 </nav>
 
-<!--- navigation bar ends ---->
+<div class="p-4 md:p-6">
+    <div class="bg-card text-card-foreground border rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row h-[calc(100vh-140px)] min-h-[600px]">
+        <!-- Sidebar Tree View -->
+        <div id="treeView" class="w-full md:w-[300px] border-r bg-muted/10 p-4 shrink-0">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-semibold mb-2 block flex items-center gap-2">
+                        {% trans "Current Path" %}
+                        <i ng-hide="treeLoading" data-lucide="loader-2" class="h-3 w-3 animate-spin text-muted-foreground"></i>
+                    </label>
+                    <input type="text" class="w-full px-3 py-2 bg-background border rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm" id="currentRPath" ng-model="currentRPath" readonly>
+                </div>
 
-
-
-<!--- File Manager body ---->
-
-<div class="row">
-    <div id="treeView" class="col-sm-3" style="padding-right: 0px;">
-        <div class="content-box mb-3 bg-lightgray" style="height: 100%;">
-            <div class="card-header">
-                <div class="mt-20">
-                    <label>{% trans "Current Path" %}  <img ng-hide="treeLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"> </label>
-                    <input type="text" class="form-control" id="currentRPath"  ng-model="currentRPath" readonly>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 p-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors group">
+                        <a href="#" onclick="return false;" ng-click="fetchChilds($event,currentRPath,'primary')" class="p-1 hover:bg-muted rounded text-muted-foreground transition-colors">
+                            <i data-lucide="plus" class="h-4 w-4"></i>
+                        </a>
+                        <a onclick="return false;" ng-click="fetchForTableSecondary($event,'fromTree',completeStartingPath)" href="#" class="flex items-center gap-2 text-sm font-medium flex-1 truncate">
+                            <i data-lucide="folder" class="h-4 w-4 text-primary fill-primary/20"></i>
+                            {$ startingPath $}
+                        </a>
+                    </div>
                 </div>
             </div>
-            <ul class="list-group list-group-flush">
-                <li  class="list-group-item">
-                    <a href="#" onclick="return false;" ng-click="fetchChilds($event,currentRPath,'primary')">
-                        <i class="fa fa-plus" aria-hidden="true" ></i>
-                    </a>
-                    <a onclick="return false;" ng-click="fetchForTableSecondary($event,'fromTree',completeStartingPath)" href="#">
-                        <i class="fa fa-folder" aria-hidden="true"></i> {$ startingPath $}
-                    </a>
-                </li>
-            </ul>
         </div>
-    </div>
 
-    <div class="col-sm-9">
-        <div class="mb-3 mt-30 mx-10" style="min-height: 30rem;">
-            <div class="">
-                <ul class="nav mb-10">
-                    <li class="nav-item">
-                        <a onclick="return false;" ng-click="fetchForTableSecondary($event,'homeFetch')"  class="mx-10" href="#"><i class="fa fa-home fa-lg" aria-hidden="true"></i>  {% trans "Home" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a onclick="return false;" ng-click="fetchForTableSecondary($event,'goBackOnPath')" class="mx-10" href="#"><i class="fa fa-arrow-left fa-lg" aria-hidden="true"></i>  {% trans "Back" %}</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a onclick="return false;" ng-click="fetchForTableSecondary($event,'refresh')" class="mx-10" href="#"><i class="fa fa-refresh fa-lg" aria-hidden="true"></i>  {% trans "Refresh" %}</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a onclick="return false;" ng-click="selectAll()" class="mx-10" href="#"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i>  {% trans "Select All" %}</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a onclick="return false;" ng-click="unSelectAll()" class="mx-10" href="#"><i class="fa fa-square-o fa-lg" aria-hidden="true"></i>  {% trans "UnSelect All" %}</a>
-                    </li>
-                </ul>
-            </div>
-            <table class="table">
-                <thead id="tableHead">
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">{% trans "File Name" %}</th>
-                    <th scope="col">{% trans "Size (KB)" %}</th>
-                    <th scope="col">{% trans "Last Modified" %}</th>
-                    <th scope="col">{% trans "Permissions" %}</th>
-                </tr>
-                </thead>
-                <tbody id="tableBodyFiles">
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-
-<!--- File Manager body ends ---->
-
-<!-- File Upload popup Modal -->
-
-
-<div class="modal fade bd-example-modal-lg" id="uploadBox" tabindex="-1" role="dialog" aria-labelledby="uploadBox" aria-hidden="true" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter" >
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div id="uploadBoxLabel" class="modal-header">
-                <h5 class="modal-title" >{% trans "Upload File" %} - <a  target="_blank" rel="noopener" href="https://cyberpanel.net/KnowledgeBase/home/website-file-manager/" title="">{% trans "Upload Limits" %}</a></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+        <!-- Main Content -->
+        <div class="file-list-section p-4">
+            <!-- Navigation Sub-Bar -->
+            <div class="flex flex-wrap items-center gap-3 mb-4 p-2 bg-muted/30 rounded-xl">
+                <button ng-click="fetchForTableSecondary($event,'homeFetch')" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium hover:bg-background hover:shadow-sm rounded-lg transition-all">
+                    <i data-lucide="home" class="h-4 w-4"></i> {% trans "Home" %}
+                </button>
+                <button ng-click="fetchForTableSecondary($event,'goBackOnPath')" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium hover:bg-background hover:shadow-sm rounded-lg transition-all">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i> {% trans "Back" %}
+                </button>
+                <button ng-click="fetchForTableSecondary($event,'refresh')" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium hover:bg-background hover:shadow-sm rounded-lg transition-all">
+                    <i data-lucide="refresh-cw" class="h-4 w-4"></i> {% trans "Refresh" %}
+                </button>
+                <div class="h-5 w-px bg-border mx-1"></div>
+                <button ng-click="selectAll()" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium hover:bg-background hover:shadow-sm rounded-lg transition-all">
+                    <i data-lucide="check-square" class="h-4 w-4"></i> {% trans "Select All" %}
+                </button>
+                <button ng-click="unSelectAll()" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium hover:bg-background hover:shadow-sm rounded-lg transition-all">
+                    <i data-lucide="square" class="h-4 w-4"></i> {% trans "UnSelect All" %}
                 </button>
             </div>
-            <div class="modal-body">
-                <h3>{% trans "Upload queue" %}</h3>
-                <p>{% trans "Queue length:" %} {$ uploader.queue.length $}</p>
+
+            <!-- Table -->
+            <div class="file-table-wrapper">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 bg-muted/50 backdrop-blur-sm border-b z-10">
+                        <tr>
+                            <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-10"></th>
+                            <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "File Name" %}</th>
+                            <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Size (KB)" %}</th>
+                            <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Last Modified" %}</th>
+                            <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Permissions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyFiles" class="divide-y divide-border">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Right-click context menu -->
+<div id="rightClick">
+    <a onclick="return false;" ng-click="showMoveModal()" href="#" class="context-menu-item">
+        <i data-lucide="move" class="h-4 w-4"></i> {% trans "Move" %}
+    </a>
+    <a onclick="return false;" ng-click="showCopyModal()" href="#" class="context-menu-item">
+        <i data-lucide="copy" class="h-4 w-4"></i> {% trans "Copy" %}
+    </a>
+    <a onclick="return false;" ng-click="showRenameModal()" href="#" class="context-menu-item">
+        <i data-lucide="edit-3" class="h-4 w-4"></i> {% trans "Rename" %}
+    </a>
+    <a onclick="return false;" ng-click="showPermissionsModal()" href="#" class="context-menu-item border-b border-border/50 pb-1.5 mb-1.5">
+        <i data-lucide="lock" class="h-4 w-4"></i> {% trans "Change Permissions" %}
+    </a>
+    <a onclick="return false;" ng-click="showHTMLEditorModal()" href="#" id="editOnRight" class="context-menu-item">
+        <i data-lucide="code" class="h-4 w-4"></i> {% trans "Edit" %}
+    </a>
+    <a onclick="return false;" ng-click="showExtractionModal()" href="#" id="extractOnRight" class="context-menu-item">
+        <i data-lucide="unarchive" class="h-4 w-4"></i> {% trans "Extract" %}
+    </a>
+    <a onclick="return false;" ng-click="showCompressionModal()" href="#" class="context-menu-item">
+        <i data-lucide="archive" class="h-4 w-4"></i> {% trans "Compress" %}
+    </a>
+    <a onclick="return false;" ng-click="showRestoreModal()" href="#" id="restoreRight" class="context-menu-item border-t border-border/50 mt-1.5 pt-1.5">
+        <i data-lucide="rotate-ccw" class="h-4 w-4"></i> {% trans "Restore" %}
+    </a>
+    <a onclick="return false;" ng-click="showDeleteModal()" href="#" class="context-menu-item text-destructive hover:bg-destructive/10">
+        <i data-lucide="trash-2" class="h-4 w-4"></i> {% trans "Delete" %}
+    </a>
+</div>
+
+<!-- Modals -->
+
+<!-- File Upload Modal -->
+<div class="modal fade" id="uploadBox" tabindex="-1" role="dialog" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-none rounded-2xl shadow-2xl overflow-hidden">
+            <div class="modal-header border-b px-6 py-4 flex justify-between items-center bg-muted/30">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Upload File" %} - <a target="_blank" rel="noopener" href="https://cyberpanel.net/KnowledgeBase/home/website-file-manager/" class="text-primary hover:underline">{% trans "Upload Limits" %}</a></h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <div class="modal-body p-6 space-y-6">
                 <div>
-                    <div class="card my-drop-zone" nv-file-over="" uploader="uploader">
-                        <div class="card-body">
-                            <h4 class="card-title">{% trans "Drop" %}</h4>
-                            <p class="card-text">{% trans "Drop Files here to upload them." %}</p>
-                        </div>
+                    <h3 class="text-lg font-semibold">{% trans "Upload queue" %}</h3>
+                    <p class="text-sm text-muted-foreground mt-1">{% trans "Queue length:" %} <span class="font-medium text-foreground">{$ uploader.queue.length $}</span></p>
+                </div>
+
+                <div nv-file-over="" uploader="uploader" class="border-2 border-dashed border-primary/20 bg-primary/5 rounded-2xl p-10 text-center space-y-3 hover:bg-primary/10 transition-colors group cursor-pointer">
+                    <div class="bg-primary/10 p-3 rounded-full w-fit mx-auto group-hover:scale-110 transition-transform">
+                        <i data-lucide="upload-cloud" class="h-8 w-8 text-primary"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="uploadControlMultiple">{% trans "Upload" %}</label>
-                        <input type="file" nv-file-select="" uploader="uploader" class="form-control-file" id="uploadControlMultiple" multiple>
+                    <div>
+                        <h4 class="font-semibold text-lg">{% trans "Drop Files" %}</h4>
+                        <p class="text-sm text-muted-foreground">{% trans "Drop files here to upload them to the current directory." %}</p>
                     </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">{% trans "Name" %}</th>
-                            <th scope="col">{% trans "Size" %}</th>
-                            <th scope="col">{% trans "Progress" %}</th>
-                            <th scope="col">{% trans "Status" %}</th>
-                            <th scope="col">{% trans "Actions" %}</th>
-                        </tr>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Select Files" %}</label>
+                    <input type="file" nv-file-select="" uploader="uploader" class="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 transition-all cursor-pointer" id="uploadControlMultiple" multiple>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-muted/50 border-b">
+                            <tr>
+                                <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Name" %}</th>
+                                <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Size" %}</th>
+                                <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Progress" %}</th>
+                                <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">{% trans "Status" %}</th>
+                                <th class="p-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Actions" %}</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                        <tr ng-repeat="item in uploader.queue">
-                            <td><strong>{$ item.file.name $}</strong></td>
-                            <td ng-show="uploader.isHTML5" nowrap>{$ item.file.size/1024/1024|number:2 $} MB</td>
-                            <td ng-show="uploader.isHTML5">
-                                <div class="progress" style="margin-bottom: 0;">
-                                    <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <span ng-show="item.isSuccess"><i class="fa fa-check" aria-hidden="true"></i></span>
-                                <span ng-show="item.isCancel"><i class="fa fa-ban" aria-hidden="true"></i></span>
-                                <span ng-show="item.isError"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                            </td>
-                            <td nowrap>
-                                <button type="button" class="btn btn-success btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-                                    <i class="fa fa-upload" aria-hidden="true"></i> {% trans "Upload" %}
-                                </button>
-                                <button type="button" class="btn btn-warning btn-sm" ng-click="item.cancel()" ng-disabled="!item.isUploading">
-                                    <i class="fa fa-ban" aria-hidden="true"></i> {% trans "Cancel" %}
-                                </button>
-                                <button type="button" class="btn btn-danger btn-sm" ng-click="item.remove()">
-                                    <i class="fa fa-trash" aria-hidden="true"></i> {% trans "Remove" %}
-                                </button>
-                            </td>
-                        </tr>
-                        </tr>
+                        <tbody class="divide-y divide-border">
+                            <tr ng-repeat="item in uploader.queue" class="hover:bg-muted/30">
+                                <td class="p-3 text-sm font-medium truncate max-w-[200px]">{$ item.file.name $}</td>
+                                <td class="p-3 text-sm text-muted-foreground" nowrap>{$ item.file.size/1024/1024|number:2 $} MB</td>
+                                <td class="p-3">
+                                    <div class="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary transition-all" ng-style="{ 'width': item.progress + '%' }"></div>
+                                    </div>
+                                </td>
+                                <td class="p-3 text-center">
+                                    <i ng-show="item.isSuccess" data-lucide="check-circle" class="h-4 w-4 text-emerald-500 mx-auto"></i>
+                                    <i ng-show="item.isCancel" data-lucide="ban" class="h-4 w-4 text-amber-500 mx-auto"></i>
+                                    <i ng-show="item.isError" data-lucide="alert-circle" class="h-4 w-4 text-destructive mx-auto"></i>
+                                </td>
+                                <td class="p-3 flex gap-2" nowrap>
+                                    <button ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="p-1.5 hover:bg-emerald-100 text-emerald-600 rounded-lg disabled:opacity-30">
+                                        <i data-lucide="upload" class="h-4 w-4"></i>
+                                    </button>
+                                    <button ng-click="item.cancel()" ng-disabled="!item.isUploading" class="p-1.5 hover:bg-amber-100 text-amber-600 rounded-lg disabled:opacity-30">
+                                        <i data-lucide="ban" class="h-4 w-4"></i>
+                                    </button>
+                                    <button ng-click="item.remove()" class="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors">
+                                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
 
-                    <div>
-                        <div id="queueProg">
-                            {% trans "Queue progress:" %}
-                            <div class="progress" style="">
-                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
-                            </div>
-                        </div>
-
+                <div id="queueProg" class="space-y-2">
+                    <div class="flex justify-between text-sm font-medium">
+                        <span>{% trans "Queue progress" %}</span>
+                        <span>{$ uploader.progress $}%</span>
                     </div>
-
-                    <div ng-hide="errorMessage" class="alert alert-danger" role="alert">
-                        {$ fileName $} {% trans "can not be uploaded, Error message:" %} {$ error_message $}
+                    <div class="h-3 w-full bg-muted rounded-full overflow-hidden">
+                        <div class="h-full bg-primary transition-all" ng-style="{ 'width': uploader.progress + '%' }"></div>
                     </div>
+                </div>
 
-                    <button type="button" class="btn btn-success btn-lg" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
-                        <i class="fa fa-upload" aria-hidden="true"></i> {% trans "Upload all" %}
+                <div ng-hide="errorMessage" class="bg-destructive/10 border border-destructive/20 text-destructive p-4 rounded-xl flex items-center gap-3">
+                    <i data-lucide="alert-circle" class="h-5 w-5"></i>
+                    <span class="text-sm font-medium">{$ fileName $} {% trans "can not be uploaded, Error:" %} {$ error_message $}</span>
+                </div>
+            </div>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50">
+                    <i data-lucide="upload" class="h-4 w-4"></i> {% trans "Upload all" %}
+                </button>
+                <button ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 transition-all border disabled:opacity-50">
+                    <i data-lucide="ban" class="h-4 w-4"></i> {% trans "Cancel all" %}
+                </button>
+                <button ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="inline-flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground font-semibold rounded-lg hover:bg-destructive/90 transition-all disabled:opacity-50">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i> {% trans "Remove all" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HTML Editor Modal -->
+<div id="showHTMLEditor" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" style="max-width: 90%;">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 flex justify-between items-center bg-muted/30">
+                <h5 class="text-xl font-bold tracking-tight flex items-center gap-2">
+                    <i data-lucide="file-code" class="h-5 w-5 text-primary"></i>
+                    {$fileInEditor$} - {% trans "Editor" %}
+                    <i ng-hide="htmlEditorLoading" data-lucide="loader-2" class="h-4 w-4 animate-spin text-muted-foreground ml-2"></i>
+                </h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <div id="htmlEditorContent" style="height: 600px;">
+                <!-- ACE Editor -->
+            </div>
+            <div class="modal-footer border-t px-6 py-4 flex flex-col gap-4 bg-muted/30">
+                <div class="w-full">
+                    <div ng-hide="errorMessageEditor" class="bg-destructive/10 border border-destructive/20 text-destructive p-3 rounded-xl flex items-center gap-3 mb-3">
+                        <i data-lucide="alert-circle" class="h-4 w-4"></i>
+                        <span class="text-sm">{$error_message$}</span>
+                    </div>
+                    <div ng-hide="saveSuccess" class="bg-emerald-100 border border-emerald-200 text-emerald-700 p-3 rounded-xl flex items-center gap-3 mb-3">
+                        <i data-lucide="check-circle" class="h-4 w-4"></i>
+                        <span class="text-sm font-medium">{% trans "File successfully saved." %}</span>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 w-full">
+                    <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">
+                        {% trans "Close" %}
                     </button>
-                    <button type="button" class="btn btn-warning btn-lg" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
-                        <i class="fa fa-ban" aria-hidden="true"></i> {% trans "Cancel all" %}
-                    </button>
-                    <button type="button" class="btn btn-danger btn-lg" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
-                        <i class="fa fa-trash" aria-hidden="true"></i> {% trans "Remove all" %}
+                    <button ng-click="putFileContents()" class="inline-flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">
+                        <i data-lucide="save" class="h-4 w-4"></i> {% trans "Save Changes" %}
                     </button>
                 </div>
-
-
-
             </div>
         </div>
     </div>
 </div>
 
-<!-- File Upload popup Modal Ends -->
-
-<!-- HTML Editor Upload popup Modal -->
-
-<div id="showHTMLEditor" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title" >{$fileInEditor$} - HTML Editor <img ng-hide="htmlEditorLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Create Folder -->
+<div id="showCreateFolder" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 flex justify-between items-center bg-muted/30">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Create Folder" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div id="htmlEditorContent">
-            </div>
-
-            <div class="modal-footer">
-
-                <div id="htmlEditorStyles" class="row">
-
-                    <div class="col-sm-12">
-                        <div ng-hide="errorMessageEditor" class="alert alert-danger" role="alert">
-                            {$error_message$}
-                        </div>
-                        <div ng-hide="saveSuccess" class="alert alert-success" role="alert">
-                            {% trans "File Successfully saved." %}
-                        </div>
-                    </div>
-
+            <div class="modal-body p-6 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Folder Name" %}</label>
+                    <input ng-keypress="createFolderEnter($event)" ng-model="newFolderName" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm" placeholder="my-new-folder">
                 </div>
-
-                <button ng-click="putFileContents()" type="button" class="btn btn-success btn-lg">
-                    <i class="fa" aria-hidden="true"></i> {% trans "Save Changes" %}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- HTML Editor Upload popup Modal -->
-
-
-<!-- create folder modal -->
-
-<div id="showCreateFolder" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title" >{% trans "Create new folder!" %} <img ng-hide="htmlEditorLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="/">
-                    <div class="form-group">
-                        <label>{% trans "New Folder Name" %}</label>
-                        <input ng-keypress="createFolderEnter($event)" ng-model="newFolderName" type="text" class="form-control" >
-                        <small class="form-text text-muted">{% trans "Folder will be created in your current directory" %}</small>
-                    </div>
-                    <button type="button" ng-click="createNewFolder()" class="btn btn-primary">{% trans "Create Folder" %}</button>
-                </form>
-            </div>
-
-
-            <div class="modal-footer">
-                <div class="row">
-
-                    <div class="col-sm-12">
-                        <div ng-hide="errorMessageFolder" class="alert alert-danger" role="alert">
-                            {$error_message$}
-                        </div>
-                        <div ng-hide="createSuccess" class="alert alert-success" role="alert">
-                            {% trans "Folder Successfully created." %}
-                        </div>
-                    </div>
-
+                <div ng-hide="errorMessageFolder" class="bg-destructive/10 text-destructive p-3 rounded-xl text-sm border border-destructive/20">
+                    {$error_message$}
+                </div>
+                <div ng-hide="createSuccess" class="bg-emerald-100 text-emerald-700 p-3 rounded-xl text-sm border border-emerald-200">
+                    {% trans "Folder successfully created." %}
                 </div>
             </div>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="createNewFolder()" class="px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Create Folder" %}</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- create folder modal -->
-
-<!-- create file modal -->
-
-<div id="showCreateFile" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title" >{% trans "Create new file!" %} <img ng-hide="htmlEditorLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Create File -->
+<div id="showCreateFile" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 flex justify-between items-center bg-muted/30">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Create File" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form action="/">
-                    <div class="form-group">
-                        <label>{% trans "New File Name" %}</label>
-                        <input ng-keypress="createFileEnter($event)" ng-model="newFileName" type="text" class="form-control" >
-                        <small class="form-text text-muted">{% trans "File will be created in your current directory, if it already exists it will not overwirte." %}</small>
-                    </div>
-                    <button type="button" ng-click="createNewFile()" class="btn btn-primary">{% trans "Create File" %}</button>
-                </form>
-            </div>
-
-
-            <div class="modal-footer">
-                <div class="row">
-
-                    <div class="col-sm-12">
-                        <div ng-hide="errorMessageFile" class="alert alert-danger" role="alert">
-                            {$error_message$}
-                        </div>
-                        <div ng-hide="createSuccess" class="alert alert-success" role="alert">
-                            {% trans "File Successfully created." %}
-                        </div>
-                    </div>
-
+            <div class="modal-body p-6 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "File Name" %}</label>
+                    <input ng-keypress="createFileEnter($event)" ng-model="newFileName" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm" placeholder="index.html">
+                </div>
+                <div ng-hide="errorMessageFile" class="bg-destructive/10 text-destructive p-3 rounded-xl text-sm border border-destructive/20">
+                    {$error_message$}
+                </div>
+                <div ng-hide="createSuccess" class="bg-emerald-100 text-emerald-700 p-3 rounded-xl text-sm border border-emerald-200">
+                    {% trans "File successfully created." %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- create file modal -->
-
-<div id="showDelete" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title" >{% trans "Confirm Deletion!" %} <img ng-hide="deleteLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="/">
-                    <div class="form-group">
-                        <input ng-model="skipTrash" type="checkbox" value="">  Skip Trash Folder
-                        <small class="form-text text-muted">{% trans "Skip trash and permanently delete this file." %}</small>
-                    </div>
-                </form>
-                <p>Are you sure?</p>
-            </div>
-            <div class="modal-footer">
-                <button ng-click="deleteFolderOrFile()" type="button" class="btn btn-primary">{% trans "Confirm" %}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="createNewFile()" class="px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Create File" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--- Delete File Confirmation modal -->
-
-
-<!-- compression modal -->
-
-<div id="showCompression" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title">{% trans "Compress" %} <img ng-hide="compressionLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Delete Confirmation -->
+<div id="showDelete" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 flex justify-between items-center bg-muted/30">
+                <h5 class="text-xl font-bold tracking-tight text-destructive">{% trans "Confirm Deletion" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>{% trans "List of files/folder!" %}</label>
-                        <textarea ng-model="listOfFiles" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>{% trans "Compressed File Name" %}</label>
-                        <input ng-model="compressedFileName" type="text" class="form-control">
-                        <small class="form-text text-muted">{% trans "Enter without extension name!" %}</small>
-                    </div>
+            <div class="modal-body p-6 space-y-4 text-center">
+                <div class="bg-destructive/10 p-4 rounded-full w-fit mx-auto mb-2">
+                    <i data-lucide="trash-2" class="h-10 w-10 text-destructive"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold">{% trans "Are you absolutely sure?" %}</h4>
+                    <p class="text-muted-foreground mt-1 text-sm">{% trans "This action cannot be undone unless trash is enabled." %}</p>
+                </div>
+                <div class="flex items-center justify-center gap-2 mt-4 p-3 bg-muted/50 rounded-xl cursor-pointer hover:bg-muted transition-colors" ng-click="skipTrash = !skipTrash">
+                    <input type="checkbox" ng-model="skipTrash" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20">
+                    <span class="text-sm font-semibold select-none">{% trans "Skip Trash Folder (Permanent)" %}</span>
+                </div>
+            </div>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="flex-1 px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="deleteFolderOrFile()" class="flex-1 px-4 py-2 bg-destructive text-destructive-foreground font-semibold rounded-lg hover:bg-destructive/90 transition-all shadow-sm">{% trans "Delete" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    <div class="form-group">
-                        <label>{% trans "Compression Type" %}</label>
-                        <select ng-model="compressionType" class="form-control">
+<!-- Compress Modal -->
+<div id="showCompression" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 bg-muted/30 flex justify-between items-center">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Compress Files" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <div class="modal-body p-6 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Files/Folders to Compress" %}</label>
+                    <textarea ng-model="listOfFiles" class="w-full px-4 py-2.5 bg-background border rounded-xl text-sm min-h-[100px] focus:ring-2 focus:ring-primary/20 outline-none transition-all" readonly></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold">{% trans "Archive Name" %}</label>
+                        <input ng-model="compressedFileName" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm" placeholder="archive">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold">{% trans "Format" %}</label>
+                        <select ng-model="compressionType" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm appearance-none">
                             <option>zip</option>
                             <option>tar.gz</option>
                         </select>
                     </div>
-                </form>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button ng-click="startCompression()" type="button" class="btn btn-primary">{% trans "Compress" %}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="startCompression()" class="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Compress" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--- compression modal -->
-
-<!-- extraction modal -->
-
-<div id="showExtraction" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title" >{% trans "Extracting" %} {$ fileToBeExtracted $} <img ng-hide="extractionLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Extract Modal -->
+<div id="showExtraction" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 bg-muted/30 flex justify-between items-center">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Extract Files" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form action="/">
-                    <div class="form-group">
-                        <label>{% trans "Extract in" %}</label>
-                        <input ng-model="extractionLocation" type="text" class="form-control" >
-                        <small class="form-text text-muted">{% trans "You can enter . to extract in current directory!" %}</small>
-                    </div>
-                    <button type="button" ng-click="startExtraction()" class="btn btn-primary">{% trans "Extract" %}</button>
-                </form>
+            <div class="modal-body p-6 space-y-4">
+                <p class="text-sm font-medium">{% trans "Extracting:" %} <span class="text-primary">{$ fileToBeExtracted $}</span></p>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Destination Path" %}</label>
+                    <input ng-model="extractionLocation" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm" placeholder=".">
+                </div>
+            </div>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="startExtraction()" class="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Extract" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- extraction modal -->
-
-
-<!-- move modal -->
-
-<div id="showMove" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title">{% trans "Move Files" %} <img ng-hide="moveLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Move Modal -->
+<div id="showMove" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 bg-muted/30 flex justify-between items-center">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Move Files" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>{% trans "List of files/folders!" %}</label>
-                        <textarea ng-model="listOfFiles" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>{% trans "Move to" %}</label>
-                        <input ng-model="pathToMoveTo" type="text" class="form-control">
-                        <small class="form-text text-muted">{% trans "Enter a path to move your files!" %}</small>
-                    </div>
-                </form>
+            <div class="modal-body p-6 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Files to Move" %}</label>
+                    <textarea ng-model="listOfFiles" class="w-full px-4 py-2.5 bg-background border rounded-xl text-sm min-h-[100px] focus:ring-2 focus:ring-primary/20 outline-none transition-all" readonly></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Target Path" %}</label>
+                    <input ng-model="pathToMoveTo" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm">
+                </div>
             </div>
-            <div class="modal-footer">
-                <button ng-click="startMoving()" type="button" class="btn btn-primary">{% trans "Move" %}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="startMoving()" class="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Move" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--- move modal -->
-
-
-<!-- copy modal -->
-
-<div id="showCopy" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title">{% trans "Copy Files" %} <img ng-hide="copyLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Copy Modal -->
+<div id="showCopy" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 bg-muted/30 flex justify-between items-center">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Copy Files" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>{% trans "List of files/folders!" %}</label>
-                        <textarea ng-model="listOfFiles" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>{% trans "Copy to" %}</label>
-                        <input ng-model="pathToCopyTo" type="text" class="form-control">
-                        <small class="form-text text-muted">{% trans "Enter a path to copy your files to!" %}</small>
-                    </div>
-                </form>
+            <div class="modal-body p-6 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Files to Copy" %}</label>
+                    <textarea ng-model="listOfFiles" class="w-full px-4 py-2.5 bg-background border rounded-xl text-sm min-h-[100px] focus:ring-2 focus:ring-primary/20 outline-none transition-all" readonly></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "Target Path" %}</label>
+                    <input ng-model="pathToCopyTo" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm">
+                </div>
             </div>
-            <div class="modal-footer">
-                <button ng-click="startCopying()" type="button" class="btn btn-primary">{% trans "Copy" %}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="startCopying()" class="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Copy" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--- copy modal -->
-
-<!-- rename modal -->
-
-<div id="showRename" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div id="htmlEditorLable" class="modal-header">
-                <h5 class="modal-title">{% trans "Renaming" %} {$ fileToRename $} <img ng-hide="renameLoading" src="{% static 'filemanager/images/loadingSmall.gif' %}"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<!-- Rename Modal -->
+<div id="showRename" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content border-none rounded-2xl shadow-2xl">
+            <div class="modal-header border-b px-6 py-4 bg-muted/30 flex justify-between items-center">
+                <h5 class="text-xl font-bold tracking-tight">{% trans "Rename" %}</h5>
+                <button type="button" class="p-2 hover:bg-background rounded-lg transition-colors" data-dismiss="modal">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>{% trans "New Name" %}</label>
-                        <input ng-keypress="renameEnter($event)" ng-model="newFileName" type="text" class="form-control">
-                        <small class="form-text text-muted">{% trans "Enter new name of file!" %}</small>
-                    </div>
-                </form>
+            <div class="modal-body p-6 space-y-4">
+                <p class="text-sm font-medium">{% trans "Renaming:" %} <span class="text-primary">{$ fileToRename $}</span></p>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold">{% trans "New Name" %}</label>
+                    <input ng-keypress="renameEnter($event)" ng-model="newFileName" type="text" class="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm">
+                </div>
             </div>
-            <div class="modal-footer">
-                <button ng-click="renameFile()" type="button" class="btn btn-primary">{% trans "Rename" %}</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <div class="modal-footer border-t px-6 py-4 flex gap-3 bg-muted/30">
+                <button data-dismiss="modal" class="px-4 py-2 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 border transition-all">{% trans "Cancel" %}</button>
+                <button ng-click="renameFile()" class="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-sm">{% trans "Rename" %}</button>
             </div>
         </div>
     </div>
 </div>
 
-<!--- rename modal -->
 
-
-
-
-
-
-
-
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-
-
-<!-- HTML Editor Include -->
+<!-- Core Scripts -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 
 <script src="{% static 'filemanager/js/ace/ace.js' %}" type="text/javascript" charset="utf-8"></script>
 
-<!-- Notification js --->
-
-<!-- JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.11.0/build/alertify.min.js"></script>
-
-<!-- CSS -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.0/build/css/alertify.min.css"/>
-<!-- Default theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.0/build/css/themes/default.min.css"/>
-<!-- Semantic UI theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.0/build/css/themes/semantic.min.css"/>
-<!-- Bootstrap theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.0/build/css/themes/bootstrap.min.css"/>
-
-
-<div style="position: absolute;top: 0;left: 0;"  id="rightClick" class="card" style="width: 20rem;">
-    <ul class="list-group list-group-flush">
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showMoveModal()" href="#"><li  class="list-group-item"><i class="fa fa-arrows-alt" aria-hidden="true"></i>  {% trans "Move" %}</li></a>
-{% comment %}
-        <a style="border-bottom: 1px solid #007bff;" id="downloadOnRight" onclick="return false;" ng-click="RootDownloadFile()" href="#"><li  class="list-group-item"><i class="fa fa-download" aria-hidden="true"></i>  {% trans "Download" %}</li></a>
-{% endcomment %}
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showCopyModal()" href="#"><li  class="list-group-item"><i class="fa fa-files-o" aria-hidden="true"></i>  {% trans "Copy" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showRenameModal()" href="#"><li  class="list-group-item"><i class="fa fa-file-text-o" aria-hidden="true"></i>  {% trans "Rename" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showPermissionsModal()" href="#"><li  class="list-group-item"><i class="fa fa-lock" aria-hidden="true"></i>  {% trans "Change Permissions" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showDeleteModal()" href="#"><li class="list-group-item"><i class="fa fa-trash" aria-hidden="true"></i>  {% trans "Delete" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" onclick="return false;" ng-click="showCompressionModal()" href="#"><li class="list-group-item"><i class="fa fa-compress" aria-hidden="true"></i>  {% trans "Compress" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" id="extractOnRight" onclick="return false;" ng-click="showExtractionModal()" href="#"><li class="list-group-item"><i class="fa fa-expand" aria-hidden="true"></i>  {% trans "Extract" %}</li></a>
-        <a style="border-bottom: 1px solid #007bff;" id="editOnRight" onclick="return false;" ng-click="showHTMLEditorModal()" href="#"><li class="list-group-item"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>  {% trans "Edit" %}</li></a>
-{% comment %}
-        <a style="border-bottom: 1px solid #007bff;" id="editOnRightCodeMirror" onclick="return false;" ng-click="editWithCodeMirror()" href="#"><li class="list-group-item"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>  {% trans "Edit with CodeMirror" %}</li></a>
-{% endcomment %}
-        <a style="border-bottom: 1px solid #007bff;" id="restoreRight" onclick="return false;" ng-click="showRestoreModal()" href="#"><li class="list-group-item"><i class="fa fa-window-restore" aria-hidden="true"></i>  {% trans "Restore" %}</li></a>
-    </ul>
-</div>
+<!-- Initialization Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 
 </body>
 </html>

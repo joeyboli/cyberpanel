@@ -94,8 +94,8 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
     <script src="{% static 'baseTemplate/custom-js/system-status.js' %}?v={{ CP_VERSION }}"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -167,8 +167,8 @@
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
         background-color: hsl(var(--background));
         color: hsl(var(--foreground));
-        font-size: 13.5px;
-        line-height: 1.5;
+        font-size: 14px;
+        line-height: 1.6;
         -webkit-font-smoothing: antialiased;
       }
 
@@ -177,6 +177,11 @@
       ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
       ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+
+      /* Lucide Icon Fill */
+      .lucide-fill {
+        fill: currentColor;
+      }
 
       /* ---------- Sidebar ---------- */
       #sidebar {
@@ -196,7 +201,7 @@
         flex: 1;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 8px 0 16px;
+        padding: 12px 0 24px;
       }
 
       .sidebar-logo {
@@ -216,17 +221,17 @@
       }
 
       .sidebar-logo .brand {
-        font-size: 14px;
+        font-size: 15.5px;
         font-weight: 600;
         color: hsl(var(--foreground));
         letter-spacing: -0.01em;
       }
 
       .sidebar-logo .version {
-        font-size: 10px;
+        font-size: 10.5px;
         color: hsl(var(--muted-foreground));
         background: hsl(var(--muted));
-        padding: 1px 6px;
+        padding: 2px 7px;
         border-radius: 4px;
         margin-left: auto;
         font-weight: 500;
@@ -235,8 +240,8 @@
 
       /* Section label */
       .nav-section {
-        padding: 16px 16px 4px;
-        font-size: 10.5px;
+        padding: 18px 16px 8px;
+        font-size: 11.5px;
         font-weight: 600;
         letter-spacing: 0.07em;
         text-transform: uppercase;
@@ -245,14 +250,14 @@
 
       /* Server info card */
       .server-card {
-        margin: 8px 10px;
+        margin: 6px 10px;
         padding: 10px 12px;
         background: hsl(var(--background));
         border: 1px solid hsl(var(--border));
         border-radius: var(--radius);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
       }
 
       .server-card .server-icon {
@@ -263,16 +268,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 13px;
-        color: hsl(var(--muted-foreground));
         flex-shrink: 0;
         border: 1px solid hsl(var(--border));
+        color: hsl(var(--muted-foreground));
       }
+
+      .server-card .server-icon svg { width: 18px; height: 18px; }
 
       .server-card .server-info-text { flex: 1; min-width: 0; }
 
       .server-card .label {
-        font-size: 10px;
+        font-size: 10.5px;
         font-weight: 500;
         color: hsl(var(--muted-foreground));
         text-transform: uppercase;
@@ -280,21 +286,27 @@
       }
 
       .server-card .ip-value {
-        font-size: 12px;
+        font-size: 13.5px;
         font-weight: 600;
         color: hsl(var(--foreground));
-        font-family: 'Courier New', monospace;
+        font-family: 'Geist Mono', 'Courier New', monospace;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
-      .server-card .ip-value i { font-size: 9px; color: hsl(var(--muted-foreground)); }
-      .server-card .ip-value:hover i { color: hsl(var(--foreground)); }
+      .copy-icon {
+        width: 12px;
+        height: 12px;
+        color: hsl(var(--muted-foreground));
+        transition: color 0.12s;
+      }
+
+      .server-card .ip-value:hover .copy-icon { color: hsl(var(--foreground)); }
 
       .copy-tooltip {
         position: fixed;
@@ -319,20 +331,20 @@
       .nav-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        margin: 1px 8px;
+        gap: 10px;
+        padding: 7px 12px;
+        margin: 1px 10px;
         border-radius: calc(var(--radius) - 1px);
         color: hsl(var(--muted-foreground));
         text-decoration: none;
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 450;
         cursor: pointer;
         transition: background 0.12s, color 0.12s;
         user-select: none;
         border: none;
         background: transparent;
-        width: calc(100% - 16px);
+        width: calc(100% - 20px);
         text-align: left;
         position: relative;
       }
@@ -350,11 +362,11 @@
       }
 
       .nav-item .nav-icon {
-        width: 16px;
-        text-align: center;
-        font-size: 13px;
+        width: 18px;
+        height: 18px;
         flex-shrink: 0;
         color: hsl(var(--muted-foreground));
+        transition: color 0.12s;
       }
 
       .nav-item:hover .nav-icon,
@@ -363,18 +375,19 @@
       .nav-item .nav-label { flex: 1; }
 
       .nav-item .nav-badge {
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
         background: hsl(var(--foreground));
         color: hsl(var(--background));
-        padding: 1px 5px;
-        border-radius: 3px;
+        padding: 2px 6px;
+        border-radius: 4px;
       }
 
       .nav-item .nav-chevron {
-        font-size: 10px;
+        width: 16px;
+        height: 16px;
         color: hsl(var(--muted-foreground));
         transition: transform 0.2s ease;
         flex-shrink: 0;
@@ -392,20 +405,20 @@
       .submenu.show { max-height: 2000px; }
 
       .submenu .nav-item {
-        padding: 5px 10px 5px 30px;
-        font-size: 12.5px;
+        padding: 5px 12px 5px 36px;
+        font-size: 13px;
         color: hsl(var(--muted-foreground));
-        margin: 1px 8px;
+        margin: 1px 10px;
       }
 
       .submenu .nav-item::before {
         content: '';
         position: absolute;
-        left: 17px;
+        left: 20px;
         top: 50%;
         transform: translateY(-50%);
-        width: 3px;
-        height: 3px;
+        width: 4px;
+        height: 4px;
         border-radius: 50%;
         background: hsl(var(--border));
       }
@@ -448,10 +461,10 @@
       .header-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 5px 10px;
+        gap: 8px;
+        padding: 6px 12px;
         border-radius: calc(var(--radius) - 1px);
-        font-size: 12.5px;
+        font-size: 14px;
         font-weight: 500;
         border: 1px solid hsl(var(--border));
         background: hsl(var(--background));
@@ -459,8 +472,10 @@
         cursor: pointer;
         transition: background 0.12s, color 0.12s;
         text-decoration: none;
-        height: 34px;
+        height: 38px;
       }
+
+      .header-btn svg { width: 16px; height: 16px; }
 
       .header-btn:hover {
         background: hsl(var(--accent));
@@ -469,8 +484,8 @@
       }
 
       .header-btn.icon-only {
-        padding: 5px 8px;
-        width: 34px;
+        padding: 6px 10px;
+        width: 38px;
         justify-content: center;
       }
 
@@ -488,7 +503,7 @@
       }
 
       .header-page-label {
-        font-size: 13px;
+        font-size: 14.5px;
         font-weight: 500;
         color: hsl(var(--foreground));
       }
@@ -504,12 +519,17 @@
 
       .banner {
         display: none;
-        padding: 10px 20px;
+        padding: 12px 24px;
         border-bottom: 1px solid hsl(var(--border));
         animation: fade-in 0.2s ease-out;
       }
 
       .banner.show { display: flex; align-items: center; gap: 10px; }
+
+      .banner-icon { width: 18px; height: 18px; flex-shrink: 0; }
+      .banner-icon-lg { width: 20px; height: 20px; flex-shrink: 0; }
+      .banner-close-icon { width: 14px; height: 14px; }
+      .btn-icon-sm { width: 14px; height: 14px; }
 
       .banner-warning {
         background: hsl(47 96% 89%);
@@ -527,7 +547,7 @@
         color: white;
       }
 
-      .banner-text { flex: 1; font-size: 12.5px; font-weight: 500; }
+      .banner-text { flex: 1; font-size: 14px; font-weight: 500; }
 
       .banner-link {
         font-size: 12px;
@@ -544,11 +564,13 @@
         border: none;
         cursor: pointer;
         opacity: 0.6;
-        font-size: 12px;
         padding: 4px;
         transition: opacity 0.12s;
         color: inherit;
         border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .banner-close:hover { opacity: 1; background: rgba(0,0,0,0.08); }
@@ -556,10 +578,10 @@
       .banner-action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 5px 12px;
+        gap: 8px;
+        padding: 6px 14px;
         border-radius: calc(var(--radius) - 1px);
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         border: 1px solid rgba(255,255,255,0.3);
         background: rgba(255,255,255,0.15);
@@ -586,7 +608,6 @@
 
       .content-inner {
         padding: 24px;
-        max-width: 1400px;
       }
 
       /* Dynamic padding for banners */
@@ -606,8 +627,9 @@
         background: transparent;
         cursor: pointer;
         color: hsl(var(--foreground));
-        font-size: 13px;
       }
+
+      #mobile-menu-toggle svg { width: 18px; height: 18px; }
 
       #sidebar-overlay {
         display: none;
@@ -636,6 +658,15 @@
         }
       }
 
+      /* Global Link Hover Overrides (fix blue/underlined links) */
+      a:hover {
+        text-decoration: none !important;
+      }
+      
+      .dark a:hover {
+        color: inherit;
+      }
+
       /* ---------- Legacy / Custom CSS from CyberPanel ---------- */
       {{ cosmetic.MainDashboardCSS | safe }}
     </style>
@@ -662,15 +693,15 @@
     <!-- Server Info -->
     <div class="nav-section">Server</div>
     <div class="server-card" ng-controller="systemStatusInfo" ng-init="getSystemStatus()">
-      <div class="server-icon"><i class="fas fa-server"></i></div>
+      <div class="server-icon"><i data-lucide="server"></i></div>
       <div class="server-info-text">
         <div class="label">IP Address</div>
         <div class="ip-value" onclick="copyIP('{{ ipAddress }}')" title="Click to copy">
-          {{ ipAddress }}<i class="fas fa-copy"></i>
+          {{ ipAddress }}<i data-lucide="copy" class="copy-icon"></i>
         </div>
-        <div class="label" style="margin-top:3px;">
-          <span ng-show="!uptimeLoaded" style="font-size:10px;">Loading uptime…</span>
-          <span ng-show="uptimeLoaded" style="font-size:10px;">{$ uptime $}</span>
+        <div class="label" style="margin-top:4px;">
+          <span ng-show="!uptimeLoaded" style="font-size:11px;">Loading uptime…</span>
+          <span ng-show="uptimeLoaded" style="font-size:11px;">{$ uptime $}</span>
         </div>
       </div>
     </div>
@@ -678,12 +709,12 @@
     <!-- Dashboard -->
     <div class="nav-section">Overview</div>
     <a href="{% url 'index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-      <i class="fas fa-home nav-icon"></i>
+      <i data-lucide="home" class="nav-icon"></i>
       <span class="nav-label">Dashboard</span>
     </a>
     {% if admin %}
     <a href="{% url 'versionManagment' %}" class="nav-item">
-      <i class="fas fa-code-branch nav-icon"></i>
+      <i data-lucide="git-branch" class="nav-icon"></i>
       <span class="nav-label">Version Management</span>
     </a>
     {% endif %}
@@ -693,9 +724,9 @@
 
     <!-- Users -->
     <button class="nav-item" onclick="toggleSubmenu('users-submenu', this)">
-      <i class="fas fa-users nav-icon"></i>
+      <i data-lucide="users" class="nav-icon"></i>
       <span class="nav-label">Users</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="users-submenu" class="submenu">
       <a href="{% url 'viewProfile' %}" class="nav-item">View Profile</a>
@@ -711,41 +742,41 @@
       {% endif %}
     </div>
 
-    <!-- WordPress -->
-    <button class="nav-item" onclick="toggleSubmenu('wordpress-submenu', this)">
-      <i class="fab fa-wordpress nav-icon"></i>
-      <span class="nav-label">WordPress</span>
-      <span class="nav-badge">New</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
-    </button>
-    <div id="wordpress-submenu" class="submenu">
-      <a href="{% url 'createWordpress' %}" class="nav-item">Deploy WordPress</a>
-      <a href="{% url 'ListWPSites' %}" class="nav-item">List WordPress</a>
-      <a href="{% url 'ConfigurePlugins' %}" class="nav-item">Configure Plugins</a>
-      <a href="{% url 'RestoreBackups' %}" class="nav-item">Restore Backups</a>
-      <a href="{% url 'RemoteBackupConfig' %}" class="nav-item">Remote Backup</a>
-    </div>
+{#    <!-- WordPress -->#}
+{#    <button class="nav-item" onclick="toggleSubmenu('wordpress-submenu', this)">#}
+{#      <i data-lucide="layout-template" class="nav-icon"></i>#}
+{#      <span class="nav-label">WordPress</span>#}
+{#      <span class="nav-badge">New</span>#}
+{#      <i data-lucide="chevron-right" class="nav-chevron"></i>#}
+{#    </button>#}
+{#    <div id="wordpress-submenu" class="submenu">#}
+{#      <a href="{% url 'createWordpress' %}" class="nav-item">Deploy WordPress</a>#}
+{#      <a href="{% url 'ListWPSites' %}" class="nav-item">List WordPress</a>#}
+{#      <a href="{% url 'ConfigurePlugins' %}" class="nav-item">Configure Plugins</a>#}
+{#      <a href="{% url 'RestoreBackups' %}" class="nav-item">Restore Backups</a>#}
+{#      <a href="{% url 'RemoteBackupConfig' %}" class="nav-item">Remote Backup</a>#}
+{#    </div>#}
 
-    <!-- Docker Apps -->
-    {% if admin %}
-    <button class="nav-item" onclick="toggleSubmenu('docker-submenu', this)">
-      <i class="fas fa-ship nav-icon"></i>
-      <span class="nav-label">Docker Apps</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
-    </button>
-    <div id="docker-submenu" class="submenu">
-      <a href="{% url 'CreateDockersite' %}" class="nav-item">Create Docker Apps</a>
-      <a href="{% url 'ListDockerSites' %}" class="nav-item">List Docker Apps</a>
-      <a href="{% url 'CreateDockerPackage' %}" class="nav-item">Docker Packages</a>
-      <a href="{% url 'AssignPackage' %}" class="nav-item">Assign Package</a>
-    </div>
-    {% endif %}
+{#    <!-- Docker Apps -->#}
+{#    {% if admin %}#}
+{#    <button class="nav-item" onclick="toggleSubmenu('docker-submenu', this)">#}
+{#      <i data-lucide="container" class="nav-icon"></i>#}
+{#      <span class="nav-label">Docker Apps</span>#}
+{#      <i data-lucide="chevron-right" class="nav-chevron"></i>#}
+{#    </button>#}
+{#    <div id="docker-submenu" class="submenu">#}
+{#      <a href="{% url 'CreateDockersite' %}" class="nav-item">Create Docker Apps</a>#}
+{#      <a href="{% url 'ListDockerSites' %}" class="nav-item">List Docker Apps</a>#}
+{#      <a href="{% url 'CreateDockerPackage' %}" class="nav-item">Docker Packages</a>#}
+{#      <a href="{% url 'AssignPackage' %}" class="nav-item">Assign Package</a>#}
+{#    </div>#}
+{#    {% endif %}#}
 
     <!-- Websites -->
     <button class="nav-item" onclick="toggleSubmenu('websites-submenu', this)">
-      <i class="fas fa-globe nav-icon"></i>
+      <i data-lucide="globe" class="nav-icon"></i>
       <span class="nav-label">Websites</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="websites-submenu" class="submenu">
       {% if admin or createWebsite %}<a href="{% url 'createWebsite' %}" class="nav-item">Create Website</a>{% endif %}
@@ -759,9 +790,9 @@
 
     <!-- Packages -->
     <button class="nav-item" onclick="toggleSubmenu('packages-submenu', this)">
-      <i class="fas fa-cube nav-icon"></i>
+      <i data-lucide="package" class="nav-icon"></i>
       <span class="nav-label">Packages</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="packages-submenu" class="submenu">
       {% if admin or createPackage %}<a href="{% url 'createPackage' %}" class="nav-item">Create Package</a>{% endif %}
@@ -772,9 +803,9 @@
 
     <!-- Databases -->
     <button class="nav-item" onclick="toggleSubmenu('databases-submenu', this)">
-      <i class="fas fa-database nav-icon"></i>
+      <i data-lucide="database" class="nav-icon"></i>
       <span class="nav-label">Databases</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="databases-submenu" class="submenu">
       {% if admin or createDatabase %}<a href="{% url 'createDatabase' %}" class="nav-item">Create Database</a>{% endif %}
@@ -785,9 +816,9 @@
 
     <!-- DNS -->
     <button class="nav-item" onclick="toggleSubmenu('dns-submenu', this)">
-      <i class="fas fa-sitemap nav-icon"></i>
+      <i data-lucide="network" class="nav-icon"></i>
       <span class="nav-label">DNS</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="dns-submenu" class="submenu">
       {% if admin or createNameServer %}<a href="{% url 'createNameserver' %}" class="nav-item">Create Nameserver</a>{% endif %}
@@ -801,9 +832,9 @@
 
     <!-- Email -->
     <button class="nav-item" onclick="toggleSubmenu('email-submenu', this)">
-      <i class="fas fa-envelope nav-icon"></i>
+      <i data-lucide="mail" class="nav-icon"></i>
       <span class="nav-label">Email</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="email-submenu" class="submenu">
       {% if admin or createEmail %}<a href="{% url 'createEmailAccount' %}" class="nav-item">Create Email</a>{% endif %}
@@ -821,9 +852,9 @@
 
     <!-- FTP -->
     <button class="nav-item" onclick="toggleSubmenu('ftp-submenu', this)">
-      <i class="fas fa-folder nav-icon"></i>
+      <i data-lucide="folder" class="nav-icon"></i>
       <span class="nav-label">FTP</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="ftp-submenu" class="submenu">
       {% if admin or createFTPAccount %}<a href="{% url 'createFTPAccount' %}" class="nav-item">Create FTP Account</a>{% endif %}
@@ -834,9 +865,9 @@
 
     <!-- Backup -->
     <button class="nav-item" onclick="toggleSubmenu('backup-submenu', this)">
-      <i class="fas fa-save nav-icon"></i>
+      <i data-lucide="save" class="nav-icon"></i>
       <span class="nav-label">Backup</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="backup-submenu" class="submenu">
       {% if admin or createBackup %}<a href="{% url 'OneClickBackups' %}" class="nav-item">One-Click Backups</a>{% endif %}
@@ -850,9 +881,9 @@
 
     <!-- Incremental Backup -->
     <button class="nav-item" onclick="toggleSubmenu('incremental-backup-submenu', this)">
-      <i class="fas fa-clock-rotate-left nav-icon"></i>
+      <i data-lucide="history" class="nav-icon"></i>
       <span class="nav-label">Incremental Backup</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="incremental-backup-submenu" class="submenu">
       {% if admin or createBackup %}
@@ -863,9 +894,9 @@
 
     <!-- SSL -->
     <button class="nav-item" onclick="toggleSubmenu('ssl-submenu', this)">
-      <i class="fas fa-lock nav-icon"></i>
+      <i data-lucide="lock" class="nav-icon"></i>
       <span class="nav-label">SSL</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="ssl-submenu" class="submenu">
       {% if admin or manageSSL %}
@@ -881,47 +912,21 @@
     <div class="nav-section">Server</div>
 
     <a href="{% url 'MysqlManager' %}" class="nav-item">
-      <i class="fas fa-database nav-icon"></i>
+      <i data-lucide="database" class="nav-icon"></i>
       <span class="nav-label">MySQL Manager</span>
       <span class="nav-badge">New</span>
     </a>
 
     <a href="{% url 'Filemanager' %}" class="nav-item">
-      <i class="fas fa-folder-open nav-icon"></i>
+      <i data-lucide="folder-open" class="nav-icon"></i>
       <span class="nav-label">Root File Manager</span>
     </a>
 
-    <!-- CloudLinux -->
-    <button class="nav-item" onclick="toggleSubmenu('cloudlinux-submenu', this)">
-      <i class="fas fa-fire nav-icon"></i>
-      <span class="nav-label">CloudLinux</span>
-      <span class="nav-badge">New</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
-    </button>
-    <div id="cloudlinux-submenu" class="submenu">
-      <a href="{% url 'CreatePackageCL' %}" class="nav-item">Create Package</a>
-      <a href="{% url 'listPackagesCL' %}" class="nav-item">List Packages</a>
-      <a href="{% url 'monitorUsage' %}" class="nav-item">Monitor Usage</a>
-      <a href="{% url 'CageFS' %}" class="nav-item">CageFS</a>
-    </div>
-
-    <!-- Docker Manager -->
-    <button class="nav-item" onclick="toggleSubmenu('docker-manager-submenu', this)">
-      <i class="fas fa-cogs nav-icon"></i>
-      <span class="nav-label">Docker Manager</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
-    </button>
-    <div id="docker-manager-submenu" class="submenu">
-      <a href="{% url 'manageImages' %}" class="nav-item">Manage Images</a>
-      <a href="{% url 'listContainers' %}" class="nav-item">Manage Containers</a>
-      <a href="{% url 'containerImage' %}" class="nav-item">Create New Container</a>
-    </div>
-
     <!-- Tuning -->
     <button class="nav-item" onclick="toggleSubmenu('tuning-submenu', this)">
-      <i class="fas fa-sliders nav-icon"></i>
+      <i data-lucide="sliders-horizontal" class="nav-icon"></i>
       <span class="nav-label">Tuning</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="tuning-submenu" class="submenu">
       <a href="{% url 'liteSpeedTuning' %}" class="nav-item">LiteSpeed Tuning</a>
@@ -931,9 +936,9 @@
 
     <!-- Server Status -->
     <button class="nav-item" onclick="toggleSubmenu('server-status-submenu', this)">
-      <i class="fas fa-chart-line nav-icon"></i>
+      <i data-lucide="line-chart" class="nav-icon"></i>
       <span class="nav-label">Server Status</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="server-status-submenu" class="submenu">
       <a href="{% url 'topProcesses' %}" class="nav-item">Top Processes</a>
@@ -944,9 +949,9 @@
 
     <!-- PHP -->
     <button class="nav-item" onclick="toggleSubmenu('php-submenu', this)">
-      <i class="fas fa-code nav-icon"></i>
+      <i data-lucide="code" class="nav-icon"></i>
       <span class="nav-label">PHP</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="php-submenu" class="submenu">
       <a href="{% url 'installExtensions' %}" class="nav-item">Install Extensions</a>
@@ -955,9 +960,9 @@
 
     <!-- Logs -->
     <button class="nav-item" onclick="toggleSubmenu('logs-submenu', this)">
-      <i class="fas fa-file-lines nav-icon"></i>
+      <i data-lucide="file-text" class="nav-icon"></i>
       <span class="nav-label">Logs</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="logs-submenu" class="submenu">
       <a href="{% url 'serverMail' %}" class="nav-item">Server Mail</a>
@@ -971,9 +976,9 @@
 
     <!-- Security -->
     <button class="nav-item" onclick="toggleSubmenu('security-submenu', this)">
-      <i class="fas fa-shield-halved nav-icon"></i>
+      <i data-lucide="shield-check" class="nav-icon"></i>
       <span class="nav-label">Security</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="security-submenu" class="submenu">
       <a href="{% url 'firewallHome' %}" class="nav-item">Firewall</a>
@@ -988,10 +993,10 @@
 
     <!-- Mail Settings -->
     <button class="nav-item" onclick="toggleSubmenu('mail-settings-submenu', this)">
-      <i class="fas fa-envelope-open-text nav-icon"></i>
+      <i data-lucide="mail-open" class="nav-icon"></i>
       <span class="nav-label">Mail Settings</span>
       <span class="nav-badge">New</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="mail-settings-submenu" class="submenu">
       <a href="{% url 'EmailDebugger' %}" class="nav-item">Email Debugger</a>
@@ -1005,9 +1010,9 @@
 
     <!-- Manage Services -->
     <button class="nav-item" onclick="toggleSubmenu('manage-services-submenu', this)">
-      <i class="fas fa-gears nav-icon"></i>
+      <i data-lucide="settings-2" class="nav-icon"></i>
       <span class="nav-label">Manage Services</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="manage-services-submenu" class="submenu">
       <a href="{% url 'manageApplications' %}" class="nav-item">Applications</a>
@@ -1019,9 +1024,9 @@
 
     <!-- Plugins -->
     <button class="nav-item" onclick="toggleSubmenu('plugins-submenu', this)">
-      <i class="fas fa-plug nav-icon"></i>
+      <i data-lucide="plug" class="nav-icon"></i>
       <span class="nav-label">Plugins</span>
-      <i class="fas fa-chevron-right nav-chevron"></i>
+      <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="plugins-submenu" class="submenu">
       <a href="{% url 'installed' %}" class="nav-item">Installed</a>
@@ -1034,7 +1039,7 @@
 <!-- Header -->
 <header id="header">
   <button id="mobile-menu-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
+    <i data-lucide="menu"></i>
   </button>
 
   <!-- Optional breadcrumb slot -->
@@ -1045,12 +1050,12 @@
   <div id="header-right">
     <!-- Theme toggle -->
     <button id="theme-toggle" class="header-btn icon-only" title="Toggle theme">
-      <i class="fas fa-moon" id="theme-icon"></i>
+      <span id="theme-icon-wrap"><i data-lucide="moon"></i></span>
     </button>
 
     <!-- Logout -->
     <a href="{% url 'logout' %}" class="header-btn danger">
-      <i class="fas fa-arrow-right-from-bracket"></i>
+      <i data-lucide="log-out"></i>
       Logout
     </a>
   </div>
@@ -1060,45 +1065,45 @@
 <div class="banner-wrap" id="banners">
   <!-- Warning Banner -->
   <div id="notification-banner" class="banner banner-warning">
-    <i class="fas fa-triangle-exclamation"></i>
+    <i data-lucide="triangle-alert" class="banner-icon"></i>
     <span class="banner-text" id="notification-text">
       Configuration required.
       <a href="#" class="banner-link" id="notification-link">Configure now</a>
     </span>
     <button class="banner-close" onclick="closeBanner('notification-banner')">
-      <i class="fas fa-xmark"></i>
+      <i data-lucide="x" class="banner-close-icon"></i>
     </button>
   </div>
 
   <!-- AI Scanner Banner -->
   <div id="ai-scanner-banner" class="banner banner-ai">
-    <i class="fas fa-shield-halved" style="font-size:14px;"></i>
+    <i data-lucide="shield-alert" class="banner-icon-lg"></i>
     <div class="banner-text">
-      <div id="ai-scanner-main-text" style="font-weight:600;font-size:13px;">AI Security Scanner</div>
-      <div id="ai-scanner-sub-text" style="opacity:0.7;font-size:11.5px;">Protect your server with AI-powered threat detection</div>
+      <div id="ai-scanner-main-text" style="font-weight:600;font-size:14.5px;">AI Security Scanner</div>
+      <div id="ai-scanner-sub-text" style="opacity:0.7;font-size:12.5px;">Protect your server with AI-powered threat detection</div>
     </div>
     <a href="{% url 'aiScannerHome' %}" class="banner-action-btn">
-      <i class="fas fa-bolt" style="font-size:11px;"></i>
+      <i data-lucide="zap" class="btn-icon-sm"></i>
       Enable Scanner
     </a>
     <button class="banner-close" onclick="closeBanner('ai-scanner-banner')">
-      <i class="fas fa-xmark"></i>
+      <i data-lucide="x" class="banner-close-icon"></i>
     </button>
   </div>
 
   <!-- .htaccess Banner -->
   <div id="htaccess-banner" class="banner banner-htaccess">
-    <i class="fas fa-file-shield" style="font-size:14px;"></i>
+    <i data-lucide="file-check-2" class="banner-icon-lg"></i>
     <div class="banner-text">
-      <div style="font-weight:600;font-size:13px;">.htaccess Manager Available</div>
-      <div style="opacity:0.85;font-size:11.5px;">Manage rewrite rules and access control directly from the panel</div>
+      <div style="font-weight:600;font-size:14.5px;">.htaccess Manager Available</div>
+      <div style="opacity:0.85;font-size:12.5px;">Manage rewrite rules and access control directly from the panel</div>
     </div>
     <a href="#" class="banner-action-btn">
-      <i class="fas fa-arrow-right" style="font-size:11px;"></i>
+      <i data-lucide="arrow-right" class="btn-icon-sm"></i>
       Open Manager
     </a>
     <button class="banner-close" onclick="closeBanner('htaccess-banner')">
-      <i class="fas fa-xmark"></i>
+      <i data-lucide="x" class="banner-close-icon"></i>
     </button>
   </div>
 </div>
@@ -1139,8 +1144,13 @@
     function applyTheme(t) {
       document.documentElement.classList.toggle('dark', t === 'dark');
       document.documentElement.setAttribute('data-theme', t);
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      const wrap = document.getElementById('theme-icon-wrap');
+      if (wrap) {
+        wrap.innerHTML = `<i data-lucide="${t === 'dark' ? 'sun' : 'moon'}"></i>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons({
+          root: wrap
+        });
+      }
     }
 
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
@@ -1154,8 +1164,14 @@
 
   // ---- Sidebar toggle (mobile) ----
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('show');
-    document.getElementById('sidebar-overlay').classList.toggle('show');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('show');
+    overlay.classList.toggle('show');
+    
+    if (sidebar.classList.contains('show')) {
+        if (typeof lucide !== 'undefined') lucide.createIcons({ root: sidebar });
+    }
   }
 
   function closeSidebar() {
@@ -1175,6 +1191,8 @@
     if (!isOpen) {
       target.classList.add('show');
       el.classList.add('expanded');
+      // Ensure icons in the newly opened submenu are rendered
+      if (typeof lucide !== 'undefined') lucide.createIcons({ root: target });
     }
   }
 
@@ -1227,6 +1245,9 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
     setActiveMenuState();
   });
 </script>

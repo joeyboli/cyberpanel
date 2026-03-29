@@ -4,401 +4,17 @@
 
 {% block header_scripts %}
 <style>
-    /* Modern page styles matching new design */
-    .page-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .page-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 8px;
-    }
-    
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Card styles */
-    .content-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        margin-bottom: 25px;
-    }
-    
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--danger-text, #dc3545);
-        border-radius: 2px;
-    }
-    
-    /* Form styles */
-    .form-group {
-        margin-bottom: 24px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:hover {
-        border-color: var(--danger-text, #dc3545);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--danger-text, #dc3545);
-        box-shadow: 0 0 0 3px var(--danger-shadow, rgba(220,53,69,0.1));
-    }
-    
-    /* Windows selectbox fixes */
-    select.form-control {
-        cursor: pointer;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 20px;
-        padding-right: 40px;
-        line-height: 1.5;
-        min-height: 44px;
-    }
-    
-    /* Windows-specific fixes */
-    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        select.form-control {
-            color: var(--text-primary, #2f3640) !important;
-            background-color: var(--bg-secondary, white) !important;
-        }
-    }
-    
-    /* Fix for Windows Edge and Chrome */
-    select.form-control::-ms-expand {
+    /* Custom styles for deletion workflow */
+    .database-selector-section, .database-info-card, .confirmation-section {
         display: none;
     }
-    
-    select.form-control:focus {
-        color: var(--text-primary, #2f3640);
-        background-color: var(--bg-secondary, white);
-    }
-    
-    /* Website selector card */
-    .website-selector-card {
-        background: var(--bg-secondary, #fff5f5);
-        border: 1px solid var(--border-color, #ffdddd);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-    }
-    
-    /* Database selector section */
-    .database-selector-section {
-        display: none;
-    }
-    
-    /* Database info card */
-    .database-info-card {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        display: none;
-    }
-    
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .info-row:last-child {
-        border-bottom: none;
-    }
-    
-    .info-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-    }
-    
-    .info-value {
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        font-weight: 600;
-        font-family: 'Courier New', monospace;
-    }
-    
-    /* Warning box */
-    .warning-box {
-        background: var(--warning-bg, #fff3e0);
-        border: 1px solid var(--warning-border, #ffe0b2);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        display: flex;
-        align-items: start;
-        gap: 15px;
-    }
-    
-    .warning-icon {
-        color: var(--warning-text, #ff9800);
-        font-size: 24px;
-        flex-shrink: 0;
-    }
-    
-    .warning-content {
-        flex: 1;
-    }
-    
-    .warning-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 8px;
-    }
-    
-    .warning-text {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        line-height: 1.6;
-    }
-    
-    .warning-list {
-        margin-top: 12px;
-        padding-left: 20px;
-    }
-    
-    .warning-list li {
-        font-size: 13px;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 6px;
-    }
-    
-    /* Button styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .btn-danger {
-        background: var(--danger-text, #dc3545);
-        color: white;
-    }
-    
-    .btn-danger:hover {
-        background: var(--danger-hover, #c82333);
-        box-shadow: 0 4px 12px var(--danger-shadow, rgba(220,53,69,0.3));
-        transform: translateY(-1px);
-    }
-    
-    .btn-danger:disabled {
-        background: var(--text-disabled, #ccc);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .btn-secondary {
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--accent-bg, #eef0ff);
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    /* Confirmation section */
-    .confirmation-section {
-        background: var(--danger-bg, #ffebee);
-        border: 1px solid var(--danger-border, #ffcdd2);
-        border-radius: 10px;
-        padding: 25px;
-        margin-top: 25px;
-        text-align: center;
-        display: none;
-    }
-    
-    .confirmation-icon {
-        font-size: 48px;
-        color: var(--danger-text, #dc3545);
-        margin-bottom: 15px;
-    }
-    
-    .confirmation-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 10px;
-    }
-    
-    .confirmation-text {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 20px;
-    }
-    
-    .confirmation-database {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--danger-text, #dc3545);
-        margin-bottom: 25px;
-        font-family: 'Courier New', monospace;
-    }
-    
-    .confirmation-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-    }
-    
-    /* Alert styles */
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+    .active-section {
+        display: block !important;
         animation: fadeIn 0.3s ease-out;
     }
-    
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .alert-danger {
-        background: var(--danger-bg, #ffebee);
-        border: 1px solid var(--danger-border, #ffcdd2);
-        color: var(--danger-text, #c62828);
-    }
-    
-    .alert-success {
-        background: var(--success-bg, #e8f5e9);
-        border: 1px solid var(--success-border, #c8e6c9);
-        color: var(--success-text, #2e7d32);
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--border-light, #f3f3f3);
-        border-top: 2px solid var(--danger-text, #dc3545);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Button container */
-    .button-container {
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    /* Empty state */
-    .empty-state {
-        text-align: center;
-        padding: 40px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    .empty-state i {
-        font-size: 48px;
-        color: var(--border-color, #e8e9ff);
-        margin-bottom: 16px;
-    }
-    
-    .empty-state-text {
-        font-size: 14px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Hide elements by default */
-    .hidden {
-        display: none !important;
-    }
-    
-    @media (max-width: 768px) {
-        .content-card {
-            padding: 20px;
-        }
-        
-        .confirmation-buttons {
-            flex-direction: column;
-        }
-        
-        .btn {
-            width: 100%;
-            justify-content: center;
-        }
     }
 </style>
 {% endblock %}
@@ -407,142 +23,229 @@
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="page-wrapper" ng-controller="deleteDatabase">
-    <div class="page-container">
-        <div class="page-header">
-            <h1 class="page-title">{% trans "Delete Database" %}</h1>
-            <p class="page-subtitle">{% trans "Permanently remove a database from your server" %}</p>
+<div class="w-full p-4 md:p-12" ng-controller="deleteDatabase">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive shrink-0">
+                <i data-lucide="trash-2" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Delete Database" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Permanently remove a database from your server" %}
+                </p>
+            </div>
         </div>
+    </div>
 
-        <div class="content-card">
-            <h2 class="card-title">
-                {% trans "Database Selection" %}
-                <span ng-hide="deleteDatabaseLoading" class="loading-spinner"></span>
-            </h2>
-            
-            <div class="website-selector-card">
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select Website" %}</label>
-                    <select ng-change="fetchDatabases()" ng-model="databaseWebsite" class="form-control">
-                        <option value="">-- {% trans "Select a website" %} --</option>
-                        {% for items in websitesList %}
-                            <option>{{ items }}</option>
-                        {% endfor %}
-                    </select>
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Main Form Area -->
+        <div class="space-y-8">
+            <!-- Warning Banner -->
+            <div class="bg-amber-500/5 border-2 border-amber-500/20 rounded-2xl p-8 flex items-start gap-6 shadow-sm">
+                <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center shrink-0">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-amber-500"></i>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-amber-800 dark:text-amber-300">
+                        {% trans "Warning: This action cannot be undone!" %}
+                    </h3>
+                    <div class="text-lg text-amber-700/80 dark:text-amber-400/80 space-y-3">
+                        <p>{% trans "Deleting a database will permanently remove:" %}</p>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li>{% trans "All tables and their data" %}</li>
+                            <li>{% trans "All stored procedures and functions" %}</li>
+                            <li>{% trans "All triggers and events" %}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="database-selector-section" ng-hide="fetchedDatabases">
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select Database to Delete" %}</label>
-                    <select ng-model="selectedDB" ng-change="databaseSelected()" class="form-control">
-                        <option value="">-- {% trans "Select a database" %} --</option>
-                        <option ng-repeat="db in dbnames track by $index">{$ db.dbName $}</option>
-                    </select>
+            <!-- Selection Card -->
+            <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-destructive"></div>
+                    {% trans "Database Selection" %}
+                    <span ng-hide="deleteDatabaseLoading" class="ml-4">
+                        <div class="w-6 h-6 border-4 border-destructive border-t-transparent rounded-full animate-spin"></div>
+                    </span>
+                </h2>
+
+                <div class="space-y-10">
+                    <!-- Website Selector -->
+                    <div class="space-y-4">
+                        <label class="text-xl font-bold text-foreground">
+                            {% trans "Select Website" %}
+                        </label>
+                        <div class="relative max-w-2xl">
+                            <select ng-change="fetchDatabases()" ng-model="databaseWebsite" 
+                                    class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-destructive/20 focus:border-destructive transition-all outline-none cursor-pointer text-xl font-medium">
+                                <option value="">-- {% trans "Select a website" %} --</option>
+                                {% for items in websitesList %}
+                                    <option>{{ items }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <i data-lucide="chevron-down" class="w-6 h-6 text-muted-foreground"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Selector (Conditional) -->
+                    <div class="database-selector-section space-y-10 pt-4" ng-hide="fetchedDatabases">
+                        <div class="space-y-4">
+                            <label class="text-xl font-bold text-foreground">
+                                {% trans "Select Database to Delete" %}
+                            </label>
+                            <div class="relative max-w-2xl">
+                                <select ng-model="selectedDB" ng-change="databaseSelected()" 
+                                        class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-destructive/20 focus:border-destructive transition-all outline-none cursor-pointer text-xl font-medium border-destructive/30">
+                                    <option value="">-- {% trans "Select a database" %} --</option>
+                                    <option ng-repeat="db in dbnames track by $index">{$ db.dbName $}</option>
+                                </select>
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i data-lucide="database" class="w-6 h-6 text-muted-foreground"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Database Info Details -->
+                        <div class="bg-muted/30 rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/50 max-w-2xl" ng-show="selectedDB && databaseInfo">
+                            <div class="flex justify-between p-6 bg-muted/50">
+                                <span class="text-lg font-medium text-muted-foreground">{% trans "Name" %}</span>
+                                <span class="text-lg font-bold font-mono text-foreground">{$ selectedDB $}</span>
+                            </div>
+                            <div class="flex justify-between p-6" ng-show="databaseInfo.size">
+                                <span class="text-lg font-medium text-muted-foreground">{% trans "Size" %}</span>
+                                <span class="text-lg font-bold text-foreground">{$ databaseInfo.size $}</span>
+                            </div>
+                            <div class="flex justify-between p-6" ng-show="databaseInfo.tables">
+                                <span class="text-lg font-medium text-muted-foreground">{% trans "Tables" %}</span>
+                                <span class="text-lg font-bold text-foreground">{$ databaseInfo.tables $}</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div ng-show="dbnames.length === 0" class="text-center py-20 px-4 bg-muted/20 rounded-3xl border-2 border-dashed border-border max-w-2xl">
+                            <i data-lucide="database-x" class="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-50"></i>
+                            <p class="text-xl text-muted-foreground font-medium">{% trans "No databases found for this website." %}</p>
+                        </div>
+
+                        <!-- Initial Delete Button -->
+                        <div class="pt-10 border-t border-border flex justify-end">
+                            <button type="button" ng-click="confirmDelete()" 
+                                    class="inline-flex items-center gap-3 px-10 py-5 bg-destructive text-destructive-foreground font-extrabold rounded-2xl hover:bg-destructive/90 hover:shadow-xl hover:shadow-destructive/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xl w-full md:w-auto justify-center"
+                                    ng-disabled="!selectedDB">
+                                <i data-lucide="trash-2" class="w-6 h-6"></i>
+                                {% trans "Delete Database" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Section -->
+            <div class="bg-destructive/5 border-4 border-destructive/20 rounded-3xl p-12 text-center space-y-8 confirmation-section shadow-2xl" id="deleteConfirmation">
+                <div class="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+                    <i data-lucide="alert-circle" class="w-12 h-12 text-destructive"></i>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-4xl font-black text-foreground">{% trans "Are you absolutely sure?" %}</h3>
+                    <p class="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                        {% trans "This action will permanently delete the database and all its data. This cannot be undone." %}
+                    </p>
+                </div>
+                <div class="inline-block px-8 py-4 bg-destructive text-white font-mono font-black rounded-2xl text-2xl shadow-lg">
+                    {$ selectedDB $}
                 </div>
                 
-                <div ng-show="dbnames.length === 0" class="empty-state">
-                    <i class="fas fa-database"></i>
-                    <div class="empty-state-text">{% trans "No databases found for this website" %}</div>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+                    <button type="button" ng-click="cancelDelete()" 
+                            class="inline-flex items-center justify-center gap-3 px-12 py-5 bg-secondary text-foreground font-bold rounded-2xl hover:bg-muted transition-all text-xl border border-border">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="button" ng-click="deleteDatabase()" 
+                            class="inline-flex items-center justify-center gap-3 px-12 py-5 bg-destructive text-white font-black rounded-2xl hover:bg-destructive/90 hover:shadow-2xl hover:shadow-destructive/40 transition-all text-xl">
+                        <i data-lucide="trash-2" class="w-6 h-6"></i>
+                        {% trans "Yes, Delete Database" %}
+                    </button>
                 </div>
             </div>
 
-            <div class="database-info-card" ng-show="selectedDB && databaseInfo">
-                <div class="info-row">
-                    <span class="info-label">{% trans "Database Name" %}</span>
-                    <span class="info-value">{$ selectedDB $}</span>
-                </div>
-                <div class="info-row" ng-show="databaseInfo.size">
-                    <span class="info-label">{% trans "Database Size" %}</span>
-                    <span class="info-value">{$ databaseInfo.size $}</span>
-                </div>
-                <div class="info-row" ng-show="databaseInfo.tables">
-                    <span class="info-label">{% trans "Tables" %}</span>
-                    <span class="info-value">{$ databaseInfo.tables $}</span>
-                </div>
-            </div>
-
-            <div class="warning-box">
-                <i class="fas fa-exclamation-triangle warning-icon"></i>
-                <div class="warning-content">
-                    <div class="warning-title">{% trans "Warning: This action cannot be undone!" %}</div>
-                    <div class="warning-text">
-                        {% trans "Deleting a database will permanently remove:" %}
+            <!-- Safety Sidebar equivalent (Wide) -->
+            <div class="bg-card border border-border rounded-2xl p-10 shadow-sm">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-destructive"></div>
+                    {% trans "Data Safety & Integrity" %}
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="save" class="w-5 h-5 text-destructive"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Always backup your database before performing a deletion." %}
+                        </p>
                     </div>
-                    <ul class="warning-list">
-                        <li>{% trans "All tables and their data" %}</li>
-                        <li>{% trans "All stored procedures and functions" %}</li>
-                        <li>{% trans "All user permissions for this database" %}</li>
-                        <li>{% trans "All triggers and events" %}</li>
-                    </ul>
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="activity" class="w-5 h-5 text-destructive"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Ensure no critical applications are actively using this database." %}
+                        </p>
+                    </div>
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="users" class="w-5 h-5 text-destructive"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "This will also remove any unique database users associated ONLY with this database." %}
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            <div class="button-container" ng-hide="fetchedDatabases">
-                <button type="button" ng-click="confirmDelete()" class="btn btn-danger" 
-                        ng-disabled="!selectedDB">
-                    <i class="fas fa-trash"></i>
-                    {% trans "Delete Database" %}
-                </button>
-            </div>
-        </div>
-
-        <!-- Confirmation Section -->
-        <div class="content-card confirmation-section" id="deleteConfirmation">
-            <i class="fas fa-exclamation-circle confirmation-icon"></i>
-            <h3 class="confirmation-title">{% trans "Are you absolutely sure?" %}</h3>
-            <p class="confirmation-text">
-                {% trans "This action will permanently delete the database and all its data." %}
-            </p>
-            <div class="confirmation-database">{$ selectedDB $}</div>
-            
-            <div class="confirmation-buttons">
-                <button type="button" ng-click="cancelDelete()" class="btn btn-secondary">
-                    <i class="fas fa-times"></i>
-                    {% trans "Cancel" %}
-                </button>
-                <button type="button" ng-click="deleteDatabase()" class="btn btn-danger">
-                    <i class="fas fa-trash"></i>
-                    {% trans "Yes, Delete Database" %}
-                </button>
-            </div>
-        </div>
-
-        <!-- Alert Messages -->
-        <div ng-hide="databaseDeletionFailed" class="alert alert-danger">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>{% trans "Error message:" %} {$ errorMessage $}</span>
-        </div>
-
-        <div ng-hide="databaseDeleted" class="alert alert-success">
-            <i class="fas fa-check-circle"></i>
-            <span>{% trans "Database deleted successfully." %}</span>
-        </div>
-
-        <div ng-hide="couldNotConnect" class="alert alert-danger">
-            <i class="fas fa-network-wired"></i>
-            <span>{% trans "Could not connect to server. Please refresh this page." %}</span>
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block footer_scripts %}
 <script>
 // Enhance the controller
 $(document).ready(function() {
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Observe for dynamic changes to refresh Lucide icons
+    const observer = new MutationObserver((mutations) => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
     var scope = angular.element($('[ng-controller="deleteDatabase"]')).scope();
     if (scope) {
         // Add confirmation dialog
         scope.confirmDelete = function() {
             if (scope.selectedDB) {
-                $('#deleteConfirmation').fadeIn();
+                $('#deleteConfirmation').addClass('active-section').fadeIn();
             }
         };
         
         scope.cancelDelete = function() {
-            $('#deleteConfirmation').fadeOut();
+            $('#deleteConfirmation').removeClass('active-section').fadeOut();
         };
         
         // Database selected handler
@@ -553,9 +256,9 @@ $(document).ready(function() {
                     size: '25.3 MB',
                     tables: '12'
                 };
-                $('.database-info-card').fadeIn();
+                $('.database-info-card').addClass('active-section').fadeIn();
             } else {
-                $('.database-info-card').fadeOut();
+                $('.database-info-card').removeClass('active-section').fadeOut();
             }
         };
         
@@ -566,9 +269,9 @@ $(document).ready(function() {
                 originalFetchDatabases();
             }
             if (scope.databaseWebsite) {
-                $('.database-selector-section').fadeIn();
+                $('.database-selector-section').addClass('active-section').fadeIn();
             } else {
-                $('.database-selector-section').fadeOut();
+                $('.database-selector-section').removeClass('active-section').fadeOut();
             }
         };
         
@@ -578,6 +281,11 @@ $(document).ready(function() {
         scope.databaseDeletionFailed = true;
         scope.databaseDeleted = true;
         scope.couldNotConnect = true;
+        
+        // Ensure Angular scope is applied if needed
+        if(!scope.$$phase) {
+            scope.$apply();
+        }
     }
 });
 </script>

@@ -2734,7 +2734,7 @@ function website_create_checkbox_function() {
 $("#listFail").hide();
 
 
-app.controller('listWebsites', function ($scope, $http, $window) {
+app.controller('listWebsites', function ($scope, $http, $window, $timeout) {
     $scope.web = {};
     $scope.WebSitesList = [];
     $scope.loading = true; // Add loading state
@@ -2751,6 +2751,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
             // You can add any data fetching logic here if needed
             setTimeout(function() {
                 site.loading = false;
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 10);
                 $scope.$apply();
             }, 500);
         } else {
@@ -2825,6 +2830,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
                 if ($scope.WebSitesList.length > 0) {
                     $scope.expandedSites[$scope.WebSitesList[0].domain] = true;
                 }
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 50);
             } else {
                 $("#listFail").fadeIn();
                 $scope.errorMessage = response.data.error_message;
@@ -2864,6 +2874,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
 
         // Toggle visibility
         site.showWPSites = !site.showWPSites;
+        $timeout(function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
         
         // If we're hiding, just return
         if (!site.showWPSites) {
@@ -6055,7 +6070,7 @@ app.controller('createWebsite', function ($scope, $http, $timeout, $window) {
 $("#listFail").hide();
 
 
-app.controller('listWebsites', function ($scope, $http, $window) {
+app.controller('listWebsites', function ($scope, $http, $window, $timeout) {
     $scope.web = {};
     $scope.WebSitesList = [];
     $scope.loading = true; // Add loading state
@@ -6072,6 +6087,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
             // You can add any data fetching logic here if needed
             setTimeout(function() {
                 site.loading = false;
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 10);
                 $scope.$apply();
             }, 500);
         } else {
@@ -6146,6 +6166,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
                 if ($scope.WebSitesList.length > 0) {
                     $scope.expandedSites[$scope.WebSitesList[0].domain] = true;
                 }
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 50);
             } else {
                 $("#listFail").fadeIn();
                 $scope.errorMessage = response.data.error_message;
@@ -6185,6 +6210,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
 
         // Toggle visibility
         site.showWPSites = !site.showWPSites;
+        $timeout(function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
         
         // If we're hiding, just return
         if (!site.showWPSites) {
@@ -9720,7 +9750,7 @@ function website_create_checkbox_function() {
 $("#listFail").hide();
 
 
-app.controller('listWebsites', function ($scope, $http, $window) {
+app.controller('listWebsites', function ($scope, $http, $window, $timeout) {
     $scope.web = {};
     $scope.WebSitesList = [];
     $scope.loading = true; // Add loading state
@@ -9737,6 +9767,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
             // You can add any data fetching logic here if needed
             setTimeout(function() {
                 site.loading = false;
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 10);
                 $scope.$apply();
             }, 500);
         } else {
@@ -9811,6 +9846,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
                 if ($scope.WebSitesList.length > 0) {
                     $scope.expandedSites[$scope.WebSitesList[0].domain] = true;
                 }
+                $timeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 50);
             } else {
                 $("#listFail").fadeIn();
                 $scope.errorMessage = response.data.error_message;
@@ -9850,6 +9890,11 @@ app.controller('listWebsites', function ($scope, $http, $window) {
 
         // Toggle visibility
         site.showWPSites = !site.showWPSites;
+        $timeout(function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
         
         // If we're hiding, just return
         if (!site.showWPSites) {
@@ -14032,6 +14077,11 @@ app.controller('manageAliasController', function ($scope, $http, $timeout, $wind
 
         // Toggle visibility
         site.showWPSites = !site.showWPSites;
+        $timeout(function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
         
         // If we're hiding, just return
         if (!site.showWPSites) {

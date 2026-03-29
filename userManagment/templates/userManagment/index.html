@@ -3,261 +3,169 @@
 {% block title %}{% trans "User Functions - CyberPanel" %}{% endblock %}
 {% block content %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+ {% load static %}
+ {% get_current_language as LANGUAGE_CODE %}
+ <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <style>
-        body {
-            background-color: #f0f0ff;
-        }
-        
-        .page-header {
-            background: linear-gradient(135deg, #5b5fcf 0%, #7b7fd0 100%);
-            color: white;
-            padding: 3rem 0;
-            margin-bottom: 3rem;
-            box-shadow: 0 4px 15px rgba(91, 95, 207, 0.2);
-        }
-        
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-        
-        .function-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e8e9ff;
-            transition: all 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            color: #2f3640;
-            display: block;
-            height: 100%;
-        }
-        
-        .function-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(91, 95, 207, 0.15);
-            text-decoration: none;
-            border-color: #5b5fcf;
-        }
-        
-        .function-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #5b5fcf 0%, #7b7fd0 100%);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: white;
-            font-size: 24px;
-            transition: all 0.3s ease;
-        }
-        
-        .function-card:hover .function-icon {
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(91, 95, 207, 0.4);
-        }
-        
-        .function-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2f3640;
-            margin-bottom: 0.5rem;
-        }
-        
-        .function-description {
-            color: #8893a7;
-            font-size: 0.9rem;
-            margin: 0;
-        }
-        
-        .section-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e8e9ff;
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2f3640;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 3px solid #5b5fcf;
-            padding-bottom: 0.75rem;
-            display: inline-block;
-        }
-        
-        .badge-primary {
-            background: #5b5fcf;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: inline-block;
-            margin-left: 1rem;
-        }
-    </style>
-
-    <div class="page-header">
-        <div class="container">
-            <h1>{% trans "User Management" %}</h1>
-            <p>{% trans "Create, modify and manage users with advanced access controls" %}</p>
+ <div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12">
+ <div class="space-y-12">
+ <!-- Page Header -->
+ <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+    <div class="flex items-center gap-6">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+            <i data-lucide="users" class="h-8 w-8"></i>
+        </div>
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                {% trans "User Management" %}
+            </h1>
+            <p class="text-xl text-muted-foreground">
+                {% trans "Create, modify and manage users with advanced access controls" %}
+            </p>
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <div class="section-card">
-            <h2 class="section-title">{% trans "User Functions" %}</h2>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'viewProfile' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-id-card"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "View Profile" %}</h3>
-                        <p class="function-description">{% trans "View your account details" %}</p>
-                    </a>
-                </div>
-                
-                {% if listUsers %}
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'listUsers' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-users"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "List Users" %}</h3>
-                        <p class="function-description">{% trans "View all system users" %}</p>
-                    </a>
-                </div>
-                {% endif %}
-                
-                {% if type != 3 %}
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'createUser' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-user-plus"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Create User" %}</h3>
-                        <p class="function-description">{% trans "Add new user accounts" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'modifyUsers' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-user-edit"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Modify User" %}</h3>
-                        <p class="function-description">{% trans "Edit user settings" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'deleteUser' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-user-times"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Delete User" %}</h3>
-                        <p class="function-description">{% trans "Remove user accounts" %}</p>
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        
-        {% if type == 1 %}
-        <div class="section-card">
-            <h2 class="section-title">{% trans "Access Control" %} <span class="badge-primary">Admin</span></h2>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'createNewACL' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-shield-alt"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Create ACL" %}</h3>
-                        <p class="function-description">{% trans "Define new access rules" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'deleteACL' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-shield-alt"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Delete ACL" %}</h3>
-                        <p class="function-description">{% trans "Remove access rules" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'modifyACL' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-shield-alt"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Modify ACL" %}</h3>
-                        <p class="function-description">{% trans "Edit access permissions" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'changeUserACL' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-user-shield"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Change User ACL" %}</h3>
-                        <p class="function-description">{% trans "Assign ACL to users" %}</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="section-card">
-            <h2 class="section-title">{% trans "Advanced Features" %}</h2>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'resellerCenter' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-store"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "Reseller Center" %}</h3>
-                        <p class="function-description">{% trans "Manage reseller accounts" %}</p>
-                    </a>
-                </div>
-                
-                <div class="col-md-3 mb-4">
-                    <a href="{% url 'apiAccess' %}" class="function-card">
-                        <div class="function-icon">
-                            <i class="fa fa-key"></i>
-                        </div>
-                        <h3 class="function-title">{% trans "API Access" %}</h3>
-                        <p class="function-description">{% trans "Configure API permissions" %}</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
+ <!-- User Functions Section -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10 mb-8">
+ <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+ <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+ {% trans "User Functions" %}
+ </h2>
+ 
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <!-- View Profile -->
+ <a href="{% url 'viewProfile' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="id-card" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "View Profile" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "View your account details" %}</p>
+ </a>
+ 
+ {% if listUsers %}
+ <!-- List Users -->
+ <a href="{% url 'listUsers' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="users" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "List Users" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "View all system users" %}</p>
+ </a>
+ {% endif %}
+ 
+ {% if type != 3 %}
+ <!-- Create User -->
+ <a href="{% url 'createUser' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="user-plus" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Create User" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Add new user accounts" %}</p>
+ </a>
+ 
+ <!-- Modify User -->
+ <a href="{% url 'modifyUsers' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="user-pen" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Modify User" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Edit user settings" %}</p>
+ </a>
+ 
+ <!-- Delete User -->
+ <a href="{% url 'deleteUser' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+ <i data-lucide="user-minus" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-destructive transition-colors">{% trans "Delete User" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Remove user accounts" %}</p>
+ </a>
+ {% endif %}
+ </div>
+ </div>
+ 
+ {% if type == 1 %}
+ <!-- Access Control Section -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10 mb-8">
+ <div class="flex items-center justify-between mb-10">
+ <h2 class="text-3xl font-bold text-foreground flex items-center gap-4">
+ <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+ {% trans "Access Control" %}
+ </h2>
+ <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xl font-bold bg-primary/10 text-primary uppercase tracking-wider">
+ {% trans "Admin" %}
+ </span>
+ </div>
+
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <!-- Create ACL -->
+ <a href="{% url 'createNewACL' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="shield-plus" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Create ACL" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Define new access rules" %}</p>
+ </a>
+ 
+ <!-- Delete ACL -->
+ <a href="{% url 'deleteACL' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+ <i data-lucide="shield-minus" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-destructive transition-colors">{% trans "Delete ACL" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Remove access rules" %}</p>
+ </a>
+ 
+ <!-- Modify ACL -->
+ <a href="{% url 'modifyACL' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="shield-check" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Modify ACL" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Edit access permissions" %}</p>
+ </a>
+ 
+ <!-- Change User ACL -->
+ <a href="{% url 'changeUserACL' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="user-shield" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Change User ACL" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Assign ACL to users" %}</p>
+ </a>
+ </div>
+ </div>
+ 
+ <!-- Advanced Features Section -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+ <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+ <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+ {% trans "Advanced Features" %}
+ </h2>
+ 
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <!-- Reseller Center -->
+ <a href="{% url 'resellerCenter' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="store" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Reseller Center" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Manage reseller accounts" %}</p>
+ </a>
+ 
+ <!-- API Access -->
+ <a href="{% url 'apiAccess' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+ <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+ <i data-lucide="key" class="h-8 w-8"></i>
+ </div>
+ <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "API Access" %}</h3>
+ <p class="text-lg text-muted-foreground">{% trans "Configure API permissions" %}</p>
+ </a>
+ </div>
+ </div>
+ {% endif %}
+ </div>
+ </div>
 
 {% endblock %}

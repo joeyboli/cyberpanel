@@ -7,239 +7,116 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<style>
-    body {
-        background-color: var(--bg-primary, #f0f0ff);
-    }
-    
-    .page-header {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        padding: 3rem 0;
-        margin-bottom: 3rem;
-        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-    }
-    
-    .page-header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .page-header p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        margin-bottom: 0;
-    }
-    
-    .form-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 2.5rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 2rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 3px solid var(--danger-text, #ef4444);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-label {
-        color: var(--text-primary, #2f3640);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    
-    .form-control {
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: var(--bg-secondary, white);
-        color: var(--text-primary, #2f3640);
-    }
-    
-    .form-control:focus {
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-        outline: none;
-    }
-    
-    .btn-danger {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        border: none;
-        border-radius: 8px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-        color: white;
-    }
-    
-    .btn-danger:hover {
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
-    
-    .btn-confirm {
-        background: #991b1b;
-        border: none;
-        border-radius: 8px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        color: white;
-    }
-    
-    .btn-confirm:hover {
-        background: #7f1d1d;
-        transform: translateY(-2px);
-    }
-    
-    .alert {
-        border-radius: 8px;
-        padding: 1rem 1.5rem;
-        margin-top: 1rem;
-        border: none;
-    }
-    
-    .alert-success {
-        background: var(--success-bg, rgba(16, 185, 129, 0.1));
-        color: var(--success-text, #065f46);
-        border: 1px solid var(--success-border, rgba(16, 185, 129, 0.2));
-    }
-    
-    .alert-danger {
-        background: var(--danger-bg, rgba(239, 68, 68, 0.1));
-        color: var(--danger-text, #991b1b);
-        border: 1px solid var(--danger-border, rgba(239, 68, 68, 0.2));
-    }
-    
-    .alert-warning {
-        background: var(--warning-bg, rgba(245, 158, 11, 0.1));
-        color: var(--warning-text, #92400e);
-        border-left: 4px solid var(--warning-text, #f59e0b);
-        border: 1px solid var(--warning-border, rgba(245, 158, 11, 0.2));
-    }
-    
-    .warning-icon {
-        color: var(--warning-text, #f59e0b);
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
-    
-    .help-text {
-        color: var(--text-secondary, #8893a7);
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-    
-    .delete-info {
-        background: var(--danger-bg, #fff5f5);
-        border: 1px solid var(--danger-border, #fee2e2);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .delete-info h4 {
-        color: var(--danger-text, #991b1b);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    
-    .delete-info ul {
-        margin: 0;
-        padding-left: 1.5rem;
-        color: var(--danger-text, #7f1d1d);
-    }
-    
-    .delete-info ul li {
-        margin-bottom: 0.25rem;
-    }
-</style>
+<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="deleteUser">
+ <div class="space-y-12">
+ <!-- Header Section -->
+ <div class="rounded-2xl border border-border/50 bg-card p-12 text-center shadow-sm transition-all">
+ <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+ <i data-lucide="user-minus" class="h-10 w-10"></i>
+ </div>
+ <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-foreground">
+ {% trans "Delete User Account" %}
+ </h1>
+ <p class="mx-auto max-w-2xl text-xl text-muted-foreground">
+ {% trans "Permanently remove user accounts from the system" %}
+ </p>
+ </div>
 
-<div class="page-header">
-    <div class="container">
-        <h1>{% trans "Delete User" %}</h1>
-        <p>{% trans "Permanently remove user accounts from the system" %}</p>
-    </div>
-</div>
+ <!-- Main Card -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+ <div class="p-12">
+ <!-- Important Info Box -->
+ <div class="mb-8 p-6 bg-destructive/5 border border-destructive/10 rounded-xl">
+ <h3 class="flex items-center gap-2 text-destructive font-bold text-2xl mb-4">
+ <i data-lucide="alert-triangle" class="h-5 w-5"></i>
+ {% trans "Important Information" %}
+ </h3>
+ <ul class="space-y-3 text-xl text-destructive/80 font-medium">
+ <li class="flex items-start gap-3">
+ <span class="h-1.5 w-1.5 rounded-full bg-destructive mt-1.5 shrink-0"></span>
+ {% trans "All websites owned by this user will be transferred to the root administrator" %}
+ </li>
+ <li class="flex items-start gap-3">
+ <span class="h-1.5 w-1.5 rounded-full bg-destructive mt-1.5 shrink-0"></span>
+ {% trans "This action cannot be undone" %}
+ </li>
+ <li class="flex items-start gap-3">
+ <span class="h-1.5 w-1.5 rounded-full bg-destructive mt-1.5 shrink-0"></span>
+ {% trans "All user data and settings will be permanently removed" %}
+ </li>
+ </ul>
+ </div>
 
-<div class="container">
-    <div class="form-card" ng-controller="deleteUser">
-        <h3 class="section-title">
-            <i class="fa fa-exclamation-triangle warning-icon"></i>
-            {% trans "Delete User Account" %}
-        </h3>
-        
-        <div class="delete-info">
-            <h4><i class="fa fa-info-circle"></i> {% trans "Important Information" %}</h4>
-            <ul>
-                <li>{% trans "All websites owned by this user will be transferred to the root administrator" %}</li>
-                <li>{% trans "This action cannot be undone" %}</li>
-                <li>{% trans "All user data and settings will be permanently removed" %}</li>
-            </ul>
-        </div>
-        
-        <form action="/" class="form-horizontal">
-            <div class="form-group">
-                <label class="form-label">{% trans "Select User to Delete" %}</label>
-                <select ng-model="accountUsername" class="form-control">
-                    <option value="">-- {% trans "Choose a user" %} --</option>
-                    {% for items in acctNames %}
-                        <option>{{ items }}</option>
-                    {% endfor %}
-                </select>
-                <p class="help-text">{% trans "Select the user account you want to permanently delete" %}</p>
-            </div>
+ <form class="space-y-8">
+ <!-- User Selection -->
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground flex items-center gap-2">
+ <i data-lucide="user-search" class="h-5 w-5"></i>
+ {% trans "Select User to Delete" %}
+ </label>
+ <select ng-model="accountUsername" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-destructive/20 focus:border-destructive outline-none transition-all text-xl text-foreground font-medium">
+ <option value="">-- {% trans "Choose a user" %} --</option>
+ {% for items in acctNames %}
+ <option>{{ items }}</option>
+ {% endfor %}
+ </select>
+ <p class="text-xl text-muted-foreground">{% trans "Select the user account you want to permanently delete" %}</p>
+ </div>
 
-            <div class="form-group mt-4">
-                <button type="button" ng-click="deleteUser()" class="btn btn-danger btn-lg">
-                    <i class="fa fa-trash"></i> {% trans "Delete User" %}
-                </button>
-            </div>
+ <!-- Initial Delete Button -->
+ <div class="pt-4">
+ <button type="button" ng-click="deleteUser()" 
+ class="w-full py-3 bg-destructive hover:bg-destructive/90 text-white rounded-xl font-bold text-xl transition-all active:translate-y-0 flex items-center justify-center gap-2">
+ <i data-lucide="trash-2" class="h-5 w-5"></i>
+ {% trans "Delete User" %}
+ </button>
+ </div>
 
-            <div ng-hide="deleteUserButton" class="form-group">
-                <div class="alert alert-warning">
-                    <i class="fa fa-exclamation-triangle"></i> 
-                    <strong>{% trans "Final Confirmation" %}</strong><br>
-                    {% trans "You are about to delete user:" %} <strong>{$ accountUsername $}</strong><br>
-                    {% trans "This action is permanent and cannot be reversed." %}
-                </div>
-                <button type="button" ng-click="deleteUserFinal()" class="btn btn-confirm btn-lg">
-                    <i class="fa fa-check"></i> {% trans "Yes, Delete This User" %}
-                </button>
-            </div>
+ <!-- Confirmation Area -->
+ <div ng-hide="deleteUserButton" class="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl animate-in zoom-in-95 space-y-6">
+ <div class="flex gap-4">
+ <div class="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+ <i data-lucide="shield-alert" class="h-6 w-6 text-amber-600 dark:text-amber-400"></i>
+ </div>
+ <div>
+ <h4 class="text-amber-700 dark:text-amber-400 font-bold mb-1">{% trans "Final Confirmation Required" %}</h4>
+ <p class="text-xl text-amber-600/80">
+ {% trans "You are about to delete user:" %} <strong class="text-amber-700 dark:text-amber-300">{$ accountUsername $}</strong>
+ </p>
+ <p class="text-lg text-amber-600/70 mt-2 font-medium">
+ {% trans "This action is permanent and cannot be reversed." %}
+ </p>
+ </div>
+ </div>
+ <button type="button" ng-click="deleteUserFinal()" 
+ class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2">
+ <i data-lucide="check-circle-2" class="h-5 w-5"></i>
+ {% trans "Yes, Delete This User" %}
+ </button>
+ </div>
 
-            <div ng-hide="deleteFailure" class="alert alert-danger">
-                <i class="fa fa-times-circle"></i> {% trans "Cannot delete user. Error message:" %} {$ errorMessage $}
-            </div>
+ <!-- Notifications -->
+ <div class="space-y-3">
+ <div ng-hide="deleteFailure" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
+ <i data-lucide="alert-circle" class="h-5 w-5"></i>
+ <span>{% trans "Cannot delete user. Error message:" %} {$ errorMessage $}</span>
+ </div>
 
-            <div ng-hide="deleteSuccess" class="alert alert-success">
-                <i class="fa fa-check-circle"></i> {% trans "User" %} <strong>{$ deletedUser $}</strong> {% trans "has been successfully deleted" %}
-            </div>
+ <div ng-hide="deleteSuccess" class="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center gap-3">
+ <i data-lucide="check-circle" class="h-5 w-5"></i>
+ <span>{% trans "User" %} <strong>{$ deletedUser $}</strong> {% trans "has been successfully deleted" %}</span>
+ </div>
 
-            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                <i class="fa fa-times-circle"></i> {% trans "Could not connect to the server. Please refresh this page." %}
-            </div>
-        </form>
-    </div>
+ <div ng-hide="couldNotConnect" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
+ <i data-lucide="wifi-off" class="h-5 w-5"></i>
+ <span>{% trans "Could not connect to the server. Please refresh this page." %}</span>
+ </div>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
 </div>
 
 {% endblock %}

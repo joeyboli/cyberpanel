@@ -121,6 +121,8 @@ app.controller('systemStatusInfo', function ($scope, $http, $timeout) {
     $scope.uptimeLoaded = false;
     $scope.uptime = 'Loading...';
     
+    var statusTimer;
+    
     getStuff();
     
     $scope.getSystemStatus = function() {
@@ -142,7 +144,7 @@ app.controller('systemStatusInfo', function ($scope, $http, $timeout) {
             
             // Total system information
             $scope.cpuCores = response.data.cpuCores;
-            $scope.ramTotalMB = response.data.ramTotalMB;
+            $scope.ramTotalGB = response.data.ramTotalGB;
             $scope.diskTotalGB = response.data.diskTotalGB;
             $scope.diskFreeGB = response.data.diskFreeGB;
             
@@ -167,9 +169,14 @@ app.controller('systemStatusInfo', function ($scope, $http, $timeout) {
             $scope.uptimeLoaded = true;
         }
 
-        $timeout(getStuff, 60000); // Update every minute
+        if (statusTimer) $timeout.cancel(statusTimer);
+        statusTimer = $timeout(getStuff, 60000); // Update every minute
 
     }
+
+    $scope.$on('$destroy', function() {
+        if (statusTimer) $timeout.cancel(statusTimer);
+    });
 });
 
 /*  Admin status */
@@ -425,6 +432,9 @@ app.controller('loadAvg', function ($scope, $http, $timeout) {
 
 app.controller('homePageStatus', function ($scope, $http, $timeout) {
 
+    var stuffTimer;
+    var loadAvgTimer;
+
     getStuff();
     getLoadAvg();
 
@@ -526,7 +536,8 @@ app.controller('homePageStatus', function ($scope, $http, $timeout) {
             console.log("not good");
         }
 
-        $timeout(getStuff, 2000);
+        if (stuffTimer) $timeout.cancel(stuffTimer);
+        stuffTimer = $timeout(getStuff, 10000); // Increased from 2s to 10s
 
     }
 
@@ -552,9 +563,15 @@ app.controller('homePageStatus', function ($scope, $http, $timeout) {
             console.log("Can't get load average data");
         }
 
-        $timeout(getLoadAvg, 2000);
+        if (loadAvgTimer) $timeout.cancel(loadAvgTimer);
+        loadAvgTimer = $timeout(getLoadAvg, 10000); // Increased from 2s to 10s
 
     }
+
+    $scope.$on('$destroy', function() {
+        if (stuffTimer) $timeout.cancel(stuffTimer);
+        if (loadAvgTimer) $timeout.cancel(loadAvgTimer);
+    });
 });
 
 ////////////
@@ -1144,13 +1161,41 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
         });
     };
 
-    // Initial fetch
-    $scope.refreshTopProcesses();
-    $scope.refreshSSHLogins();
-    $scope.refreshSSHLogs();
+        // Initial fetch
+        $scope.refreshTopProcesses();
+        $scope.refreshSSHLogins();
+        $scope.refreshSSHLogs();
+
+        // Re-initialize charts when theme changes to update colors
+        window.addEventListener('themeChanged', function() {
+            if (trafficChart) trafficChart.destroy();
+            if (diskIOChart) diskIOChart.destroy();
+            if (cpuChart) cpuChart.destroy();
+            setupCharts();
+        });
 
     // Chart.js chart objects
     var trafficChart, diskIOChart, cpuChart;
+
+    // Helper to get CSS variables for Chart.js
+    function getThemeColor(variable) {
+        return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+    }
+
+    function getChartColors() {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+            primary: `hsl(${getThemeColor('--primary')})`,
+            muted: `hsl(${getThemeColor('--muted-foreground')})`,
+            border: `hsl(${getThemeColor('--border')})`,
+            card: `hsl(${getThemeColor('--card')})`,
+            foreground: `hsl(${getThemeColor('--foreground')})`,
+            grid: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+            blue: '#3b82f6',
+            emerald: '#10b981',
+            rose: '#f43f5e'
+        };
+    }
     // Data arrays for live graphs
     var trafficLabels = [], rxData = [], txData = [];
     var diskLabels = [], readData = [], writeData = [];
@@ -1158,8 +1203,10 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
     // For rate calculation
     var lastRx = null, lastTx = null, lastDiskRead = null, lastDiskWrite = null, lastCPU = null;
     var lastCPUTimes = null;
-    var pollInterval = 2000; // ms
+    var pollInterval = 10000; // ms (increased from 2s to 10s)
     var maxPoints = 30;
+
+    var mainPollTimer;
 
     function pollDashboardStats() {
         $http.get('/base/getDashboardStats').then(function(response) {
@@ -1317,7 +1364,19 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
 
     function setupCharts() {
         console.log('setupCharts called, initializing charts...');
+        const colors = getChartColors();
+        
         var trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        
+        // Gradient for Traffic
+        var downloadGradient = trafficCtx.createLinearGradient(0, 0, 0, 350);
+        downloadGradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+        downloadGradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+        
+        var uploadGradient = trafficCtx.createLinearGradient(0, 0, 0, 350);
+        uploadGradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+        uploadGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
         trafficChart = new Chart(trafficCtx, {
             type: 'line',
             data: {
@@ -1326,12 +1385,15 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     { 
                         label: 'Download', 
                         data: [], 
-                        borderColor: '#5b5fcf', 
-                        backgroundColor: 'rgba(91,95,207,0.1)', 
-                        pointBackgroundColor: '#5b5fcf',
-                        pointBorderColor: '#5b5fcf',
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        borderColor: colors.blue, 
+                        backgroundColor: downloadGradient, 
+                        pointBackgroundColor: colors.blue,
+                        pointBorderColor: colors.card,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: colors.blue,
+                        pointHoverBorderColor: colors.card,
+                        pointHoverBorderWidth: 2,
                         borderWidth: 2,
                         tension: 0.4, 
                         fill: true 
@@ -1339,12 +1401,15 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     { 
                         label: 'Upload', 
                         data: [], 
-                        borderColor: '#4a90e2', 
-                        backgroundColor: 'rgba(74,144,226,0.1)', 
-                        pointBackgroundColor: '#4a90e2',
-                        pointBorderColor: '#4a90e2',
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        borderColor: colors.emerald, 
+                        backgroundColor: uploadGradient, 
+                        pointBackgroundColor: colors.emerald,
+                        pointBorderColor: colors.card,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: colors.emerald,
+                        pointHoverBorderColor: colors.card,
+                        pointHoverBorderWidth: 2,
                         borderWidth: 2,
                         tension: 0.4, 
                         fill: true 
@@ -1359,58 +1424,78 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     legend: { 
                         display: true, 
                         position: 'top',
+                        align: 'end',
                         labels: { 
-                            font: { size: 12, weight: '600' },
-                            color: '#64748b',
+                            font: { family: 'Inter', size: 12, weight: '500' },
+                            color: colors.muted,
                             usePointStyle: true,
+                            pointStyle: 'circle',
                             padding: 20
                         } 
                     },
-                    title: { display: false },
                     tooltip: { 
                         enabled: true, 
                         mode: 'index', 
                         intersect: false,
-                        backgroundColor: 'rgba(255,255,255,0.95)',
-                        titleColor: '#2f3640',
-                        bodyColor: '#64748b',
-                        borderColor: '#e8e9ff',
+                        backgroundColor: colors.card,
+                        titleColor: colors.foreground,
+                        bodyColor: colors.muted,
+                        borderColor: colors.border,
                         borderWidth: 1,
                         cornerRadius: 8,
-                        padding: 12
+                        padding: 12,
+                        titleFont: { family: 'Inter', size: 13, weight: '600' },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        displayColors: true,
+                        boxPadding: 6
                     }
                 },
                 interaction: { mode: 'nearest', axis: 'x', intersect: false },
                 scales: {
                     x: { 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { display: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8',
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
                             maxTicksLimit: 8
                         }
                     },
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { color: colors.grid, drawBorder: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8'
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
+                            padding: 10,
+                            callback: function(value) {
+                                if (value >= 1024 * 1024) return (value / (1024 * 1024)).toFixed(1) + ' MB/s';
+                                if (value >= 1024) return (value / 1024).toFixed(1) + ' KB/s';
+                                return value + ' B/s';
+                            }
                         }
                     }
-                },
-                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } }
+                }
             }
         });
         window.trafficChart = trafficChart;
+        
         setTimeout(function() {
             if (window.trafficChart) {
                 window.trafficChart.resize();
                 window.trafficChart.update();
-                console.log('trafficChart resized and updated after setup.');
             }
         }, 500);
+
         var diskCtx = document.getElementById('diskIOChart').getContext('2d');
+        
+        var readGradient = diskCtx.createLinearGradient(0, 0, 0, 350);
+        readGradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+        readGradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+        
+        var writeGradient = diskCtx.createLinearGradient(0, 0, 0, 350);
+        writeGradient.addColorStop(0, 'rgba(244, 63, 94, 0.2)');
+        writeGradient.addColorStop(1, 'rgba(244, 63, 94, 0)');
+
         diskIOChart = new Chart(diskCtx, {
             type: 'line',
             data: {
@@ -1419,12 +1504,15 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     { 
                         label: 'Read', 
                         data: [], 
-                        borderColor: '#5b5fcf', 
-                        backgroundColor: 'rgba(91,95,207,0.1)', 
-                        pointBackgroundColor: '#5b5fcf',
-                        pointBorderColor: '#5b5fcf',
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        borderColor: colors.blue, 
+                        backgroundColor: readGradient, 
+                        pointBackgroundColor: colors.blue,
+                        pointBorderColor: colors.card,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: colors.blue,
+                        pointHoverBorderColor: colors.card,
+                        pointHoverBorderWidth: 2,
                         borderWidth: 2,
                         tension: 0.4, 
                         fill: true 
@@ -1432,12 +1520,15 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     { 
                         label: 'Write', 
                         data: [], 
-                        borderColor: '#e74c3c', 
-                        backgroundColor: 'rgba(231,76,60,0.1)', 
-                        pointBackgroundColor: '#e74c3c',
-                        pointBorderColor: '#e74c3c',
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        borderColor: colors.rose, 
+                        backgroundColor: writeGradient, 
+                        pointBackgroundColor: colors.rose,
+                        pointBorderColor: colors.card,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: colors.rose,
+                        pointHoverBorderColor: colors.card,
+                        pointHoverBorderWidth: 2,
                         borderWidth: 2,
                         tension: 0.4, 
                         fill: true 
@@ -1452,50 +1543,66 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     legend: { 
                         display: true, 
                         position: 'top',
+                        align: 'end',
                         labels: { 
-                            font: { size: 12, weight: '600' },
-                            color: '#64748b',
+                            font: { family: 'Inter', size: 12, weight: '500' },
+                            color: colors.muted,
                             usePointStyle: true,
+                            pointStyle: 'circle',
                             padding: 20
                         } 
                     },
-                    title: { display: false },
                     tooltip: { 
                         enabled: true, 
                         mode: 'index', 
                         intersect: false,
-                        backgroundColor: 'rgba(255,255,255,0.95)',
-                        titleColor: '#2f3640',
-                        bodyColor: '#64748b',
-                        borderColor: '#e8e9ff',
+                        backgroundColor: colors.card,
+                        titleColor: colors.foreground,
+                        bodyColor: colors.muted,
+                        borderColor: colors.border,
                         borderWidth: 1,
                         cornerRadius: 8,
-                        padding: 12
+                        padding: 12,
+                        titleFont: { family: 'Inter', size: 13, weight: '600' },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        displayColors: true,
+                        boxPadding: 6
                     }
                 },
                 interaction: { mode: 'nearest', axis: 'x', intersect: false },
                 scales: {
                     x: { 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { display: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8',
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
                             maxTicksLimit: 8
                         }
                     },
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { color: colors.grid, drawBorder: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8'
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
+                            padding: 10,
+                            callback: function(value) {
+                                if (value >= 1024 * 1024) return (value / (1024 * 1024)).toFixed(1) + ' MB/s';
+                                if (value >= 1024) return (value / 1024).toFixed(1) + ' KB/s';
+                                return value + ' B/s';
+                            }
                         }
                     }
-                },
-                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } }
+                }
             }
         });
+
         var cpuCtx = document.getElementById('cpuChart').getContext('2d');
+        
+        var cpuGradient = cpuCtx.createLinearGradient(0, 0, 0, 350);
+        cpuGradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+        cpuGradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
         cpuChart = new Chart(cpuCtx, {
             type: 'line',
             data: {
@@ -1504,12 +1611,15 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     { 
                         label: 'CPU Usage (%)', 
                         data: [], 
-                        borderColor: '#5b5fcf', 
-                        backgroundColor: 'rgba(91,95,207,0.1)', 
-                        pointBackgroundColor: '#5b5fcf',
-                        pointBorderColor: '#5b5fcf',
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        borderColor: colors.blue, 
+                        backgroundColor: cpuGradient, 
+                        pointBackgroundColor: colors.blue,
+                        pointBorderColor: colors.card,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: colors.blue,
+                        pointHoverBorderColor: colors.card,
+                        pointHoverBorderWidth: 2,
                         borderWidth: 2,
                         tension: 0.4, 
                         fill: true 
@@ -1524,48 +1634,53 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                     legend: { 
                         display: true, 
                         position: 'top',
+                        align: 'end',
                         labels: { 
-                            font: { size: 12, weight: '600' },
-                            color: '#64748b',
+                            font: { family: 'Inter', size: 12, weight: '500' },
+                            color: colors.muted,
                             usePointStyle: true,
+                            pointStyle: 'circle',
                             padding: 20
                         } 
                     },
-                    title: { display: false },
                     tooltip: { 
                         enabled: true, 
                         mode: 'index', 
                         intersect: false,
-                        backgroundColor: 'rgba(255,255,255,0.95)',
-                        titleColor: '#2f3640',
-                        bodyColor: '#64748b',
-                        borderColor: '#e8e9ff',
+                        backgroundColor: colors.card,
+                        titleColor: colors.foreground,
+                        bodyColor: colors.muted,
+                        borderColor: colors.border,
                         borderWidth: 1,
                         cornerRadius: 8,
-                        padding: 12
+                        padding: 12,
+                        titleFont: { family: 'Inter', size: 13, weight: '600' },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        displayColors: true,
+                        boxPadding: 6
                     }
                 },
                 interaction: { mode: 'nearest', axis: 'x', intersect: false },
                 scales: {
                     x: { 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { display: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8',
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
                             maxTicksLimit: 8
                         }
                     },
                     y: { 
                         beginAtZero: true, 
-                        max: 100, 
-                        grid: { color: '#f0f0ff', drawBorder: false }, 
+                        grid: { color: colors.grid, drawBorder: false }, 
                         ticks: { 
-                            font: { size: 11 },
-                            color: '#94a3b8'
+                            font: { family: 'Inter', size: 11 },
+                            color: colors.muted,
+                            padding: 10,
+                            suggestedMax: 100
                         }
                     }
-                },
-                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } }
+                }
             }
         });
 
@@ -1619,9 +1734,17 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
             pollDiskIO();
             pollCPU();
             $scope.refreshTopProcesses();
-            $timeout(pollAll, pollInterval);
+            if (mainPollTimer) $timeout.cancel(mainPollTimer);
+            mainPollTimer = $timeout(pollAll, pollInterval);
         }
         pollAll();
+
+        $scope.$on('$destroy', function() {
+            if (mainPollTimer) $timeout.cancel(mainPollTimer);
+            if (trafficChart) { trafficChart.destroy(); trafficChart = null; }
+            if (diskIOChart) { diskIOChart.destroy(); diskIOChart = null; }
+            if (cpuChart) { cpuChart.destroy(); cpuChart = null; }
+        });
     }, 500);
 
     // SSH User Activity Modal

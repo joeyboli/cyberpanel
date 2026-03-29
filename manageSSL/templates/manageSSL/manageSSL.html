@@ -17,18 +17,18 @@
     }
     
     .ssl-section {
-        background: var(--bg-secondary, white);
+        background: hsl(var(--card));
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 25px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid hsl(var(--border) / 0.5);
     }
     
     .section-title {
         font-size: 16px;
         font-weight: 700;
-        color: var(--text-primary, #2f3640);
+        color: hsl(var(--foreground));
         margin-bottom: 20px;
         display: flex;
         align-items: center;
@@ -41,14 +41,14 @@
         content: '';
         width: 4px;
         height: 24px;
-        background: var(--accent-color, #5b5fcf);
+        background: hsl(var(--primary));
         border-radius: 2px;
     }
     
     .ssl-docs-link {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        color: var(--accent-color, #5b5fcf);
+        background: hsl(var(--muted));
+        border: 1px solid hsl(var(--border));
+        color: hsl(var(--foreground));
         padding: 6px 14px;
         border-radius: 6px;
         font-size: 12px;
@@ -62,23 +62,22 @@
     }
     
     .ssl-docs-link:hover {
-        background: var(--accent-color, #5b5fcf);
-        color: var(--bg-secondary, white);
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 2px 4px var(--accent-shadow, rgba(91,95,207,0.3));
+        background: hsl(var(--accent));
+        color: hsl(var(--accent-foreground));
+        border-color: hsl(var(--border));
         text-decoration: none;
     }
     
     .ssl-description {
-        color: var(--text-muted, #8893a7);
+        color: hsl(var(--muted-foreground));
         font-size: 14px;
         margin-bottom: 25px;
         line-height: 1.5;
     }
     
     .form-container {
-        background: var(--bg-secondary, #fafbff);
-        border: 1px solid var(--border-color, #e8e9ff);
+        background: hsl(var(--muted) / 0.3);
+        border: 1px solid hsl(var(--border) / 0.5);
         border-radius: 8px;
         padding: 25px;
     }
@@ -90,7 +89,7 @@
     .form-label {
         font-size: 13px;
         font-weight: 600;
-        color: var(--text-primary, #2f3640);
+        color: hsl(var(--foreground));
         margin-bottom: 8px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -100,18 +99,18 @@
     .form-control {
         width: 100%;
         padding: 12px 16px;
-        border: 1px solid var(--border-color, #e8e9ff);
+        border: 1px solid hsl(var(--border));
         border-radius: 8px;
         font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
+        color: hsl(var(--foreground));
+        background: hsl(var(--background));
         transition: all 0.2s ease;
     }
     
     .form-control:focus {
         outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px var(--accent-focus, rgba(91,95,207,0.1));
+        border-color: hsl(var(--primary));
+        box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
     }
     
     /* Windows selectbox fix */
@@ -119,21 +118,20 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
         background-repeat: no-repeat;
         background-position: right 12px center;
         background-size: 20px;
         padding-right: 40px;
         line-height: 1.5;
         min-height: 44px;
-        color: var(--text-primary, #2f3640);
     }
     
     /* Windows-specific fixes */
     @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
         select.form-control {
-            color: var(--text-primary, #2f3640) !important;
-            background-color: var(--bg-secondary, white) !important;
+            color: hsl(var(--foreground)) !important;
+            background-color: hsl(var(--background)) !important;
         }
     }
     
@@ -143,14 +141,14 @@
     }
     
     select.form-control:focus {
-        color: var(--text-primary, #2f3640);
-        background-color: var(--bg-secondary, white);
+        color: hsl(var(--foreground));
+        background-color: hsl(var(--background));
     }
     
     .btn-primary {
-        background: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--accent-color, #5b5fcf);
-        color: var(--bg-secondary, white);
+        background: hsl(var(--primary));
+        border: 1px solid hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
         padding: 12px 24px;
         border-radius: 8px;
         font-size: 14px;
@@ -164,23 +162,22 @@
     }
     
     .btn-primary:hover {
-        background: var(--accent-hover, #4b4fbf);
-        border-color: var(--accent-hover, #4b4fbf);
-        box-shadow: 0 3px 8px var(--accent-shadow, rgba(91,95,207,0.3));
+        opacity: 0.9;
         transform: translateY(-1px);
     }
     
     .btn-primary:disabled {
-        background: var(--text-disabled, #94a3b8);
-        border-color: var(--text-disabled, #94a3b8);
+        background: hsl(var(--muted));
+        border-color: hsl(var(--border));
+        color: hsl(var(--muted-foreground));
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
     }
     
     .ssl-details-card {
-        background: var(--info-bg, #f0f9ff);
-        border: 1px solid var(--info-border, #bae6fd);
+        background: hsl(var(--muted) / 0.5);
+        border: 1px solid hsl(var(--border));
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 20px;
@@ -189,7 +186,7 @@
     .ssl-details-card h4 {
         font-size: 14px;
         font-weight: 700;
-        color: var(--info-text, #0c4a6e);
+        color: hsl(var(--foreground));
         margin-bottom: 15px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -198,11 +195,11 @@
     .ssl-detail-item {
         margin-bottom: 10px;
         font-size: 14px;
-        color: var(--text-secondary, #64748b);
+        color: hsl(var(--muted-foreground));
     }
     
     .ssl-detail-item strong {
-        color: var(--text-primary, #2f3640);
+        color: hsl(var(--foreground));
         font-weight: 600;
         margin-right: 8px;
     }
@@ -218,13 +215,13 @@
     }
     
     .ssl-status.active {
-        background: var(--success-bg, #d1fae5);
-        color: var(--success-text, #065f46);
+        background: #d1fae5;
+        color: #065f46;
     }
     
     .ssl-status.inactive {
-        background: var(--warning-bg, #fef3c7);
-        color: var(--warning-text, #92400e);
+        background: #fef3c7;
+        color: #92400e;
     }
     
     .alert {
@@ -236,15 +233,15 @@
     }
     
     .alert-success {
-        background: var(--info-bg, #f0f9ff);
-        border: 1px solid var(--info-border, #bae6fd);
-        color: var(--info-text, #0c4a6e);
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        color: #0c4a6e;
     }
     
     .alert-danger {
-        background: var(--danger-bg, #fef2f2);
-        border: 1px solid var(--danger-border, #fecaca);
-        color: var(--danger-text, #991b1b);
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
     }
     
     .loading-spinner {
@@ -297,7 +294,7 @@
 
                 <div class="form-group">
                     <label class="form-label">{% trans "Select Website" %}</label>
-                    <select ng-change="showbtn()" ng-model="virtualHost" class="form-control">
+                    <select ng-change="showbtn()" ng-model="virtualHost" class="form-control" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='{$ 'currentColor' $}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;);">
                         <option value="">-- Select a website --</option>
                         {% for items in websiteList %}
                             <option>{{ items }}</option>

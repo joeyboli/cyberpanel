@@ -7,15 +7,15 @@
     {% get_current_language as LANGUAGE_CODE %}
     <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <div class="container">
+    <div class="w-full p-4 md:p-12">
         <div id="page-title">
             <h2>{% trans "Backup Sites Configurations" %}</h2>
         </div>
 
 
-        <div ng-controller="BackupSchedule" class="panel">
+        <div ng-controller="BackupSchedule" class="bg-card rounded-2xl shadow-sm border border-border/50 mb-12 overflow-hidden">
             <div class="panel-body">
-                <h3 class="content-box-header">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
                     {% trans " Add WordPress Sites for Remote Backup" %} <img ng-hide="BackupScheduleLoading"
                                                          src="{% static 'images/loading.gif' %}">
                 </h3>
@@ -25,11 +25,11 @@
                     <span style="display: none" id="RemoteScheduleID"> {{ RemoteScheduleID }}</span>
 
 
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label">{% trans "Selecte WordPress Site" %}</label>
                         <div class="col-sm-6">
                             <select ng-model="Wpsite" id="Wpsite"
-                                    class="form-control">
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                 {% for i in WPsites %}
                                 <option value="{{ i.id }}">{{ i.title }}</option>
                                 {% endfor %}
@@ -38,16 +38,16 @@
                         </div>
                     </div>
 
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label"></label>
                         <div class="col-sm-4">
                             <button type="button" ng-click="AddWPsiteforRemoteBackup()"
-                                    class="btn btn-primary btn-lg">{% trans "Save Backup Schedule" %}</button>
+                                    class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg transition-all">{% trans "Save Backup Schedule" %}</button>
 
                         </div>
                     </div>
                 </form>
-                <h3 class="content-box-header">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
                     {% trans "Saved Sites For Remote Backup" %} </h3>
                 <table class="table-spacing" style="width: 100%">
                     <thead style="color: white; background-color: #0a6ebd">

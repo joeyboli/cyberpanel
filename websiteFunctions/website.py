@@ -3576,7 +3576,7 @@ context /cyberpanel_suspension_page.html {
             import requests
             import json
             try:
-                response = requests.post(url, data=json.dumps(addon_data))
+                response = requests.post(url, data=json.dumps(addon_data), timeout=5)
                 Status = response.json().get('status', 0)
             except Exception:
                 Status = 0

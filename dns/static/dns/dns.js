@@ -7,14 +7,13 @@
 
 app.controller('createNameserver', function ($scope, $http) {
 
-    $scope.createNameserverLoading = true;
+    $scope.createNameserverLoading = false;
     $scope.nameserverCreationFailed = true;
     $scope.nameserverCreated = true;
     $scope.couldNotConnect = true;
 
     $scope.createNameserverFunc = function () {
-
-        var domainForNS = $scope.domainForNS;
+        $scope.createNameserverLoading = true;
 
         var ns1 = $scope.firstNS;
         var ns2 = $scope.secondNS;
@@ -47,7 +46,7 @@ app.controller('createNameserver', function ($scope, $http) {
 
 
             if (response.data.NSCreation === 1) {
-                $scope.createNameserverLoading = true;
+                $scope.createNameserverLoading = false;
                 $scope.nameserverCreationFailed = true;
                 $scope.nameserverCreated = false;
                 $scope.couldNotConnect = true;
@@ -57,7 +56,7 @@ app.controller('createNameserver', function ($scope, $http) {
                 $scope.nameServerOne = $scope.secondNS;
 
             } else {
-                $scope.createNameserverLoading = true;
+                $scope.createNameserverLoading = false;
                 $scope.nameserverCreationFailed = false;
                 $scope.nameserverCreated = true;
                 $scope.couldNotConnect = true;
@@ -68,7 +67,7 @@ app.controller('createNameserver', function ($scope, $http) {
         }
 
         function cantLoadInitialDatas(response) {
-            $scope.createNameserverLoading = true;
+            $scope.createNameserverLoading = false;
             $scope.nameserverCreationFailed = true;
             $scope.nameserverCreated = true;
             $scope.couldNotConnect = false;
@@ -1311,11 +1310,18 @@ app.controller('addModifyDNSRecordsCloudFlare', function ($scope, $http, $window
 /* Java script code for CloudFlare */
 
 
-app.controller('ResetDNSconf', function ($scope, $http, $timeout){
+app.controller('ResetDNSconf', function ($scope, $http, $timeout, $window) {
     $scope.Loading = true;
     $scope.NotifyBox = true;
     $scope.InstallBox = true;
 
+    var statusTimer;
+
+    $scope.$on('$destroy', function () {
+        if (statusTimer) {
+            $timeout.cancel(statusTimer);
+        }
+    });
 
     $scope.resetDNS = function () {
         $scope.Loading = false;
@@ -1351,7 +1357,7 @@ app.controller('ResetDNSconf', function ($scope, $http, $timeout){
 
                 $scope.statusfile = response.data.tempStatusPath
 
-                $timeout(getRequestStatus, 1000);
+                statusTimer = $timeout(getRequestStatus, 1000);
 
             } else {
                 $scope.errorMessage = response.data.error_message;
@@ -1418,10 +1424,12 @@ app.controller('ResetDNSconf', function ($scope, $http, $timeout){
                 $scope.installationFailed = true;
 
                 $scope.requestData = response.data.requestStatus;
-                $timeout(getRequestStatus, 1000);
+                statusTimer = $timeout(getRequestStatus, 1000);
             } else {
                 // Notifications
-                $timeout.cancel();
+                if (statusTimer) {
+                    $timeout.cancel(statusTimer);
+                }
                 $scope.NotifyBox = false;
                 $scope.InstallBox = false;
                 $scope.Loading = true;
@@ -1435,7 +1443,7 @@ app.controller('ResetDNSconf', function ($scope, $http, $timeout){
                     $scope.errorMessage = response.data.error_message;
                 } else {
                     $scope.modSecSuccessfullyInstalled = false;
-                    $timeout(function () {
+                    statusTimer = $timeout(function () {
                         $window.location.reload();
                     }, 3000);
                 }

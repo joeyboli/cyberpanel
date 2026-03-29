@@ -20,20 +20,16 @@ def get_website_resource_usage(externalApp):
             cpu_percent = 0
             memory_percent = 0
 
-        # Get disk usage using du command
-        website_path = f"/home/{user}/public_html"
-        if os.path.exists(website_path):
-            # Get disk usage in MB
-            command = f"du -sm {website_path} | cut -f1"
-            disk_used = float(ProcessUtilities.outputExecutioner(command))
-            
-            # Get total disk space
-            command = f"df -m {website_path} | tail -1 | awk '{{print $2}}'"
-            disk_total = float(ProcessUtilities.outputExecutioner(command))
-            
-            # Calculate percentage
+        # Get disk usage from cached data in database (du is too slow for real-time)
+        from websiteFunctions.models import Websites
+        import json
+        try:
+            website = Websites.objects.get(externalApp=user)
+            config = json.loads(website.config)
+            disk_used = float(config.get('DiskUsage', 0))
+            disk_total = float(website.package.diskSpace)
             disk_percent = (disk_used / disk_total) * 100 if disk_total > 0 else 0
-        else:
+        except:
             disk_used = 0
             disk_total = 0
             disk_percent = 0

@@ -1,297 +1,130 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Delete DNS Zone - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<style>
-    /* Delete DNS Zone Page Styles with Dark Mode Support */
-    .container {
-        background: var(--bg-primary, #f0f0ff);
-        min-height: 100vh;
-        padding: 20px;
-    }
-
-    #page-title {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    #page-title h2 {
-        color: var(--text-primary, #2f3640);
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    #page-title p {
-        color: var(--text-secondary, #8893a7);
-        font-size: 16px;
-        line-height: 1.6;
-    }
-
-    #page-title a {
-        margin-left: 15px;
-    }
-
-    .btn-border.border-red {
-        background: transparent;
-        border: 1px solid var(--danger-color, #dc3545);
-        color: var(--danger-color, #dc3545) !important;
-        padding: 6px 16px;
-        font-size: 14px;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .btn-border.border-red:hover {
-        background: var(--danger-color, #dc3545);
-        color: white !important;
-    }
-
-    .panel {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .panel-body {
-        padding: 30px;
-    }
-
-    .content-box-header {
-        color: var(--text-primary, #2f3640);
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .example-box-wrapper {
-        background: transparent;
-    }
-
-    .form-horizontal {
-        background: transparent;
-        border: none;
-        padding: 0;
-    }
-
-    .form-group {
-        margin-bottom: 24px;
-    }
-
-    .control-label {
-        font-weight: 600;
-        color: var(--text-primary, #2f3640);
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .form-control {
-        background: var(--bg-secondary, white);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        padding: 12px 16px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        transition: all 0.2s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px var(--accent-focus, rgba(91,95,207,0.1));
-    }
-
-    select.form-control {
-        cursor: pointer;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        background: var(--danger-color, #dc3545);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--danger-hover, #c82333);
-        box-shadow: 0 4px 12px var(--danger-shadow, rgba(220,53,69,0.3));
-        transform: translateY(-1px);
-    }
-
-    .btn-lg {
-        padding: 14px 28px;
-        font-size: 16px;
-    }
-
-    .btn-block {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .btn-blue-alt {
-        background: var(--accent-color, #5b5fcf);
-        color: white;
-    }
-
-    .btn-blue-alt:hover {
-        background: var(--accent-hover, #4b4fbf);
-        box-shadow: 0 4px 12px var(--accent-shadow, rgba(91,95,207,0.3));
-        transform: translateY(-1px);
-    }
-
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .alert-danger {
-        background: var(--danger-bg, #fee2e2);
-        border: 1px solid var(--danger-border, #fca5a5);
-        color: var(--danger-text, #991b1b);
-    }
-
-    .alert-success {
-        background: var(--success-bg, #d1fae5);
-        border: 1px solid var(--success-border, #6ee7b7);
-        color: var(--success-text, #065f46);
-    }
-
-    .alert strong {
-        font-weight: 700;
-    }
-
-    /* PowerDNS disabled state */
-    .text-center h3 {
-        color: var(--text-primary, #2f3640);
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-        .panel-body {
-            padding: 20px;
-        }
-        
-        #page-title h2 {
-            font-size: 24px;
-        }
-    }
-</style>
-
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Delete DNS Zone" %} - <a  target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" style="height: 23px;line-height: 21px;" class="btn btn-border btn-alt border-red btn-link font-red" title=""><span>{% trans "DNS Docs" %}</span></a></h2>
-   <p>{% trans "This page can be used to delete DNS Zone. Deleting the DNS zone will remove all its related records as well." %}</p>
-</div>
-<div class="panel">
-    <div class="panel-body">
-        <h3 class="content-box-header">
+<div class="w-full p-4 md:p-12" ng-controller="deleteDNSZone">
+    <div class="mb-12 text-center">
+        <h1 class="text-5xl font-extrabold text-foreground tracking-tight sm:text-6xl flex items-center justify-center gap-4">
+            <i data-lucide="trash-2" class="w-12 h-12 text-destructive"></i>
             {% trans "Delete DNS Zone" %}
-        </h3>
-        <div ng-controller="deleteDNSZone" class="example-box-wrapper">
+        </h1>
+        <p class="mt-6 max-w-3xl mx-auto text-2xl text-muted-foreground">
+            {% trans "This page can be used to delete DNS Zone. Deleting the DNS zone will remove all its related records as well." %}
+        </p>
+        <div class="mt-8 flex justify-center gap-4">
+            <a target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" class="inline-flex items-center gap-2 px-6 py-3 bg-accent/50 text-accent-foreground border border-border rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                {% trans "DNS Documentation" %}
+            </a>
+        </div>
+    </div>
 
-
+    <div class="space-y-12">
         {% if not status %}
-            <div class="col-md-12 text-center" style="margin-bottom: 2%;">
-                <h3>{% trans "PowerDNS is disabled." %}
-                    <a href="{% url 'managePowerDNS' %}"><button class="btn btn-alt btn-hover btn-blue-alt">
-                        <span>{% trans "Enable Now" %}</span>
-                        <i class="glyph-icon icon-arrow-right"></i>
-                    </button></a></h3>
+            <div class="bg-warning/10 border border-warning/20 rounded-2xl p-8 mb-8 flex items-center gap-6">
+                <div class="w-16 h-16 bg-warning/20 rounded-2xl flex items-center justify-center text-warning shrink-0">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-foreground mb-2">{% trans "PowerDNS is disabled" %}</h3>
+                    <p class="text-muted-foreground">
+                        {% trans "You need to enable PowerDNS to delete DNS zones. Some features may be unavailable." %}
+                        <a href="{% url 'managePowerDNS' %}" class="text-primary font-bold hover:underline ml-2">{% trans "Enable PowerDNS →" %}</a>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
+            <div class="bg-muted/30 p-8 border-bottom border-border">
+                <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                    <span class="w-2 h-8 bg-destructive rounded-full"></span>
+                    {% trans "Delete DNS Zone" %}
+                </h2>
             </div>
 
-        {% else %}
-
-            <form  action="/" class="form-horizontal bordered-row panel-body">
-
-                 <div class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Select Zone" %}</label>
-                    <div class="col-sm-6">
-                        <select ng-model="selectedZone" class="form-control">
+            <div class="p-8 md:p-12">
+                <form class="space-y-8">
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                            {% trans "Select Zone" %}
+                        </label>
+                        <select ng-model="selectedZone" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300">
+                            <option value="">-- {% trans "Select a zone to delete" %} --</option>
                             {% for items in domainsList %}
                                 <option>{{ items }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                </div>
 
-            <div class="form-group">
-                    <label class="col-sm-3 control-label"></label>
-                    <div class="col-sm-4">
-                         <button type="button" ng-click="deleteZone()" class="btn btn-primary btn-lg">{% trans "Delete Zone" %}</button>
+                    <div class="flex flex-col gap-4">
+                        <button type="button" ng-click="deleteZone()" class="w-full inline-flex items-center justify-center gap-3 px-10 py-5 bg-destructive text-destructive-foreground rounded-2xl font-bold text-lg hover:bg-destructive/90 transition-all duration-300 shadow-lg shadow-destructive/20" ng-disabled="!selectedZone">
+                            <i data-lucide="trash-2" class="w-6 h-6"></i>
+                            {% trans "Delete Zone" %}
+                        </button>
 
+                        <button type="button" ng-hide="deleteZoneButton" ng-click="deleteZoneFinal()" class="w-full inline-flex items-center justify-center gap-3 px-10 py-5 bg-destructive text-destructive-foreground rounded-2xl font-bold text-lg hover:bg-destructive/80 border-4 border-destructive animate-pulse transition-all duration-300">
+                            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                            {% trans "Are you sure? This cannot be undone." %}
+                        </button>
                     </div>
+
+                    <div class="space-y-4">
+                        <div ng-hide="deleteFailure" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <i data-lucide="alert-octagon" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <strong class="text-lg">{% trans "Cannot delete zone" %}</strong>
+                                <p class="mt-1">{% trans "Error message: " %}{$ errorMessage $}</p>
+                            </div>
+                        </div>
+
+                        <div ng-hide="deleteSuccess" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <strong class="text-lg">{% trans "Zone successfully erased" %}</strong>
+                                <p class="mt-1">{% trans "Zone for domain:" %} <strong class="font-mono">{$ deletedZone $}</strong></p>
+                            </div>
+                        </div>
+
+                        <div ng-hide="couldNotConnect" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4">
+                            <i data-lucide="wifi-off" class="w-8 h-8 shrink-0"></i>
+                            <div>{% trans "Could not connect to server. Please refresh this page." %}</div>
+                        </div>
+                    </div>
+                </form>
             </div>
-
-
-            <div ng-hide="deleteZoneButton" class="form-group">
-                    <label class="col-sm-3 control-label"></label>
-                    <div class="col-sm-4">
-                         <button type="button" ng-click="deleteZoneFinal()" class="btn btn-primary btn-lg btn-block">{% trans "Are you sure?" %}</button>
-
-                    </div>
-            </div>
-
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label"></label>
-                    <div class="col-sm-6">
-                            <div ng-hide="deleteFailure" class="alert alert-danger">
-                                        <p>{% trans "Cannot delete zone. Error message: " %}{$ errorMessage $}</p>
-                            </div>
-
-                            <div ng-hide="deleteSuccess" class="alert alert-success">
-                                <p>{% trans "Zone for domain:" %} <strong>{$ deletedZone $}</strong> {% trans "is successfully erased." %}</p>
-                            </div>
-
-                            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                <p>{% trans "Could not connect to server. Please refresh this page." %}</p>
-                            </div>
-                    </div>
-
-
-
-                </div>
-
-
-            </form>
-
-        {% endif %}
-
-
-
-
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
-</div>
+        const observer = new MutationObserver((mutations) => {
+            let shouldCreate = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    shouldCreate = true;
+                }
+            });
+            if (shouldCreate && typeof lucide !== 'undefined') {
+                lucide.createIcons({
+                    root: document.querySelector('[ng-controller="deleteDNSZone"]')
+                });
+            }
+        });
 
-
+        observer.observe(document.querySelector('[ng-controller="deleteDNSZone"]'), {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
 {% endblock %}

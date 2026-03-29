@@ -7,221 +7,123 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<style>
-    /* DNS Page Styles with Dark Mode Support */
-    .container {
-        background: var(--bg-primary, #f0f0ff);
-        min-height: 100vh;
-        padding: 20px;
-    }
+<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                    <i data-lucide="globe" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "DNS Functions" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Create, edit and delete DNS zones on this page." %}
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    #page-title {
-        text-align: center;
-        margin-bottom: 30px;
-    }
+        <!-- Available Functions Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Available Functions" %}
+            </h2>
 
-    #page-title h2 {
-        color: var(--text-primary, #2f3640);
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    #page-title p {
-        color: var(--text-secondary, #8893a7);
-        font-size: 16px;
-    }
-
-    .panel {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-
-    .panel-body {
-        padding: 30px;
-    }
-
-    .content-box-header {
-        color: var(--text-primary, #2f3640);
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .tile-box {
-        display: block;
-        text-decoration: none;
-        padding: 25px;
-        border-radius: 8px;
-        text-align: center;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-    }
-
-    .tile-box.btn-primary {
-        background: var(--accent-color, #5b5fcf) !important;
-        color: white !important;
-        border: 1px solid var(--accent-color, #5b5fcf);
-    }
-
-    .tile-box.btn-primary:hover {
-        background: var(--accent-hover, #4b4fbf) !important;
-        box-shadow: 0 4px 12px var(--accent-shadow, rgba(91,95,207,0.3));
-        transform: translateY(-2px);
-    }
-
-    .tile-box .tile-header {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        color: inherit;
-    }
-
-    .tile-box .tile-content-wrapper i {
-        font-size: 48px;
-        color: inherit;
-    }
-
-    .example-box-wrapper {
-        background: transparent;
-    }
-
-    .btn-min-width {
-        min-width: 250px;
-    }
-
-    @media (max-width: 768px) {
-        .btn-min-width {
-            min-width: 100%;
-        }
-    }
-</style>
-
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "DNS Functions" %}</h2>
-   <p>{% trans "Create, edit and delete DNS zones on this page." %}</p>
-</div>
-
-    <div class="panel col-md-11">
-        <div class="panel-body">
-            <h3 class="content-box-header">
-            {% trans "Available Functions" %}
-            </h3>
-
-             <div class="example-box-wrapper">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% if type == 3 %}
+                    <!-- Create DNS Zone -->
+                    <a href="{% url 'createDNSZone' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="globe" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Create DNS Zone" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Set up a new DNS zone" %}</p>
+                        </div>
+                    </a>
 
-                <div class="row">
+                    <!-- Delete Zone -->
+                    <a href="{% url 'deleteDNSZone' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+                            <i data-lucide="trash-2" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-destructive transition-colors">{% trans "Delete Zone" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Remove existing DNS zones" %}</p>
+                        </div>
+                    </a>
 
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'createDNSZone' %}" title="{% trans 'Create DNS Zone' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Create DNS Zone" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="glyph-icon icon-dashboard"></i>
-                                        </div>
-                                    </a>
-                    </div>
+                    <!-- Add Delete/Records -->
+                    <a href="{% url 'addDeleteDNSRecords' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 text-blue-500">
+                            <i data-lucide="list" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-blue-500 transition-colors">{% trans "Add Delete/Records" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Manage DNS records" %}</p>
+                        </div>
+                    </a>
+                {% else %}
+                    <!-- Create Nameserver -->
+                    <a href="{% url 'createNameserver' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="server" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Create Nameserver" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Set up custom nameservers" %}</p>
+                        </div>
+                    </a>
 
+                    <!-- Create DNS Zone -->
+                    <a href="{% url 'createDNSZone' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 text-emerald-500">
+                            <i data-lucide="globe" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-emerald-500 transition-colors">{% trans "Create DNS Zone" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Set up a new DNS zone" %}</p>
+                        </div>
+                    </a>
 
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'deleteDNSZone' %}" title="{% trans 'Delete Zone' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Delete Zone" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="glyph-icon icon-dashboard"></i>
-                                        </div>
-                                    </a>
-                    </div>
+                    <!-- Delete Zone -->
+                    <a href="{% url 'deleteDNSZone' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+                            <i data-lucide="trash-2" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-destructive transition-colors">{% trans "Delete Zone" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Remove existing DNS zones" %}</p>
+                        </div>
+                    </a>
 
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'addDeleteDNSRecords' %}" title="{% trans 'Add Delete Records' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Add Delete/Records" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="glyph-icon icon-dashboard"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-                </div>
-
-                 {% else %}
-
-                 <div class="row">
-
-
-                    <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'createNameserver' %}" title="{% trans 'Create Nameserver' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Create Nameserver" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-server"></i>
-                                            </div>
-                                        </a>
-                    </div>
-
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'createDNSZone' %}" title="{% trans 'Create DNS Zone' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Create DNS Zone" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-globe"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'deleteDNSZone' %}" title="{% trans 'Delete Zone' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Delete Zone" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-trash"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'addDeleteDNSRecords' %}" title="{% trans 'Add Delete Records' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Add Delete/Records" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-folder-open"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-                </div>
-
-
-
-                 {% endif %}
-
-
-
-             </div>
+                    <!-- Add Delete/Records -->
+                    <a href="{% url 'addDeleteDNSRecords' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 text-blue-500">
+                            <i data-lucide="folder-open" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-blue-500 transition-colors">{% trans "Add Delete/Records" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Manage DNS records" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 
 
 {% endblock %}

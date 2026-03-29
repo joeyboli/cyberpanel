@@ -8,1146 +8,511 @@
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
         display: none !important;
     }
-    
-    /* Dashboard Specific Styles */
-    .dashboard-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .dashboard-container {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-    
-    /* Overview Section */
-    .overview-section {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .section-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .section-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-    }
-    
-    .stat-card {
-        background: var(--bg-secondary, white);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 12px;
-        padding: 20px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stat-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    
-    .stat-card-title {
-        font-size: 13px;
-        color: var(--text-secondary, #8893a7);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .stat-card-value {
-        font-size: 13px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    .progress-bar-container {
-        width: 100%;
-        height: 8px;
-        background: var(--border-color, #e8e9ff);
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    
-    .progress-bar {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-        background: var(--accent-color, #5b5fcf);
-    }
-    
-    .stat-card-info {
-        margin-top: 10px;
-        font-size: 13px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Insights Section */
-    .insights-section {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .insights-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 15px;
-    }
-    
-    .insight-card {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        padding: 20px 15px;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .insight-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(91,95,207,0.1);
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .insight-icon {
-        width: 48px;
-        height: 48px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px;
-        color: white;
-        font-size: 20px;
-    }
-    
-    .insight-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 5px;
-    }
-    
-    .insight-label {
-        font-size: 13px;
-        color: var(--text-secondary, #8893a7);
-        font-weight: 500;
-    }
-    
-    /* Activity Board */
-    .activity-section {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .activity-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-    
-    .activity-tabs {
-        display: flex;
-        gap: 3px;
-        background: var(--bg-primary, #f0f0ff);
-        padding: 3px;
-        border-radius: 8px;
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .activity-tab {
-        background: transparent;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-    }
-    
-    .activity-tab:hover {
-        color: var(--accent-color, #5b5fcf);
-        background: rgba(91,95,207,0.1);
-    }
-    
-    .activity-tab.active {
-        background: var(--accent-color, #5b5fcf);
-        color: white;
-        box-shadow: 0 2px 4px rgba(91,95,207,0.3);
-    }
-    
-    .activity-tab i {
-        font-size: 14px;
-    }
-    
-    .tab-content {
-        display: none;
-    }
-    
-    .tab-content.active {
-        display: block;
-    }
-    
-    .activity-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        display: table;
-    }
-    
-    .activity-table thead {
-        display: table-header-group;
-    }
-    
-    .activity-table tbody {
-        display: table-row-group;
-    }
-    
-    .activity-table tr {
-        display: table-row;
-    }
-    
-    .activity-table th,
-    .activity-table td {
-        display: table-cell !important;
-    }
-    
-    .activity-table tr {
-        display: table-row !important;
-    }
-    
-    .activity-table thead {
-        display: table-header-group !important;
-    }
-    
-    .activity-table tbody {
-        display: table-row-group !important;
-    }
-    
-    .activity-table th {
-        text-align: left;
-        padding: 14px 12px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #ffffff;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        border-bottom: 2px solid rgba(91, 95, 207, 0.3);
-        background: linear-gradient(135deg, #5b5fcf 0%, #4a4fc7 100%);
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        vertical-align: middle;
-        white-space: nowrap;
-    }
-    
-    .activity-table thead {
-        background: linear-gradient(135deg, #5b5fcf 0%, #4a4fc7 100%);
-    }
-    
-    .activity-table tbody tr {
-        border-bottom: 1px solid var(--border-color, #f0f0ff);
-    }
-    
-    .activity-table tbody tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .activity-table td {
-        padding: 12px 12px;
-        font-size: 13px;
-        color: var(--text-primary, #2f3640);
-        border-bottom: 1px solid var(--border-color, #f0f0ff);
-        vertical-align: middle;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    .activity-table td:nth-child(1) { 
-        min-width: 80px;
-        max-width: 120px;
-    }
-    
-    .activity-table td:nth-child(2) { 
-        min-width: 120px;
-        max-width: 180px;
-        font-family: monospace;
-        font-size: 12px;
-    }
-    
-    .activity-table td:nth-child(3) { 
-        min-width: 80px;
-        max-width: 120px;
-    }
-    
-    .activity-table td:nth-child(4) { 
-        min-width: 140px;
-        max-width: 200px;
-        white-space: nowrap;
-    }
-    
-    .activity-table td:nth-child(5) { 
-        min-width: 150px;
-        max-width: 300px;
-    }
-    
-    .activity-table td:nth-child(6) { 
-        min-width: 120px;
-        text-align: center;
-    }
-    
-    /* SSH Logs table specific column widths */
-    .ssh-logs-table th:nth-child(1),
-    .ssh-logs-table td:nth-child(1) {
-        min-width: 180px;
-        max-width: 220px;
-        white-space: nowrap;
-    }
-    
-    .ssh-logs-table th:nth-child(2),
-    .ssh-logs-table td:nth-child(2) {
-        min-width: 300px;
-        word-break: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    /* Process table specific column widths (for modal only) */
-    .process-table thead th:nth-child(1),
-    .process-table tbody td:nth-child(1) { 
-        min-width: 70px;
-        max-width: 90px;
-    }
-    
-    .process-table thead th:nth-child(2),
-    .process-table tbody td:nth-child(2) { 
-        min-width: 80px;
-        max-width: 100px;
-    }
-    
-    .process-table thead th:nth-child(3),
-    .process-table tbody td:nth-child(3) { 
-        min-width: 90px;
-        max-width: 120px;
-    }
-    
-    .process-table thead th:nth-child(4),
-    .process-table tbody td:nth-child(4) { 
-        min-width: 200px;
-    }
-    
-    .process-table thead th:nth-child(5),
-    .process-table tbody td:nth-child(5) { 
-        min-width: 150px;
-        max-width: 250px;
-    }
-    
-    .process-table thead th:nth-child(6),
-    .process-table tbody td:nth-child(6) { 
-        min-width: 100px;
-        max-width: 120px;
-        text-align: center;
-    }
-    
-    .activity-table tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .view-activity-btn {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        color: var(--accent-color, #5b5fcf);
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .view-activity-btn:hover {
-        background: var(--accent-color, #5b5fcf);
-        color: white;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 2px 4px rgba(91,95,207,0.3);
-    }
-    
-    /* Pagination Styles */
-    .pagination-container {
-        margin-top: 20px;
-        padding: 16px 20px;
-        background: #ffffff;
-        border: 1px solid #e8e9ff;
-        border-radius: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-    
-    .pagination-info {
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 500;
-    }
-    
-    .pagination-controls {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-    
-    .pagination-btn {
-        background: #f8f9ff;
-        border: 1px solid #e8e9ff;
-        color: #5b5fcf;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .pagination-btn:hover:not(:disabled) {
-        background: #5b5fcf;
-        color: #ffffff;
-        border-color: #5b5fcf;
-    }
-    
-    .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    .pagination-page-info {
-        color: #2f3640;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 0 8px;
-    }
-    
-    .pagination-goto {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .pagination-goto input {
-        width: 80px;
-        padding: 6px 8px;
-        border: 1px solid #e8e9ff;
-        border-radius: 6px;
-        font-size: 12px;
-        margin-right: 6px;
-    }
-    
-    .pagination-goto input:focus {
-        outline: none;
-        border-color: #5b5fcf;
-        box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-    }
-    
-    .chart-container {
-        height: 280px;
-        position: relative;
-        padding: 15px;
-        background: var(--bg-hover, #fafbff);
-        border-radius: 8px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        margin-top: 10px;
-    }
-    
-    /* Modal Styles */
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0,0,0,0.5);
-        z-index: 10000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        backdrop-filter: blur(2px);
-        overflow-y: auto;
-    }
-    
-    .modal-backdrop.show {
-        display: flex !important;
-    }
-    
-    /* Ensure modal is hidden when ng-show is false */
-    .modal-backdrop.ng-hide {
-        display: none !important;
-    }
-    
-    .modal-content {
-        max-width: 90vw;
-        max-height: 90vh;
-        width: 600px;
-        background: var(--bg-secondary, #fff);
-        border-radius: 16px;
-        box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-        padding: 32px 28px 24px;
-        position: relative;
-        overflow-y: auto;
-        animation: modalFadeIn 0.3s ease-out;
-        margin: auto;
-        align-self: center;
-    }
-    
-    /* Ensure tables inside modal render correctly */
-    .modal-content table {
-        display: table !important;
-        width: 100% !important;
-    }
-    
-    .modal-content table thead {
-        display: table-header-group !important;
-    }
-    
-    .modal-content table tbody {
-        display: table-row-group !important;
-    }
-    
-    .modal-content table tr {
-        display: table-row !important;
-    }
-    
-    .modal-content table th,
-    .modal-content table td {
-        display: table-cell !important;
-    }
-    
-    @keyframes modalFadeIn {
-        from { 
-            opacity: 0; 
-            transform: scale(0.9) translateY(-20px); 
-        }
-        to { 
-            opacity: 1; 
-            transform: scale(1) translateY(0); 
-        }
-    }
-    
-    /* Brand Bird Badge */
-    .brand-badge {
-        background: var(--text-primary, #2f3640);
-        color: var(--bg-secondary, white);
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .brand-badge img {
-        width: 16px;
-        height: 16px;
-    }
-    
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .activity-tabs {
-            flex-wrap: wrap;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .stats-grid,
-        .insights-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .activity-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        .activity-table {
-            font-size: 12px;
-        }
-        
-        .activity-table th,
-        .activity-table td {
-            padding: 8px;
-        }
-        
-        .view-activity-btn {
-            font-size: 12px;
-            padding: 4px 12px;
-        }
-        
-        .activity-tabs {
-            width: 100%;
-            overflow-x: auto;
-            flex-wrap: nowrap;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-wrapper">
-    <div class="dashboard-container" ng-controller="dashboardStatsController">
+<div class="space-y-12" ng-controller="dashboardStatsController">
     <!-- Overview Section -->
-    <div class="overview-section">
-        <h2 class="section-title">OVERVIEW</h2>
-        <div class="stats-grid" ng-controller="systemStatusInfo">
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <span class="stat-card-title">CPU USAGE</span>
-                    <span class="stat-card-value">({$ cpuUsage $}%)</span>
+    <div class="space-y-6">
+        <h2 class="text-base font-semibold tracking-wider text-muted-foreground uppercase">Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" ng-controller="systemStatusInfo">
+            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+                <div class="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <h3 class="text-lg font-semibold tracking-tight">CPU Usage</h3>
+                    <span class="text-lg font-bold text-muted-foreground">{$ cpuUsage $}%</span>
                 </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {$ cpuUsage $}%;"></div>
+                <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-secondary">
+                    <div class="h-full bg-primary transition-all duration-300" style="width: {$ cpuUsage $}%;"></div>
                 </div>
-                <div class="stat-card-info">You've {$ cpuCores $} Core(s) CPU.</div>
+                <p class="mt-4 text-base text-muted-foreground">{$ cpuCores $} CPU Core(s)</p>
             </div>
-            
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <span class="stat-card-title">MEMORY USAGE</span>
-                    <span class="stat-card-value">({$ ramUsage $}%)</span>
+
+            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+                <div class="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <h3 class="text-lg font-semibold tracking-tight">Memory Usage</h3>
+                    <span class="text-lg font-bold text-muted-foreground">{$ ramUsage $}%</span>
                 </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {$ ramUsage $}%;"></div>
+                <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-secondary">
+                    <div class="h-full bg-primary transition-all duration-300" style="width: {$ ramUsage $}%;"></div>
                 </div>
-                <div class="stat-card-info">You've {$ ramTotalMB $} MB Memory.</div>
+                <p class="mt-4 text-base text-muted-foreground">{$ ramTotalGB $} GB Ram</p>
             </div>
-            
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <span class="stat-card-title">DISK USAGE</span>
-                    <span class="stat-card-value">({$ diskUsage $}%)</span>
+
+            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+                <div class="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <h3 class="text-lg font-semibold tracking-tight">Disk Usage</h3>
+                    <span class="text-lg font-bold text-muted-foreground">{$ diskUsage $}%</span>
                 </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {$ diskUsage $}%;"></div>
+                <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-secondary">
+                    <div class="h-full bg-primary transition-all duration-300" style="width: {$ diskUsage $}%;"></div>
                 </div>
-                <div class="stat-card-info">You've {$ diskFreeGB $} GB remaining out of {$ diskTotalGB $} GB.</div>
+                <p class="mt-4 text-base text-muted-foreground">{$ diskFreeGB $} GB remaining out of {$ diskTotalGB $} GB.</p>
             </div>
         </div>
     </div>
-    
+
     <!-- Insights Section -->
-    <div class="insights-section">
-        <h2 class="section-title">INSIGHTS</h2>
-        <div class="insights-grid">
-            <div class="insight-card">
-                <div class="insight-icon">
-                    <i class="fas fa-users"></i>
+    <div class="space-y-6">
+        <h2 class="text-base font-semibold tracking-wider text-muted-foreground uppercase">Insights</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <i data-lucide="users" class="h-8 w-8"></i>
                 </div>
-                <div class="insight-value">{$ totalUsers || 0 $}</div>
-                <div class="insight-label">Users</div>
+                <div class="text-4xl font-bold">{$ totalUsers || 0 $}</div>
+                <div class="text-base font-medium text-muted-foreground">Users</div>
             </div>
-            
-            <div class="insight-card">
-                <div class="insight-icon">
-                    <i class="fas fa-globe"></i>
+
+            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <i data-lucide="globe" class="h-8 w-8"></i>
                 </div>
-                <div class="insight-value">{$ totalSites || 0 $}</div>
-                <div class="insight-label">Websites</div>
+                <div class="text-4xl font-bold">{$ totalSites || 0 $}</div>
+                <div class="text-base font-medium text-muted-foreground">Websites</div>
             </div>
-            
-            <div class="insight-card">
-                <div class="insight-icon" style="background: #5b87da;">
-                    <i class="fab fa-wordpress"></i>
+
+{#            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">#}
+{#                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#5b87da]/10 text-[#5b87da]">#}
+{#                    <i data-lucide="layout-template" class="h-8 w-8"></i>#}
+{#                </div>#}
+{#                <div class="text-4xl font-bold">{$ totalWPSites || 0 $}</div>#}
+{#                <div class="text-base font-medium text-muted-foreground">WordPress</div>#}
+{#            </div>#}
+
+            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <i data-lucide="database" class="h-8 w-8"></i>
                 </div>
-                <div class="insight-value">{$ totalWPSites || 0 $}</div>
-                <div class="insight-label">WordPress</div>
+                <div class="text-4xl font-bold">{$ totalDBs || 0 $}</div>
+                <div class="text-base font-medium text-muted-foreground">Databases</div>
             </div>
-            
-            <div class="insight-card">
-                <div class="insight-icon">
-                    <i class="fas fa-database"></i>
+
+            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <i data-lucide="mail" class="h-8 w-8"></i>
                 </div>
-                <div class="insight-value">{$ totalDBs || 0 $}</div>
-                <div class="insight-label">Databases</div>
+                <div class="text-4xl font-bold">{$ totalEmails || 0 $}</div>
+                <div class="text-base font-medium text-muted-foreground">Emails</div>
             </div>
-            
-            <div class="insight-card">
-                <div class="insight-icon">
-                    <i class="fas fa-envelope"></i>
+
+            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <i data-lucide="folder" class="h-8 w-8"></i>
                 </div>
-                <div class="insight-value">{$ totalEmails || 0 $}</div>
-                <div class="insight-label">Emails</div>
-            </div>
-            
-            <div class="insight-card">
-                <div class="insight-icon">
-                    <i class="fas fa-folder"></i>
-                </div>
-                <div class="insight-value">{$ totalFTPUsers || 0 $}</div>
-                <div class="insight-label">FTP Users</div>
+                <div class="text-4xl font-bold">{$ totalFTPUsers || 0 $}</div>
+                <div class="text-base font-medium text-muted-foreground">FTP Users</div>
             </div>
         </div>
     </div>
-    
+
     <!-- Activity Board -->
-    <div class="activity-section">
-        <div class="activity-header">
-            <h2 class="section-title">ACTIVITY BOARD</h2>
-            <div class="activity-tabs">
-                <button class="activity-tab active" onclick="switchTab('ssh-logins', this)">
-                    <i class="fas fa-terminal"></i>
-                    <span>Recent SSH Logins</span>
+    <div class="rounded-lg border border-border/50 bg-card shadow-sm overflow-hidden">
+        <div class="flex flex-col space-y-1.5 p-8">
+            <h2 class="text-xl font-semibold leading-none tracking-tight">Activity Board</h2>
+        </div>
+        <div class="px-8 pb-8">
+            <div class="inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full md:w-auto mb-8 flex-wrap md:flex-nowrap gap-1 h-auto border border-border/40">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('ssh-logins', this)">
+                    <i data-lucide="terminal" class="mr-2 h-5 w-5"></i>
+                    Recent SSH Logins
                 </button>
-                <button class="activity-tab" onclick="switchTab('ssh-logs', this)">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Recent SSH Logs</span>
-                    <span ng-if="securityAlerts.length > 0" style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px;">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('ssh-logs', this)">
+                    <i data-lucide="file-text" class="mr-2 h-5 w-5"></i>
+                    Recent SSH Logs
+                    <span ng-if="securityAlerts.length > 0" class="ml-2 rounded-full bg-destructive px-2 py-0.5 text-xs text-destructive-foreground">
                         {$ securityAlerts.length $}
                     </span>
                 </button>
-                <button class="activity-tab" onclick="switchTab('top-process', this)" ng-hide="hideSystemCharts">
-                    <i class="fas fa-microchip"></i>
-                    <span>Top Process</span>
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('top-process', this)" ng-hide="hideSystemCharts">
+                    <i data-lucide="cpu" class="mr-2 h-5 w-5"></i>
+                    Top Process
                 </button>
-                <button class="activity-tab" onclick="switchTab('traffic', this)" ng-hide="hideSystemCharts">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Traffic</span>
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('traffic', this)" ng-hide="hideSystemCharts">
+                    <i data-lucide="line-chart" class="mr-2 h-5 w-5"></i>
+                    Traffic
                 </button>
-                <button class="activity-tab" onclick="switchTab('diskio', this)" ng-hide="hideSystemCharts">
-                    <i class="fas fa-hard-drive"></i>
-                    <span>Disk IO</span>
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('diskio', this)" ng-hide="hideSystemCharts">
+                    <i data-lucide="hard-drive" class="mr-2 h-5 w-5"></i>
+                    Disk IO
                 </button>
-                <button class="activity-tab" onclick="switchTab('cpu-usage', this)" ng-hide="hideSystemCharts">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>CPU Usage</span>
-                </button>
-            </div>
-        </div>
-        
-        <!-- SSH Logins Tab -->
-        <div id="ssh-logins" class="tab-content active">
-            <div ng-if="loadingSSHLogins" style="text-align: center; padding: 20px; color: #8893a7;">
-                Loading SSH logins...
-            </div>
-            <div ng-if="!loadingSSHLogins && sshLogins.length === 0" style="text-align: center; padding: 20px; color: #8893a7;">
-                No recent SSH logins found.
-            </div>
-            <table class="activity-table" ng-if="!loadingSSHLogins && sshLogins.length > 0">
-                <thead>
-                    <tr>
-                        <th>USER</th>
-                        <th>IP</th>
-                        <th>COUNTRY</th>
-                        <th>DATE</th>
-                        <th>SESSION</th>
-                        <th>ACTIVITY</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="login in sshLogins">
-                        <td><strong>{$ login.user $}</strong></td>
-                        <td><code style="background: #f0f0ff; padding: 2px 6px; border-radius: 4px; font-size: 11px;">{$ login.ip $}</code></td>
-                        <td>
-                            <span ng-if="login.flag"><img ng-src="{$ login.flag $}" style="width: 16px; height: 12px; vertical-align: middle; margin-right: 4px;" /></span>
-                            <span>{$ login.country || 'N/A' $}</span>
-                        </td>
-                        <td>{$ login.date $}</td>
-                        <td><span style="font-size: 12px;">{$ login.session $}</span></td>
-                        <td>
-                            <button class="view-activity-btn" ng-click="viewSSHActivity(login)">View Activity</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <!-- Dummy data for demonstration -->
-            <table class="activity-table" ng-if="loadingSSHLogins">
-                <thead>
-                    <tr>
-                        <th>USER</th>
-                        <th>IP</th>
-                        <th>COUNTRY</th>
-                        <th>DATE</th>
-                        <th>SESSION</th>
-                        <th>ACTIVITY</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]">
-                        <td>root1</td>
-                        <td>192.168.0.180</td>
-                        <td>Bangladesh</td>
-                        <td>Wed Jun 4 20:59</td>
-                        <td>Still Logged In</td>
-                        <td>
-                            <button class="view-activity-btn" style="background: #5b5fcf; color: white; border-color: #5b5fcf;">View Activity</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- SSH Logs Tab -->
-        <div id="ssh-logs" class="tab-content">
-            <!-- Security Analysis Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #2f3640; text-transform: uppercase; letter-spacing: 0.5px;">
-                    SSH Security Analysis
-                </h3>
-                <button ng-click="analyzeSSHSecurity()" class="btn-primary" style="padding: 6px 16px; font-size: 12px;">
-                    <i class="fas fa-sync-alt" ng-class="{'fa-spin': loadingSecurityAnalysis}"></i>
-                    Refresh Analysis
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('cpu-usage', this)" ng-hide="hideSystemCharts">
+                    <i data-lucide="gauge" class="mr-2 h-5 w-5"></i>
+                    CPU Usage
                 </button>
             </div>
-            
-            <!-- Addon Required Section -->
-            <div ng-if="showAddonRequired" style="margin-bottom: 20px;">
-                <div style="background: linear-gradient(135deg, #f0f1ff 0%, #e8e9ff 100%); border: 1px solid #c7d2fe; border-radius: 16px; padding: 30px; text-align: center;">
-                    <div style="max-width: 600px; margin: 0 auto;">
-                        <div style="width: 80px; height: 80px; background: #5b5fcf; border-radius: 16px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-shield-alt" style="color: white; font-size: 36px;"></i>
-                        </div>
-                        <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 24px; font-weight: 700;">{$ addonInfo.feature_title $}</h3>
-                        <p style="margin: 0 0 25px 0; color: #64748b; font-size: 15px; line-height: 1.6;">{$ addonInfo.feature_description $}</p>
-                        
-                        <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; text-align: left;">
-                            <h4 style="margin: 0 0 15px 0; color: #1e293b; font-size: 16px; font-weight: 600;">
-                                <i class="fas fa-star" style="color: #f59e0b; margin-right: 8px;"></i>
-                                Premium Features Include:
-                            </h4>
-                            <ul style="list-style: none; margin: 0; padding: 0;">
-                                <li ng-repeat="feature in addonInfo.features" style="padding: 8px 0; color: #475569; font-size: 14px; display: flex; align-items: flex-start;">
-                                    <i class="fas fa-check-circle" style="color: #10b981; margin-right: 10px; margin-top: 2px; flex-shrink: 0;"></i>
-                                    <span>{$ feature $}</span>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="btn-primary" style="padding: 12px 30px; font-size: 16px; display: inline-flex; align-items: center; gap: 10px; text-decoration: none;">
-                            <i class="fas fa-unlock"></i>
-                            Unlock SSH Security Analysis
-                        </a>
-                        <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 13px;">
-                            Upgrade to CyberPanel Addons to access advanced security features
-                        </p>
-                    </div>
+
+            <!-- SSH Logins Tab -->
+            <div id="ssh-logins" class="tab-content active">
+                <div ng-if="loadingSSHLogins" class="py-12 text-center text-base text-muted-foreground">
+                    <i data-lucide="loader-2" class="animate-spin mr-2 h-5 w-5"></i> Loading SSH logins...
+                </div>
+                <div ng-if="!loadingSSHLogins && sshLogins.length === 0" class="py-12 text-center text-base text-muted-foreground">
+                    No recent SSH logins found.
+                </div>
+                <div class="relative w-full overflow-auto" ng-if="!loadingSSHLogins && sshLogins.length > 0">
+                    <table class="w-full caption-bottom text-lg">
+                        <thead class="[&_tr]:border-b border-border/40">
+                            <tr class="border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">USER</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">IP</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">COUNTRY</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">DATE</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">SESSION</th>
+                                <th class="h-16 px-4 text-right align-middle font-bold text-muted-foreground">ACTIVITY</th>
+                            </tr>
+                        </thead>
+                        <tbody class="[&_tr:last-child]:border-0">
+                            <tr ng-repeat="login in sshLogins" class="border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                <td class="p-4 align-middle font-semibold">{$ login.user $}</td>
+                                <td class="p-4 align-middle"><code class="rounded bg-muted px-[0.5rem] py-[0.3rem] font-mono text-base">{$ login.ip $}</code></td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex items-center gap-3">
+                                        <span ng-if="login.flag"><img ng-src="{$ login.flag $}" class="w-6 h-5 object-cover rounded-sm" /></span>
+                                        <span>{$ login.country || 'N/A' $}</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-muted-foreground">{$ login.date $}</td>
+                                <td class="p-4 align-middle text-base text-muted-foreground">{$ login.session $}</td>
+                                <td class="p-4 align-middle text-right">
+                                    <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-border/40 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-11 px-6" ng-click="viewSSHActivity(login)">View Activity</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            
-            <!-- Security Alerts Section -->
-            <div ng-if="!showAddonRequired && !loadingSecurityAnalysis && securityAlerts.length === 0" style="margin-bottom: 20px;">
-                <div style="background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 15px;">
-                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 24px;"></i>
-                    <div>
-                        <h4 style="margin: 0; color: #065f46; font-size: 14px; font-weight: 600;">No Security Threats Detected</h4>
-                        <p style="margin: 4px 0 0 0; color: #047857; font-size: 13px;">Your SSH logs show no signs of malicious activity. Continue monitoring regularly.</p>
+
+            <!-- SSH Security Analysis section -->
+            <div id="ssh-logs" class="tab-content hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold tracking-tight">SSH Security Analysis</h3>
+                    <button ng-click="analyzeSSHSecurity()" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-11 px-6">
+                        <i data-lucide="refresh-cw" class="mr-2 h-5 w-5" ng-class="{'animate-spin': loadingSecurityAnalysis}"></i>
+                        Refresh Analysis
+                    </button>
+                </div>
+
+                <!-- Addon Required Section -->
+                <div ng-if="showAddonRequired" class="mb-8">
+                    <div class="rounded-xl border border-border/50 bg-accent/30 p-10 text-center shadow-sm">
+                        <div class="max-w-3xl mx-auto space-y-6">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
+                                <i data-lucide="shield-check" class="h-10 w-10"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold tracking-tight">{$ addonInfo.feature_title $}</h3>
+                            <p class="text-lg text-muted-foreground">{$ addonInfo.feature_description $}</p>
+
+                            <div class="bg-card rounded-lg border border-border/50 p-8 text-left shadow-sm">
+                                <h4 class="mb-6 text-base font-semibold flex items-center gap-3">
+                                    <i data-lucide="star" class="text-amber-500 h-5 w-5"></i>
+                                    Premium Features Include:
+                                </h4>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <li ng-repeat="feature in addonInfo.features" class="flex items-start text-base text-muted-foreground">
+                                        <i data-lucide="check-circle" class="text-emerald-500 mt-1 mr-4 flex-shrink-0 h-5 w-5"></i>
+                                        <span>{$ feature $}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="pt-6">
+                                <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-12 px-10">
+                                    <i data-lucide="unlock" class="mr-2 h-5 w-5"></i>
+                                    Unlock SSH Security Analysis
+                                </a>
+                                <p class="mt-6 text-sm text-muted-foreground">
+                                    Upgrade to CyberPanel Addons to access advanced security features
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div ng-if="securityAlerts.length > 0" style="margin-bottom: 20px;">
-                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 12px; padding: 20px;">
-                    <h3 style="margin: 0 0 15px 0; color: #856404; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i>
-                        Security Alerts Detected ({$ securityAlerts.length $})
-                    </h3>
-                    <div ng-repeat="alert in securityAlerts" style="margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px solid #ffeaa7;">
-                        <div style="display: flex; align-items: flex-start; gap: 12px;">
-                            <i class="fas fa-shield-alt" style="color: {$ alert.severity === 'high' ? '#e74c3c' : (alert.severity === 'medium' ? '#f39c12' : (alert.severity === 'low' ? '#3498db' : '#10b981')) $}; font-size: 20px; margin-top: 2px;"></i>
-                            <div style="flex: 1;">
-                                <h4 style="margin: 0 0 8px 0; color: #2f3640; font-size: 14px; font-weight: 600;">{$ alert.title $}</h4>
-                                <p style="margin: 0 0 8px 0; color: #5f6368; font-size: 13px; line-height: 1.6;">{$ alert.description $}</p>
-                                <div ng-if="alert.details" style="margin-top: 10px;">
-                                    <div ng-repeat="(key, value) in alert.details" style="font-size: 12px; color: #64748b; margin-bottom: 4px;">
-                                        <strong style="color: #475569;">{$ key $}:</strong> {$ value $}
+
+                <!-- Security Alerts Section -->
+                <div ng-if="!showAddonRequired && !loadingSecurityAnalysis && securityAlerts.length === 0" class="mb-8">
+                    <div class="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-6">
+                        <i data-lucide="check-circle" class="text-emerald-500 h-8 w-8"></i>
+                        <div>
+                            <h4 class="text-base font-semibold text-emerald-700 dark:text-emerald-400">No Security Threats Detected</h4>
+                            <p class="text-sm text-emerald-600/80 dark:text-emerald-400/80">Your SSH logs show no signs of malicious activity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="securityAlerts.length > 0" class="mb-8 space-y-6">
+                    <div class="rounded-lg border border-amber-500/20 bg-amber-500/5 p-6">
+                        <h3 class="text-base font-bold text-amber-700 dark:text-amber-400 flex items-center gap-3 mb-6">
+                            <i data-lucide="triangle-alert" class="h-6 w-6"></i>
+                            Security Alerts Detected ({$ securityAlerts.length $})
+                        </h3>
+                        <div class="space-y-6">
+                            <div ng-repeat="alert in securityAlerts" class="rounded-lg border border-border/50 bg-card p-6 shadow-sm">
+                                <div class="flex items-start gap-6">
+                                    <div class="mt-1" ng-class="{'text-destructive': alert.severity === 'high', 'text-amber-500': alert.severity === 'medium', 'text-blue-500': alert.severity === 'low'}">
+                                        <i data-lucide="shield-check" class="h-8 w-8"></i>
+                                    </div>
+                                    <div class="flex-1 space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <h4 class="text-base font-semibold leading-none">{$ alert.title $}</h4>
+                                            <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider"
+                                                  ng-class="{'bg-destructive/10 text-destructive': alert.severity === 'high', 'bg-amber-500/10 text-amber-600': alert.severity === 'medium', 'bg-blue-500/10 text-blue-600': alert.severity === 'low'}">
+                                                {$ alert.severity $}
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground leading-relaxed">{$ alert.description $}</p>
+                                        <div ng-if="alert.details" class="pt-3">
+                                            <div ng-repeat="(key, value) in alert.details" class="text-xs text-muted-foreground mb-1.5">
+                                                <span class="font-semibold text-foreground">{$ key $}:</span> {$ value $}
+                                            </div>
+                                        </div>
+                                        <div ng-if="alert.recommendation" class="mt-4 rounded-md bg-muted p-4">
+                                            <p class="text-xs font-bold mb-1.5">Recommendation:</p>
+                                            <p class="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">{$ alert.recommendation $}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div ng-if="alert.recommendation" style="margin-top: 10px; padding: 10px; background: #f0f4f8; border-radius: 6px;">
-                                    <strong style="font-size: 12px; color: #1e293b;">Recommendation:</strong>
-                                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #475569; white-space: pre-line;">{$ alert.recommendation $}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="loadingSSHLogs" class="py-12 text-center text-base text-muted-foreground">
+                    <i data-lucide="loader-2" class="animate-spin mr-2 h-5 w-5"></i> Loading SSH logs...
+                </div>
+                <div ng-if="!loadingSSHLogs && sshLogs.length === 0" class="py-12 text-center text-base text-muted-foreground">
+                    No recent SSH logs found.
+                </div>
+                <div class="relative w-full overflow-auto rounded-md border border-border/50" ng-if="!loadingSSHLogs && sshLogs.length > 0">
+                    <table class="w-full text-sm">
+                        <thead class="bg-muted/50 border-b border-border/40">
+                            <tr>
+                                <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground w-48">TIMESTAMP</th>
+                                <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground">MESSAGE</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border/40">
+                            <tr ng-repeat="log in sshLogs" class="hover:bg-muted/30">
+                                <td class="p-3 align-top font-semibold text-muted-foreground border-border/40">{$ log.timestamp $}</td>
+                                <td class="p-3 align-top border-border/40"><code class="block whitespace-pre-wrap break-all text-xs leading-relaxed">{$ log.message $}</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top Process Tab -->
+            <div id="top-process" class="tab-content hidden" ng-hide="hideSystemCharts">
+                <div ng-if="loadingTopProcesses" class="py-12 text-center text-base text-muted-foreground">
+                    <i data-lucide="loader-2" class="animate-spin mr-2 h-5 w-5"></i> Loading top processes...
+                </div>
+                <div ng-if="!loadingTopProcesses && errorTopProcesses" class="py-12 text-center text-base text-destructive">
+                    {$ errorTopProcesses $}
+                </div>
+                <div ng-if="!loadingTopProcesses && !errorTopProcesses && topProcesses.length === 0" class="py-12 text-center text-base text-muted-foreground">
+                    No process information available.
+                </div>
+                <div class="relative w-full overflow-auto" ng-if="!loadingTopProcesses && !errorTopProcesses && topProcesses.length > 0">
+                    <table class="w-full text-lg">
+                        <thead class="border-b border-border/40">
+                            <tr>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">PID</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">USER</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">CPU %</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">MEMORY %</th>
+                                <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">COMMAND</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="process in topProcesses" class="border-b border-border/40 transition-colors hover:bg-muted/50">
+                                <td class="p-4 align-middle">{$ process.pid $}</td>
+                                <td class="p-4 align-middle font-semibold">{$ process.user $}</td>
+                                <td class="p-4 align-middle">{$ process.cpu $}%</td>
+                                <td class="p-4 align-middle">{$ process.memory $}%</td>
+                                <td class="p-4 align-middle font-mono text-base">{$ process.command $}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Traffic Tab -->
+            <div id="traffic" class="tab-content hidden" ng-hide="hideSystemCharts">
+                <div class="rounded-lg border border-border/50 bg-card p-8">
+                    <div class="h-[400px] w-full">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disk IO Tab -->
+            <div id="diskio" class="tab-content hidden" ng-hide="hideSystemCharts">
+                <div class="rounded-lg border border-border/50 bg-card p-8">
+                    <div class="h-[400px] w-full">
+                        <canvas id="diskIOChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Usage Tab -->
+            <div id="cpu-usage" class="tab-content hidden" ng-hide="hideSystemCharts">
+                <div class="rounded-lg border border-border/50 bg-card p-8">
+                    <div class="h-[400px] w-full">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SSH Activity Modal -->
+    <div ng-show="showSSHActivityModal" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm ng-cloak flex items-center justify-center p-6 md:p-12" ng-click="closeModalOnBackdrop($event)">
+        <div class="bg-card w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-xl border border-border/50 shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200" ng-click="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-10 border-b border-border/40">
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold leading-none tracking-tight">User Activity: <span class="text-primary">{$ sshActivityUser $}</span></h3>
+                    <p class="text-lg text-muted-foreground">Detailed activity report for the selected user session.</p>
+                </div>
+                <button class="rounded-full h-12 w-12 flex items-center justify-center hover:bg-muted transition-colors" ng-click="closeSSHActivityModal()">
+                    <i data-lucide="x" class="text-2xl h-6 w-6"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-10 space-y-12">
+                <div ng-if="loadingSSHActivity" class="py-24 text-center text-muted-foreground">
+                    <i data-lucide="loader-2" class="animate-spin text-3xl mb-6 h-10 w-10 mx-auto"></i>
+                    <p class="text-lg">Loading activity data...</p>
+                </div>
+
+                <div ng-if="errorSSHActivity" class="rounded-lg border border-destructive/20 bg-destructive/10 p-8 text-center">
+                    <i data-lucide="circle-alert" class="text-destructive text-4xl mb-4 h-12 w-12 mx-auto"></i>
+                    <p class="text-base font-bold">{$ errorSSHActivity $}</p>
+                </div>
+
+                <div ng-if="!loadingSSHActivity && !errorSSHActivity && sshActivity" class="space-y-12">
+                    <!-- Processes Section -->
+                    <div ng-if="sshActivity.processes && sshActivity.processes.length > 0">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i data-lucide="cpu" class="text-primary text-xl h-6 w-6"></i>
+                            <h4 class="text-base font-bold uppercase tracking-wider">Running Processes ({$ sshActivity.processes.length $})</h4>
+                        </div>
+                        <div class="rounded-md border border-border/50 overflow-hidden">
+                            <div class="overflow-x-auto max-h-[500px]">
+                                <table class="w-full text-base">
+                                    <thead class="bg-muted/50 border-b border-border/40 sticky top-0">
+                                        <tr>
+                                            <th class="h-12 px-5 text-left font-bold text-muted-foreground">PID</th>
+                                            <th class="h-12 px-5 text-left font-bold text-muted-foreground">TTY</th>
+                                            <th class="h-12 px-5 text-left font-bold text-muted-foreground">TIME</th>
+                                            <th class="h-12 px-5 text-left font-bold text-muted-foreground">COMMAND</th>
+                                            <th class="h-12 px-5 text-left font-bold text-muted-foreground">CWD</th>
+                                            <th class="h-12 px-5 text-right font-bold text-muted-foreground">ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y">
+                                        <tr ng-repeat="proc in sshActivity.processes" class="hover:bg-muted/30 transition-colors">
+                                            <td class="p-5 font-bold text-lg">{$ proc.pid $}</td>
+                                            <td class="p-5 font-mono">{$ proc.tty $}</td>
+                                            <td class="p-5">{$ proc.time $}</td>
+                                            <td class="p-5 font-mono break-all max-w-xs">{$ proc.cmd $}</td>
+                                            <td class="p-5 font-mono break-all max-w-xs">{$ proc.cwd || 'N/A' $}</td>
+                                            <td class="p-5 text-right">
+                                                <button ng-click="killProcess(proc.pid, sshActivityUser)" class="inline-flex items-center justify-center rounded-md text-sm font-bold h-10 px-6 bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-sm">
+                                                    KILL
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shell History Section -->
+                    <div ng-if="sshActivity.shell_history && sshActivity.shell_history.length > 0">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i data-lucide="history" class="text-primary text-xl h-6 w-6"></i>
+                            <h4 class="text-base font-bold uppercase tracking-wider">Recent Shell History</h4>
+                        </div>
+                        <div class="rounded-lg border border-border/50 bg-muted/30 p-6 font-mono text-sm space-y-3 max-h-64 overflow-y-auto">
+                            <div ng-repeat="cmd in sshActivity.shell_history" class="flex items-start gap-5">
+                                <span class="text-muted-foreground select-none w-8 text-right font-bold">{$ $index + 1 $}.</span>
+                                <span class="text-foreground break-all">{$ cmd $}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Disk Usage Section -->
+                        <div ng-if="sshActivity.disk_usage">
+                            <div class="flex items-center gap-3 mb-6">
+                                <i data-lucide="hard-drive" class="text-primary text-xl h-6 w-6"></i>
+                                <h4 class="text-base font-bold uppercase tracking-wider">Disk Usage</h4>
+                            </div>
+                            <div class="rounded-lg border border-border/50 p-6 bg-muted/20 text-sm font-mono leading-relaxed">
+                                {$ sshActivity.disk_usage $}
+                            </div>
+                        </div>
+
+                        <!-- GeoIP Section -->
+                        <div ng-if="sshActivity.geoip && Object.keys(sshActivity.geoip).length > 0">
+                            <div class="flex items-center gap-3 mb-6">
+                                <i data-lucide="globe" class="text-primary text-xl h-6 w-6"></i>
+                                <h4 class="text-base font-bold uppercase tracking-wider">Location Information</h4>
+                            </div>
+                            <div class="rounded-lg border border-border/50 p-6 grid grid-cols-2 gap-6">
+                                <div ng-if="sshActivity.geoip.country">
+                                    <p class="text-xs font-bold text-muted-foreground uppercase mb-1">Country</p>
+                                    <p class="text-lg font-semibold">{$ sshActivity.geoip.country $}</p>
+                                </div>
+                                <div ng-if="sshActivity.geoip.city">
+                                    <p class="text-xs font-bold text-muted-foreground uppercase mb-1">City</p>
+                                    <p class="text-lg font-semibold">{$ sshActivity.geoip.city $}</p>
+                                </div>
+                                <div ng-if="sshActivity.geoip.ip" class="col-span-2">
+                                    <p class="text-xs font-bold text-muted-foreground uppercase mb-1">IP Address</p>
+                                    <code class="text-lg font-mono font-bold">{$ sshActivity.geoip.ip $}</code>
+                                </div>
+                                <div ng-if="sshActivity.geoip.isp" class="col-span-2 border-t pt-4">
+                                    <p class="text-xs font-bold text-muted-foreground uppercase mb-1">ISP</p>
+                                    <p class="text-base">{$ sshActivity.geoip.isp $}</p>
                                 </div>
                             </div>
-                            <span style="background: {$ alert.severity === 'high' ? '#fee2e2' : (alert.severity === 'medium' ? '#fef3c7' : (alert.severity === 'low' ? '#dbeafe' : '#d1fae5')) $}; 
-                                       color: {$ alert.severity === 'high' ? '#dc2626' : (alert.severity === 'medium' ? '#f59e0b' : (alert.severity === 'low' ? '#3b82f6' : '#10b981')) $}; 
-                                       padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase;">
-                                {$ alert.severity $}
-                            </span>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- SSH Logs Table -->
-            <div ng-if="loadingSSHLogs" style="text-align: center; padding: 20px; color: #8893a7;">
-                Loading SSH logs...
-            </div>
-            <div ng-if="!loadingSSHLogs && sshLogs.length === 0" style="text-align: center; padding: 20px; color: #8893a7;">
-                No recent SSH logs found.
-            </div>
-            <table class="activity-table ssh-logs-table" ng-if="!loadingSSHLogs && sshLogs.length > 0">
-                <thead>
-                    <tr>
-                        <th>TIMESTAMP</th>
-                        <th>MESSAGE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="log in sshLogs">
-                        <td><strong>{$ log.timestamp $}</strong></td>
-                        <td><code style="background: #f0f0ff; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; word-break: break-word; overflow-wrap: break-word;">{$ log.message $}</code></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Top Process Tab -->
-        <div id="top-process" class="tab-content" ng-hide="hideSystemCharts">
-            <div ng-if="loadingTopProcesses" style="text-align: center; padding: 20px; color: #8893a7;">
-                Loading top processes...
-            </div>
-            <div ng-if="!loadingTopProcesses && errorTopProcesses" style="text-align: center; padding: 20px; color: #e53935;">
-                {$ errorTopProcesses $}
-            </div>
-            <div ng-if="!loadingTopProcesses && !errorTopProcesses && topProcesses.length === 0" style="text-align: center; padding: 20px; color: #8893a7;">
-                No process information available.
-            </div>
-            <table class="activity-table" ng-if="!loadingTopProcesses && !errorTopProcesses && topProcesses.length > 0">
-                <thead>
-                    <tr>
-                        <th>PID</th>
-                        <th>USER</th>
-                        <th>CPU %</th>
-                        <th>MEMORY %</th>
-                        <th>COMMAND</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="process in topProcesses">
-                        <td>{$ process.pid $}</td>
-                        <td>{$ process.user $}</td>
-                        <td>{$ process.cpu $}%</td>
-                        <td>{$ process.memory $}%</td>
-                        <td>{$ process.command $}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Traffic Tab -->
-        <div id="traffic" class="tab-content" ng-hide="hideSystemCharts">
-            <div class="chart-container">
-                <canvas id="trafficChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- Disk IO Tab -->
-        <div id="diskio" class="tab-content" ng-hide="hideSystemCharts">
-            <div class="chart-container">
-                <canvas id="diskIOChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- CPU Usage Tab -->
-        <div id="cpu-usage" class="tab-content" ng-hide="hideSystemCharts">
-            <div class="chart-container">
-                <canvas id="cpuChart"></canvas>
-            </div>
-        </div>
-        
-    </div>
-    
-    <!-- SSH Activity Modal -->
-    <div ng-show="showSSHActivityModal" ng-class="{'show': showSSHActivityModal}" class="modal-backdrop ng-cloak" ng-click="closeModalOnBackdrop($event)">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                <div style="font-size: 1.2rem; font-weight: 800; color: #5b5fcf;">
-                    User Activity: <span style="color: #2f3640;">{$ sshActivityUser $}</span>
-                </div>
-                <button class="btn btn-sm" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;" ng-click="closeSSHActivityModal()">&times;</button>
-            </div>
-            <div ng-if="loadingSSHActivity" style="text-align: center; color: #8893a7; padding: 20px 0;">
-                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>Loading activity...
-            </div>
-            <div ng-if="errorSSHActivity" style="color: #e53935; padding: 15px; background: #fee2e2; border-radius: 8px; margin-bottom: 15px;">
-                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>{$ errorSSHActivity $}
-            </div>
-            <div ng-if="!loadingSSHActivity && !errorSSHActivity && sshActivity">
-                <!-- Processes Section -->
-                <div ng-if="sshActivity.processes && sshActivity.processes.length > 0" style="margin-bottom: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 700; color: #2f3640; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                        <i class="fas fa-microchip" style="margin-right: 8px; color: #5b5fcf;"></i>Running Processes ({$ sshActivity.processes.length $})
-                    </h4>
-                    <div style="overflow-x: auto; max-height: 300px; overflow-y: auto; border: 1px solid #e8e9ff; border-radius: 8px;">
-                        <table class="activity-table process-table" style="margin-top: 0;">
-                            <thead>
-                                <tr>
-                                    <th>PID</th>
-                                    <th>TTY</th>
-                                    <th>Time</th>
-                                    <th>Command</th>
-                                    <th>CWD</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="proc in sshActivity.processes">
-                                    <td><strong>{$ proc.pid $}</strong></td>
-                                    <td style="font-family: monospace; font-size: 12px;">{$ proc.tty $}</td>
-                                    <td>{$ proc.time $}</td>
-                                    <td style="font-family: monospace; font-size: 11px; word-break: break-word; overflow-wrap: break-word;">{$ proc.cmd $}</td>
-                                    <td style="font-family: monospace; font-size: 11px; word-break: break-word; overflow-wrap: break-word;">{$ proc.cwd || 'N/A' $}</td>
-                                    <td style="text-align: center;">
-                                        <button ng-click="killProcess(proc.pid, sshActivityUser)" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                                            <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Kill
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Shell History Section -->
-                <div ng-if="sshActivity.shell_history && sshActivity.shell_history.length > 0" style="margin-bottom: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 700; color: #2f3640; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                        <i class="fas fa-history" style="margin-right: 8px; color: #5b5fcf;"></i>Recent Shell History (Last 10 commands)
-                    </h4>
-                    <div style="background: #f8f9fa; border: 1px solid #e8e9ff; border-radius: 8px; padding: 15px; max-height: 200px; overflow-y: auto;">
-                        <div ng-repeat="cmd in sshActivity.shell_history" style="padding: 8px 0; border-bottom: 1px solid #e8e9ff; font-family: monospace; font-size: 12px; color: #2f3640;">
-                            <span style="color: #64748b; margin-right: 10px;">{$ $index + 1 $}.</span>{$ cmd $}
+
+                    <!-- W Command Output Section -->
+                    <div ng-if="sshActivity.w && sshActivity.w.length > 0">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="terminal" class="text-primary text-xl h-6 w-6"></i>
+                                <h4 class="text-base font-bold uppercase tracking-wider">Session Info</h4>
+                            </div>
+                            <button ng-click="killSession(sshActivityUser, sshActivity.w && sshActivity.w.length > 0 ? (sshActivity.w[0].split(/\s+/)[1] || '') : '')" class="inline-flex items-center justify-center rounded-md text-sm font-bold h-11 px-6 bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-sm">
+                                <i data-lucide="power" class="mr-2 h-4 w-4"></i> FORCE CLOSE SESSION
+                            </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Disk Usage Section -->
-                <div ng-if="sshActivity.disk_usage" style="margin-bottom: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 700; color: #2f3640; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                        <i class="fas fa-hdd" style="margin-right: 8px; color: #5b5fcf;"></i>Disk Usage
-                    </h4>
-                    <div style="background: #f8f9fa; border: 1px solid #e8e9ff; border-radius: 8px; padding: 15px; color: #2f3640; font-size: 14px;">
-                        {$ sshActivity.disk_usage $}
-                    </div>
-                </div>
-                
-                <!-- GeoIP Section -->
-                <div ng-if="sshActivity.geoip && Object.keys(sshActivity.geoip).length > 0" style="margin-bottom: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 700; color: #2f3640; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                        <i class="fas fa-globe" style="margin-right: 8px; color: #5b5fcf;"></i>Location Information
-                    </h4>
-                    <div style="background: #f8f9fa; border: 1px solid #e8e9ff; border-radius: 8px; padding: 15px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                            <div ng-if="sshActivity.geoip.country">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">Country:</strong>
-                                <div style="color: #2f3640; margin-top: 4px;">{$ sshActivity.geoip.country $}</div>
-                            </div>
-                            <div ng-if="sshActivity.geoip.region">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">Region:</strong>
-                                <div style="color: #2f3640; margin-top: 4px;">{$ sshActivity.geoip.region $}</div>
-                            </div>
-                            <div ng-if="sshActivity.geoip.city">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">City:</strong>
-                                <div style="color: #2f3640; margin-top: 4px;">{$ sshActivity.geoip.city $}</div>
-                            </div>
-                            <div ng-if="sshActivity.geoip.isp">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">ISP:</strong>
-                                <div style="color: #2f3640; margin-top: 4px;">{$ sshActivity.geoip.isp $}</div>
-                            </div>
-                            <div ng-if="sshActivity.geoip.org">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">Organization:</strong>
-                                <div style="color: #2f3640; margin-top: 4px;">{$ sshActivity.geoip.org $}</div>
-                            </div>
-                            <div ng-if="sshActivity.geoip.ip">
-                                <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">IP Address:</strong>
-                                <div style="color: #2f3640; margin-top: 4px; font-family: monospace;">{$ sshActivity.geoip.ip $}</div>
+                        <div class="rounded-lg border border-border/50 bg-zinc-950 p-6 font-mono text-sm text-zinc-300 overflow-x-auto shadow-inner">
+                            <div ng-repeat="line in sshActivity.w" class="whitespace-nowrap border-b border-zinc-800 py-2 last:border-0">
+                                {$ line $}
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- W Command Output Section -->
-                <div ng-if="sshActivity.w && sshActivity.w.length > 0" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h4 style="font-size: 14px; font-weight: 700; color: #2f3640; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <i class="fas fa-terminal" style="margin-right: 8px; color: #5b5fcf;"></i>User Session Information
-                        </h4>
-                        <button ng-click="killSession(sshActivityUser, sshActivity.w && sshActivity.w.length > 0 ? (sshActivity.w[0].split(/\\s+/)[1] || '') : '')" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                            <i class="fas fa-power-off"></i>Force Close Session
-                        </button>
+
+                    <!-- No Data Message -->
+                    <div ng-if="(!sshActivity.processes || sshActivity.processes.length === 0) && (!sshActivity.shell_history || sshActivity.shell_history.length === 0) && !sshActivity.disk_usage && (!sshActivity.geoip || Object.keys(sshActivity.geoip).length === 0) && (!sshActivity.w || sshActivity.w.length === 0)" class="py-24 text-center text-muted-foreground">
+                        <i data-lucide="info" class="text-5xl mb-6 opacity-20 h-16 w-16 mx-auto"></i>
+                        <p class="text-lg">No activity data available for this user.</p>
                     </div>
-                    <div style="background: #f8f9fa; border: 1px solid #e8e9ff; border-radius: 8px; padding: 15px; max-height: 200px; overflow-y: auto;">
-                        <div ng-repeat="line in sshActivity.w" style="padding: 8px 0; border-bottom: 1px solid #e8e9ff; font-family: monospace; font-size: 12px; color: #2f3640;">
-                            {$ line $}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Session Actions (if no w output but we have user info) -->
-                <div ng-if="(!sshActivity.w || sshActivity.w.length === 0) && sshActivityUser" style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong style="color: #856404; font-size: 13px;">Session Management</strong>
-                            <p style="margin: 4px 0 0 0; color: #856404; font-size: 12px;">Force close all sessions for user: <strong>{$ sshActivityUser $}</strong></p>
-                        </div>
-                        <button ng-click="killSession(sshActivityUser)" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                            <i class="fas fa-power-off"></i>Force Close Session
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- No Data Message -->
-                <div ng-if="(!sshActivity.processes || sshActivity.processes.length === 0) && (!sshActivity.shell_history || sshActivity.shell_history.length === 0) && !sshActivity.disk_usage && (!sshActivity.geoip || Object.keys(sshActivity.geoip).length === 0) && (!sshActivity.w || sshActivity.w.length === 0)" style="text-align: center; padding: 40px 20px; color: #8893a7;">
-                    <i class="fas fa-info-circle" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
-                    <p style="margin: 0; font-size: 14px;">No activity data available for this user.</p>
                 </div>
             </div>
+
+            <div class="p-8 border-t border-border/40 flex justify-end">
+                <button class="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-12 px-8" ng-click="closeSSHActivityModal()">
+                    Close Report
+                </button>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
@@ -1156,20 +521,25 @@
     function switchTab(tabId, tabButton) {
         // Hide all tab contents
         document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
             content.classList.remove('active');
         });
-        
+
         // Remove active class from all tabs
         document.querySelectorAll('.activity-tab').forEach(tab => {
+            tab.removeAttribute('data-state');
             tab.classList.remove('active');
         });
-        
+
         // Show selected tab content
-        document.getElementById(tabId).classList.add('active');
-        
-        // Add active class to clicked tab
+        const target = document.getElementById(tabId);
+        target.classList.remove('hidden');
+        target.classList.add('active');
+
+        // Add active state to clicked tab
+        tabButton.setAttribute('data-state', 'active');
         tabButton.classList.add('active');
-        
+
         // Trigger chart resize if switching to chart tabs
         if (tabId === 'traffic' || tabId === 'diskio' || tabId === 'cpu-usage') {
             setTimeout(() => {

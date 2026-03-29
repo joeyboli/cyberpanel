@@ -3,503 +3,185 @@
 {% block title %}{% trans "Delete Package - CyberPanel" %}{% endblock %}
 
 {% block header_scripts %}
-<style>
-    /* Modern page styles matching new design */
-    .page-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .page-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 8px;
-    }
-    
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Card styles */
-    .content-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        margin-bottom: 25px;
-    }
-    
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--danger-color, #dc3545);
-        border-radius: 2px;
-    }
-    
-    /* Form styles */
-    .form-group {
-        margin-bottom: 24px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:hover {
-        border-color: var(--danger-color, #dc3545);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--danger-color, #dc3545);
-        box-shadow: 0 0 0 3px var(--danger-shadow, rgba(220,53,69,0.1));
-    }
-    
-    /* Windows selectbox fixes */
-    select.form-control {
-        cursor: pointer;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 20px;
-        padding-right: 40px;
-        line-height: 1.5;
-        min-height: 44px;
-    }
-    
-    /* Windows-specific fixes */
-    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        select.form-control {
-            color: var(--text-primary, #2f3640) !important;
-            background-color: var(--bg-secondary, white) !important;
-        }
-    }
-    
-    /* Fix for Windows Edge and Chrome */
-    select.form-control::-ms-expand {
-        display: none;
-    }
-    
-    select.form-control:focus {
-        color: var(--text-primary, #2f3640);
-        background-color: var(--bg-secondary, white);
-    }
-    
-    /* Package selector card */
-    .package-selector-card {
-        background: var(--bg-secondary, #fff5f5);
-        border: 1px solid var(--border-color, #ffdddd);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-    }
-    
-    /* Package details card */
-    .package-details {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        display: none;
-    }
-    
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .detail-row:last-child {
-        border-bottom: none;
-    }
-    
-    .detail-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-    }
-    
-    .detail-value {
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        font-weight: 600;
-    }
-    
-    /* Resource badge */
-    .resource-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-    
-    .resource-badge.unlimited {
-        background: var(--bg-success-light, #e8f5e9);
-        border-color: var(--border-success-light, #c8e6c9);
-        color: var(--success-color, #2e7d32);
-    }
-    
-    /* Warning box */
-    .warning-box {
-        background: var(--bg-warning-light, #fff3e0);
-        border: 1px solid var(--border-warning-light, #ffe0b2);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        display: flex;
-        align-items: start;
-        gap: 15px;
-    }
-    
-    .warning-icon {
-        color: var(--warning-color, #ff9800);
-        font-size: 24px;
-        flex-shrink: 0;
-    }
-    
-    .warning-content {
-        flex: 1;
-    }
-    
-    .warning-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 8px;
-    }
-    
-    .warning-text {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        line-height: 1.6;
-    }
-    
-    /* Button styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .btn-danger {
-        background: var(--danger-color, #dc3545);
-        color: var(--text-on-danger, white);
-    }
-    
-    .btn-danger:hover {
-        background: var(--danger-hover, #c82333);
-        box-shadow: 0 4px 12px var(--danger-shadow, rgba(220,53,69,0.3));
-        transform: translateY(-1px);
-    }
-    
-    .btn-danger:disabled {
-        background: var(--bg-disabled, #ccc);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .btn-secondary {
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--primary-color, #5b5fcf);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--bg-primary-light, #eef0ff);
-        border-color: var(--primary-color, #5b5fcf);
-    }
-    
-    /* Confirmation section */
-    .confirmation-section {
-        background: var(--bg-danger-light, #ffebee);
-        border: 1px solid var(--border-danger-light, #ffcdd2);
-        border-radius: 10px;
-        padding: 25px;
-        margin-top: 25px;
-        text-align: center;
-        display: none;
-    }
-    
-    .confirmation-icon {
-        font-size: 48px;
-        color: var(--danger-color, #dc3545);
-        margin-bottom: 15px;
-    }
-    
-    .confirmation-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 10px;
-    }
-    
-    .confirmation-text {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 20px;
-    }
-    
-    .confirmation-package {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--danger-color, #dc3545);
-        margin-bottom: 25px;
-    }
-    
-    .confirmation-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-    }
-    
-    /* Alert styles */
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: fadeIn 0.3s ease-out;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .alert-danger {
-        background: var(--bg-danger-light, #ffebee);
-        border: 1px solid var(--border-danger-light, #ffcdd2);
-        color: var(--danger-text, #c62828);
-    }
-    
-    .alert-success {
-        background: var(--bg-success-light, #e8f5e9);
-        border: 1px solid var(--border-success-light, #c8e6c9);
-        color: var(--success-color, #2e7d32);
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--spinner-bg, #f3f3f3);
-        border-top: 2px solid var(--danger-color, #dc3545);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Button container */
-    .button-container {
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    /* Hide elements by default */
-    #deleteFailure {
-        display: none;
-    }
-    
-    #deleteSuccess {
-        display: none;
-    }
-    
-    #deletePackageButton {
-        display: none;
-    }
-    
-    @media (max-width: 768px) {
-        .content-card {
-            padding: 20px;
-        }
-        
-        .confirmation-buttons {
-            flex-direction: column;
-        }
-        
-        .btn {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
 {% endblock %}
 
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="page-wrapper" ng-controller="deletePackage">
-    <div class="page-container">
-        <div class="page-header">
-            <h1 class="page-title">{% trans "Delete Package" %}</h1>
-            <p class="page-subtitle">{% trans "Permanently remove a hosting package from your system" %}</p>
+<div class="w-full p-4 md:p-12 space-y-8" ng-controller="deletePackage">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive shrink-0">
+                <i data-lucide="package-minus" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">{% trans "Delete Package" %}</h1>
+                <p class="text-xl text-muted-foreground">{% trans "Permanently remove a hosting package from your system" %}</p>
+            </div>
         </div>
+        <div>
+            <a href="{% url 'listPackages' %}" class="flex items-center gap-3 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl text-xl font-bold transition-all border border-border hover:bg-muted !no-underline">
+                <i data-lucide="list" class="h-6 w-6"></i>
+                {% trans "List Packages" %}
+            </a>
+        </div>
+    </div>
 
-        <div class="content-card">
-            <h2 class="card-title">{% trans "Package Selection" %}</h2>
+    <!-- Alert Messages -->
+    <div id="deleteFailure" class="flex items-start gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-300 hidden">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/20 text-destructive shrink-0">
+            <i data-lucide="alert-circle" class="h-6 w-6"></i>
+        </div>
+        <div class="space-y-1">
+            <h4 class="font-bold text-destructive">{% trans "Deletion Failed" %}</h4>
+            <p class="text-destructive/80 font-medium">{% trans "Error message:" %} <span class="font-bold">{$ errorMessage $}</span></p>
+        </div>
+    </div>
+
+    <div id="deleteSuccess" class="flex items-start gap-4 p-6 bg-primary/10 border border-primary/20 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-300 hidden">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary shrink-0">
+            <i data-lucide="check-circle" class="h-6 w-6"></i>
+        </div>
+        <div class="space-y-1">
+            <h4 class="font-bold text-primary">{% trans "Success" %}</h4>
+            <p class="text-primary/80 font-medium">{% trans "Package" %} <span class="font-bold text-primary">{$ deletedPackage $}</span> {% trans "successfully deleted." %}</p>
+        </div>
+    </div>
+
+    <div class="space-y-8">
+        <!-- Package Selection Card -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-8 space-y-8">
+            <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                <i data-lucide="search" class="h-6 w-6 text-primary"></i>
+                {% trans "Package Selection" %}
+            </h2>
             
-            <div class="package-selector-card">
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select Package to Delete" %}</label>
-                    <select ng-change="fetchPackageDetails()" ng-model="packageToBeDeleted" class="form-control" aria-label="{% trans 'Select Package to Delete' %}">
+            <div class="space-y-3">
+                <label class="text-lg font-bold text-foreground uppercase tracking-wider">{% trans "Select Package to Delete" %}</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="package" class="h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                    </div>
+                    <select ng-change="fetchPackageDetails()" ng-model="packageToBeDeleted" class="w-full pl-14 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none cursor-pointer">
                         <option value="">-- {% trans "Select a package" %} --</option>
                         {% for items in packageList %}
                             <option>{{ items }}</option>
                         {% endfor %}
                     </select>
-                </div>
-            </div>
-
-            <div class="package-details" ng-show="packageToBeDeleted && packageDetails">
-                <div class="detail-row">
-                    <span class="detail-label">{% trans "Package Name" %}</span>
-                    <span class="detail-value">{$ packageToBeDeleted $}</span>
-                </div>
-                <div class="detail-row" ng-show="packageDetails.websites">
-                    <span class="detail-label">{% trans "Active Websites" %}</span>
-                    <span class="detail-value">{$ packageDetails.websites $}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">{% trans "Disk Space" %}</span>
-                    <span class="detail-value">
-                        <span class="resource-badge" ng-class="{'unlimited': packageDetails.diskSpace == 0}">
-                            <span ng-if="packageDetails.diskSpace == 0">{% trans "Unlimited" %}</span>
-                            <span ng-if="packageDetails.diskSpace != 0">{$ packageDetails.diskSpace $} MB</span>
-                        </span>
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">{% trans "Bandwidth" %}</span>
-                    <span class="detail-value">
-                        <span class="resource-badge" ng-class="{'unlimited': packageDetails.bandwidth == 0}">
-                            <span ng-if="packageDetails.bandwidth == 0">{% trans "Unlimited" %}</span>
-                            <span ng-if="packageDetails.bandwidth != 0">{$ packageDetails.bandwidth $} MB</span>
-                        </span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="warning-box">
-                <i class="fas fa-exclamation-triangle warning-icon"></i>
-                <div class="warning-content">
-                    <div class="warning-title">{% trans "Warning: This action cannot be undone!" %}</div>
-                    <div class="warning-text">
-                        {% trans "Deleting a package will permanently remove it from the system. Make sure no websites are using this package before deletion." %}
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <i data-lucide="chevron-down" class="h-6 w-6 text-muted-foreground"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="button-container">
-                <button type="button" ng-click="deletePackage()" class="btn btn-danger" ng-disabled="!packageToBeDeleted">
-                    <i class="fas fa-trash"></i>
+            <!-- Package Preview Details -->
+            <div class="p-6 bg-secondary/10 rounded-2xl border border-border space-y-4 animate-in fade-in slide-in-from-top-2 duration-300" ng-show="packageToBeDeleted && packageDetails">
+                <div class="flex items-center justify-between pb-4 border-b border-border/50 text-lg">
+                    <span class="font-medium text-muted-foreground">{% trans "Package Name" %}</span>
+                    <span class="font-bold text-foreground">{$ packageToBeDeleted $}</span>
+                </div>
+                <div class="flex items-center justify-between pb-4 border-b border-border/50 text-lg" ng-show="packageDetails.websites">
+                    <span class="font-medium text-muted-foreground">{% trans "Active Websites" %}</span>
+                    <span class="font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">{$ packageDetails.websites $}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-card border border-border rounded-xl space-y-1 text-center">
+                        <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Disk Space" %}</div>
+                        <div class="text-lg font-bold text-foreground">
+                            <span ng-if="packageDetails.diskSpace == 0">{% trans "Unlimited" %}</span>
+                            <span ng-if="packageDetails.diskSpace != 0">{$ packageDetails.diskSpace $} MB</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-card border border-border rounded-xl space-y-1 text-center">
+                        <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Bandwidth" %}</div>
+                        <div class="text-lg font-bold text-foreground">
+                            <span ng-if="packageDetails.bandwidth == 0">{% trans "Unlimited" %}</span>
+                            <span ng-if="packageDetails.bandwidth != 0">{$ packageDetails.bandwidth $} MB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="flex items-start gap-6 p-8 bg-destructive/5 border border-destructive/20 rounded-2xl">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive shrink-0">
+                    <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="text-xl font-bold text-destructive">{% trans "Warning: Critical Action" %}</h4>
+                    <p class="text-lg text-muted-foreground leading-relaxed">
+                        {% trans "Deleting a package will permanently remove it. Websites using this package may lose their resource configuration. This action cannot be undone." %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-border">
+                <button type="button" ng-click="deletePackage()" class="w-full md:w-auto px-12 py-5 bg-destructive text-destructive-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-destructive/20 flex items-center justify-center gap-3" ng-disabled="!packageToBeDeleted">
+                    <i data-lucide="trash-2" class="h-6 w-6"></i>
                     {% trans "Delete Package" %}
                 </button>
             </div>
         </div>
 
-        <!-- Confirmation Section -->
-        <div class="content-card confirmation-section" id="deletePackageButton">
-            <i class="fas fa-exclamation-circle confirmation-icon"></i>
-            <h3 class="confirmation-title">{% trans "Are you absolutely sure?" %}</h3>
-            <p class="confirmation-text">
-                {% trans "This action will permanently delete the package from your system." %}
-            </p>
-            <div class="confirmation-package">{$ packageToBeDeleted $}</div>
+        <!-- Confirmation Card -->
+        <div class="bg-card rounded-2xl shadow-sm border-2 border-destructive/30 p-12 text-center space-y-8 animate-in zoom-in duration-300 hidden" id="deletePackageButton">
+            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-xl shadow-destructive/20">
+                <i data-lucide="alert-circle" class="h-12 w-12"></i>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-3xl font-extrabold text-foreground">{% trans "Are you absolutely sure?" %}</h3>
+                <p class="text-xl text-muted-foreground max-w-lg mx-auto leading-relaxed">
+                    {% trans "You are about to permanently delete the package" %} <br>
+                    <span class="text-destructive font-black text-2xl tracking-tight">{$ packageToBeDeleted $}</span>
+                </p>
+            </div>
             
-            <div class="confirmation-buttons">
-                <button type="button" ng-click="cancelDelete()" class="btn btn-secondary">
-                    <i class="fas fa-times"></i>
+            <div class="flex flex-col md:flex-row gap-6 justify-center pt-4">
+                <button type="button" ng-click="cancelDelete()" class="px-12 py-5 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border hover:bg-muted transition-all">
                     {% trans "Cancel" %}
                 </button>
-                <button type="button" ng-click="deletePackageFinal()" class="btn btn-danger">
-                    <i class="fas fa-trash"></i>
+                <button type="button" ng-click="deletePackageFinal()" class="px-12 py-5 bg-destructive text-destructive-foreground rounded-xl text-xl font-bold shadow-xl hover:shadow-destructive/30 transition-all flex items-center justify-center gap-3">
+                    <i data-lucide="trash-2" class="h-6 w-6"></i>
                     {% trans "Yes, Delete Package" %}
                 </button>
             </div>
         </div>
-
-        <!-- Alert Messages -->
-        <div id="deleteFailure" class="alert alert-danger">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>{% trans "Cannot delete package. Error message:" %} {$ errorMessage $}</span>
-        </div>
-
-        <div id="deleteSuccess" class="alert alert-success">
-            <i class="fas fa-check-circle"></i>
-            <span>{% trans "Package" %} <strong>{$ deletedPackage $}</strong> {% trans "successfully deleted." %}</span>
-        </div>
     </div>
 </div>
+
+<script>
+    // Lucide Icon Refresh
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        // Watch for dynamic content changes
+        const observer = new MutationObserver((mutations) => {
+            let shouldRefresh = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
+                }
+            });
+            
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons();
+                }, 100);
+            }
+        });
+        
+        const config = { childList: true, subtree: true };
+        const targetNode = document.querySelector('[ng-controller="deletePackage"]');
+        if (targetNode) {
+            observer.observe(targetNode, config);
+        }
+    });
+</script>
 
 {% endblock %}
 

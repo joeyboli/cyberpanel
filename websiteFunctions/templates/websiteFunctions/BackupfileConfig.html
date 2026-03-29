@@ -7,35 +7,35 @@
     {% get_current_language as LANGUAGE_CODE %}
     <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <div class="container">
+    <div class="w-full p-4 md:p-12">
         <div id="page-title">
             <h2>{% trans "Backup File Configurations" %}</h2>
         </div>
 
 
-        <div ng-controller="BackupSchedule" class="panel">
+        <div ng-controller="BackupSchedule" class="bg-card rounded-2xl shadow-sm border border-border/50 mb-12 overflow-hidden">
             <div class="panel-body">
-                <h3 class="content-box-header">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
                     {% trans " Schedule Backups" %} <img ng-hide="BackupScheduleLoading"
                                                          src="{% static 'images/loading.gif' %}">
                 </h3>
                 <form name="websiteCreationForm" action="/" id="createPackages"
                       class="form-horizontal bordered-row panel-body">
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label">{% trans "Schedule Name" %}</label>
                         <div class="col-sm-6">
-                            <input name="Hostname" type="text" class="form-control" ng-model="ScheduleName"
+                            <input name="Hostname" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="ScheduleName"
                                    required>
                         </div>
 
                     </div>
                     <span style="display: none" id="RemoteConfigID"> {{ RemoteConfigID }}</span>
 
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label">{% trans "Backup Frequency" %}</label>
                         <div class="col-sm-6">
                             <select ng-model="Bfrequency"
-                                    class="form-control">
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                 <option>30 Minutes</option>
                                 <option>1 Hour</option>
                                 <option>6 Hours</option>
@@ -46,11 +46,11 @@
                             </select>
                         </div>
                     </div>
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label">{% trans "Backup File Retention" %}</label>
                         <div class="col-sm-6">
                             <select ng-model="Fretention"
-                                    class="form-control">
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                 <option>3 Days</option>
                                 <option>1 Week</option>
                                 <option>3 Weeks</option>
@@ -58,11 +58,11 @@
                             </select>
                         </div>
                     </div>
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label">{% trans "Backup Type" %}</label>
                         <div class="col-sm-6">
                             <select ng-model="BackupType"
-                                    class="form-control">
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                 <option>Only DataBase</option>
                                 <option>Only Website</option>
                                 <option>Website and Database Both</option>
@@ -71,16 +71,16 @@
                         </div>
                     </div>
 
-                    <div ng-hide="installationDetailsForm" class="form-group">
+                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                         <label class="col-sm-3 control-label"></label>
                         <div class="col-sm-4">
                             <button type="button" ng-click="SaveBackupSchedule()"
-                                    class="btn btn-primary btn-lg">{% trans "Save Backup Schedule" %}</button>
+                                    class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg transition-all">{% trans "Save Backup Schedule" %}</button>
 
                         </div>
                     </div>
                 </form>
-                <h3 class="content-box-header">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
                     {% trans "Configure Backup Schedules" %} </h3>
                 <table class="table-spacing" style="width: 100%">
                     <thead style="color: white; background-color: #0a6ebd">
@@ -145,12 +145,12 @@
                             <div class="modal-body">
 
                                 <form name="containerSettingsForm" action="/" class="form-horizontal">
-                                    <div ng-hide="installationDetailsForm" class="form-group">
+                                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                                         <label class="col-sm-3 control-label">{% trans "Backup Frequency" %}</label>
                                         <div class="col-sm-6">
 
                                             <select ng-model="RemoteFrequency"
-                                                    class="form-control">
+                                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                                 <option>30 Minutes</option>
                                                 <option>1 Hour</option>
                                                 <option>6 Hours</option>
@@ -162,11 +162,11 @@
                                         </div>
 
                                     </div>
-                                    <div ng-hide="installationDetailsForm" class="form-group">
+                                    <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                                         <label class="col-sm-3 control-label">{% trans "Backup File Retention" %}</label>
                                         <div class="col-sm-6">
                                             <select ng-model="RemoteFileretention"
-                                                    class="form-control">
+                                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                                 <option>3 Days</option>
                                                 <option>1 Week</option>
                                                 <option>3 Weeks</option>
@@ -180,7 +180,7 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button type="button" ng-disabled="savingSettings" class="btn btn-primary"
+                                <button type="button" ng-disabled="savingSettings" class="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg transition-all"
                                         ng-click="UpdateRemoteschedules()">Save
                                 </button>
                                 <button type="button" ng-disabled="savingSettings" class="btn btn-default"

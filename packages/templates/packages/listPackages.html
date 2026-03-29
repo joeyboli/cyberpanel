@@ -4,426 +4,27 @@
 
 {% block header_scripts %}
 <style>
-    /* Modern page styles matching new design */
-    .page-wrapper {
-        background: transparent;
-        padding: 20px;
+    /* Custom styles for components not easily handled by Tailwind */
+    .resource-badge-unlimited {
+        background-color: hsl(142 76% 36% / 0.1);
+        color: hsl(142 76% 36%);
+        border: 1px solid hsl(142 76% 36% / 0.2);
     }
     
-    .page-container {
-        max-width: 1400px;
-        margin: 0 auto;
+    .status-badge-enabled {
+        background-color: hsl(142 76% 36% / 0.1);
+        color: hsl(142 76% 36%);
     }
     
-    .page-header {
-        margin-bottom: 30px;
+    .status-badge-disabled {
+        background-color: hsl(43 96% 56% / 0.15);
+        color: hsl(35 92% 33%);
     }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-    }
-    
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--text-secondary);
-    }
-    
-    /* Card styles */
-    .content-card {
-        background: var(--surface-primary);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 2px 8px var(--shadow-light);
-        border: 1px solid var(--border-primary);
-        margin-bottom: 25px;
-    }
-    
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-primary);
-        border-radius: 2px;
-    }
-    
-    /* Table styles */
-    .modern-table {
-        width: 100%;
-        background: var(--surface-primary);
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px var(--shadow-xs);
-        border: 1px solid var(--border-primary);
-    }
-    
-    .modern-table thead {
-        background: var(--surface-secondary);
-    }
-    
-    .modern-table th {
-        padding: 16px 20px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid var(--border-primary);
-        text-align: left;
-    }
-    
-    .modern-table td {
-        padding: 16px 20px;
-        font-size: 14px;
-        color: var(--text-primary);
-        border-bottom: 1px solid var(--border-light);
-    }
-    
-    .modern-table tbody tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .modern-table tbody tr:hover {
-        background: var(--surface-hover);
-    }
-    
-    /* Resource badges */
-    .resource-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        background: var(--surface-secondary);
-        border: 1px solid var(--border-primary);
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-    
-    .resource-badge.unlimited {
-        background: var(--success-light);
-        border-color: var(--success-border);
-        color: var(--success-dark);
-    }
-    
-    /* Status badges */
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .status-badge.enabled {
-        background: var(--success-light);
-        color: var(--success-dark);
-    }
-    
-    .status-badge.disabled {
-        background: var(--warning-light);
-        color: var(--warning-dark);
-    }
-    
-    .status-icon {
-        font-size: 8px;
-    }
-    
-    /* Action buttons */
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-    }
-    
-    .btn-action {
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .btn-edit {
-        background: var(--surface-secondary);
-        color: var(--accent-primary);
-    }
-    
-    .btn-edit:hover {
-        background: var(--accent-primary);
-        color: var(--text-inverse);
-        transform: translateY(-1px);
-    }
-    
-    .btn-delete {
-        background: var(--error-light);
-        color: var(--error-primary);
-    }
-    
-    .btn-delete:hover {
-        background: var(--error-primary);
-        color: var(--text-inverse);
-        transform: translateY(-1px);
-    }
-    
-    /* Modal styles */
-    .modal-content {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 8px 32px var(--shadow-medium);
-    }
-    
-    .modal-header {
-        background: var(--surface-secondary);
-        border-bottom: 1px solid var(--border-primary);
-        border-radius: 12px 12px 0 0;
-        padding: 20px 25px;
-    }
-    
-    .modal-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .modal-body {
-        padding: 25px;
-    }
-    
-    .modal-footer {
-        background: var(--surface-secondary);
-        border-top: 1px solid var(--border-primary);
-        border-radius: 0 0 12px 12px;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-    
-    /* Form styles in modal */
-    .form-section {
-        margin-bottom: 25px;
-    }
-    
-    .form-section-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .form-section-title i {
-        color: var(--accent-primary);
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-muted);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--border-primary);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary);
-        background: var(--surface-primary);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:hover {
-        border-color: var(--accent-primary);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-primary);
-        box-shadow: 0 0 0 3px var(--accent-focus);
-    }
-    
-    .form-control[readonly] {
-        background: var(--surface-secondary);
-        cursor: not-allowed;
-    }
-    
-    /* Input group */
-    .input-group {
-        display: flex;
-        align-items: center;
-        gap: 0;
-    }
-    
-    .input-group .form-control {
-        border-radius: 8px 0 0 8px;
-    }
-    
-    .input-suffix {
-        background: var(--surface-secondary);
-        border: 1px solid var(--border-primary);
-        border-left: none;
-        padding: 10px 16px;
-        border-radius: 0 8px 8px 0;
-        font-size: 13px;
-        color: var(--text-muted);
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    
-    /* Help text */
-    .help-text {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-top: 6px;
-    }
-    
-    /* Checkbox styles */
-    .checkbox-wrapper {
-        display: flex;
-        align-items: start;
-        gap: 10px;
-        padding: 12px 16px;
-        background: var(--surface-secondary);
-        border: 1px solid var(--border-primary);
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        margin-bottom: 12px;
-    }
-    
-    .checkbox-wrapper:hover {
-        border-color: var(--accent-primary);
-        background: var(--accent-lighter);
-    }
-    
-    .checkbox-wrapper input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        border-radius: 4px;
-        cursor: pointer;
-        accent-color: var(--accent-primary);
-        margin-top: 2px;
-    }
-    
-    .checkbox-content {
-        flex: 1;
-    }
-    
-    .checkbox-label {
-        font-size: 14px;
-        color: var(--text-primary);
-        font-weight: 600;
-        cursor: pointer;
-        -webkit-user-select: none;
-        user-select: none;
-        display: block;
-        margin-bottom: 4px;
-    }
-    
-    .checkbox-desc {
-        font-size: 12px;
-        color: var(--text-secondary);
-        line-height: 1.5;
-    }
-    
-    /* Button styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .btn-primary {
-        background: var(--accent-primary);
-        color: var(--text-inverse);
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-dark);
-        box-shadow: 0 4px 12px var(--accent-shadow);
-        transform: translateY(-1px);
-    }
-    
-    .btn-secondary {
-        background: var(--surface-secondary);
-        color: var(--accent-primary);
-        border: 1px solid var(--border-primary);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--accent-light);
-        border-color: var(--accent-primary);
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--border-light);
-        border-top: 2px solid var(--accent-primary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) {
-        .modern-table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+        background-color: hsl(var(--background) / 0.8);
+        backdrop-filter: blur(4px);
     }
 </style>
 {% endblock %}
@@ -432,199 +33,239 @@
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="page-wrapper" ng-controller="listPackageTables">
-    <div class="page-container">
-        <div class="page-header">
-            <h1 class="page-title">{% trans "List Packages" %}</h1>
-            <p class="page-subtitle">{% trans "Manage your hosting packages - edit resource limits or delete packages" %}</p>
-        </div>
-
-        <div class="content-card">
-            <h2 class="card-title">
-                {% trans "Hosting Packages" %}
-                <span ng-hide="cyberpanelLoading" class="loading-spinner"></span>
-            </h2>
-            
-            <div class="table-responsive">
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th>{% trans "Package Name" %}</th>
-                            <th>{% trans "Disk Space" %}</th>
-                            <th>{% trans "Bandwidth" %}</th>
-                            <th>{% trans "Domains" %}</th>
-                            <th>{% trans "Emails" %}</th>
-                            <th>{% trans "Databases" %}</th>
-                            <th>{% trans "FTP Accounts" %}</th>
-                            <th>{% trans "FQDN Status" %}</th>
-                            <th>{% trans "Actions" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="record in records track by $index">
-                            <td>
-                                <strong>{$ record.package $}</strong>
-                            </td>
-                            <td>
-                                <span class="resource-badge" ng-class="{'unlimited': record.diskSpace == 0}">
-                                    <span ng-if="record.diskSpace == 0">{% trans "Unlimited" %}</span>
-                                    <span ng-if="record.diskSpace != 0">{$ record.diskSpace $} MB</span>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="resource-badge" ng-class="{'unlimited': record.bandwidth == 0}">
-                                    <span ng-if="record.bandwidth == 0">{% trans "Unlimited" %}</span>
-                                    <span ng-if="record.bandwidth != 0">{$ record.bandwidth $} MB</span>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="resource-badge" ng-class="{'unlimited': record.allowedDomains == 0}">
-                                    <span ng-if="record.allowedDomains == 0">{% trans "Unlimited" %}</span>
-                                    <span ng-if="record.allowedDomains != 0">{$ record.allowedDomains $}</span>
-                                </span>
-                            </td>
-                            <td>{$ record.emailAccounts $}</td>
-                            <td>{$ record.dataBases $}</td>
-                            <td>{$ record.ftpAccounts $}</td>
-                            <td>
-                                <span class="status-badge" ng-class="{'enabled': record.allowFullDomain, 'disabled': !record.allowFullDomain}">
-                                    <i class="fas fa-circle status-icon"></i>
-                                    <span ng-if="record.allowFullDomain">{% trans "Enabled" %}</span>
-                                    <span ng-if="!record.allowFullDomain">{% trans "Disabled" %}</span>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-action btn-edit" 
-                                            ng-click="editInitial(record.package, record.diskSpace, record.bandwidth, record.emailAccounts, record.dataBases, record.ftpAccounts, record.allowedDomains, record.allowFullDomain, record.enforceDiskLimits)"
-                                            data-toggle="modal" 
-                                            data-target="#editPackageModal">
-                                        <i class="fas fa-edit"></i>
-                                        {% trans "Edit" %}
-                                    </button>
-                                    <button class="btn-action btn-delete" 
-                                            ng-click="confirmDelete(record.package)">
-                                        <i class="fas fa-trash"></i>
-                                        {% trans "Delete" %}
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+<div ng-controller="listPackageTables" class="w-full p-4 md:p-12 space-y-8">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                <i data-lucide="package" class="h-8 w-8"></i>
             </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">{% trans "List Packages" %}</h1>
+                <p class="text-xl text-muted-foreground">{% trans "Manage your hosting packages - edit resource limits or delete packages" %}</p>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'createPackage' %}" class="flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-primary/20 !no-underline">
+                <i data-lucide="plus-circle" class="h-6 w-6"></i>
+                {% trans "Create Package" %}
+            </a>
         </div>
     </div>
 
-    <!-- Edit Package Modal - Inside Controller -->
-    <div id="editPackageModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">
+    <!-- Main Content -->
+    <div class="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+        <div class="p-8 border-b border-border flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                <i data-lucide="list" class="h-6 w-6 text-primary"></i>
+                {% trans "Hosting Packages" %}
+            </h2>
+            <div ng-hide="cyberpanelLoading" class="flex items-center gap-2 text-muted-foreground">
+                <div class="h-5 w-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                <span class="text-sm font-medium">{% trans "Loading..." %}</span>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-muted/50 border-b border-border">
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Package Name" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Disk Space" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Bandwidth" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Domains" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Emails" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Databases" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "FTP Accounts" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "FQDN Status" %}</th>
+                        <th class="p-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    <tr ng-repeat="record in records track by $index" class="hover:bg-muted/30 transition-colors">
+                        <td class="p-6 font-bold text-foreground text-lg">{$ record.package $}</td>
+                        <td class="p-6">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold" 
+                                  ng-class="record.diskSpace == 0 ? 'resource-badge-unlimited' : 'bg-secondary text-secondary-foreground border border-border'">
+                                <i data-lucide="hard-drive" class="h-4 w-4"></i>
+                                <span ng-if="record.diskSpace == 0">{% trans "Unlimited" %}</span>
+                                <span ng-if="record.diskSpace != 0">{$ record.diskSpace $} MB</span>
+                            </span>
+                        </td>
+                        <td class="p-6">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold" 
+                                  ng-class="record.bandwidth == 0 ? 'resource-badge-unlimited' : 'bg-secondary text-secondary-foreground border border-border'">
+                                <i data-lucide="activity" class="h-4 w-4"></i>
+                                <span ng-if="record.bandwidth == 0">{% trans "Unlimited" %}</span>
+                                <span ng-if="record.bandwidth != 0">{$ record.bandwidth $} MB</span>
+                            </span>
+                        </td>
+                        <td class="p-6">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold" 
+                                  ng-class="record.allowedDomains == 0 ? 'resource-badge-unlimited' : 'bg-secondary text-secondary-foreground border border-border'">
+                                <i data-lucide="globe" class="h-4 w-4"></i>
+                                <span ng-if="record.allowedDomains == 0">{% trans "Unlimited" %}</span>
+                                <span ng-if="record.allowedDomains != 0">{$ record.allowedDomains $}</span>
+                            </span>
+                        </td>
+                        <td class="p-6">
+                            <div class="flex items-center gap-2 font-semibold">
+                                <i data-lucide="mail" class="h-4 w-4 text-muted-foreground"></i>
+                                {$ record.emailAccounts $}
+                            </div>
+                        </td>
+                        <td class="p-6">
+                            <div class="flex items-center gap-2 font-semibold">
+                                <i data-lucide="database" class="h-4 w-4 text-muted-foreground"></i>
+                                {$ record.dataBases $}
+                            </div>
+                        </td>
+                        <td class="p-6">
+                            <div class="flex items-center gap-2 font-semibold">
+                                <i data-lucide="file-key" class="h-4 w-4 text-muted-foreground"></i>
+                                {$ record.ftpAccounts $}
+                            </div>
+                        </td>
+                        <td class="p-6">
+                            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-colors" 
+                                  ng-class="record.allowFullDomain ? 'status-badge-enabled' : 'status-badge-disabled'">
+                                <div class="h-2 w-2 rounded-full" ng-class="record.allowFullDomain ? 'bg-current' : 'bg-current'"></div>
+                                <span ng-if="record.allowFullDomain">{% trans "Enabled" %}</span>
+                                <span ng-if="!record.allowFullDomain">{% trans "Disabled" %}</span>
+                            </span>
+                        </td>
+                        <td class="p-6">
+                            <div class="flex items-center gap-3">
+                                <button class="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground rounded-lg text-sm font-bold transition-all border border-border shadow-sm" 
+                                        ng-click="editInitial(record.package, record.diskSpace, record.bandwidth, record.emailAccounts, record.dataBases, record.ftpAccounts, record.allowedDomains, record.allowFullDomain, record.enforceDiskLimits)"
+                                        data-toggle="modal" 
+                                        data-target="#editPackageModal">
+                                    <i data-lucide="edit" class="h-4 w-4"></i>
+                                    {% trans "Edit" %}
+                                </button>
+                                <button class="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground rounded-lg text-sm font-bold transition-all border border-destructive/20 shadow-sm" 
+                                        ng-click="confirmDelete(record.package)">
+                                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                    {% trans "Delete" %}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Edit Package Modal -->
+    <div id="editPackageModal" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content !rounded-2xl !border-0 shadow-2xl overflow-hidden bg-card">
+                <div class="bg-muted/30 p-8 border-b border-border flex items-center justify-between">
+                    <h4 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                        <i data-lucide="edit-3" class="h-6 w-6 text-primary"></i>
                         {% trans "Edit Package" %}
-                        <span ng-hide="cyberpanelLoading" class="loading-spinner"></span>
                     </h4>
+                    <button type="button" class="p-2 hover:bg-secondary rounded-full transition-colors" data-dismiss="modal">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <form name="editPackageForm">
-                        <div class="form-group">
-                            <label class="form-label">{% trans "Package Name" %}</label>
-                            <input type="text" class="form-control" ng-model="name" readonly aria-label="{% trans 'Package Name' %}">
+                <div class="p-8 max-h-[70vh] overflow-y-auto">
+                    <form name="editPackageForm" class="space-y-8">
+                        <div class="space-y-2">
+                            <label class="text-lg font-bold text-foreground uppercase tracking-wider">{% trans "Package Name" %}</label>
+                            <input type="text" class="w-full p-4 bg-muted/20 border border-border rounded-xl text-lg font-bold text-foreground cursor-not-allowed" ng-model="name" readonly>
                         </div>
                         
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-globe"></i>
+                        <!-- Web Resources Section -->
+                        <div class="p-6 bg-secondary/10 rounded-2xl border border-border space-y-6">
+                            <div class="flex items-center gap-3 text-lg font-bold text-foreground">
+                                <i data-lucide="globe" class="h-5 w-5 text-primary"></i>
                                 {% trans "Web Resources" %}
                             </div>
                             
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Domains" %}</label>
-                                <input type="number" class="form-control" ng-model="allowedDomains" required aria-label="{% trans 'Number of domains allowed' %}">
-                                <div class="help-text">{% trans "Number of domains allowed (0 = Unlimited)" %}</div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Disk Space" %}</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" ng-model="diskSpace" required aria-label="{% trans 'Disk space in MB' %}">
-                                    <span class="input-suffix">MB</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "Domains" %}</label>
+                                    <input type="number" class="w-full p-4 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="allowedDomains" required>
+                                    <p class="text-xs text-muted-foreground">{% trans "Allowed domains (0 = Unlimited)" %}</p>
                                 </div>
-                                <div class="help-text">{% trans "Disk space in MB (0 = Unlimited)" %}</div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Bandwidth" %}</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" ng-model="bandwidth" required aria-label="{% trans 'Monthly bandwidth in MB' %}">
-                                    <span class="input-suffix">MB</span>
+                                
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "Disk Space" %}</label>
+                                    <div class="relative">
+                                        <input type="number" class="w-full p-4 pr-16 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="diskSpace" required>
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground bg-muted px-2 py-1 rounded">MB</span>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground">{% trans "Disk space in MB (0 = Unlimited)" %}</p>
                                 </div>
-                                <div class="help-text">{% trans "Monthly bandwidth in MB (0 = Unlimited)" %}</div>
+                                
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "Bandwidth" %}</label>
+                                    <div class="relative">
+                                        <input type="number" class="w-full p-4 pr-16 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="bandwidth" required>
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground bg-muted px-2 py-1 rounded">MB</span>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground">{% trans "Monthly bandwidth (0 = Unlimited)" %}</p>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-server"></i>
+                        <!-- Services Section -->
+                        <div class="p-6 bg-secondary/10 rounded-2xl border border-border space-y-6">
+                            <div class="flex items-center gap-3 text-lg font-bold text-foreground">
+                                <i data-lucide="server" class="h-5 w-5 text-primary"></i>
                                 {% trans "Services & Features" %}
                             </div>
                             
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Email Accounts" %}</label>
-                                <input type="number" class="form-control" ng-model="emails" required aria-label="{% trans 'Number of email accounts' %}">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Databases" %}</label>
-                                <input type="number" class="form-control" ng-model="dataBases" required aria-label="{% trans 'Number of databases' %}">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">{% trans "FTP Accounts" %}</label>
-                                <input type="number" class="form-control" ng-model="ftpAccounts" required aria-label="{% trans 'Number of FTP accounts' %}">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "Email Accounts" %}</label>
+                                    <input type="number" class="w-full p-4 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="emails" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "Databases" %}</label>
+                                    <input type="number" class="w-full p-4 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="dataBases" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-lg font-bold text-foreground">{% trans "FTP Accounts" %}</label>
+                                    <input type="number" class="w-full p-4 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="ftpAccounts" required>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-cog"></i>
-                                {% trans "Additional Features" %}
+                        <!-- Additional Features -->
+                        <div class="p-6 bg-secondary/10 rounded-2xl border border-border space-y-6">
+                            <div class="flex items-center gap-3 text-lg font-bold text-foreground">
+                                <i data-lucide="settings" class="h-5 w-5 text-primary"></i>
+                                {% trans "Additional Options" %}
                             </div>
                             
-                            <div class="checkbox-wrapper">
-                                <input ng-model="allowFullDomain" type="checkbox" id="editAllowFullDomain">
-                                <div class="checkbox-content">
-                                    <label for="editAllowFullDomain" class="checkbox-label">
-                                        {% trans "Allow Fully Qualified Domains" %}
-                                    </label>
-                                    <div class="checkbox-desc">
-                                        {% trans "Allow creation of fully qualified domain names as child-domains" %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex items-start gap-4 p-4 bg-card border border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                                    <input ng-model="allowFullDomain" type="checkbox" class="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20">
+                                    <div class="space-y-1">
+                                        <div class="font-bold text-foreground">{% trans "Allow FQDN" %}</div>
+                                        <div class="text-xs text-muted-foreground">{% trans "Allow creation of fully qualified domain names" %}</div>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <div class="checkbox-wrapper">
-                                <input ng-model="enforceDiskLimits" type="checkbox" id="editEnforceDiskLimits">
-                                <div class="checkbox-content">
-                                    <label for="editEnforceDiskLimits" class="checkbox-label">
-                                        {% trans "Enforce Disk Limits" %}
-                                    </label>
-                                    <div class="checkbox-desc">
-                                        {% trans "Strictly enforce disk space limits for websites using this package" %}
+                                </label>
+                                
+                                <label class="flex items-start gap-4 p-4 bg-card border border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                                    <input ng-model="enforceDiskLimits" type="checkbox" class="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20">
+                                    <div class="space-y-1">
+                                        <div class="font-bold text-foreground">{% trans "Enforce Disk Limits" %}</div>
+                                        <div class="text-xs text-muted-foreground">{% trans "Strictly enforce disk space limits" %}</div>
                                     </div>
-                                </div>
+                                </label>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                <div class="bg-muted/30 p-8 border-top border-border flex flex-col md:flex-row gap-4 justify-end">
+                    <button type="button" class="px-8 py-4 bg-secondary text-foreground rounded-xl font-bold border border-border hover:bg-muted transition-all" data-dismiss="modal">
                         {% trans "Cancel" %}
                     </button>
-                    <button type="button" class="btn btn-primary" ng-click="saveChanges()" data-dismiss="modal">
-                        <i class="fas fa-save"></i>
+                    <button type="button" class="px-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2" ng-click="saveChanges()" data-dismiss="modal">
+                        <i data-lucide="save" class="h-5 w-5"></i>
                         {% trans "Save Changes" %}
                     </button>
                 </div>
@@ -633,29 +274,27 @@
     </div>
 
     <!-- Delete Package Modal -->
-    <div id="deletePackageModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">
-                        {% trans "Delete Package" %}
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <strong>{% trans "Warning!" %}</strong> {% trans "Are you sure you want to delete this package?" %}
+    <div id="deletePackageModal" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content !rounded-2xl !border-0 shadow-2xl overflow-hidden bg-card">
+                <div class="p-8 space-y-6 text-center">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                        <i data-lucide="alert-triangle" class="h-10 w-10"></i>
                     </div>
-                    <p>{% trans "Package to delete:" %} <strong>{$ packageToDelete $}</strong></p>
-                    <p class="text-muted">{% trans "This action cannot be undone." %}</p>
+                    <div class="space-y-2">
+                        <h3 class="text-2xl font-bold text-foreground">{% trans "Delete Package?" %}</h3>
+                        <p class="text-muted-foreground">
+                            {% trans "Are you sure you want to delete" %} <span class="font-bold text-foreground">{$ packageToDelete $}</span>?
+                            {% trans "This action cannot be undone." %}
+                        </p>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                <div class="bg-muted/30 p-8 flex flex-col md:flex-row gap-4">
+                    <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl font-bold border border-border hover:bg-muted transition-all" data-dismiss="modal">
                         {% trans "Cancel" %}
                     </button>
-                    <button type="button" class="btn btn-danger" ng-click="deletePackageFinal(packageToDelete)" data-dismiss="modal">
-                        <i class="fas fa-trash"></i>
+                    <button type="button" class="flex-1 px-8 py-4 bg-destructive text-destructive-foreground rounded-xl font-bold shadow-lg hover:shadow-destructive/20 transition-all flex items-center justify-center gap-2" ng-click="deletePackageFinal(packageToDelete)" data-dismiss="modal">
+                        <i data-lucide="trash-2" class="h-5 w-5"></i>
                         {% trans "Delete Package" %}
                     </button>
                 </div>
@@ -663,5 +302,38 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Lucide Icon Refresh
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        // Watch for dynamic content changes (AngularJS)
+        const observer = new MutationObserver((mutations) => {
+            let shouldRefresh = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
+                }
+            });
+            
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                // Debounce refresh
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons();
+                }, 100);
+            }
+        });
+        
+        const config = { childList: true, subtree: true };
+        const targetNode = document.querySelector('[ng-controller="listPackageTables"]');
+        if (targetNode) {
+            observer.observe(targetNode, config);
+        }
+    });
+</script>
 
 {% endblock %}
