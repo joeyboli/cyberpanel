@@ -7,16 +7,24 @@
     {% get_current_language as LANGUAGE_CODE %}
     <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Sync your site to Master" %}</h2>
-            <p>{% trans "Right now you can only sync your child domains to master domains."%} {{ childDomain }} {% trans " will be synced to " %} {{ domainName }}.</p>
+    <div class="w-full p-4 md:p-12">
+        <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                <i data-lucide="layout" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">{% trans "Sync your site to Master" %}</h1>
+                <p class="text-xl text-muted-foreground">{% trans "Right now you can only sync your child domains to master domains."%} {{ childDomain }} {% trans " will be synced to " %} {{ domainName }}.</p>
+            </div>
         </div>
+    </div>
 
 
-        <div ng-controller="syncWebsite" class="panel">
+        <div ng-controller="syncWebsite" class="bg-card rounded-2xl shadow-sm border border-border/50 mb-12 overflow-hidden">
             <div class="panel-body">
-                <h3 class="title-hero">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
                     {% trans "Sync " %}<span id="childDomain">{{ childDomain }}</span>  {% trans "to " %} <span id="domainName">{{ domainName }}</span><img
                         ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}">
                 </h3>
@@ -26,7 +34,7 @@
                     <form name="websiteCreationForm" action="/" id="createPackages"
                           class="form-horizontal bordered-row">
 
-                        <div ng-hide="installationDetailsForm" class="form-group">
+                        <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                             <label class="col-sm-3 control-label">{% trans "What to Sync" %}</label>
                             <div class="col-sm-9">
                                 <div class="checkbox">
@@ -56,15 +64,15 @@
                             </div>
                         </div>
 
-                        <div ng-hide="installationDetailsForm" class="form-group">
+                        <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-4">
                                 <button type="button" ng-click="startSyncing()"
-                                        class="btn btn-primary btn-lg btn-block">{% trans "Start Syncing" %}</button>
+                                        class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg w-full transition-all">{% trans "Start Syncing" %}</button>
                             </div>
                         </div>
 
-                        <div ng-hide="installationProgress" class="form-group">
+                        <div ng-hide="installationProgress" class="space-y-3 mb-6">
                             <label class="col-sm-2 control-label"></label>
                             <div class="col-sm-7">
 
@@ -83,11 +91,11 @@
                             </div>
                         </div>
 
-                        <div ng-hide="installationProgress" class="form-group">
+                        <div ng-hide="installationProgress" class="space-y-3 mb-6">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-4">
                                 <button type="button" ng-disabled="goBackDisable" ng-click="goBack()"
-                                        class="btn btn-primary btn-lg">{% trans "Go Back" %}</button>
+                                        class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg transition-all">{% trans "Go Back" %}</button>
                             </div>
                         </div>
 

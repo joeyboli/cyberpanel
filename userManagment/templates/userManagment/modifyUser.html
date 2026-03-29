@@ -3,348 +3,216 @@
 {% block title %}{% trans "Modify User - CyberPanel" %}{% endblock %}
 {% block content %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+ {% load static %}
+ {% get_current_language as LANGUAGE_CODE %}
+ <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <style>
-        body {
-            background-color: var(--bg-primary, #f0f0ff);
-        }
-        .page-wrapper {
-            background: transparent;
-            padding: 20px;
-        }
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .content-card {
-            background: var(--bg-secondary, white);
-            border-radius: 12px;
-            padding: 2.5rem;
-            box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            margin-bottom: 25px;
-        }
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary, #2f3640);
-            margin-bottom: 2.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 3px solid var(--accent-color, #5b5fcf);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-row {
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-        .form-col-6 {
-            float: left;
-            width: 48%;
-            margin-right: 4%;
-        }
-        .form-col-6:last-child {
-            margin-right: 0;
-        }
-        .form-label {
-            color: var(--text-primary, #2f3640);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .form-control {
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
-            background: var(--bg-secondary, white);
-            color: var(--text-primary, #2f3640);
-        }
-        .form-control:focus {
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-            outline: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color, #5b5fcf) 0%, var(--accent-hover, #7b7fd0) 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(91, 95, 207, 0.3);
-            color: white;
-            cursor: pointer;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--accent-hover, #4b4fbf) 0%, var(--accent-hover, #6b6fc0) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-        }
-        .btn-generate {
-            background: var(--success-text, #10b981);
-            border: none;
-            color: white;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .btn-generate:hover {
-            background: var(--success-text, #0ea271);
-            transform: translateY(-2px);
-        }
-        .btn-row {
-            overflow: hidden;
-        }
-        .btn-col-8 {
-            float: left;
-            width: 75%;
-            margin-right: 5%;
-        }
-        .btn-col-4 {
-            float: left;
-            width: 20%;
-        }
-        .alert {
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-top: 1rem;
-            border: none;
-        }
-        .alert-success {
-            background: var(--success-bg, rgba(16, 185, 129, 0.1));
-            color: var(--success-text, #065f46);
-        }
-        .alert-danger {
-            background: var(--danger-bg, rgba(239, 68, 68, 0.1));
-            color: var(--danger-text, #991b1b);
-        }
-        .error-text {
-            color: var(--danger-text, #ef4444);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-        .loading-icon {
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-        }
-        .help-text {
-            color: var(--text-secondary, #8893a7);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .security-info {
-            background: var(--bg-hover, #f8f9ff);
-            border-left: 4px solid var(--accent-color, #5b5fcf);
-            padding: 0.75rem 1rem;
-            border-radius: 0 8px 8px 0;
-            color: var(--accent-color, #5b5fcf);
-            font-weight: 600;
-        }
-        .checkbox-wrapper {
-            background: var(--bg-hover, #f8f9ff);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-            border: 1px solid var(--border-color, #e8e9ff);
-        }
-        .checkbox-wrapper label {
-            font-weight: 500;
-            color: var(--text-primary, #2f3640);
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-        .checkbox-wrapper input[type="checkbox"] {
-            margin-right: 0.5rem;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        #qr {
-            margin-top: 1rem;
-            border: 2px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            padding: 10px;
-            background: var(--bg-secondary, white);
-        }
-        .text-muted {
-            color: var(--text-secondary, #8893a7);
-        }
-        .btn-outline-secondary {
-            background: transparent;
-            border: 1px solid var(--border-color, #e8e9ff);
-            color: var(--text-secondary, #8893a7);
-            padding: 0.75rem 1rem;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-outline-secondary:hover {
-            background: var(--bg-hover, #f8f9ff);
-            color: var(--accent-color, #5b5fcf);
-            border-color: var(--accent-color, #5b5fcf);
-        }
-        @media (max-width: 768px) {
-            .page-container {
-                padding-left: 12px;
-                padding-right: 12px;
-            }
-            .form-col-6 {
-                float: none;
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            .btn-col-8, .btn-col-4 {
-                float: none;
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            .content-card {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-
-    <div class="page-wrapper">
-      <div class="page-container">
-        <div class="content-card" ng-controller="modifyUser">
-            <h3 class="section-title">
-                {% trans "Modify User" %}
-                <img class="loading-icon" ng-hide="userModificationLoading" src="{% static 'images/loading.gif' %}">
-            </h3>
-            <form name="modifyUserForm" action="/">
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select User Account" %}</label>
-                    <select ng-change="fetchUserDetails()" ng-model="accountUsername" class="form-control">
-                        <option value="">-- {% trans "Choose a user to modify" %} --</option>
-                        {% for accts in acctNames %}
-                            <option>{{ accts }}</option>
-                        {% endfor %}
-                    </select>
-                    <p class="help-text">{% trans "Select the user account you want to modify" %}</p>
-                </div>
-                <div ng-hide="acctDetailsFetched">
-                    <div class="form-row">
-                        <div class="form-col-6">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "First Name" %}</label>
-                                <input name="firstName" type="text" class="form-control" ng-model="firstName" required>
-                            </div>
-                        </div>
-                        <div class="form-col-6">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Last Name" %}</label>
-                                <input name="lastName" type="text" class="form-control" ng-model="lastName" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Email Address" %}</label>
-                        <input name="email" type="email" class="form-control" ng-model="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{% trans "New Password" %} <small class="text-muted">({% trans "Leave blank to keep current" %})</small></label>
-                        <div class="btn-row">
-                            <div class="btn-col-8">
-                                <input name="password" type="password" class="form-control" ng-model="password">
-                            </div>
-                            <div class="btn-col-4">
-                                <button type="button" ng-click="generatePassword()" class="btn-generate" style="width: 100%;">
-                                    <i class="fa fa-magic"></i> {% trans "Generate" %}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-hide="generatedPasswordView" class="form-group">
-                        <label class="form-label">{% trans "Generated Password" %}</label>
-                        <div class="btn-row">
-                            <div class="btn-col-8">
-                                <input type="text" class="form-control" ng-model="password" readonly>
-                            </div>
-                            <div class="btn-col-4">
-                                <button type="button" ng-click="usePassword()" class="btn-primary" style="width: 100%;">
-                                    <i class="fa fa-check"></i> {% trans "Use This Password" %}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Security Level" %}</label>
-                        <select ng-init="securityLevels={{ securityLevels }}"
-                                ng-model="securityLevel" ng-options="s for s in securityLevels track by s"
-                                class="form-control">
-                        </select>
-                        <p class="help-text">{% trans "Choose the security level for this account" %}</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Additional Features" %}</label>
-                        <div class="checkbox-wrapper">
-                            <label>
-                                <input ng-change="decideQRShow()" ng-model="twofa" type="checkbox" value="">
-                                {% trans "Enable Two-Factor Authentication (2FA)" %}
-                            </label>
-                            <p class="help-text mb-0 mt-2">{% trans "Enhance account security with 2FA" %}</p>
-                        </div>
-                        <div ng-hide="qrHidden" class="mt-3">
-                            <p class="help-text">{% trans "Scan this QR code with your authenticator app:" %}</p>
-                            <div style="max-width:220px;">
-                                <canvas id="qr"></canvas>
-                            </div>
-                            <div class="mt-3">
-                                <p class="help-text mb-2">{% trans "Or manually enter this key:" %}</p>
-                                <div class="input-group" style="max-width:350px;">
-                                    <input type="text" class="form-control" ng-model="formattedSecretKey" readonly style="font-family: monospace; font-size: 14px;">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" ng-click="copySecretKey()" title="{% trans 'Copy to clipboard' %}">
-                                            <i class="fa fa-copy"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <small class="text-muted mt-1 d-block">{% trans "Enter this key in your authenticator app if you cannot scan QR codes." %}</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-top: 2rem;">
-                        <button type="button" ng-click="modifyUser()" class="btn-primary">
-                            <i class="fa fa-save"></i> {% trans "Save Changes" %}
-                        </button>
-                    </div>
-                </div>
-                <div ng-hide="userModified" class="alert alert-success">
-                    <i class="fa fa-check-circle"></i> {% trans "Account with username:" %} <strong>{$ userName $}</strong> {% trans "is successfully modified." %}
-                </div>
-                <div ng-hide="canotModifyUser" class="alert alert-danger">
-                    <i class="fa fa-exclamation-circle"></i> {% trans "Cannot modify user. Error message:" %} {$ errorMessage $}
-                </div>
-                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                    <i class="fa fa-times-circle"></i> {% trans "Could not connect to server. Please refresh this page." %}
-                </div>
-                <div ng-hide="canotFetchDetails" class="alert alert-danger">
-                    <i class="fa fa-exclamation-circle"></i> {% trans "Cannot fetch details. Error message:" %} {$ errorMessage $}
-                </div>
-                <div ng-hide="detailsFetched" class="alert alert-success">
-                    <i class="fa fa-info-circle"></i> {% trans "User details loaded successfully." %}
-                </div>
-            </form>
+ <div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="modifyUser">
+ <div class="space-y-12">
+ <!-- Header Section -->
+ <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+    <div class="flex items-center gap-6">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+            <i data-lucide="user-pen" class="h-8 w-8"></i> <img class="h-6 w-6 absolute top-0 right-0 -mr-2 -mt-2" ng-hide="userModificationLoading" src="{% static 'images/loading.gif' %}" alt="Loading...">
         </div>
-      </div>
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                {% trans "Modify User" %}
+            </h1>
+            <p class="text-xl text-muted-foreground">
+                {% trans "Update account details, security settings, and permissions" %}
+            </p>
+        </div>
     </div>
+</div>
+
+ <!-- Main Card -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+ <div class="p-12">
+ <form name="modifyUserForm" class="space-y-8">
+ <!-- User Selection -->
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground flex items-center gap-2">
+ <i data-lucide="users" class="h-5 w-5"></i>
+ {% trans "Select User Account" %}
+ </label>
+ <select ng-change="fetchUserDetails()" ng-model="accountUsername" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground">
+ <option value="">-- {% trans "Choose a user to modify" %} --</option>
+ {% for accts in acctNames %}
+ <option>{{ accts }}</option>
+ {% endfor %}
+ </select>
+ <p class="text-xl text-muted-foreground">{% trans "Select the user account you want to modify" %}</p>
+ </div>
+
+ <!-- Details Section (Hidden until user selected) -->
+ <div ng-hide="acctDetailsFetched" class="space-y-6 animate-in fade-in slide-in-from-top-4">
+ <div class="pt-4 border-t border-border/40">
+ <h3 class="text-xl font-semibold text-muted-foreground uppercase tracking-wider mb-6 flex items-center gap-2">
+ <i data-lucide="user-cog" class="h-5 w-5"></i>
+ {% trans "Account Information" %}
+ </h3>
+ 
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground">{% trans "First Name" %}</label>
+ <input name="firstName" type="text" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground" 
+ ng-model="firstName" required>
+ </div>
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground">{% trans "Last Name" %}</label>
+ <input name="lastName" type="text" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground" 
+ ng-model="lastName" required>
+ </div>
+ </div>
+ </div>
+
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground">{% trans "Email Address" %}</label>
+ <input name="email" type="email" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground" 
+ ng-model="email" required>
+ </div>
+
+ <!-- Password Update -->
+ <div class="space-y-4 pt-4 border-t border-border/40">
+ <h3 class="text-xl font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+ <i data-lucide="key-round" class="h-5 w-5"></i>
+ {% trans "Security Update" %}
+ </h3>
+ 
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground">
+ {% trans "New Password" %} 
+ <span class="text-lg font-normal text-muted-foreground ml-1">({% trans "Leave blank to keep current" %})</span>
+ </label>
+ <div class="flex gap-3">
+ <input name="password" type="password" 
+ class="flex-1 px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground" 
+ ng-model="password">
+ <button type="button" ng-click="generatePassword()" 
+ class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap">
+ <i data-lucide="sparkles" class="h-5 w-5"></i>
+ {% trans "Generate" %}
+ </button>
+ </div>
+ </div>
+
+ <!-- Generated Password Display -->
+ <div ng-hide="generatedPasswordView" class="p-4 bg-primary/5 rounded-xl border border-primary/10 animate-in fade-in slide-in-from-top-2">
+ <label class="text-lg font-semibold text-primary mb-2 block uppercase tracking-wider">
+ {% trans "Generated Password" %}
+ </label>
+ <div class="flex gap-3">
+ <input type="text" 
+ class="flex-1 px-4 py-2 bg-card border border-primary/20 rounded-lg text-primary font-mono focus:outline-none" 
+ ng-model="password" readonly>
+ <button type="button" ng-click="usePassword()" 
+ class="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-colors">
+ {% trans "Use" %}
+ </button>
+ </div>
+ </div>
+ </div>
+
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+ <!-- Security Level -->
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground flex items-center gap-2">
+ <i data-lucide="shield" class="h-5 w-5"></i>
+ {% trans "Security Level" %}
+ </label>
+ <select ng-init="securityLevels={{ securityLevels }}"
+ ng-model="securityLevel" ng-options="s for s in securityLevels track by s"
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground">
+ </select>
+ <p class="text-xl text-muted-foreground">{% trans "Choose the security level for this account" %}</p>
+ </div>
+
+ <!-- 2FA Section -->
+ <div class="space-y-4">
+ <label class="text-xl font-medium text-foreground flex items-center gap-2">
+ <i data-lucide="fingerprint" class="h-5 w-5"></i>
+ {% trans "Two-Factor Auth" %}
+ </label>
+ <div class="flex items-center space-x-3 p-4 bg-secondary/50 rounded-xl border border-border/40">
+ <input ng-change="decideQRShow()" ng-model="twofa" type="checkbox" 
+ class="h-5 w-5 rounded border-border text-primary focus:ring-primary transition-all cursor-pointer">
+ <div class="flex flex-col">
+ <span class="text-xl font-medium text-foreground">{% trans "Enable 2FA" %}</span>
+ <span class="text-lg text-muted-foreground">{% trans "Enhance account security" %}</span>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- QR Code Section -->
+ <div ng-hide="qrHidden" class="p-6 bg-secondary/30 rounded-2xl border border-border/40 flex flex-col items-center animate-in zoom-in-95">
+ <p class="text-xl font-medium text-foreground mb-4 text-center">
+ {% trans "Scan this QR code with your authenticator app:" %}
+ </p>
+ <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
+ <canvas id="qr" class="w-[180px] h-[180px]"></canvas>
+ </div>
+ <div class="w-full max-w-sm space-y-2">
+ <p class="text-lg font-medium text-muted-foreground text-center uppercase tracking-wider">
+ {% trans "Or manually enter this key:" %}
+ </p>
+ <div class="flex">
+ <input type="text" 
+ class="flex-1 px-4 py-2 bg-card border border-border/40 rounded-l-lg font-mono text-xl text-primary focus:outline-none" 
+ ng-model="formattedSecretKey" readonly>
+ <button class="px-4 py-2 bg-secondary hover:bg-accent text-xl text-foreground rounded-r-lg transition-colors border border-l-0 border-border/40" 
+ type="button" ng-click="copySecretKey()" title="{% trans 'Copy to clipboard' %}">
+ <i data-lucide="copy" class="h-5 w-5"></i>
+ </button>
+ </div>
+ <p class="text-xl text-muted-foreground text-center italic">
+ {% trans "Enter this key in your authenticator app if you cannot scan QR codes." %}
+ </p>
+ </div>
+ </div>
+
+ <!-- Save Button -->
+ <div class="pt-6 border-t border-border/40">
+ <button type="button" ng-click="modifyUser()" 
+ class="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-xl transition-all active:translate-y-0 flex items-center justify-center gap-2">
+ <i data-lucide="save" class="h-5 w-5"></i>
+ {% trans "Save Changes" %}
+ </button>
+ </div>
+ </div>
+
+ <!-- Notifications Area -->
+ <div class="space-y-3">
+ <div ng-hide="userModified" class="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center gap-3">
+ <i data-lucide="check-circle" class="h-5 w-5"></i>
+ <span>{% trans "Account with username:" %} <strong>{$ userName $}</strong> {% trans "is successfully modified." %}</span>
+ </div>
+ <div ng-hide="canotModifyUser" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
+ <i data-lucide="alert-circle" class="h-5 w-5"></i>
+ <span>{% trans "Cannot modify user. Error message:" %} {$ errorMessage $}</span>
+ </div>
+ <div ng-hide="couldNotConnect" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
+ <i data-lucide="wifi-off" class="h-5 w-5"></i>
+ <span>{% trans "Could not connect to server. Please refresh this page." %}</span>
+ </div>
+ <div ng-hide="canotFetchDetails" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
+ <i data-lucide="alert-octagon" class="h-5 w-5"></i>
+ <span>{% trans "Cannot fetch details. Error message:" %} {$ errorMessage $}</span>
+ </div>
+ <div ng-hide="detailsFetched" class="p-4 bg-primary/10 border border-primary/20 text-primary rounded-xl flex items-center gap-3">
+ <i data-lucide="info" class="h-5 w-5"></i>
+ <span>{% trans "User details loaded successfully." %}</span>
+ </div>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
 
 {% endblock %}

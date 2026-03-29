@@ -42,6 +42,10 @@ def viewProfile(request):
     AdminData['websitesLimit'] = admin.initWebsitesLimit
     AdminData['email'] = admin.email
     AdminData['accountACL'] = admin.acl.name
+    AdminData['type'] = admin.type
+
+    from websiteFunctions.models import Websites
+    AdminData['activeWebsites'] = Websites.objects.filter(admin=admin).count()
 
     proc = httpProc(request, 'userManagment/userProfile.html',
                     AdminData)

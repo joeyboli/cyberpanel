@@ -7,6 +7,7 @@ import threading as multi
 import time
 import getpass
 import codecs
+import platform
 
 class ProcessUtilities(multi.Thread):
     debugPath = '/usr/local/CyberCP/debug'
@@ -216,6 +217,10 @@ class ProcessUtilities(multi.Thread):
 
     @staticmethod
     def setupUDSConnection():
+        # Check if socket file exists first to avoid long timeouts on non-existent paths
+        if not os.path.exists(ProcessUtilities.server_address):
+            return [-1, f"Socket file {ProcessUtilities.server_address} not found"]
+
         count = 0
         while 1:
             try:
@@ -253,6 +258,12 @@ class ProcessUtilities(multi.Thread):
                 if ret[0] == -1:
                     attempt += 1
                     last_error = ret[1]
+                    
+                    # If socket file is explicitly missing or we are on Mac, don't retry
+                    if "not found" in last_error or platform.system() == 'Darwin':
+                        logging.writeToFile(f"[sendCommand] Failing fast: {last_error}")
+                        return f"-1Connection failed: {last_error}"
+
                     if attempt < retries:
                         logging.writeToFile(f"[sendCommand] Connection failed, attempt {attempt}/{retries}. Retrying in 2 seconds...")
                         time.sleep(2)
@@ -375,9 +386,9 @@ class ProcessUtilities(multi.Thread):
             if os.path.exists(ProcessUtilities.debugPath):
                 logging.writeToFile(f"[executioner] Called with command: {command}, user: {user}, shell: {shell}")
             
-            if getpass.getuser() == 'root':
+            if getpass.getuser() == 'root' or platform.system() == 'Darwin':
                 if os.path.exists(ProcessUtilities.debugPath):
-                    logging.writeToFile(f"[executioner] Running as root, using normalExecutioner")
+                    logging.writeToFile(f"[executioner] Running as root (or Mac), using normalExecutioner")
                 ProcessUtilities.normalExecutioner(command, shell, user)
                 return 1
 
@@ -421,7 +432,7 @@ class ProcessUtilities(multi.Thread):
     @staticmethod
     def outputExecutioner(command, user=None, shell = None, dir = None, retRequired = None):
         try:
-            if getpass.getuser() == 'root':
+            if getpass.getuser() == 'root' or platform.system() == 'Darwin':
                 if os.path.exists(ProcessUtilities.debugPath):
                     logging.writeToFile(command)
 

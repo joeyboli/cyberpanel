@@ -204,7 +204,7 @@ def getSystemStatus(request):
                 'ramUsage': min(100, int((total_databases * 10) + (total_emails * 2))),  # Estimate based on resources
                 'diskUsage': disk_usage_percent,
                 'cpuCores': 2,  # Default for display
-                'ramTotalMB': 4096,  # Default for display
+                'ramTotalGB': 4.0,  # Default for display (4GB)
                 'diskTotalGB': int(total_disk_limit_gb),
                 'diskFreeGB': int(disk_free_gb),
                 'uptime': 'User Account Active'
@@ -220,7 +220,7 @@ def getSystemStatus(request):
             'ramUsage': 0,
             'diskUsage': 0,
             'cpuCores': 2,
-            'ramTotalMB': 4096,
+            'ramTotalGB': 4.0,
             'diskTotalGB': 100,
             'diskFreeGB': 100,
             'uptime': 'N/A'

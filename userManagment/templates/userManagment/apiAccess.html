@@ -3,245 +3,124 @@
 {% block title %}{% trans "API Access for User - CyberPanel" %}{% endblock %}
 {% block content %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <style>
-        body {
-            background-color: var(--bg-primary, #f0f0ff);
-        }
-        .page-wrapper {
-            background: transparent;
-            padding: 20px;
-        }
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .page-header {
-            margin-bottom: 30px;
-        }
-        .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-heading, #2f3640);
-            margin-bottom: 8px;
-        }
-        .content-card {
-            background: var(--bg-secondary, white);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            margin-bottom: 25px;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary, #2f3640);
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 24px;
-            background: var(--accent-color, #5b5fcf);
-            border-radius: 2px;
-        }
-        .info-box {
-            background: var(--bg-hover, #f8f9ff);
-            border-left: 4px solid var(--accent-color, #5b5fcf);
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 2rem;
-        }
-        .info-box h4 {
-            color: var(--accent-color, #5b5fcf);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .info-box p {
-            color: var(--text-secondary, #4a5568);
-            margin-bottom: 0;
-        }
-        .form-label {
-            color: var(--text-primary, #2f3640);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .form-control {
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
-            background: var(--bg-secondary, white);
-            color: var(--text-primary, #2f3640);
-        }
-        .form-control:focus {
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-            outline: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color, #5b5fcf) 0%, var(--accent-hover, #7b7fd0) 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(91, 95, 207, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--accent-hover, #4b4fbf) 0%, var(--accent-hover, #6b6fc0) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-        }
-        .loading-icon {
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-        }
-        .help-text {
-            color: var(--text-secondary, #8893a7);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .access-status {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-left: 1rem;
-        }
-        .access-enabled {
-            background: var(--success-bg, #f0fdf4);
-            color: var(--success-text, #166534);
-        }
-        .access-disabled {
-            background: var(--danger-bg, #fef2f2);
-            color: var(--danger-text, #991b1b);
-        }
-        .toggle-option {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background: var(--bg-hover, #f8f9ff);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color, #e8e9ff);
-        }
-        .toggle-option:hover {
-            background: var(--bg-hover, #e8e9ff);
-            border-color: var(--accent-color, #5b5fcf);
-        }
-        .toggle-option input[type="radio"] {
-            margin-right: 0.75rem;
-        }
-        .toggle-option i {
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-        }
-        .toggle-enable {
-            color: var(--success-text, #10b981);
-        }
-        .toggle-disable {
-            color: var(--danger-text, #ef4444);
-        }
-        .text-muted {
-            color: var(--text-secondary, #8893a7);
-        }
-        @media (max-width: 768px) {
-            .content-card {
-                padding: 20px;
-            }
-            .page-title {
-                font-size: 1.3rem;
-            }
-            .section-title {
-                font-size: 1.1rem;
-            }
-        }
-
-</style>
-
-    <div class="page-wrapper">
-        <div class="page-container">
-            <div class="page-header">
-                <h1 class="page-title">{% trans "API Access" %}</h1>
-            </div>
-            <div class="content-card" ng-controller="apiAccessCTRL">
-                <h3 class="section-title">
-                    {% trans "Configure API Access" %}
-                    <img class="loading-icon" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}">
-                </h3>
-                <div class="info-box">
-                    <h4><i class="fa fa-info-circle"></i> {% trans "Important Information" %}</h4>
-                    <p>{% trans "API access allows external applications to interact with CyberPanel on behalf of users. This includes cloud platform connections, third-party modules, and automated tools." %}</p>
-                </div>
-                <form action="/" class="form-horizontal">
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Select User Account" %}</label>
-                        <select ng-change="showApiAccessDropDown()" ng-model="accountUsername" class="form-control">
-                            <option value="">-- {% trans "Choose a user" %} --</option>
-                            {% for items in acctNames %}
-                                <option>{{ items }}</option>
-                            {% endfor %}
-                        </select>
-                        <p class="help-text">{% trans "Select the user account to manage API access" %}</p>
-                    </div>
-                    <div ng-hide="apiAccessDropDown" class="form-group">
-                        <label class="form-label">
-                            {% trans "API Access Status" %}
-                            <span ng-if="access=='Enable'" class="access-status access-enabled">
-                                <i class="fa fa-check-circle"></i> {% trans "Currently Enabled" %}
-                            </span>
-                            <span ng-if="access=='Disable'" class="access-status access-disabled">
-                                <i class="fa fa-times-circle"></i> {% trans "Currently Disabled" %}
-                            </span>
-                        </label>
-                        <div class="mt-3">
-                            <label class="toggle-option">
-                                <input type="radio" ng-model="access" value="Enable" name="apiAccess">
-                                <i class="fa fa-power-off toggle-enable"></i>
-                                <div>
-                                    <strong>{% trans "Enable API Access" %}</strong><br>
-                                    <small class="text-muted">{% trans "Allow external applications to connect to this account" %}</small>
-                                </div>
-                            </label>
-                            <label class="toggle-option">
-                                <input type="radio" ng-model="access" value="Disable" name="apiAccess">
-                                <i class="fa fa-power-off toggle-disable"></i>
-                                <div>
-                                    <strong>{% trans "Disable API Access" %}</strong><br>
-                                    <small class="text-muted">{% trans "Block all API connections for this account" %}</small>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group mt-4">
-                        <button type="button" ng-click="saveChanges()" class="btn btn-primary btn-lg">
-                            <i class="fa fa-save"></i> {% trans "Save Changes" %}
-                        </button>
-                    </div>
-                </form>
-            </div>
+<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="apiAccessCTRL">
+ <div class="space-y-12">
+ <!-- Header Section -->
+ <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+    <div class="flex items-center gap-6">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+            <i data-lucide="key" class="h-8 w-8"></i> <img class="h-6 w-6 absolute top-0 right-0 -mr-2 -mt-2" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" alt="...">
+        </div>
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                {% trans "API Access" %}
+            </h1>
+            <p class="text-xl text-muted-foreground">
+                {% trans "Manage programmatic access permissions for system user accounts" %}
+            </p>
         </div>
     </div>
+</div>
+
+ <!-- Main Card -->
+ <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+ <div class="p-12">
+ <!-- Info Alert -->
+ <div class="p-4 bg-primary/5 border border-primary/10 rounded-xl mb-8 flex gap-3 items-start">
+ <i data-lucide="info" class="h-5 w-5 text-primary shrink-0 mt-0.5"></i>
+ <p class="text-xl text-foreground/80 font-medium">
+ {% trans "API access allows external applications to interact with CyberPanel on behalf of users. This includes cloud platform connections, third-party modules, and automated tools." %}
+ </p>
+ </div>
+
+ <form class="space-y-8">
+ <!-- User Selection -->
+ <div class="space-y-2">
+ <label class="text-xl font-medium text-foreground flex items-center gap-2">
+ <i data-lucide="user" class="h-5 w-5 text-muted-foreground"></i>
+ {% trans "Select User Account" %}
+ </label>
+ <div class="relative">
+ <select ng-change="showApiAccessDropDown()" ng-model="accountUsername" 
+ class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground font-medium appearance-none">
+ <option value="">-- {% trans "Choose a user" %} --</option>
+ {% for items in acctNames %}
+ <option>{{ items }}</option>
+ {% endfor %}
+ </select>
+ <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+ <i data-lucide="chevron-down" class="h-5 w-5"></i>
+ </div>
+ </div>
+ </div>
+
+ <!-- API Status Toggle (Hidden until user selected) -->
+ <div ng-hide="apiAccessDropDown" class="space-y-4 animate-in fade-in slide-in-from-top-4">
+ <div class="flex items-center justify-between">
+ <label class="text-xl font-bold text-muted-foreground uppercase tracking-widest">
+ {% trans "API Access Status" %}
+ </label>
+ <div>
+ <span ng-if="access=='Enable'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-lg font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+ <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+ {% trans "Currently Enabled" %}
+ </span>
+ <span ng-if="access=='Disable'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-lg font-bold bg-destructive/10 text-destructive border border-destructive/20">
+ <span class="h-1.5 w-1.5 rounded-full bg-destructive"></span>
+ {% trans "Currently Disabled" %}
+ </span>
+ </div>
+ </div>
+
+ <div class="grid grid-cols-1 gap-3">
+ <label class="relative flex items-center p-4 rounded-xl border border-border/40 bg-secondary/30 cursor-pointer hover:border-primary transition-all group"
+ ng-class="{'border-primary bg-primary/5 ring-2 ring-primary/10': access == 'Enable'}">
+ <input type="radio" ng-model="access" value="Enable" class="sr-only text-xl">
+ <div class="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+ <i data-lucide="zap" class="h-5 w-5"></i>
+ </div>
+ <div class="ml-4 flex-1">
+ <div class="text-xl font-bold text-foreground">{% trans "Enable API Access" %}</div>
+ <div class="text-lg text-muted-foreground">{% trans "Allow external applications to connect to this account" %}</div>
+ </div>
+ <div class="h-5 w-5 rounded-full border-2 border-border flex items-center justify-center" ng-class="{'border-primary': access == 'Enable'}">
+ <div class="h-2.5 w-2.5 rounded-full bg-primary scale-0 transition-transform" ng-class="{'scale-100': access == 'Enable'}"></div>
+ </div>
+ </label>
+
+ <label class="relative flex items-center p-4 rounded-xl border border-border/40 bg-secondary/30 cursor-pointer hover:border-destructive transition-all group"
+ ng-class="{'border-destructive bg-destructive/5 ring-2 ring-destructive/10': access == 'Disable'}">
+ <input type="radio" ng-model="access" value="Disable" class="sr-only text-xl">
+ <div class="h-10 w-10 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+ <i data-lucide="shield-off" class="h-5 w-5"></i>
+ </div>
+ <div class="ml-4 flex-1">
+ <div class="text-xl font-bold text-foreground">{% trans "Disable API Access" %}</div>
+ <div class="text-lg text-muted-foreground">{% trans "Block all API connections for this account" %}</div>
+ </div>
+ <div class="h-5 w-5 rounded-full border-2 border-border flex items-center justify-center" ng-class="{'border-destructive': access == 'Disable'}">
+ <div class="h-2.5 w-2.5 rounded-full bg-destructive scale-0 transition-transform" ng-class="{'scale-100': access == 'Disable'}"></div>
+ </div>
+ </label>
+ </div>
+ </div>
+
+ <!-- Action Button -->
+ <div class="pt-4">
+ <button type="button" ng-click="saveChanges()" 
+ class="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-xl transition-all active:translate-y-0 flex items-center justify-center gap-2">
+ <i data-lucide="save" class="h-5 w-5"></i>
+ {% trans "Save Changes" %}
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+</div>
 
 {% endblock %}

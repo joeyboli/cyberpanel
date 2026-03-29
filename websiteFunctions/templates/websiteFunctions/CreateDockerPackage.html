@@ -3,311 +3,7 @@
 {% block title %}{% trans "Create Docker Package - CyberPanel" %}{% endblock %}
 
 {% block header_scripts %}
-<style>
-    /* Modern page styles matching new design */
-    .page-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .page-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-heading, #2f3640);
-        margin-bottom: 8px;
-    }
-    
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Card styles */
-    .content-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        margin-bottom: 25px;
-    }
-    
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-heading, #2f3640);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    /* Form styles */
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:hover {
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px rgba(91,95,207,0.1);
-    }
-    
-    .form-control[readonly] {
-        background: var(--bg-hover, #f8f9ff);
-        cursor: not-allowed;
-    }
-    
-    /* Button styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .btn-primary {
-        background: var(--accent-color, #5b5fcf);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-hover, #4a4fc4);
-        box-shadow: 0 4px 12px rgba(91,95,207,0.3);
-        transform: translateY(-1px);
-    }
-    
-    .btn-warning {
-        background: #ff9800;
-        color: white;
-    }
-    
-    .btn-warning:hover {
-        background: #f57c00;
-        box-shadow: 0 4px 12px rgba(255,152,0,0.3);
-        transform: translateY(-1px);
-    }
-    
-    .btn-danger {
-        background: var(--danger-text, #dc3545);
-        color: white;
-    }
-    
-    .btn-danger:hover {
-        background: #c82333;
-        box-shadow: 0 4px 12px rgba(220,53,69,0.3);
-        transform: translateY(-1px);
-    }
-    
-    .btn-secondary {
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .btn-secondary:hover {
-        background: #eef0ff;
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    /* Table styles */
-    .modern-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-    
-    .modern-table th {
-        text-align: left;
-        padding: 12px 15px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--text-secondary, #64748b);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        border-bottom: 2px solid var(--border-color, #e8e9ff);
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .modern-table td {
-        padding: 12px 15px;
-        font-size: 13px;
-        color: var(--text-primary, #2f3640);
-        border-bottom: 1px solid var(--border-color, #f0f0ff);
-    }
-    
-    .modern-table tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-    }
-    
-    .action-buttons .btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-    
-    /* Modal styles */
-    .modal-content {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 8px 32px var(--shadow-color, rgba(0,0,0,0.1));
-        background: var(--bg-secondary, white);
-    }
-    
-    .modal-header {
-        background: var(--bg-hover, #f8f9ff);
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 12px 12px 0 0;
-        padding: 20px 25px;
-    }
-    
-    .modal-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-heading, #2f3640);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .modal-body {
-        padding: 25px;
-    }
-    
-    .modal-footer {
-        background: var(--bg-hover, #f8f9ff);
-        border-top: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 0 0 12px 12px;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid #5b5fcf;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Alert styles */
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .alert-info {
-        background: var(--info-bg, #e3f2fd);
-        border: 1px solid #bbdefb;
-        color: var(--info-text, #1565c0);
-    }
-    
-    /* Form row */
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    
-    @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .content-card {
-            padding: 20px;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
-        
-        .action-buttons .btn {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .modern-table {
-            font-size: 12px;
-        }
-        
-        .modern-table th,
-        .modern-table td {
-            padding: 8px;
-        }
-    }
-</style>
+
 {% endblock %}
 
 {% block content %}
@@ -330,40 +26,40 @@
             
             <form name="websiteCreationForm">
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <label class="form-label">{% trans "Package Name" %}</label>
-                        <input type="text" class="form-control" ng-model="packagesname"
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="packagesname"
                                placeholder="{% trans "Enter package name" %}" required>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <label class="form-label">{% trans "CPU Cores" %}</label>
-                        <input type="number" class="form-control" ng-model="CPU"
+                        <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="CPU"
                                placeholder="{% trans "e.g. 2, 3, 4" %}" required>
                     </div>
                 </div>
                 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <label class="form-label">{% trans "Memory (MB)" %}</label>
-                        <input type="number" class="form-control" ng-model="Memory"
+                        <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Memory"
                                placeholder="{% trans "e.g. 256, 512, 1024" %}" required>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <label class="form-label">{% trans "Bandwidth" %}</label>
-                        <input type="text" class="form-control" ng-model="Bandwidth"
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Bandwidth"
                                placeholder="{% trans "Enter bandwidth limit" %}" required>
                     </div>
                 </div>
                 
-                <div class="form-group">
+                <div class="space-y-3 mb-6">
                     <label class="form-label">{% trans "Disk Space" %}</label>
-                    <input type="text" class="form-control" ng-model="disk"
+                    <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="disk"
                            placeholder="{% trans "Enter disk space limit" %}" required>
                 </div>
                 
-                <button type="button" ng-click="createdockerpackage()" class="btn btn-primary">
+                <button type="button" ng-click="createdockerpackage()" class="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg transition-all">
                     <i class="fas fa-plus"></i>
                     {% trans "Create Docker Package" %}
                 </button>
@@ -432,35 +128,35 @@
             <div class="modal-body">
                 <form name="editPackageForm">
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="space-y-3 mb-6">
                             <label class="form-label">{% trans "Package Name" %}</label>
-                            <input type="text" class="form-control" ng-model="U_Name" readonly>
+                            <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="U_Name" readonly>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="space-y-3 mb-6">
                             <label class="form-label">{% trans "CPU Cores" %}</label>
-                            <input type="number" class="form-control" ng-model="U_CPU"
+                            <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="U_CPU"
                                    placeholder="{% trans "e.g. 2, 3, 4" %}" required>
                         </div>
                     </div>
                     
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="space-y-3 mb-6">
                             <label class="form-label">{% trans "Memory (MB)" %}</label>
-                            <input type="number" class="form-control" ng-model="U_Memory"
+                            <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="U_Memory"
                                    placeholder="{% trans "e.g. 256, 512, 1024" %}" required>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="space-y-3 mb-6">
                             <label class="form-label">{% trans "Bandwidth" %}</label>
-                            <input type="text" class="form-control" ng-model="U_Bandwidth"
+                            <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="U_Bandwidth"
                                    placeholder="{% trans "Enter bandwidth limit" %}" required>
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <label class="form-label">{% trans "Disk Space" %}</label>
-                        <input type="text" class="form-control" ng-model="U_DiskSpace"
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="U_DiskSpace"
                                placeholder="{% trans "Enter disk space limit" %}" required>
                     </div>
                 </form>
@@ -469,7 +165,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                     {% trans "Cancel" %}
                 </button>
-                <button type="button" ng-click="SaveUpdate()" class="btn btn-primary">
+                <button type="button" ng-click="SaveUpdate()" class="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg transition-all">
                     <i class="fas fa-save"></i>
                     {% trans "Update Package" %}
                 </button>

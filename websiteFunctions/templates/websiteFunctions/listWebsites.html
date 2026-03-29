@@ -3,879 +3,278 @@
 {% block title %}{% trans "Websites Hosted - CyberPanel" %}{% endblock %}
 {% block content %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <!-- Add Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<div ng-controller="listWebsites" class="w-full p-4 md:p-12">
+    <!-- Loading State -->
+    <div ng-show="loading" class="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+        <div class="h-16 w-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <h4 class="text-2xl font-bold text-muted-foreground">{% trans "Loading websites..." %}</h4>
+    </div>
 
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            // Ensure modal is hidden on page load
-            $('#passwordProtectionModal').modal('hide');
-        });
-    </script>
-
-    <style>
-        /* Page Structure */
-        .page-wrapper {
-            background: transparent;
-            padding: 0 20px 20px 20px;
-        }
-        
-        .page-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .page-header {
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .page-title-section {
-            flex: 1;
-        }
-        
-        .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-heading, #2f3640);
-            margin-bottom: 8px;
-        }
-        
-        .page-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary, #8893a7);
-        }
-        
-        /* Search and Filter Section */
-        .search-section {
-            background: var(--bg-secondary, white);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            margin-bottom: 25px;
-        }
-        
-        .search-row {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .search-input-wrapper {
-            flex: 1;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            font-size: 14px;
-            color: var(--text-primary, #2f3640);
-            background: var(--bg-secondary, white);
-            transition: all 0.2s ease;
-        }
-        
-        .form-control:hover {
-            border-color: var(--accent-color, #5b5fcf);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px rgba(91,95,207,0.1);
-        }
-        
-        .form-select {
-            width: 120px;
-        }
-        
-        /* Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        
-        /* Ensure anchor tags styled as buttons work properly */
-        a.btn {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        a.btn:hover {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        a.btn:focus,
-        a.btn:active {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .btn-primary {
-            background: var(--accent-color, #5b5fcf) !important;
-            color: white !important;
-        }
-        
-        .btn-primary:hover {
-            background: var(--accent-hover, #4a4fc4) !important;
-            box-shadow: 0 4px 12px rgba(91,95,207,0.3);
-            transform: translateY(-1px);
-            color: white !important;
-        }
-        
-        .btn-secondary {
-            background: var(--bg-hover, #f8f9ff);
-            color: var(--accent-color, #5b5fcf);
-            border: 1px solid var(--border-color, #e8e9ff);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--bg-hover, #eef0ff);
-            border-color: var(--accent-color, #5b5fcf);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--text-secondary, #64748b);
-            border: 1px solid var(--border-color, #e8e9ff);
-        }
-        
-        .btn-outline:hover {
-            background: var(--bg-hover, #f8f9ff);
-            border-color: var(--accent-color, #5b5fcf);
-            color: var(--accent-color, #5b5fcf);
-        }
-        
-        .btn-outline-danger {
-            background: transparent;
-            color: #e53935;
-            border: 1px solid #fde2e2;
-        }
-        
-        .btn-outline-danger:hover {
-            background: #fde2e2;
-            border-color: #e53935;
-        }
-        
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 13px;
-        }
-        
-        /* Website List Container */
-        .websites-container {
-            background: var(--bg-secondary, white);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            overflow: hidden;
-        }
-        
-        /* Website Row */
-        .website-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            cursor: pointer;
-            background: var(--bg-secondary, white);
-            transition: background 0.2s ease;
-            border-bottom: 1px solid var(--border-color, #f0f0f0);
-        }
-        
-        .website-row:hover {
-            background: var(--bg-hover, #f8f9ff);
-        }
-        
-        .website-row:last-child {
-            border-bottom: none;
-        }
-        
-        .row-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-        }
-        
-        .chevron {
-            font-size: 14px;
-            color: #8893a7;
-            transition: transform 0.2s ease;
-            min-width: 20px;
-        }
-        
-        .chevron.fa-chevron-down {
-            transform: rotate(0deg);
-        }
-        
-        .domain {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary, #2f3640);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        /* SSL Status Badge */
-        .ssl-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 20px;
-            gap: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .ssl-badge.valid {
-            background: #f0fdf4;
-            color: #10b981;
-        }
-        
-        .ssl-badge.warning {
-            background: #fef3c7;
-            color: #f59e0b;
-        }
-        
-        .ssl-badge.expiring,
-        .ssl-badge.expired {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-        
-        .ssl-badge.self-signed {
-            background: #fef3c7;
-            color: #f59e0b;
-        }
-        
-        .ssl-badge.none {
-            background: #f3f4f6;
-            color: #9ca3af;
-        }
-        
-        .ssl-badge .wildcard-indicator {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 1px 4px;
-            border-radius: 8px;
-            font-size: 10px;
-            margin-left: 2px;
-        }
-        
-        .loading-indicator {
-            color: #5b5fcf;
-            margin-left: 8px;
-        }
-        
-        .row-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        /* Expanded Website Content */
-        .website-details {
-            background: var(--bg-hover, #fafbff);
-            padding: 30px;
-            border-bottom: 1px solid var(--border-color, #f0f0f0);
-        }
-        
-        .website-details:last-child {
-            border-bottom: none;
-        }
-        
-        .details-content {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .screenshot-section {
-            flex-shrink: 0;
-            width: 280px;
-        }
-        
-        .website-screenshot {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #e8e9ff;
-            background: #f5f5f5;
-            min-height: 150px;
-            object-fit: cover;
-            margin-bottom: 16px;
-        }
-        
-        .screenshot-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .screenshot-actions .btn {
-            width: 100%;
-            justify-content: center;
-            padding: 8px 12px;
-        }
-        
-        /* Info Table */
-        .info-section {
-            flex: 1;
-        }
-        
-        .info-table {
-            width: 100%;
-            background: var(--bg-secondary, white);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color, #e8e9ff);
-        }
-        
-        .info-table-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .info-table-row:last-child {
-            border-bottom: none;
-        }
-        
-        .info-cell {
-            padding: 20px;
-            border-right: 1px solid #f0f0f0;
-        }
-        
-        .info-cell:last-child {
-            border-right: none;
-        }
-        
-        .info-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary, #8893a7);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
-            display: block;
-        }
-        
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary, #2f3640);
-        }
-        
-        /* WordPress Sites Section */
-        .wp-sites-section {
-            margin-top: 30px;
-        }
-        
-        .wp-sites-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2f3640;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 20px;
-            background: #e3f2fd;
-            color: #0073aa;
-        }
-        
-        .wp-site-item {
-            background: white;
-            border: 1px solid #e8e9ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-        
-        .wp-screenshot {
-            width: 100%;
-            height: auto;
-            border-radius: 6px;
-            border: 1px solid #e8e9ff;
-            background: #f5f5f5;
-            min-height: 100px;
-            object-fit: cover;
-            margin-bottom: 12px;
-        }
-        
-        .wp-action-btn {
-            width: 100%;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
-        
-        .wp-site-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .checkbox {
-            margin: 12px 0;
-        }
-        
-        .checkbox label {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #2f3640;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .checkbox input[type="checkbox"] {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* Loading State */
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: #8893a7;
-        }
-        
-        .spinner-border {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #e8e9ff;
-            border-top-color: #5b5fcf;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Alert */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid;
-        }
-        
-        .alert-danger {
-            background: #fde2e2;
-            border-color: #ffc9c9;
-            color: #c62828;
-        }
-        
-        /* Pagination */
-        .pagination-section {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 30px;
-        }
-        
-        .pagination-select {
-            width: 200px;
-        }
-        
-        /* Modal Fixes */
-        .modal {
-            display: none !important;
-        }
-        
-        .modal.show {
-            display: block !important;
-        }
-        
-        .modal.fade.show {
-            opacity: 1;
-        }
-        
-        .modal-backdrop {
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        
-        .modal-header {
-            border-bottom: 1px solid #e8e9ff;
-            padding: 20px 24px;
-        }
-        
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2f3640;
-        }
-        
-        .modal-body {
-            padding: 24px;
-        }
-        
-        .modal-footer {
-            border-top: 1px solid #e8e9ff;
-            padding: 16px 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #2f3640;
-            margin-bottom: 8px;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .info-table-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-row {
-                flex-direction: column;
-            }
-            
-            .form-select {
-                width: 100%;
-            }
-            
-            .website-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            
-            .row-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .details-content {
-                flex-direction: column;
-            }
-            
-            .screenshot-section {
-                width: 100%;
-            }
-            
-            .info-table-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .screenshot-actions {
-                flex-direction: row;
-            }
-            
-            .wp-site-actions {
-                flex-direction: column;
-            }
-        }
-        
-        .mt-3 {
-            margin-top: 1rem;
-        }
-    </style>
-
-    <div ng-controller="listWebsites" class="page-wrapper">
-        <div class="page-container">
-            <!-- Loading State -->
-            <div ng-show="loading" class="loading-container">
-                <div class="spinner-border" role="status"></div>
-                <h4 class="mt-3">{% trans "Loading websites..." %}</h4>
+    <!-- Main Content (hidden while loading) -->
+    <div ng-hide="loading" class="space-y-12">
+        <!-- Password Protection Modal -->
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm hidden" id="passwordProtectionModal">
+            <div class="bg-card w-full max-w-lg rounded-2xl border border-border shadow-2xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
+                <div class="flex items-center justify-between">
+                    <h5 class="text-3xl font-bold text-foreground">{% trans "Password Protection" %}</h5>
+                    <button type="button" class="p-2 hover:bg-secondary rounded-full transition-colors" onclick="$('#passwordProtectionModal').fadeOut()">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+                <div class="space-y-6">
+                    <div class="space-y-3">
+                        <label class="text-xl font-semibold text-foreground">{% trans "Username" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="currentWP.PPUsername" required>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-xl font-semibold text-foreground">{% trans "Password" %}</label>
+                        <input type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="currentWP.PPPassword" required>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4 pt-4">
+                    <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all" onclick="$('#passwordProtectionModal').fadeOut()">{% trans "Cancel" %}</button>
+                    <button type="button" class="flex-1 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg" ng-click="submitPasswordProtection()">{% trans "Enable Protection" %}</button>
+                </div>
             </div>
+        </div>
 
-            <!-- Main Content (hidden while loading) -->
-            <div ng-hide="loading">
-                <!-- Password Protection Modal (Hidden by default) -->
-                <div class="modal fade" id="passwordProtectionModal" tabindex="-1" role="dialog" aria-labelledby="passwordProtectionModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="passwordProtectionModalLabel">Password Protection</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group">
-                                        <label>Username</label>
-                                        <input type="text" class="form-control" ng-model="currentWP.PPUsername" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Password</label>
-                                        <input type="password" class="form-control" ng-model="currentWP.PPPassword" required>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" ng-click="submitPasswordProtection()">Enable Protection</button>
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                    <i data-lucide="globe" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "List Websites" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "View and manage all websites hosted on your server." %}
+                    </p>
+                </div>
+            </div>
+            <div>
+                <a class="flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-primary/20 hover:!bg-primary hover:!text-primary-foreground !no-underline" href="{% url 'createWebsite' %}">
+                    <i data-lucide="plus-circle" class="h-6 w-6"></i>
+                    {% trans "Create Website" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-8">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="relative flex-1 group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                    </div>
+                    <input ng-keypress="$event.keyCode === 13 && searchWebsites()" 
+                           placeholder="Search by domain... (Press Enter)" 
+                           ng-model="patternAdded" 
+                           name="dom" 
+                           type="text" 
+                           class="w-full pl-14 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                           required>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-lg font-semibold text-muted-foreground whitespace-nowrap">{% trans "Show" %}</span>
+                    <select ng-model="recordsToShow" 
+                            ng-change="getFurtherWebsitesFromDB()" 
+                            class="p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all w-32">
+                        <option>10</option>
+                        <option>50</option>
+                        <option>100</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Websites List -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden divide-y divide-border/50">
+            <div ng-repeat="web in WebSitesList track by $index" class="transition-all duration-300">
+                <!-- Website Main Row -->
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between p-8 gap-6 cursor-pointer bg-card hover:bg-secondary/10 transition-colors" ng-click="toggleSite(web)">
+                    <div class="flex items-center gap-6 min-w-0 flex-1">
+                        <div class="p-3 rounded-xl bg-secondary/30 transition-transform duration-300" ng-class="{'rotate-90': isExpanded(web.domain)}">
+                            <i data-lucide="chevron-right" class="h-6 w-6 text-muted-foreground"></i>
+                        </div>
+                        <div class="flex flex-col gap-1 min-w-0">
+                            <h3 class="text-2xl font-bold text-foreground truncate" title="{$ web.domain $}">{$ web.domain $}</h3>
+                            <div class="flex items-center gap-3">
+                                <span ng-if="web.loading" class="animate-spin">
+                                    <i data-lucide="loader-2" class="h-4 w-4 text-primary"></i>
+                                </span>
+                                <!-- SSL Status Badge -->
+                                <div ng-if="web.ssl" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold gap-2" 
+                                     ng-class="{
+                                         'bg-green-500/10 text-green-600': web.ssl.status === 'valid',
+                                         'bg-yellow-500/10 text-yellow-600': web.ssl.status === 'warning' || web.ssl.status === 'self-signed',
+                                         'bg-destructive/10 text-destructive': web.ssl.status === 'expiring' || web.ssl.status === 'expired',
+                                         'bg-secondary text-muted-foreground': web.ssl.status === 'none'
+                                     }"
+                                     title="{$ getSslTooltip(web) $}">
+                                    <i data-lucide="lock" class="h-4 w-4" ng-if="web.ssl.status === 'valid'"></i>
+                                    <i data-lucide="unlock" class="h-4 w-4" ng-if="web.ssl.status !== 'valid'"></i>
+                                    <span class="uppercase tracking-wider font-extrabold">
+                                        <span ng-if="web.ssl.status === 'valid'">Secure</span>
+                                        <span ng-if="web.ssl.status === 'warning'">SSL {$ web.ssl.days $}d</span>
+                                        <span ng-if="web.ssl.status === 'expiring'">Expiring {$ web.ssl.days $}d</span>
+                                        <span ng-if="web.ssl.status === 'expired'">Expired</span>
+                                        <span ng-if="web.ssl.status === 'self-signed'">Self-Signed</span>
+                                        <span ng-if="web.ssl.status === 'none'">No SSL</span>
+                                    </span>
+                                    <span ng-if="web.ssl.is_wildcard" class="bg-primary/20 px-1.5 rounded text-[10px]" title="Wildcard SSL Certificate">*</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Page Header -->
-                <div class="page-header">
-                    <div class="page-title-section">
-                        <h1 class="page-title">{% trans "List Websites" %}</h1>
-                        <p class="page-subtitle">{% trans "On this page you can launch, list, modify and delete websites from your server." %}</p>
-                    </div>
-                    <div>
-                        <a class="btn btn-primary" href="{% url 'createWebsite' %}">
-                            <i class="fas fa-plus"></i>
-                            {% trans "Create Website" %}
+                    <div class="flex items-center gap-3 shrink-0 w-full md:w-auto">
+                        <a href="/websites/{$ web.domain $}" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-6 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all !no-underline">
+                            <i data-lucide="settings" class="h-5 w-5"></i>
+                            {% trans "Manage" %}
+                        </a>
+                        <a href="/filemanager/{$ web.domain $}" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-6 py-3 bg-secondary/30 text-foreground border border-border rounded-xl text-lg font-bold hover:!bg-secondary hover:!text-secondary-foreground transition-all !no-underline">
+                            <i data-lucide="folder" class="h-5 w-5"></i>
+                            {% trans "Files" %}
                         </a>
                     </div>
                 </div>
-
-                <!-- Search Section -->
-                <div class="search-section">
-                    <div class="search-row">
-                        <div class="search-input-wrapper">
-                            <input ng-keypress="$event.keyCode === 13 && searchWebsites()" 
-                                   placeholder="Search... (Press Enter to search)" 
-                                   ng-model="patternAdded" 
-                                   name="dom" 
-                                   type="text" 
-                                   class="form-control" 
-                                   required>
-                        </div>
-                        <select ng-model="recordsToShow" 
-                                ng-change="getFurtherWebsitesFromDB()" 
-                                class="form-control form-select">
-                            <option>10</option>
-                            <option>50</option>
-                            <option>100</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Websites List Container -->
-                <div class="websites-container">
-                    <div ng-repeat="web in WebSitesList track by $index">
-                        <!-- Website Row -->
-                        <div class="website-row" ng-click="toggleSite(web)" title="Expand/collapse details">
-                            <div class="row-left">
-                                <i class="fas chevron" ng-class="{'fa-chevron-down': isExpanded(web.domain), 'fa-chevron-right': !isExpanded(web.domain)}"></i>
-                                <span class="domain" title="{$ web.domain $}">{$ web.domain $}</span>
-                                <span ng-if="web.loading" class="loading-indicator">
-                                    <i class="fa fa-spinner fa-spin"></i>
-                                </span>
-                                <!-- SSL Status Badge -->
-                                <span ng-if="web.ssl" class="ssl-badge" ng-class="web.ssl.status" 
-                                      data-toggle="tooltip" 
-                                      data-placement="top"
-                                      title="{$ getSslTooltip(web) $}">
-                                    <i class="fas" ng-class="{
-                                        'fa-lock': web.ssl.status === 'valid',
-                                        'fa-exclamation-triangle': web.ssl.status === 'warning' || web.ssl.status === 'self-signed',
-                                        'fa-exclamation-circle': web.ssl.status === 'expiring' || web.ssl.status === 'expired',
-                                        'fa-unlock': web.ssl.status === 'none'
-                                    }"></i>
-                                    <span ng-if="web.ssl.status === 'valid'">Secure</span>
-                                    <span ng-if="web.ssl.status === 'warning'">SSL {$ web.ssl.days $}d</span>
-                                    <span ng-if="web.ssl.status === 'expiring'">Expiring {$ web.ssl.days $}d</span>
-                                    <span ng-if="web.ssl.status === 'expired'">Expired</span>
-                                    <span ng-if="web.ssl.status === 'self-signed'">Self-Signed</span>
-                                    <span ng-if="web.ssl.status === 'none'">No SSL</span>
-                                    <span ng-if="web.ssl.is_wildcard" class="wildcard-indicator" title="Wildcard SSL Certificate">*</span>
-                                </span>
-                            </div>
-                            <div class="row-actions">
-                                <a href="/websites/{$ web.domain $}" class="btn btn-primary btn-sm" title="{% trans 'Manage' %}">
-                                    Manage
-                                </a>
-                                <a href="/filemanager/{$ web.domain $}" class="btn btn-outline btn-sm" title="{% trans 'File Manager' %}">
-                                    Filemanager
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Expanded Website Details -->
-                        <div class="website-details" ng-if="isExpanded(web.domain)">
-                            <div class="details-content">
-                                <div class="screenshot-section">
+                
+                <!-- Expanded Website Details -->
+                <div class="bg-secondary/5 border-t border-border/40 overflow-hidden transition-all duration-300 animate-in slide-in-from-top-4" ng-if="isExpanded(web.domain)">
+                    <div class="p-8 space-y-8">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <!-- Left: Screenshot & Quick Actions -->
+                            <div class="w-full lg:w-80 space-y-6 shrink-0">
+                                <div class="aspect-video relative rounded-2xl border border-border overflow-hidden bg-muted group shadow-md">
                                     <img ng-src="https://api.microlink.io/?url=https://{$ web.domain $}&screenshot=true&meta=false&embed=screenshot.url&ttl=86400000" 
                                          alt="{$ web.domain $}" 
-                                         class="website-screenshot" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                                          onerror="this.onerror=null; this.src='{% static 'baseTemplate/assets/image-resources/webPanel.png' %}';">
-                                    <div class="screenshot-actions">
-                                        <a href="http://{$ web.domain $}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-                                            Visit Site
-                                        </a>
-                                        <a ng-click="issueSSL(web.domain)" href="javascript:void(0);" class="btn btn-primary btn-sm">
-                                            Issue SSL
-                                        </a>
-                                        <button ng-click="showWPSites(web.domain); $event.stopPropagation();" 
-                                                class="btn btn-outline btn-sm" 
-                                                ng-if="(web.wp_sites && web.wp_sites.length) > 0">
-                                            {$ (web.wp_sites && web.wp_sites.length) || 0 $} WP Site<span ng-if="(web.wp_sites && web.wp_sites.length) != 1">s</span>
-                                        </button>
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none"></div>
+                                </div>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <a href="http://{$ web.domain $}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-4 py-3 bg-secondary/30 border border-border rounded-xl font-bold hover:!bg-secondary hover:!text-secondary-foreground transition-all !no-underline text-foreground">
+                                        <i data-lucide="external-link" class="h-5 w-5"></i>
+                                        Visit Site
+                                    </a>
+                                    <button ng-click="issueSSL(web.domain)" class="flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all">
+                                        <i data-lucide="shield-check" class="h-5 w-5"></i>
+                                        Issue SSL
+                                    </button>
+                                    <button ng-click="showWPSites(web.domain); $event.stopPropagation();" 
+                                            class="flex items-center justify-center gap-2 px-4 py-3 bg-secondary/30 border border-border rounded-xl font-bold hover:bg-secondary transition-all" 
+                                            ng-if="(web.wp_sites && web.wp_sites.length) > 0">
+                                        <i data-lucide="layout-template" class="h-5 w-5"></i>
+                                        {$ (web.wp_sites && web.wp_sites.length) || 0 $} WP Site<span ng-if="(web.wp_sites && web.wp_sites.length) != 1">s</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Right: Info Grid -->
+                            <div class="flex-1">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-1 bg-border/20 rounded-2xl border border-border overflow-hidden shadow-sm">
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">STATE</span>
+                                        <span class="text-xl font-bold text-foreground">{$ web.state $}</span>
+                                    </div>
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">IP ADDRESS</span>
+                                        <span class="text-xl font-bold text-foreground font-mono">{$ web.ipAddress $}</span>
+                                    </div>
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">PHP VERSION</span>
+                                        <span class="text-xl font-bold text-foreground">{$ web.phpVersion $}</span>
+                                    </div>
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">DISK USAGE</span>
+                                        <span class="text-xl font-bold text-foreground">{$ web.diskUsed $}</span>
+                                    </div>
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">PACKAGE</span>
+                                        <span class="text-xl font-bold text-foreground">{$ web.package $}</span>
+                                    </div>
+                                    <div class="bg-card p-6 flex flex-col gap-2">
+                                        <span class="text-xs font-black uppercase tracking-widest text-muted-foreground/60">OWNER</span>
+                                        <span class="text-xl font-bold text-foreground">{$ web.admin $}</span>
                                     </div>
                                 </div>
                                 
-                                <div class="info-section">
-                                    <div class="info-table">
-                                        <div class="info-table-row">
-                                            <div class="info-cell">
-                                                <span class="info-label">STATE</span>
-                                                <span class="info-value">{$ web.state $}</span>
-                                            </div>
-                                            <div class="info-cell">
-                                                <span class="info-label">IP ADDRESS</span>
-                                                <span class="info-value">{$ web.ipAddress $}</span>
-                                            </div>
-                                            <div class="info-cell">
-                                                <span class="info-label">PHP VERSION</span>
-                                                <span class="info-value">{$ web.phpVersion $}</span>
-                                            </div>
-                                        </div>
-                                        <div class="info-table-row">
-                                            <div class="info-cell">
-                                                <span class="info-label">DISK USAGE</span>
-                                                <span class="info-value">{$ web.diskUsed $}</span>
-                                            </div>
-                                            <div class="info-cell">
-                                                <span class="info-label">PACKAGE</span>
-                                                <span class="info-value">{$ web.package $}</span>
-                                            </div>
-                                            <div class="info-cell">
-                                                <span class="info-label">OWNER</span>
-                                                <span class="info-value">{$ web.admin $}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <!-- WordPress Sites Section (Inner) -->
+                                <div class="mt-8 space-y-6" ng-if="web.showWPSites && web.wp_sites && web.wp_sites.length > 0">
+                                    <h5 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                                        <div class="h-5 w-1 rounded-full bg-primary"></div>
+                                        WordPress Sites 
+                                        <span class="px-2 py-0.5 rounded text-sm bg-primary/10 text-primary">{$ web.wp_sites.length $}</span>
+                                    </h5>
                                     
-                                    <!-- WordPress Sites Section -->
-                                    <div class="wp-sites-section" ng-if="web.showWPSites && web.wp_sites && web.wp_sites.length > 0">
-                                        <h5 class="wp-sites-title">
-                                            <i class="fab fa-wordpress"></i>
-                                            WordPress Sites 
-                                            <span class="badge">{$ web.wp_sites.length $}</span>
-                                        </h5>
-                                        <div ng-repeat="wp in web.wp_sites" class="wp-site-item">
-                                            <div class="row">
-                                                <div class="col-md-3 col-sm-12">
-                                                    <img ng-src="{$ wp.screenshot $}" 
-                                                         alt="{$ wp.title $}" 
-                                                         class="wp-screenshot" 
-                                                         onerror="this.onerror=null; this.src='https://s.wordpress.org/style/images/about/WordPress-logotype-standard.png'">
-                                                    <div class="screenshot-actions">
-                                                        <a href="javascript:void(0);" ng-click="visitSite(wp)" class="btn btn-outline btn-sm wp-action-btn">
+                                    <div class="grid grid-cols-1 gap-6">
+                                        <div ng-repeat="wp in web.wp_sites" class="bg-card rounded-2xl border border-border shadow-sm p-6 hover:shadow-md transition-shadow">
+                                            <div class="flex flex-col md:flex-row gap-8">
+                                                <div class="w-full md:w-56 space-y-4 shrink-0">
+                                                    <div class="aspect-video rounded-xl border border-border overflow-hidden bg-muted shadow-inner">
+                                                        <img ng-src="{$ wp.screenshot $}" 
+                                                             alt="{$ wp.title $}" 
+                                                             class="w-full h-full object-cover" 
+                                                             onerror="this.onerror=null; this.src='https://s.wordpress.org/style/images/about/WordPress-logotype-standard.png'">
+                                                    </div>
+                                                    <div class="grid grid-cols-1 gap-2">
+                                                        <a href="javascript:void(0);" ng-click="visitSite(wp)" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-secondary/30 text-foreground rounded-lg font-bold border border-border hover:!bg-secondary hover:!text-secondary-foreground transition-all text-center !no-underline">
+                                                            <i data-lucide="external-link" class="h-4 w-4"></i>
                                                             Visit Site
                                                         </a>
-                                                        <a href="{% url 'AutoLogin' %}?id={$ wp.id $}" target="_blank" rel="noopener" class="btn btn-primary btn-sm wp-action-btn">
+                                                        <a href="{% url 'AutoLogin' %}?id={$ wp.id $}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all text-center !no-underline">
+                                                            <i data-lucide="user-cog" class="h-4 w-4"></i>
                                                             WP Admin
                                                         </a>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-9 col-sm-12">
-                                                    <div class="info-table">
-                                                        <div class="info-table-row">
-                                                            <div class="info-cell">
-                                                                <span class="info-label">WORDPRESS VERSION</span>
-                                                                <span class="info-value">{$ wp.version || 'Loading...' $}</span>
-                                                            </div>
-                                                            <div class="info-cell">
-                                                                <span class="info-label">PHP VERSION</span>
-                                                                <span class="info-value">{$ wp.phpVersion || 'Loading...' $}</span>
-                                                            </div>
-                                                            <div class="info-cell">
-                                                                <span class="info-label">THEME</span>
-                                                                <span class="info-value">{$ wp.theme || 'Loading...' $}</span>
-                                                            </div>
+                                                <div class="flex-1 space-y-6">
+                                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 bg-border/20 rounded-xl border border-border overflow-hidden">
+                                                        <div class="bg-card p-4 flex flex-col gap-1">
+                                                            <span class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">WP VERSION</span>
+                                                            <span class="text-lg font-bold text-foreground truncate">{$ wp.version || 'Loading...' $}</span>
+                                                        </div>
+                                                        <div class="bg-card p-4 flex flex-col gap-1">
+                                                            <span class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">PHP VERSION</span>
+                                                            <span class="text-lg font-bold text-foreground truncate">{$ wp.phpVersion || 'Loading...' $}</span>
+                                                        </div>
+                                                        <div class="bg-card p-4 flex flex-col gap-1">
+                                                            <span class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">THEME</span>
+                                                            <span class="text-lg font-bold text-foreground truncate">{$ wp.theme || 'Loading...' $}</span>
                                                         </div>
                                                     </div>
-                                                    <div class="row mt-3">
-                                                        <div class="col-sm-6">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="updateSetting(wp, 'search-indexing')" ng-checked="wp.searchIndex == 1">
-                                                                    Search engine indexing
-                                                                </label>
-                                                            </div>
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="updateSetting(wp, 'debugging')" ng-checked="wp.debugging == 1">
-                                                                    Debugging
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input type="checkbox" ng-model="wp.passwordProtection" ng-init="wp.passwordProtection = wp.passwordProtection || false" ng-change="togglePasswordProtection(wp)">
-                                                                    Password protection
-                                                                </label>
-                                                            </div>
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="updateSetting(wp, 'maintenance-mode')" ng-checked="wp.maintenanceMode == 1">
-                                                                    Maintenance mode
-                                                                </label>
-                                                            </div>
-                                                        </div>
+                                                    
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <label class="flex items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                                            <input type="checkbox" ng-click="updateSetting(wp, 'search-indexing')" ng-checked="wp.searchIndex == 1" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                                            <span class="text-base font-semibold text-foreground">Search indexing</span>
+                                                        </label>
+                                                        <label class="flex items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                                            <input type="checkbox" ng-click="updateSetting(wp, 'debugging')" ng-checked="wp.debugging == 1" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                                            <span class="text-base font-semibold text-foreground">Debugging</span>
+                                                        </label>
+                                                        <label class="flex items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                                            <input type="checkbox" ng-model="wp.passwordProtection" ng-init="wp.passwordProtection = wp.passwordProtection || false" ng-change="togglePasswordProtection(wp)" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                                            <span class="text-base font-semibold text-foreground">Password protection</span>
+                                                        </label>
+                                                        <label class="flex items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                                            <input type="checkbox" ng-click="updateSetting(wp, 'maintenance-mode')" ng-checked="wp.maintenanceMode == 1" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                                            <span class="text-base font-semibold text-foreground">Maintenance mode</span>
+                                                        </label>
                                                     </div>
-                                                    <div class="wp-site-actions">
-                                                        <a href="/websites/WPHome?ID={$ wp.id $}" class="btn btn-primary btn-sm">
-                                                            <i class="fas fa-cog"></i>
+                                                    
+                                                    <div class="flex flex-wrap gap-3 pt-2">
+                                                        <a href="/websites/WPHome?ID={$ wp.id $}" class="flex items-center gap-2 px-6 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all shadow-md !no-underline">
+                                                            <i data-lucide="settings-2" class="h-5 w-5"></i>
                                                             Manage
                                                         </a>
-                                                        <button class="btn btn-outline-danger btn-sm" ng-click="deleteWPSite(wp)">
-                                                            <i class="fas fa-trash"></i>
+                                                        <button class="flex items-center gap-2 px-6 py-3 bg-destructive/10 text-destructive rounded-xl text-lg font-bold hover:bg-destructive hover:text-destructive-foreground transition-all border border-destructive/20" ng-click="deleteWPSite(wp)">
+                                                            <i data-lucide="trash-2" class="h-5 w-5"></i>
                                                             Delete
                                                         </button>
                                                     </div>
@@ -888,26 +287,45 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Error Display -->
-                <div id="listFail" class="alert alert-danger" style="display: none;">
-                    <p>{% trans "Cannot list websites. Error message:" %} {$ errorMessage $}</p>
-                </div>
+        <!-- Pagination -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="text-lg font-bold text-muted-foreground uppercase tracking-widest">
+                {% trans "Pagination Control" %}
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-lg font-semibold text-muted-foreground">{% trans "Page" %}</span>
+                <select ng-model="currentPage" 
+                        class="p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all w-48" 
+                        ng-change="getFurtherWebsitesFromDB()">
+                    <option ng-repeat="page in pagination" value="{$ $index + 1 $}">{$ $index + 1 $}</option>
+                </select>
+            </div>
+        </div>
 
-                <!-- Pagination -->
-                <div class="pagination-section">
-                    <select ng-model="currentPage" 
-                            class="form-control pagination-select" 
-                            ng-change="getFurtherWebsitesFromDB()">
-                        <option ng-repeat="page in pagination" value="{$ $index + 1 $}">Page {$ $index + 1 $}</option>
-                    </select>
-                </div>
+        <!-- Error Display -->
+        <div id="listFail" class="p-8 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive hidden">
+            <div class="flex items-center gap-4">
+                <i data-lucide="alert-octagon" class="h-8 w-8"></i>
+                <p class="text-xl font-bold">{% trans "Cannot list websites. Error message:" %} {$ errorMessage $}</p>
             </div>
         </div>
     </div>
+</div>
 
 {% endblock %}
 
 {% block footer_scripts %}
     <script src="{% static 'websiteFunctions/websiteFunctions.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            // Ensure modal is handled correctly by custom fade
+            window.togglePasswordModal = function(show) {
+                if(show) $('#passwordProtectionModal').removeClass('hidden').fadeIn();
+                else $('#passwordProtectionModal').fadeOut(() => $('#passwordProtectionModal').addClass('hidden'));
+            };
+        });
+    </script>
 {% endblock %}

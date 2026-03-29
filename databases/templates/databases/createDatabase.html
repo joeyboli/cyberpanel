@@ -4,382 +4,37 @@
 
 {% block header_scripts %}
 <style>
-    /* Modern page styles matching new design */
-    .page-wrapper {
+    /* Custom scrollbar for better UX */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
         background: transparent;
-        padding: 20px;
     }
-    
-    .page-container {
-        max-width: 900px;
-        margin: 0 auto;
+    ::-webkit-scrollbar-thumb {
+        background: hsl(var(--border));
+        border-radius: 4px;
     }
-    
-    .page-header {
-        margin-bottom: 30px;
+    ::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground));
     }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 8px;
+
+    .form-control-cyber {
+        @apply w-full px-4 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none;
     }
-    
-    .page-subtitle {
-        font-size: 14px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    /* Card styles */
-    .content-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        margin-bottom: 25px;
-    }
-    
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    /* Form styles */
-    .form-group {
-        margin-bottom: 24px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-muted, #64748b);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:hover {
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px var(--accent-shadow, rgba(91,95,207,0.1));
-    }
-    
-    /* Windows selectbox fixes */
-    select.form-control {
-        cursor: pointer;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f3640' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 20px;
-        padding-right: 40px;
-        line-height: 1.5;
-        min-height: 44px;
-    }
-    
-    /* Windows-specific fixes */
-    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        select.form-control {
-            color: var(--text-primary, #2f3640) !important;
-            background-color: var(--bg-secondary, white) !important;
-        }
-    }
-    
-    /* Fix for Windows Edge and Chrome */
-    select.form-control::-ms-expand {
-        display: none;
-    }
-    
-    select.form-control:focus {
-        color: var(--text-primary, #2f3640);
-        background-color: var(--bg-secondary, white);
-    }
-    
-    /* Website selector card */
-    .website-selector-card {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-    }
-    
-    /* Database details section */
+
+    /* Database details section animation */
     .dbDetails {
         display: none;
     }
-    
-    /* Name preview */
-    .name-preview {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 6px;
-        padding: 8px 12px;
-        font-size: 13px;
-        color: var(--accent-color, #5b5fcf);
-        font-weight: 600;
-        margin-top: 8px;
-        display: inline-block;
-        font-family: 'Courier New', monospace;
+    .dbDetails.active {
+        display: block;
+        animation: slideDown 0.3s ease-out;
     }
-    
-    /* Password input group */
-    .password-group {
-        display: flex;
-        gap: 10px;
-        align-items: start;
-    }
-    
-    .password-input-wrapper {
-        flex: 1;
-    }
-    
-    .password-input {
-        display: flex;
-        gap: 0;
-        align-items: center;
-    }
-    
-    .password-input .form-control {
-        border-radius: 8px 0 0 8px;
-    }
-    
-    .password-toggle {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-left: none;
-        padding: 10px 14px;
-        border-radius: 0 8px 8px 0;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .password-toggle:hover {
-        background: var(--bg-active, #eef0ff);
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .password-toggle i {
-        color: var(--text-muted, #64748b);
-        font-size: 16px;
-    }
-    
-    /* Generated password section */
-    .generated-password-box {
-        background: var(--success-bg, #e8f5e9);
-        border: 1px solid var(--success-border, #c8e6c9);
-        border-radius: 8px;
-        padding: 16px;
-        margin-top: 16px;
-        display: none;
-    }
-    
-    .generated-password-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--success-text, #2e7d32);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
-    }
-    
-    .generated-password-value {
-        font-family: 'Courier New', monospace;
-        font-size: 14px;
-        color: var(--success-dark, #1b5e20);
-        font-weight: 600;
-        word-break: break-all;
-        margin-bottom: 12px;
-    }
-    
-    /* Button styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .btn-primary {
-        background: var(--accent-color, #5b5fcf);
-        color: var(--text-white, white);
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-hover, #4a4fc4);
-        box-shadow: 0 4px 12px var(--accent-shadow, rgba(91,95,207,0.3));
-        transform: translateY(-1px);
-    }
-    
-    .btn-primary:disabled {
-        background: var(--bg-disabled, #ccc);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .btn-secondary {
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--bg-active, #eef0ff);
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .btn-success {
-        background: var(--success-color, #66bb6a);
-        color: var(--text-white, white);
-    }
-    
-    .btn-success:hover {
-        background: var(--success-hover, #4caf50);
-        box-shadow: 0 4px 12px var(--success-shadow, rgba(102,187,106,0.3));
-        transform: translateY(-1px);
-    }
-    
-    .btn-lg {
-        padding: 12px 24px;
-        font-size: 16px;
-    }
-    
-    /* Alert styles */
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: fadeIn 0.3s ease-out;
-    }
-    
-    @keyframes fadeIn {
+
+    @keyframes slideDown {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .alert-danger {
-        background: var(--danger-bg, #ffebee);
-        border: 1px solid var(--danger-border, #ffcdd2);
-        color: var(--danger-text, #c62828);
-    }
-    
-    .alert-success {
-        background: var(--success-bg, #e8f5e9);
-        border: 1px solid var(--success-border, #c8e6c9);
-        color: var(--success-text, #2e7d32);
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--bg-tertiary, #f3f3f3);
-        border-top: 2px solid var(--accent-color, #5b5fcf);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Button container */
-    .button-container {
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    /* Info box */
-    .info-box {
-        background: var(--info-bg, #e3f2fd);
-        border: 1px solid var(--info-border, #bbdefb);
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .info-box i {
-        color: var(--info-color, #1976d2);
-        font-size: 18px;
-    }
-    
-    .info-box-text {
-        font-size: 13px;
-        color: var(--info-text, #1565c0);
-        line-height: 1.5;
-    }
-    
-    /* Help text */
-    .help-text {
-        font-size: 12px;
-        color: var(--text-secondary, #8893a7);
-        margin-top: 6px;
-    }
-    
-    /* Hide by default */
-    .generatedPasswordDetails {
-        display: none;
-    }
-    
-    @media (max-width: 768px) {
-        .content-card {
-            padding: 20px;
-        }
-        
-        .password-group {
-            flex-direction: column;
-        }
     }
 </style>
 {% endblock %}
@@ -388,104 +43,202 @@
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="page-wrapper" ng-controller="createDatabase">
-    <div class="page-container">
-        <div class="page-header">
-            <h1 class="page-title">{% trans "Create Database" %}</h1>
-            <p class="page-subtitle">{% trans "Create a new MySQL database for your websites" %}</p>
-        </div>
-
-        <div class="info-box">
-            <i class="fas fa-info-circle"></i>
-            <div class="info-box-text">
-                {% trans "Each database will be prefixed with your domain name for security and organization." %}
+<div class="w-full p-4 md:p-12" ng-controller="createDatabase">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                <i data-lucide="database" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Create Database" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Create a new MySQL database for your websites" %}
+                </p>
             </div>
         </div>
+    </div>
 
-        <div class="content-card">
-            <h2 class="card-title">
-                {% trans "Database Configuration" %}
-                <span ng-hide="createDatabaseLoading" class="loading-spinner"></span>
-            </h2>
-            
-            <form name="createDatabaseForm">
-                <div class="website-selector-card">
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Select Website" %}</label>
-                        <select id="create-database-select" ng-model="databaseWebsite" ng-change="websiteChanged()" class="form-control">
-                            <option value="">-- {% trans "Select a website" %} --</option>
-                            {% for items in websitesList %}
-                                <option>{{ items }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Main Form Area -->
+        <div class="space-y-8">
+            <!-- Configuration Card -->
+            <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Database Configuration" %}
+                    <span ng-show="createDatabaseLoading" class="ml-4">
+                        <div class="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </span>
+                </h2>
 
-                <div class="dbDetails">
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Database Name" %}</label>
-                        <input name="dbName" type="text" class="form-control" ng-model="dbName" 
-                               placeholder="{% trans 'Enter database name' %}" required>
-                        <div class="name-preview" ng-show="dbName">
-                            <span id="domainDatabase"></span>_{$ dbName $}
+                <div class="space-y-8">
+                    <form name="createDatabaseForm" class="space-y-10">
+                        <!-- Website Selector -->
+                        <div class="space-y-4">
+                            <label class="text-xl font-bold text-foreground">
+                                {% trans "Select Website" %}
+                            </label>
+                            <div class="relative">
+                                <select id="create-database-select" ng-model="databaseWebsite" ng-change="websiteChanged()" 
+                                        class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer text-xl font-medium">
+                                    <option value="">-- {% trans "Select a website" %} --</option>
+                                    {% for items in websitesList %}
+                                        <option>{{ items }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i data-lucide="chevron-down" class="w-6 h-6 text-muted-foreground"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl mt-2">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5"></i>
+                                <p class="text-sm text-blue-700 dark:text-blue-300">
+                                    {% trans "Each database will be prefixed with your domain name for security and organization." %}
+                                </p>
+                            </div>
                         </div>
-                        <div class="help-text">{% trans "Database name will be prefixed with your domain" %}</div>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Database User" %}</label>
-                        <input type="text" name="dbUsername" class="form-control" ng-model="dbUsername" 
-                               placeholder="{% trans 'Enter username' %}" required>
-                        <div class="name-preview" ng-show="dbUsername">
-                            <span id="domainUsername"></span>_{$ dbUsername $}
-                        </div>
-                        <div class="help-text">{% trans "Username will be prefixed with your domain" %}</div>
-                    </div>
+                        <!-- Database Details (Conditional) -->
+                        <div class="dbDetails space-y-10 pt-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                <!-- DB Name -->
+                                <div class="space-y-4">
+                                    <label class="text-xl font-bold text-foreground">
+                                        {% trans "Database Name" %}
+                                    </label>
+                                    <div class="relative group">
+                                        <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
+                                            <i data-lucide="database" class="w-6 h-6"></i>
+                                        </div>
+                                        <input name="dbName" type="text" ng-model="dbName" 
+                                               class="w-full pl-14 pr-5 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
+                                               placeholder="{% trans 'Enter database name' %}" required>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl text-sm font-mono text-primary self-start" ng-show="dbName">
+                                            <span id="domainDatabase"></span>_{$ dbName $}
+                                        </div>
+                                        <p class="text-sm text-muted-foreground">{% trans "Database name will be prefixed with your domain" %}</p>
+                                    </div>
+                                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Password" %}</label>
-                        <div class="password-group">
-                            <div class="password-input-wrapper">
-                                <div class="password-input">
-                                    <input type="password" id="dbPassword" name="dbPassword" class="form-control" 
-                                           ng-model="dbPassword" placeholder="{% trans 'Enter password' %}" required>
-                                    <div class="password-toggle" onclick="togglePasswordVisibility()">
-                                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                <!-- DB User -->
+                                <div class="space-y-4">
+                                    <label class="text-xl font-bold text-foreground">
+                                        {% trans "Database User" %}
+                                    </label>
+                                    <div class="relative group">
+                                        <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
+                                            <i data-lucide="user" class="w-6 h-6"></i>
+                                        </div>
+                                        <input type="text" name="dbUsername" ng-model="dbUsername" 
+                                               class="w-full pl-14 pr-5 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
+                                               placeholder="{% trans 'Enter username' %}" required>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl text-sm font-mono text-primary self-start" ng-show="dbUsername">
+                                            <span id="domainUsername"></span>_{$ dbUsername $}
+                                        </div>
+                                        <p class="text-sm text-muted-foreground">{% trans "Username will be prefixed with your domain" %}</p>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" ng-click="generatePassword()" class="btn btn-secondary">
-                                <i class="fas fa-sync"></i>
-                                {% trans "Generate" %}
-                            </button>
+
+                            <!-- Password -->
+                            <div class="space-y-4 pt-4">
+                                <label class="text-xl font-bold text-foreground">
+                                    {% trans "Password" %}
+                                </label>
+                                <div class="flex flex-col md:flex-row gap-6">
+                                    <div class="relative flex-1 group">
+                                        <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
+                                            <i data-lucide="key-round" class="w-6 h-6"></i>
+                                        </div>
+                                        <input type="password" id="dbPassword" name="dbPassword" ng-model="dbPassword" 
+                                               class="w-full pl-14 pr-14 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
+                                               placeholder="{% trans 'Enter password' %}" required>
+                                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                                            <i data-lucide="eye" id="passwordToggleIcon" class="w-6 h-6"></i>
+                                        </button>
+                                    </div>
+                                    <button type="button" ng-click="generatePassword()" 
+                                            class="inline-flex items-center justify-center gap-3 px-8 py-5 bg-secondary text-foreground font-bold rounded-xl border border-border hover:bg-muted transition-all text-xl">
+                                        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                                        {% trans "Generate" %}
+                                    </button>
+                                </div>
+                                <p class="text-sm text-muted-foreground">{% trans "Use a strong password for security." %}</p>
+                            </div>
+
+                            <!-- Generated Password Preview -->
+                            <div class="generated-password-box generatedPasswordDetails bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-8 space-y-6">
+                                <div class="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 font-bold text-lg uppercase tracking-wider">
+                                    <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                                    {% trans "Generated Password" %}
+                                </div>
+                                <div class="p-5 bg-background border border-emerald-500/10 rounded-xl font-mono text-2xl text-emerald-700 dark:text-emerald-300 break-all select-all">
+                                    {$ generatedPassword $}
+                                </div>
+                                <button type="button" ng-click="usePassword()" 
+                                        class="inline-flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all text-lg">
+                                    <i data-lucide="check" class="w-5 h-5"></i>
+                                    {% trans "Use This Password" %}
+                                </button>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="pt-10 border-t border-border flex justify-end">
+                                <button type="button" ng-click="createDatabase()" 
+                                        class="inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground font-extrabold rounded-2xl hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none text-xl w-full md:w-auto justify-center"
+                                        ng-disabled="!databaseWebsite || !dbName || !dbUsername || !dbPassword">
+                                    <i data-lucide="database" class="w-6 h-6"></i>
+                                    {% trans "Create Database" %}
+                                </button>
+                            </div>
                         </div>
-                        <div class="help-text">{% trans "Use a strong password for security" %}</div>
-                    </div>
+                    </form>
+                </div>
+            </div>
 
-                    <div class="generated-password-box generatedPasswordDetails">
-                        <div class="generated-password-label">{% trans "Generated Password" %}</div>
-                        <div class="generated-password-value">{$ generatedPassword $}</div>
-                        <button type="button" ng-click="usePassword()" class="btn btn-success btn-sm">
-                            <i class="fas fa-check"></i>
-                            {% trans "Use This Password" %}
-                        </button>
+            <!-- Tips Section (Wide) -->
+            <div class="bg-card border border-border rounded-2xl p-10 shadow-sm">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-amber-500"></div>
+                    {% trans "Quick Tips" %}
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="tag" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Choose a descriptive name to easily identify your database later." %}
+                        </p>
                     </div>
-
-                    <div class="button-container">
-                        <button type="button" ng-click="createDatabase()" class="btn btn-primary btn-lg" 
-                                ng-disabled="!databaseWebsite || !dbName || !dbUsername || !dbPassword">
-                            <i class="fas fa-database"></i>
-                            {% trans "Create Database" %}
-                        </button>
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="lock" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "CyberPanel automatically handles database user permissions for you." %}
+                        </p>
+                    </div>
+                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="terminal" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "You can manage your data using phpMyAdmin after creating the database." %}
+                        </p>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-
-        <!-- Success/Error messages will be handled by the controller -->
     </div>
 </div>
-
 {% endblock %}
 
 {% block footer_scripts %}
@@ -497,28 +250,58 @@ function togglePasswordVisibility() {
     
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        toggleIcon.className = 'fas fa-eye-slash';
+        if (typeof lucide !== 'undefined') {
+            toggleIcon.setAttribute('data-lucide', 'eye-off');
+            lucide.createIcons();
+        }
     } else {
         passwordInput.type = 'password';
-        toggleIcon.className = 'fas fa-eye';
+        if (typeof lucide !== 'undefined') {
+            toggleIcon.setAttribute('data-lucide', 'eye');
+            lucide.createIcons();
+        }
     }
 }
 
 // Enhance the controller
 $(document).ready(function() {
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Observe for dynamic changes to refresh Lucide icons
+    const observer = new MutationObserver((mutations) => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
     var scope = angular.element($('[ng-controller="createDatabase"]')).scope();
     if (scope) {
         // Add website change handler
         scope.websiteChanged = function() {
             if (scope.databaseWebsite) {
-                $('.dbDetails').fadeIn();
-                // Update the domain prefixes
-                var domainParts = scope.databaseWebsite.split('.');
-                var prefix = domainParts[0];
+                $('.dbDetails').addClass('active').fadeIn();
+                
+                // Use the controller's built-in truncation logic if available
+                var prefix = '';
+                if (typeof scope.getTruncatedWebName === 'function') {
+                    prefix = scope.getTruncatedWebName(scope.databaseWebsite);
+                } else {
+                    var domainParts = scope.databaseWebsite.split('.');
+                    prefix = domainParts[0];
+                }
+                
                 $('#domainDatabase').text(prefix);
                 $('#domainUsername').text(prefix);
             } else {
-                $('.dbDetails').fadeOut();
+                $('.dbDetails').removeClass('active').fadeOut();
             }
         };
         

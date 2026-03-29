@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     # dotenv not available, continue without it
@@ -124,19 +125,25 @@ WSGI_APPLICATION = 'CyberCP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'cyberpanel'),
-        'USER': os.getenv('DB_USER', 'cyberpanel'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'SLTUIUxqhulwsh'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': 'cyberpanel',
+        'USER': 'root',
+        'PASSWORD': '',  # if root has no password
+        'HOST': '127.0.0.1',  # must match host of root
+        'PORT': '3306',  # Herd MySQL port
+        'OPTIONS': {
+            'auth_plugin': 'caching_sha2_password',  # match your MySQL plugin
+        }
     },
     'rootdb': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('ROOT_DB_NAME', 'mysql'),
         'USER': os.getenv('ROOT_DB_USER', 'root'),
-        'PASSWORD': os.getenv('ROOT_DB_PASSWORD', 'SLTUIUxqhulwsh'),
-        'HOST': os.getenv('ROOT_DB_HOST', 'localhost'),
+        'PASSWORD': '',
+        'HOST': os.getenv('ROOT_DB_HOST', '127.0.0.1'),
         'PORT': os.getenv('ROOT_DB_PORT', '3306'),
+        'OPTIONS': {
+            'auth_plugin': 'caching_sha2_password',  # match your MySQL plugin
+        }
     },
 }
 DATABASE_ROUTERS = ['backup.backupRouter.backupRouter']

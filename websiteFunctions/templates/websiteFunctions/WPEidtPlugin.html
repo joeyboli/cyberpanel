@@ -14,7 +14,7 @@
 
             </h2>
         </div>
-        <div ng-controller="WPAddNewPlugin" class="panel" style="background: var(--bg-secondary, white); border-radius: 12px; box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08)); border: 1px solid var(--border-color, #e8e9ff);">
+        <div ng-controller="WPAddNewPlugin" class="bg-card rounded-2xl shadow-sm border border-border/50 mb-12 overflow-hidden" style="background: var(--bg-secondary, white); border-radius: 12px; box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08)); border: 1px solid var(--border-color, #e8e9ff);">
             <div class="panel-body" style="padding: 25px;">
                 <div class="example-box-wrapper">
                     <h2 style="color: var(--text-heading, #2f3640); margin-bottom: 20px;">{{ BucketName }}</h2>
@@ -27,7 +27,7 @@
 
                         <label style="margin-bottom: 10px; color: var(--text-primary, #2f3640); font-weight: 600;">{% trans "Search Plugin Name" %}</label>
 
-                        <input name="searchcontent" type="text" class="form-control" ng-model="searchcontent"
+                        <input name="searchcontent" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="searchcontent"
                                ng-keyup="SearchPluginName('eidt')"
                                placeholder="{% trans "Search Plugin...." %}" required
                                style="border: 1px solid var(--border-color, #e8e9ff); background: var(--bg-secondary, white); color: var(--text-primary, #2f3640); padding: 12px 16px; border-radius: 8px;">

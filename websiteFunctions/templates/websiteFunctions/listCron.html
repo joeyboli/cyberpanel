@@ -1,701 +1,192 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Cron Management - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<style>
-    /* Modern page styles matching new design with dark mode support */
-    .page-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .page-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    /* Container Styling */
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        min-height: 100vh;
-        background: transparent;
-        transition: var(--transition-base);
-    }
-    
-    /* Page Title Section */
-    #page-title {
-        background: var(--bg-gradient);
-        color: white;
-        padding: 40px;
-        border-radius: var(--radius-xl);
-        margin-bottom: 30px;
-        box-shadow: var(--shadow-xl);
-        position: relative;
-        overflow: hidden;
-        transition: var(--transition-base);
-    }
-    
-    #page-title::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: pulse 4s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.3; }
-    }
-    
-    #page-title h2 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 10px;
-        letter-spacing: -0.5px;
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    #page-title p {
-        font-size: 16px;
-        opacity: 0.95;
-        margin: 0;
-        position: relative;
-        z-index: 1;
-        line-height: 1.6;
-    }
-    
-    /* Main Panel */
-    .panel {
-        background: var(--bg-card);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        position: relative;
-        transition: var(--transition-base);
-    }
-    
-    .panel-body {
-        padding: 0;
-    }
-    
-    /* Content Box Header */
-    .title-hero {
-        background: var(--bg-light);
-        padding: 25px 30px;
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary);
-        border-bottom: 1px solid var(--border-color);
-        letter-spacing: -0.3px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        transition: var(--transition-base);
-    }
-    
-    /* Example Box Wrapper */
-    .example-box-wrapper {
-        padding: 30px;
-    }
-    
-    /* Enhanced Buttons */
-    .btn {
-        padding: 12px 28px;
-        border-radius: var(--radius-md);
-        font-weight: 600;
-        transition: var(--transition-base);
-        border: none;
-        font-size: 14px;
-        letter-spacing: 0.3px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-        text-decoration: none;
-    }
-    
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-    
-    .btn:active::before {
-        width: 300px;
-        height: 300px;
-    }
-    
-    .btn-primary {
-        background: var(--bg-gradient);
-        color: white;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-        color: white;
-    }
-    
-    .btn-warning {
-        background: linear-gradient(135deg, var(--warning-color) 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        padding: 8px 12px;
-    }
-    
-    .btn-warning:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-        color: white;
-    }
-    
-    .btn-border {
-        background: transparent;
-        border: 2px solid var(--primary-color);
-        color: var(--primary-color);
-        box-shadow: none;
-    }
-    
-    .btn-border:hover {
-        background: var(--primary-color);
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .btn-link {
-        background: transparent;
-        color: white;
-        box-shadow: none;
-        padding: 8px 16px;
-        font-size: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    .btn-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: white;
-        text-decoration: none;
-    }
-    
-    .btn-lg {
-        padding: 16px 40px;
-        font-size: 16px;
-    }
-    
-    .btn-block {
-        width: 100%;
-    }
-    
-    /* Action Buttons Row */
-    .action-buttons {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    /* Enhanced Table */
-    #cronTable {
-        background: var(--bg-card);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 30px;
-        width: 100%;
-    }
-    
-    #cronTable thead {
-        background: var(--bg-gradient);
-    }
-    
-    #cronTable thead th {
-        border: none;
-        color: white;
-        font-weight: 600;
-        padding: 18px;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-    }
-    
-    #cronTable tbody tr {
-        transition: all var(--transition-base);
-        border-bottom: 1px solid var(--border-light);
-    }
-    
-    #cronTable tbody tr:last-child {
-        border-bottom: none;
-    }
-    
-    #cronTable tbody tr:hover {
-        background: var(--bg-hover);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    }
-    
-    #cronTable tbody td {
-        padding: 18px;
-        border: none;
-        vertical-align: middle;
-        color: var(--text-primary);
-    }
-    
-    /* Cron Form */
-    #modifyCronForm {
-        background: var(--bg-light);
-        border-radius: var(--radius-lg);
-        padding: 30px;
-        margin-top: 30px;
-        border: 1px solid var(--border-color);
-        display: none;
-        transition: var(--transition-base);
-    }
-    
-    .form-horizontal {
-        margin-bottom: 0;
-    }
-    
-    .form-group {
-        margin-bottom: 25px;
-        transition: var(--transition-base);
-    }
-    
-    .form-group:hover {
-        transform: translateX(5px);
-    }
-    
-    .control-label {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-        font-size: 14px;
-        letter-spacing: 0.3px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .form-control {
-        border: 2px solid var(--border-color);
-        border-radius: var(--radius-md);
-        padding: 12px 16px;
-        font-size: 15px;
-        transition: var(--transition-base);
-        background: var(--bg-card);
-        color: var(--text-primary);
-    }
-    
-    .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        outline: none;
-    }
-    
-    select.form-control {
-        cursor: pointer;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-color: var(--bg-card);
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        padding-right: 2.5rem;
-        line-height: 1.5;
-        min-height: 44px;
-        color: var(--text-primary);
-    }
-    
-    /* Windows-specific fixes */
-    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        select.form-control {
-            color: var(--text-primary) !important;
-            background-color: var(--bg-card) !important;
-        }
-    }
-    
-    /* Fix for Windows Edge and Chrome */
-    select.form-control::-ms-expand {
-        display: none;
-    }
-    
-    select.form-control:focus {
-        color: var(--text-primary);
-        background-color: var(--bg-card);
-    }
-    
-    /* Alerts */
-    .alert {
-        border-radius: var(--radius-lg);
-        border: none;
-        padding: 18px 24px;
-        margin-bottom: 20px;
-        font-weight: 500;
-        display: none;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .alert-success {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
-        border: 1px solid #6ee7b7;
-    }
-    
-    .alert-danger {
-        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        color: #991b1b;
-        border: 1px solid #fca5a5;
-    }
-    
-    /* Loading Animation */
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    #manageCronLoading {
-        animation: spin 1s linear infinite;
-        width: 20px;
-        height: 20px;
-        vertical-align: middle;
-        display: none;
-    }
-    
-    /* HR Styling */
-    hr {
-        border: none;
-        border-top: 1px solid var(--border-color);
-        margin: 30px 0;
-    }
-    
-    /* Icon Styling */
-    .glyph-icon {
-        font-size: 16px;
-    }
-    
-    /* Dark mode specific adjustments */
-    [data-theme="dark"] body {
-        background: var(--bg-primary);
-    }
-    
-    [data-theme="dark"] .btn-border {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
-    
-    [data-theme="dark"] .btn-border:hover {
-        background: var(--primary-color);
-        color: var(--bg-card);
-    }
-    
-    [data-theme="dark"] code {
-        background: var(--bg-hover) !important;
-        color: var(--accent-color) !important;
-    }
-    
-    [data-theme="dark"] #cronTable tbody tr:hover {
-        background: var(--bg-hover);
-    }
-    
-    [data-theme="dark"] .alert-success {
-        background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
-        color: #34d399;
-        border: 1px solid #047857;
-    }
-    
-    [data-theme="dark"] .alert-danger {
-        background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
-        color: #f87171;
-        border: 1px solid #991b1b;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .container {
-            padding: 15px;
-        }
-        
-        #page-title {
-            padding: 25px;
-        }
-        
-        #page-title h2 {
-            font-size: 24px;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        .example-box-wrapper {
-            padding: 20px;
-        }
-        
-        .control-label {
-            margin-bottom: 10px;
-        }
-        
-        .btn-lg {
-            padding: 12px 28px;
-            font-size: 14px;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        .action-buttons .btn {
-            width: 100%;
-        }
-        
-        #cronTable {
-            font-size: 12px;
-        }
-        
-        #cronTable th,
-        #cronTable td {
-            padding: 12px 8px;
-        }
-    }
-</style>
-
-<div ng-controller="manageCronController" class="container">
-    
-    <div id="page-title">
-        <h2>
-            <i class="fas fa-clock" style="margin-right: 10px;"></i>
-            {% trans "Cron Management" %}
-            <a target="_blank" rel="noopener" href="https://cyberpanel.net/KnowledgeBase/home/cron-jobs/" class="btn btn-link">
-                <i class="fas fa-book"></i>
-                {% trans "Cron Docs" %}
+<div ng-controller="manageCronController" class="w-full p-4 md:p-12">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                <i data-lucide="clock" class="h-8 w-8"></i>
+                <span id="manageCronLoading" class="absolute -top-2 -right-2 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center animate-spin hidden">
+                    <i data-lucide="loader-2" class="h-4 w-4"></i>
+                </span>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Cron Management" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">{% trans "Manage scheduled tasks for" %} <span class="font-bold text-foreground">{{ domain }}</span></p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a target="_blank" rel="noopener" href="https://cyberpanel.net/KnowledgeBase/home/cron-jobs/" class="flex items-center gap-2 px-6 py-3 bg-secondary text-foreground rounded-xl text-lg font-bold border border-border hover:bg-secondary/80 transition-all">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                {% trans "Documentation" %}
             </a>
-        </h2>
-        <p>{% trans "Create, edit or delete your cron jobs from this page." %}</p>
+            <button ng-click="addCronForm()" class="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-lg font-bold shadow-lg transition-all">
+                <i data-lucide="plus" class="h-5 w-5"></i>
+                {% trans "Add Cron" %}
+            </button>
+        </div>
     </div>
-    
-    <div class="panel">
-        <div class="panel-body">
-            <h3 class="title-hero">
-                <i class="fas fa-tasks" style="color: var(--accent-color, #5b5fcf);"></i>
-                {% trans "Cron Jobs for" %} <span id="domain">{{ domain }}</span>
-                <img id="manageCronLoading" src="{% static 'images/loading.gif' %}">
-            </h3>
+
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Cron List Table -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+            <div class="p-8 border-b border-border/50 flex justify-between items-center bg-secondary/10">
+                <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                    <i data-lucide="list" class="h-6 w-6 text-primary"></i>
+                    {% trans "Current Cron Jobs" %}
+                </h2>
+                <button ng-click="fetchWebsites()" class="text-primary font-bold hover:underline flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                    {% trans "Refresh" %}
+                </button>
+            </div>
             
-            <div class="example-box-wrapper">
-                
-                <div class="action-buttons">
-                    <a ng-click="addCronForm()" class="btn btn-primary" href="#">
-                        <i class="fas fa-plus"></i>
-                        {% trans "Add Cron" %}
-                    </a>
-                    <a ng-click="fetchWebsites()" class="btn btn-border" href="#">
-                        <i class="fas fa-sync-alt"></i>
-                        {% trans "Fetch Current Cron Jobs" %}
-                    </a>
-                </div>
-                
-                <!-- Cron Jobs Table -->
-                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="cronTable">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
                     <thead>
-                        <tr>
-                            <th>{% trans "Minute" %}</th>
-                            <th>{% trans "Hour" %}</th>
-                            <th>{% trans "Day of Month" %}</th>
-                            <th>{% trans "Month" %}</th>
-                            <th>{% trans "Day of Week" %}</th>
-                            <th>{% trans "Command" %}</th>
-                            <th style="width: 120px;">{% trans "Action" %}</th>
+                        <tr class="bg-secondary/30">
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Min" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Hour" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Day" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Month" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Weekday" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60">{% trans "Command" %}</th>
+                            <th class="p-6 text-sm font-black uppercase tracking-widest text-muted-foreground/60 text-right">{% trans "Actions" %}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr ng-repeat="cron in cronList track by $index">
-                            <td ng-bind="cron.minute"></td>
-                            <td ng-bind="cron.hour"></td>
-                            <td ng-bind="cron.monthday"></td>
-                            <td ng-bind="cron.month"></td>
-                            <td ng-bind="cron.weekday"></td>
-                            <td>
-                                <code style="background: var(--bg-light); padding: 4px 8px; border-radius: 4px; font-size: 12px; color: var(--text-primary);" ng-bind="cron.command">
-                                </code>
+                    <tbody class="divide-y divide-border/50 font-medium">
+                        <tr ng-repeat="cron in cronList track by $index" class="hover:bg-secondary/10 transition-colors">
+                            <td class="p-6 text-lg" ng-bind="cron.minute"></td>
+                            <td class="p-6 text-lg" ng-bind="cron.hour"></td>
+                            <td class="p-6 text-lg" ng-bind="cron.monthday"></td>
+                            <td class="p-6 text-lg" ng-bind="cron.month"></td>
+                            <td class="p-6 text-lg" ng-bind="cron.weekday"></td>
+                            <td class="p-6">
+                                <code class="px-3 py-1.5 bg-secondary rounded-lg text-base font-mono text-foreground break-all" ng-bind="cron.command"></code>
                             </td>
-                            <td>
-                                <div style="display: flex; gap: 8px; justify-content: center;">
-                                    <a class="btn btn-primary" ng-click="fetchCron(cron.line)" href="#" title="{% trans 'Edit' %}">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a class="btn btn-warning" ng-click="removeCron(cron.line)" href="#" title="{% trans 'Delete' %}">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                            <td class="p-6 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button class="p-3 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white transition-all" ng-click="fetchCron(cron.line)" title="{% trans 'Edit' %}">
+                                        <i data-lucide="edit-3" class="h-5 w-5"></i>
+                                    </button>
+                                    <button class="p-3 bg-destructive/10 text-destructive rounded-xl hover:bg-destructive hover:text-white transition-all" ng-click="removeCron(cron.line)" title="{% trans 'Delete' %}">
+                                        <i data-lucide="trash-2" class="h-5 w-5"></i>
+                                    </button>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="cronList.length == 0">
+                            <td colspan="7" class="p-12 text-center text-xl text-muted-foreground font-medium italic">
+                                {% trans "No cron jobs found for this website." %}
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                
-                <!-- Cron Form -->
-                <div id="modifyCronForm">
-                    <form action="/" class="form-horizontal">
-                        <input type="hidden" ng-value="line" required="">
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-magic" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Pre defined" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <select class="form-control" ng-model="defined" ng-change="populate()" required="">
-                                    <option value="* * * * *">{% trans "Every minute" %}</option>
-                                    <option value="*/5 * * * *">{% trans "Every 5 minutes" %}</option>
-                                    <option value="*/30 * * * *">{% trans "Every 30 minutes" %}</option>
-                                    <option value="0 * * * *">{% trans "Every hour" %}</option>
-                                    <option value="0 0 * * *">{% trans "Every day" %}</option>
-                                    <option value="0 0 * * 0">{% trans "Every week" %}</option>
-                                    <option value="0 0 1 * *">{% trans "Every month" %}</option>
-                                    <option value="0 0 1 1 *">{% trans "Every year" %}</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-stopwatch" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Minute" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="minute" placeholder="0-59 or *" required="">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-clock" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Hour" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="hour" placeholder="0-23 or *" required="">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-calendar-day" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Day of month" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="monthday" placeholder="1-31 or *" required="">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-calendar-alt" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Month" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="month" placeholder="1-12 or *" required="">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-calendar-week" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Day of week" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="weekday" placeholder="0-6 or *" required="">
-                            </div>
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <i class="fas fa-terminal" style="color: var(--accent-color, #5b5fcf);"></i>
-                                {% trans "Command" %}
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="command" placeholder="/usr/bin/php /path/to/script.php" required="">
-                            </div>
-                        </div>
-                        
-                        <div id="saveCronButton" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <button type="button" ng-click="modifyCronFunc()" class="btn btn-primary btn-lg btn-block">
-                                    <i class="fas fa-save"></i>
-                                    {% trans "Save Edits" %}
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="addCronButton" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <button type="button" ng-click="addCronFunc()" class="btn btn-primary btn-lg btn-block">
-                                    <i class="fas fa-plus"></i>
-                                    {% trans "Add Cron" %}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+            </div>
+        </div>
+
+        <!-- Cron Form Card -->
+        <div id="modifyCronForm" class="bg-card rounded-2xl shadow-sm border-2 border-primary/20 p-10 space-y-10 animate-in slide-in-from-bottom-4 duration-300">
+            <h2 class="text-3xl font-bold text-foreground flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                <span ng-if="line">{% trans "Edit Cron Job" %}</span>
+                <span ng-if="!line">{% trans "Add New Cron Job" %}</span>
+            </h2>
+            
+            <form class="space-y-10">
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="zap" class="h-6 w-6 text-primary"></i>
+                        {% trans "Quick Presets" %}
+                    </label>
+                    <select class="w-full p-4 bg-secondary/30 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="defined" ng-change="populate()">
+                        <option value="">-- {% trans "Choose a preset" %} --</option>
+                        <option value="* * * * *">{% trans "Every minute" %}</option>
+                        <option value="*/5 * * * *">{% trans "Every 5 minutes" %}</option>
+                        <option value="*/30 * * * *">{% trans "Every 30 minutes" %}</option>
+                        <option value="0 * * * *">{% trans "Every hour" %}</option>
+                        <option value="0 0 * * *">{% trans "Every day" %}</option>
+                        <option value="0 0 * * 0">{% trans "Every week" %}</option>
+                        <option value="0 0 1 * *">{% trans "Every month" %}</option>
+                        <option value="0 0 1 1 *">{% trans "Every year" %}</option>
+                    </select>
                 </div>
-                
-                <!-- Alert Messages -->
-                <div class="form-group" style="margin-top: 30px;">
-                    <label class="col-sm-3 control-label"></label>
-                    <div class="col-sm-6">
-                        <div id="fetchCronFailure" class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <p>{% trans "Cannot fetch website details. Error message:" %} {$ errorMessage $}</p>
-                        </div>
-                        
-                        <div id="addCronFailure" class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <p>{% trans "Unable to add/save Cron. Error message:" %} {$ errorMessage $}</p>
-                        </div>
-                        
-                        <div id="cronEditSuccess" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <p>{% trans "Cron job saved successfully!" %}</p>
-                        </div>
+
+                <div class="h-px bg-border/50"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <div class="space-y-3">
+                        <label class="text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Minute" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono text-center" ng-model="minute" placeholder="0-59 or *">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Hour" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono text-center" ng-model="hour" placeholder="0-23 or *">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Day" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono text-center" ng-model="monthday" placeholder="1-31 or *">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Month" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono text-center" ng-model="month" placeholder="1-12 or *">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Weekday" %}</label>
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono text-center" ng-model="weekday" placeholder="0-6 or *">
                     </div>
                 </div>
-                
+
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="terminal" class="h-6 w-6 text-primary"></i>
+                        {% trans "Command to execute" %}
+                    </label>
+                    <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl font-mono" ng-model="command" placeholder="/usr/bin/php /home/domain.com/public_html/cron.php" required>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 pt-6">
+                    <button id="saveCronButton" type="button" ng-click="modifyCronFunc()" class="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg hidden">
+                        <i data-lucide="save" class="h-6 w-6"></i>
+                        {% trans "Save Changes" %}
+                    </button>
+                    <button id="addCronButton" type="button" ng-click="addCronFunc()" class="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold shadow-lg hidden">
+                        <i data-lucide="plus" class="h-6 w-6"></i>
+                        {% trans "Add Cron Job" %}
+                    </button>
+                    <button type="button" onclick="$('#modifyCronForm').fadeOut()" class="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                        {% trans "Cancel" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="space-y-4">
+            <div id="fetchCronFailure" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive hidden">
+                <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                <span class="text-lg font-semibold">{% trans "Cannot fetch cron details. Error message:" %} {$ errorMessage $}</span>
+            </div>
+            
+            <div id="addCronFailure" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive hidden">
+                <i data-lucide="x-circle" class="h-6 w-6 shrink-0"></i>
+                <span class="text-lg font-semibold">{% trans "Unable to add/save Cron. Error message:" %} {$ errorMessage $}</span>
+            </div>
+            
+            <div id="cronEditSuccess" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600 hidden">
+                <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                <span class="text-lg font-semibold">{% trans "Cron job saved successfully!" %}</span>
             </div>
         </div>
     </div>
-    
 </div>
-
 {% endblock %}

@@ -4,323 +4,7 @@
 {% block title %}{% trans "Remote Backup Configurations - CyberPanel" %}{% endblock %}
 
 {% block header_scripts %}
-<style>
-    /* Remote Backup Config Page Specific Styles */
-    .backup-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .backup-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .backup-section {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .section-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-heading, #2f3640);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .section-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    /* Form Styles */
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-row {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 20px;
-        align-items: center;
-    }
-    
-    .form-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-primary, #2f3640);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        text-align: right;
-    }
-    
-    .form-control {
-        width: 100%;
-        max-width: 400px;
-        padding: 12px 16px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        background: var(--bg-secondary, white);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px rgba(91,95,207,0.1);
-    }
-    
-    select.form-control {
-        cursor: pointer;
-    }
-    
-    .btn-primary {
-        background: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--accent-color, #5b5fcf);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-hover, #4a4fc4);
-        border-color: var(--accent-hover, #4a4fc4);
-        box-shadow: 0 3px 8px rgba(91,95,207,0.3);
-        transform: translateY(-1px);
-    }
-    
-    .btn-primary:disabled {
-        background: #94a3b8;
-        border-color: #94a3b8;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    /* Provider Selector */
-    .provider-options {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-top: 10px;
-    }
-    
-    /* Table Styles */
-    .table-container {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    
-    .table {
-        width: 100%;
-        margin-bottom: 0;
-        background: var(--bg-secondary, white);
-    }
-    
-    .table thead {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .table th {
-        border: none;
-        padding: 15px;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--text-secondary, #8893a7);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .table td {
-        border: none;
-        padding: 15px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        border-bottom: 1px solid #f1f3f5;
-        vertical-align: middle;
-    }
-    
-    .table tbody tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .table tbody tr:last-child td {
-        border-bottom: none;
-    }
-    
-    /* Backup Type Badge */
-    .backup-type {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .backup-type.sftp {
-        background: var(--info-bg, #e0f2fe);
-        color: var(--info-text, #0369a1);
-    }
-    
-    .backup-type.s3 {
-        background: var(--warning-bg, #fef3c7);
-        color: var(--warning-text, #92400e);
-    }
-    
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .btn-action {
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        border: 1px solid transparent;
-        background: transparent;
-    }
-    
-    .btn-schedule {
-        color: var(--success-text, #065f46);
-        border-color: #d1fae5;
-        background: var(--success-bg, #f0fdf4);
-    }
-    
-    .btn-schedule:hover {
-        background: var(--success-text, #065f46);
-        color: white;
-        border-color: var(--success-text, #065f46);
-        text-decoration: none;
-    }
-    
-    .btn-delete {
-        color: var(--danger-text, #ef4444);
-        border-color: #fee2e2;
-        background: var(--danger-bg, #fef2f2);
-    }
-    
-    .btn-delete:hover {
-        background: var(--danger-text, #ef4444);
-        color: white;
-        border-color: var(--danger-text, #ef4444);
-    }
-    
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--text-secondary, #8893a7);
-    }
-    
-    .empty-state svg {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 20px;
-        opacity: 0.3;
-    }
-    
-    .empty-state h3 {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text-heading, #2f3640);
-        margin-bottom: 10px;
-    }
-    
-    .empty-state p {
-        font-size: 14px;
-    }
-    
-    .loading-spinner {
-        width: 16px;
-        height: 16px;
-        margin-left: 8px;
-    }
-    
-    /* Info Alert */
-    .info-alert {
-        background: var(--info-bg, #e0f2fe);
-        border: 1px solid #bae6fd;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        color: var(--info-text, #0369a1);
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .info-alert i {
-        color: var(--info-text, #0369a1);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .backup-wrapper {
-            padding: 15px;
-        }
-        
-        .backup-section {
-            padding: 20px;
-        }
-        
-        .form-row {
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-        
-        .form-label {
-            text-align: left;
-        }
-        
-        .form-control {
-            max-width: 100%;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
-        
-        .btn-action {
-            width: 100%;
-            text-align: center;
-        }
-    }
-</style>
+
 
 <script>
     function DeleteBackupConfigNow(url) {
@@ -351,10 +35,10 @@
             </h3>
             
             <form name="websiteCreationForm">
-                <div ng-hide="installationDetailsForm" class="form-group">
+                <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Backup Type" %}</label>
-                        <select ng-model="RemoteBackuptype" ng-change="SelectRemoteBackuptype()" class="form-control">
+                        <select ng-model="RemoteBackuptype" ng-change="SelectRemoteBackuptype()" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                             <option>SFTP</option>
                             <option>S3</option>
                         </select>
@@ -363,44 +47,44 @@
 
                 <!-- SFTP Configuration -->
                 <div ng-hide="SFTPBackUpdiv">
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <div class="form-row">
                             <label class="form-label">{% trans "Hostname" %}</label>
-                            <input name="Hostname" type="text" class="form-control" ng-model="Hostname"
+                            <input name="Hostname" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Hostname"
                                    placeholder="sftp.example.com" required>
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <div class="form-row">
                             <label class="form-label">{% trans "Username" %}</label>
-                            <input name="Username" type="text" class="form-control" ng-model="Username"
+                            <input name="Username" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Username"
                                    placeholder="SFTP username" required>
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <div class="form-row">
                             <label class="form-label">{% trans "Password" %}</label>
-                            <input name="Password" type="password" class="form-control" ng-model="Password"
+                            <input name="Password" type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Password"
                                    placeholder="SFTP password" required>
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="space-y-3 mb-6">
                         <div class="form-row">
                             <label class="form-label">{% trans "Path" %}</label>
-                            <input name="path" type="text" class="form-control" ng-model="path"
+                            <input name="path" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="path"
                                    placeholder="/backups/wordpress" required>
                         </div>
                     </div>
                 </div>
 
                 <!-- S3 Configuration -->
-                <div ng-hide="Selectprovider" class="form-group">
+                <div ng-hide="Selectprovider" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Provider" %}</label>
-                        <select ng-model="Providervalue" ng-change="SelectProvidertype()" class="form-control">
+                        <select ng-model="Providervalue" ng-change="SelectProvidertype()" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                             <option selected="selected">Amazon</option>
                             <option>Wasabi</option>
                             <option>Backblaze</option>
@@ -408,39 +92,39 @@
                     </div>
                 </div>
                 
-                <div ng-hide="S3keyNamediv" class="form-group">
+                <div ng-hide="S3keyNamediv" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Bucket Name" %}</label>
-                        <input name="S3keyName" type="text" class="form-control" ng-model="S3keyName"
+                        <input name="S3keyName" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="S3keyName"
                                placeholder="my-backup-bucket" required>
                     </div>
                 </div>
                 
-                <div ng-hide="EndpointURLdiv" class="form-group">
+                <div ng-hide="EndpointURLdiv" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Endpoint URL" %}</label>
-                        <input name="EndpointURL" type="text" class="form-control" ng-model="EndpointURL"
+                        <input name="EndpointURL" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="EndpointURL"
                                placeholder="https://s3.amazonaws.com" required>
                     </div>
                 </div>
                 
-                <div ng-hide="Accesskeydiv" class="form-group">
+                <div ng-hide="Accesskeydiv" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Access Key" %}</label>
-                        <input name="Accesskey" type="text" class="form-control" ng-model="Accesskey"
+                        <input name="Accesskey" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Accesskey"
                                placeholder="Your access key" required>
                     </div>
                 </div>
                 
-                <div ng-hide="SecretKeydiv" class="form-group">
+                <div ng-hide="SecretKeydiv" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label">{% trans "Secret Key" %}</label>
-                        <input name="SecretKey" type="password" class="form-control" ng-model="SecretKey"
+                        <input name="SecretKey" type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="SecretKey"
                                placeholder="Your secret key" required>
                     </div>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="form-group">
+                <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
                     <div class="form-row">
                         <label class="form-label"></label>
                         <button type="button" ng-click="SaveBackupConfig()" class="btn-primary">

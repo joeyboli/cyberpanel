@@ -85,7 +85,7 @@ class SystemInformation:
             
             # Get total system information
             cpu_cores = psutil.cpu_count()
-            ram_total_mb = int(psutil.virtual_memory().total / (1024 * 1024))
+            ram_total_gb = round(psutil.virtual_memory().total / (1024 * 1024 * 1024), 2)
             disk_total_gb = int(psutil.disk_usage('/').total / (1024 * 1024 * 1024))
             disk_free_gb = int(psutil.disk_usage('/').free / (1024 * 1024 * 1024))
             
@@ -108,7 +108,7 @@ class SystemInformation:
                 'cpuUsage': cpu_percent, 
                 'diskUsage': disk_percent,
                 'cpuCores': cpu_cores,
-                'ramTotalMB': ram_total_mb,
+                'ramTotalGB': ram_total_gb,
                 'diskTotalGB': disk_total_gb,
                 'diskFreeGB': disk_free_gb,
                 'uptime': uptime_str
@@ -119,7 +119,7 @@ class SystemInformation:
                           'cpuUsage': 0,
                           'diskUsage': 0,
                           'cpuCores': 0,
-                          'ramTotalMB': 0,
+                          'ramTotalGB': 0,
                           'diskTotalGB': 0,
                           'diskFreeGB': 0,
                           'uptime': 'N/A'}

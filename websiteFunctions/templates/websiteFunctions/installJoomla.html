@@ -7,228 +7,91 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<style>
-/* Joomla Installation Page Styles with Dark Mode Support */
-.container {
-    background: var(--bg-primary, #f0f0ff);
-    min-height: 100vh;
-    padding: 20px;
-}
-
-#page-title {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-#page-title h2 {
-    color: var(--text-primary, #2f3640);
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-#page-title p {
-    color: var(--text-secondary, #8893a7);
-    font-size: 16px;
-}
-
-.panel {
-    background: var(--bg-secondary, white);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.08));
-    border: 1px solid var(--border-color, #e8e9ff);
-    margin: 0 auto;
-    max-width: 800px;
-}
-
-.panel-body {
-    padding: 30px;
-}
-
-.title-hero {
-    color: var(--text-primary, #2f3640);
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.example-box-wrapper {
-    background: transparent;
-}
-
-.form-horizontal.bordered-row {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-}
-
-.form-group {
-    margin-bottom: 25px;
-}
-
-.control-label {
-    font-weight: 600;
-    color: var(--text-primary, #2f3640);
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.form-control {
-    background: var(--bg-secondary, white);
-    border: 1px solid var(--border-color, #e8e9ff);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 14px;
-    color: var(--text-primary, #2f3640);
-    transition: all 0.2s ease;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: var(--accent-color, #5b5fcf);
-    box-shadow: 0 0 0 3px var(--accent-focus, rgba(91,95,207,0.1));
-}
-
-.btn {
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.btn-primary {
-    background: var(--accent-color, #5b5fcf);
-    border: 1px solid var(--accent-color, #5b5fcf);
-    color: var(--text-on-accent, white);
-}
-
-.btn-primary:hover {
-    background: var(--accent-hover, #4b4fbf);
-    border-color: var(--accent-hover, #4b4fbf);
-    color: var(--text-on-accent, white);
-    box-shadow: 0 2px 4px var(--accent-shadow, rgba(91,95,207,0.3));
-}
-
-.btn-lg {
-    padding: 12px 24px;
-    font-size: 16px;
-}
-
-.progress {
-    background: var(--border-color, #e8e9ff);
-    border-radius: 8px;
-    height: 12px;
-    margin-bottom: 20px;
-}
-
-.progress-bar {
-    background: var(--accent-color, #5b5fcf);
-    border-radius: 8px;
-    color: var(--text-on-accent, white);
-    font-size: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: width 0.4s ease;
-}
-
-.alert {
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.alert-success {
-    background: var(--success-bg, #d1fae5);
-    border: 1px solid var(--success-border, #6ee7b7);
-    color: var(--success-text, #065f46);
-}
-
-.alert-danger {
-    background: var(--danger-bg, #fee2e2);
-    border: 1px solid var(--danger-border, #fca5a5);
-    color: var(--danger-text, #991b1b);
-}
-
-.text-center {
-    text-align: center;
-}
-</style>
-
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Install Joomla" %}</h2>
-   <p>{% trans "One-click Joomla Install!" %}</p>
-</div>
 
 
-<div ng-controller="installJoomlaCTRL" class="panel">
-    <div class="panel-body">
-        <h3 class="title-hero">
+<div class="w-full p-4 md:p-12">
+
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                <i data-lucide="package" class="h-8 w-8"></i>
+                <span ng-hide="wpInstallLoading" class="absolute -top-2 -right-2 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center animate-spin">
+                    <i data-lucide="loader-2" class="h-4 w-4"></i>
+                </span>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Install Joomla" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">{% trans "Launch a high-performance Joomla site on" %} <span class="font-bold text-foreground">{{ domainName }}</span></p>
+            </div>
+        </div>
+    </div>
+
+
+<div ng-controller="installJoomlaCTRL" class="bg-card rounded-2xl shadow-sm border border-border/50 mb-12 overflow-hidden">
+    
+        <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4 p-6 bg-secondary/10 border-b border-border/50">
             <span id="domainNamePage">{{ domainName }}</span> -  {% trans "Installation Details" %} <img ng-hide="wpInstallLoading" src="{% static 'images/loading.gif' %}">
         </h3>
         <div class="example-box-wrapper">
 
 
-            <form name="websiteCreationForm"  action="/" id="createPackages" class="form-horizontal bordered-row">
+            <form name="websiteCreationForm"  action="/" id="createPackages" class="space-y-8 max-w-4xl">
 
-                <div ng-hide="installationDetailsForm" class="form-group">
+                <div ng-hide="installationDetailsForm" class="space-y-3">
 
-                    <label class="col-sm-3 control-label">{% trans "Site Name" %}</label>
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">{% trans "Site Name" %}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" ng-model="siteName">
+                        <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="siteName">
                     </div>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Login User" %}</label>
+                <div ng-hide="installationDetailsForm" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">{% trans "Login User" %}</label>
                     <div class="col-sm-6">
-                        <input placeholder="admin" type="text" class="form-control" ng-model="adminUser" readonly>
+                        <input placeholder="admin" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="adminUser" readonly>
                     </div>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Login Password" %}</label>
+                <div ng-hide="installationDetailsForm" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">{% trans "Login Password" %}</label>
                     <div class="col-sm-6">
-                        <input  type="password" class="form-control" ng-model="adminPassword" required>
+                        <input  type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="adminPassword" required>
                     </div>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Database Prefix" %}</label>
+                <div ng-hide="installationDetailsForm" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">{% trans "Database Prefix" %}</label>
                     <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="databasePrefix" readonly>
+                        <input  type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="databasePrefix" readonly>
                     </div>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Path" %}</label>
+                <div ng-hide="installationDetailsForm" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2">{% trans "Path" %}</label>
                     <div class="col-sm-6">
-                        <input placeholder="Leave emtpy to install in website home directory. (Without preceding slash)"  type="text" class="form-control" ng-model="installPath">
+                        <input placeholder="Leave emtpy to install in website home directory. (Without preceding slash)"  type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="installPath">
                     </div>
                 </div>
 
 
 
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label"></label>
+                <div ng-hide="installationDetailsForm" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2"></label>
                     <div class="col-sm-4">
-                         <button type="button"  ng-click="installJoomla()" class="btn btn-primary btn-lg btn-block">{% trans "Install Now" %}</button>
+                         <button type="button"  ng-click="installJoomla()" class="flex items-center justify-center gap-3 px-10 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg w-full md:w-auto">{% trans "Install Now" %}</button>
                     </div>
                 </div>
 
 
 
-                <div ng-hide="installationProgress" class="form-group">
+                <div ng-hide="installationProgress" class="space-y-3">
                     <label class="col-sm-2 control-label"></label>
                     <div class="col-sm-7">
 
-                            <div class="alert alert-success text-center">
+                            <div class="bg-secondary/30 rounded-2xl p-8 mb-8">
                                         <h2>{$ currentStatus $}</h2>
                             </div>
 
@@ -241,17 +104,17 @@
 
 
 
-                            <div ng-hide="installationFailed" class="alert alert-danger">
+                            <div ng-hide="installationFailed" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
                                         <p>{% trans "Installation failed. Error message:" %} {$ errorMessage $}</p>
                             </div>
 
-                            <div ng-hide="installationSuccessfull" class="alert alert-success">
+                            <div ng-hide="installationSuccessfull" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
                                 <p>{% trans "Installation successful. Visit:" %} {$ installationURL $}</p>
                             </div>
 
 
 
-                            <div ng-hide="couldNotConnect" class="alert alert-danger">
+                            <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
                                         <p>{% trans "Could not connect to server. Please refresh this page." %}</p>
                             </div>
 
@@ -259,10 +122,10 @@
                     </div>
                 </div>
 
-                <div ng-hide="installationProgress" class="form-group">
-                    <label class="col-sm-3 control-label"></label>
+                <div ng-hide="installationProgress" class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground flex items-center gap-2"></label>
                     <div class="col-sm-4">
-                        <button type="button" ng-disabled="goBackDisable"  ng-click="goBack()" class="btn btn-primary btn-lg btn-block">{% trans "Go Back" %}</button>
+                        <button type="button" ng-disabled="goBackDisable"  ng-click="goBack()" class="flex items-center justify-center gap-3 px-10 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg w-full md:w-auto">{% trans "Go Back" %}</button>
                     </div>
                 </div>
 

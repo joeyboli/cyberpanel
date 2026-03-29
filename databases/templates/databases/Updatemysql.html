@@ -1,99 +1,205 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "List Databases  - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "Upgrade MySQL - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Upgrade Mysql" %}
-
-            </h2>
-            <p>{% trans "On this page you can update mysql." %}</p>
-        </div>
-        <div ng-controller="mysqlupdate" class="panel">
-            <div class="panel-body">
-                <h3 class="content-box-header">
-                    {% trans "Update Mysql" %} <img ng-hide="dbLoading"
-                                                    src="{% static 'images/loading.gif' %}">
-                </h3>
-                <div class="example-box-wrapper">
-
-                    <form name="websiteCreationForm" action="/"
-                          class="form-horizontal bordered-row panel-body">
-
-                        <div ng-hide="installform" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Mysql version" %} </label>
-                            <div class="col-sm-6">
-                                <select ng-model="version" class="form-control" required>
-                                    {% for version in mysqlversions %}
-                                        <option>{{ version }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div ng-hide="installform" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-4">
-                                <button type="button" ng-click="Upgardemysql()"
-                                        class="btn btn-primary btn-lg">{% trans "Update Mysql" %}</button>
-
-                            </div>
-                        </div>
-
-
-                        <div ng-hide="modSecNotifyBox" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-
-                                <div ng-hide="failedToStartInallation" class="alert alert-danger">
-                                    <p>{% trans "Failed to start installation, Error message: " %} {$ errorMessage
-                                        $}</p>
-                                </div>
-
-                                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                    <p>{% trans "Could not connect. Please refresh this page." %} </p>
-                                </div>
-
-                                <div ng-hide="installationFailed" class="alert alert-danger">
-                                    <p>{% trans "Installation failed." %} {$ errorMessage $}</p>
-                                </div>
-
-                                <div ng-hide="modSecSuccessfullyInstalled" class="alert alert-success">
-                                    <p>{% trans "Upgrading Done successfully." %}</p>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div ng-hide="modeSecInstallBox" class="col-md-12">
-
-                            <form action="/" id="" class="form-horizontal bordered-row">
-                                <div class="form-group">
-                                    <div class="col-sm-12 text-center">
-                                        <h3><img
-                                                src="{% static 'firewall/icons/firewall.png' %}"> {% trans "In winter we must protect each other.." %}
-                                            <img ng-hide="modsecLoading" src="/static/images/loading.gif"></h3>
-                                    </div>
-                                    <div style="margin-top: 2%;" class="col-sm-12">
-                                        <textarea ng-model="requestData" rows="15"
-                                                  class="form-control">{{ requestData }}</textarea>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </form>
-                </div>
+<div class="w-full p-4 md:p-12" ng-controller="mysqlupdate">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                <i data-lucide="arrow-up-circle" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Upgrade MySQL" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Upgrade your database server to a newer version" %}
+                </p>
             </div>
         </div>
     </div>
 
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Main Form Area -->
+        <div class="space-y-8">
+            <!-- Configuration Card -->
+            <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-10 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Update MySQL" %}
+                    <span ng-hide="dbLoading" class="ml-4">
+                        <div class="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </span>
+                </h2>
 
+                <div class="space-y-10">
+                    <form name="websiteCreationForm" class="space-y-10">
+                        <!-- Version Selection -->
+                        <div ng-hide="installform" class="max-w-2xl bg-muted/20 p-8 rounded-2xl border border-border/50">
+                            <label class="block text-xl font-bold text-foreground mb-4">
+                                {% trans "Target MySQL Version" %}
+                            </label>
+                            <div class="relative">
+                                <select ng-model="version" 
+                                        class="w-full p-5 bg-background border border-border rounded-xl appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer text-xl font-medium" 
+                                        required>
+                                    <option value="">-- {% trans "Select a version" %} --</option>
+                                    {% for version in mysqlversions %}
+                                        <option>{{ version }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i data-lucide="chevron-down" class="w-6 h-6 text-muted-foreground"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div ng-hide="installform" class="pt-4">
+                            <button type="button" ng-click="Upgardemysql()" 
+                                    class="inline-flex items-center gap-4 px-12 py-5 bg-primary text-primary-foreground font-black rounded-2xl hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xl w-full md:w-auto justify-center"
+                                    ng-disabled="!version">
+                                <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                                {% trans "Start Upgrade Process" %}
+                            </button>
+                        </div>
+
+                        <!-- Status Messages -->
+                        <div ng-hide="modSecNotifyBox" class="space-y-6 pt-4">
+                            <div ng-hide="failedToStartInallation" class="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 flex items-center gap-6 text-destructive animate-in fade-in">
+                                <i data-lucide="alert-circle" class="w-8 h-8 shrink-0"></i>
+                                <p class="text-xl font-bold">{% trans "Failed to start installation, Error message:" %} {$ errorMessage $}</p>
+                            </div>
+
+                            <div ng-hide="couldNotConnect" class="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 flex items-center gap-6 text-destructive animate-in fade-in">
+                                <i data-lucide="wifi-off" class="w-8 h-8 shrink-0"></i>
+                                <p class="text-xl font-bold">{% trans "Could not connect. Please refresh this page." %}</p>
+                            </div>
+
+                            <div ng-hide="installationFailed" class="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 flex items-center gap-6 text-destructive animate-in fade-in">
+                                <i data-lucide="x-circle" class="w-8 h-8 shrink-0"></i>
+                                <p class="text-xl font-bold">{% trans "Installation failed:" %} {$ errorMessage $}</p>
+                            </div>
+
+                            <div ng-hide="modSecSuccessfullyInstalled" class="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 flex items-center gap-6 text-emerald-600 animate-in fade-in">
+                                <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
+                                <p class="text-xl font-bold">{% trans "Upgrading Done successfully." %}</p>
+                            </div>
+                        </div>
+
+                        <!-- Installation Log / Terminal -->
+                        <div ng-hide="modeSecInstallBox" class="pt-10 animate-in slide-in-from-bottom-8 duration-700">
+                            <div class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-800">
+                                <div class="px-8 py-6 bg-slate-800/50 border-b border-slate-700/50 flex items-center justify-between">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex gap-2">
+                                            <div class="w-4 h-4 rounded-full bg-red-500/80"></div>
+                                            <div class="w-4 h-4 rounded-full bg-amber-500/80"></div>
+                                            <div class="w-4 h-4 rounded-full bg-emerald-500/80"></div>
+                                        </div>
+                                        <span class="text-sm font-black text-slate-400 uppercase tracking-widest ml-4">{% trans "System Upgrade Terminal" %}</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div ng-hide="modsecLoading" class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                        <span class="text-xs text-primary font-black uppercase tracking-widest" ng-hide="modsecLoading">{% trans "Real-time" %}</span>
+                                    </div>
+                                </div>
+                                <div class="p-10">
+                                    <textarea ng-model="requestData" rows="20" readonly
+                                              class="w-full bg-transparent border-none focus:ring-0 text-emerald-400 font-mono text-lg leading-relaxed resize-none overflow-y-auto custom-scrollbar"
+                                              placeholder="{% trans 'Waiting for output...' %}">{$ requestData $}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Warning Footer (Wide) -->
+            <div class="bg-amber-500/5 border-2 border-amber-500/20 rounded-2xl p-10 shadow-sm">
+                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-amber-500"></div>
+                    {% trans "Important Safety Information" %}
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="shield-alert" class="w-6 h-6 text-amber-600"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Upgrading MySQL is a major operation. Ensure you have a full server backup before proceeding." %}
+                        </p>
+                    </div>
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Your databases may be briefly unavailable during the upgrade process. Plan for scheduled maintenance." %}
+                        </p>
+                    </div>
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="check-circle" class="w-6 h-6 text-amber-600"></i>
+                        </div>
+                        <p class="text-lg text-muted-foreground leading-relaxed">
+                            {% trans "Ensure your applications are compatible with the target version to avoid service disruption." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
+        // Observe for dynamic changes to refresh Lucide icons
+        const observer = new MutationObserver((mutations) => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Auto-scroll log textarea
+        const textarea = document.querySelector('textarea[ng-model="requestData"]');
+        if (textarea) {
+            const scrollObserver = new MutationObserver(() => {
+                textarea.scrollTop = textarea.scrollHeight;
+            });
+            scrollObserver.observe(textarea, { childList: true, characterData: true, subtree: true });
+        }
+    });
+</script>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+    }
+</style>
 {% endblock %}

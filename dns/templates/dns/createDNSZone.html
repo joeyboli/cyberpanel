@@ -2,716 +2,211 @@
 {% load i18n %}
 {% block title %}{% trans "Create DNS Zone - CyberPanel" %}{% endblock %}
 
-{% block header_scripts %}
-<style>
-    /* Modern Create DNS Zone Styles */
-    .dns-zone-creator {
-        background: transparent;
-        padding: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-    
-    .dns-zone-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    /* Header Section */
-    .dns-zone-header {
-        margin-bottom: 40px;
-        text-align: center;
-    }
-    
-    .dns-zone-title {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-    }
-    
-    .dns-zone-title i {
-        color: var(--accent-color, #5b5fcf);
-        font-size: 36px;
-    }
-    
-    .dns-zone-subtitle {
-        font-size: 16px;
-        color: var(--text-secondary, #64748b);
-        line-height: 1.6;
-        max-width: 600px;
-        margin: 0 auto 20px;
-    }
-    
-    .docs-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--accent-color, #5b5fcf);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-    
-    .docs-link:hover {
-        background: var(--accent-color, #5b5fcf);
-        color: var(--text-white, white);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px var(--shadow-accent, rgba(91,95,207,0.2));
-    }
-    
-    /* PowerDNS Disabled State */
-    .powerdns-disabled {
-        background: var(--bg-warning-light, #fff8e1);
-        border: 1px solid var(--border-warning, #ffe082);
-        border-radius: 12px;
-        padding: 40px;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    
-    .powerdns-disabled i {
-        font-size: 48px;
-        color: var(--warning-color, #ffa000);
-        margin-bottom: 20px;
-    }
-    
-    .powerdns-disabled h3 {
-        font-size: 20px;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 20px;
-    }
-    
-    .enable-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        background: var(--accent-color, #5b5fcf);
-        color: var(--text-white, white);
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .enable-btn:hover {
-        background: var(--accent-hover, #4a4fc4);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px var(--shadow-accent, rgba(91,95,207,0.3));
-        color: var(--text-white, white);
-    }
-    
-    /* Info Cards */
-    .info-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-    
-    .info-card {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 24px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        transition: all 0.3s ease;
-        text-align: center;
-    }
-    
-    .info-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px var(--shadow-color, rgba(0,0,0,0.08));
-    }
-    
-    .info-card-icon {
-        width: 56px;
-        height: 56px;
-        background: var(--bg-hover, #f8f9ff);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 16px;
-        color: var(--accent-color, #5b5fcf);
-        font-size: 28px;
-    }
-    
-    .info-card-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 8px;
-    }
-    
-    .info-card-text {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        line-height: 1.6;
-    }
-    
-    /* Main Form Card */
-    .create-zone-card {
-        background: var(--bg-secondary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px var(--shadow-light, rgba(0,0,0,0.05)), 0 10px 40px var(--shadow-color, rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        overflow: hidden;
-    }
-    
-    .card-header {
-        background: linear-gradient(135deg, var(--bg-hover, #f8f9ff) 0%, var(--bg-secondary, #fff) 100%);
-        padding: 30px;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .card-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary, #1e293b);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .card-title::before {
-        content: '';
-        width: 4px;
-        height: 28px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    /* Form Section */
-    .form-section {
-        padding: 40px;
-    }
-    
-    /* Domain Input Section */
-    .domain-input-section {
-        background: var(--bg-primary, #fafbff);
-        border: 2px solid var(--border-color, #e8e9ff);
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 30px;
-        transition: all 0.3s ease;
-    }
-    
-    .domain-input-section:hover {
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 4px 20px var(--shadow-accent-light, rgba(91,95,207,0.1));
-    }
-    
-    .input-icon {
-        width: 48px;
-        height: 48px;
-        background: var(--bg-secondary, white);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        color: var(--accent-color, #5b5fcf);
-        font-size: 24px;
-        box-shadow: 0 2px 8px var(--shadow-light, rgba(0,0,0,0.05));
-    }
-    
-    .input-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 12px;
-        text-align: center;
-    }
-    
-    .domain-input {
-        width: 100%;
-        padding: 16px 24px;
-        border: 2px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        font-size: 18px;
-        color: var(--text-primary, #1e293b);
-        background: var(--bg-secondary, white);
-        text-align: center;
-        transition: all 0.2s ease;
-        font-family: 'Courier New', monospace;
-    }
-    
-    .domain-input:hover {
-        border-color: var(--border-hover, #c7c9ff);
-    }
-    
-    .domain-input:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        box-shadow: 0 0 0 3px var(--shadow-accent-light, rgba(91,95,207,0.1));
-    }
-    
-    .input-hint {
-        text-align: center;
-        font-size: 13px;
-        color: var(--text-muted, #94a3b8);
-        margin-top: 12px;
-        font-style: italic;
-    }
-    
-    /* Visual Preview */
-    .zone-preview {
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 30px;
-        display: none;
-    }
-    
-    .preview-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-secondary, #64748b);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 16px;
-        text-align: center;
-    }
-    
-    .preview-content {
-        background: var(--bg-secondary, white);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        padding: 20px;
-    }
-    
-    .preview-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border-light, #f0f0f0);
-    }
-    
-    .preview-item:last-child {
-        border-bottom: none;
-    }
-    
-    .preview-label {
-        font-size: 13px;
-        color: var(--text-secondary, #64748b);
-        font-weight: 600;
-    }
-    
-    .preview-value {
-        font-size: 14px;
-        color: var(--text-primary, #1e293b);
-        font-weight: 600;
-        font-family: 'Courier New', monospace;
-    }
-    
-    /* Submit Button */
-    .form-actions {
-        text-align: center;
-    }
-    
-    .btn-create-zone {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 14px 40px;
-        background: var(--accent-color, #5b5fcf);
-        color: var(--text-white, white);
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .btn-create-zone:hover {
-        background: var(--accent-hover, #4a4fc4);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px var(--shadow-accent, rgba(91,95,207,0.3));
-    }
-    
-    .btn-create-zone:disabled {
-        background: var(--bg-disabled, #cbd5e1);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    /* Loading State */
-    .loading-spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--text-white, #ffffff);
-        border-right-color: transparent;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    
-    /* Alert Messages */
-    .alert-section {
-        margin-top: 30px;
-    }
-    
-    .alert {
-        padding: 16px 20px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: fadeIn 0.3s ease-out;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .alert-danger {
-        background: var(--bg-error-light, #ffebee);
-        border: 1px solid var(--border-error, #ffcdd2);
-        color: var(--error-color, #c62828);
-    }
-    
-    .alert-success {
-        background: var(--bg-success-light, #e8f5e9);
-        border: 1px solid var(--border-success, #c8e6c9);
-        color: var(--success-color, #2e7d32);
-    }
-    
-    .alert i {
-        font-size: 20px;
-    }
-    
-    .alert-content {
-        flex: 1;
-    }
-    
-    .zone-created-info {
-        margin-top: 20px;
-        padding: 20px;
-        background: var(--bg-hover, #f8f9ff);
-        border-radius: 10px;
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .next-steps-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .next-steps-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .next-steps-list li {
-        padding: 8px 0;
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .next-steps-list i {
-        color: var(--accent-color, #5b5fcf);
-        font-size: 12px;
-    }
-    
-    /* Success Animation */
-    @keyframes successPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    .success-animation {
-        animation: successPulse 0.5s ease-out;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .dns-zone-header {
-            text-align: left;
-        }
-        
-        .dns-zone-title {
-            font-size: 24px;
-            justify-content: flex-start;
-        }
-        
-        .info-cards {
-            grid-template-columns: 1fr;
-        }
-        
-        .form-section {
-            padding: 20px;
-        }
-        
-        .domain-input {
-            font-size: 16px;
-            padding: 12px 16px;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="dns-zone-creator" ng-controller="createDNSZone">
-    <div class="dns-zone-container">
-        <div class="dns-zone-header">
-            <h1 class="dns-zone-title">
-                <i class="fas fa-globe-americas"></i>
-                {% trans "Create DNS Zone" %}
-            </h1>
-            <p class="dns-zone-subtitle">
-                {% trans "Set up a new DNS zone for your domain to manage its DNS records" %}
-            </p>
-            <a href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" target="_blank" class="docs-link">
-                <i class="fas fa-book"></i>
+<div class="w-full p-4 md:p-12" ng-controller="createDNSZone">
+    <div class="mb-12 text-center">
+        <h1 class="text-5xl font-extrabold text-foreground tracking-tight sm:text-6xl flex items-center justify-center gap-4">
+            <i data-lucide="globe" class="w-12 h-12 text-primary"></i>
+            {% trans "Create DNS Zone" %}
+        </h1>
+        <p class="mt-6 max-w-3xl mx-auto text-2xl text-muted-foreground">
+            {% trans "Set up a new DNS zone for your domain to manage its DNS records" %}
+        </p>
+        <div class="mt-8">
+            <a href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-accent/50 text-accent-foreground border border-border rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
                 {% trans "DNS Documentation" %}
             </a>
         </div>
+    </div>
 
+    <div class="space-y-12">
         {% if not status %}
-        <div class="powerdns-disabled">
-            <i class="fas fa-exclamation-circle"></i>
-            <h3>{% trans "PowerDNS is disabled" %}</h3>
-            <p style="margin-bottom: 24px; color: var(--text-secondary, #64748b);">
-                {% trans "You need to enable PowerDNS to create DNS zones" %}
-            </p>
-            <a href="{% url 'managePowerDNS' %}" class="enable-btn">
-                <i class="fas fa-power-off"></i>
-                {% trans "Enable PowerDNS" %}
-            </a>
-        </div>
-        {% else %}
+            <div class="bg-warning/10 border border-warning/20 rounded-2xl p-8 mb-8 flex items-center gap-6">
+                <div class="w-16 h-16 bg-warning/20 rounded-2xl flex items-center justify-center text-warning shrink-0">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-foreground mb-2">{% trans "PowerDNS is disabled" %}</h3>
+                    <p class="text-muted-foreground">
+                        {% trans "You need to enable PowerDNS to create DNS zones. Some features may be unavailable." %}
+                        <a href="{% url 'managePowerDNS' %}" class="text-primary font-bold hover:underline ml-2">{% trans "Enable PowerDNS →" %}</a>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
 
         <!-- Info Cards -->
-        <div class="info-cards">
-            <div class="info-card">
-                <div class="info-card-icon">
-                    <i class="fas fa-sitemap"></i>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                    <i data-lucide="network" class="w-8 h-8"></i>
                 </div>
-                <div class="info-card-title">{% trans "DNS Zone" %}</div>
-                <div class="info-card-text">
-                    {% trans "A DNS zone contains all DNS records for a particular domain" %}
-                </div>
+                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "DNS Zone" %}</h3>
+                <p class="text-muted-foreground">{% trans "A DNS zone contains all DNS records for a particular domain" %}</p>
             </div>
-            <div class="info-card">
-                <div class="info-card-icon">
-                    <i class="fas fa-server"></i>
+            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                    <i data-lucide="server" class="w-8 h-8"></i>
                 </div>
-                <div class="info-card-title">{% trans "Nameservers" %}</div>
-                <div class="info-card-text">
-                    {% trans "Default nameservers will be automatically assigned to this zone" %}
-                </div>
+                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "Nameservers" %}</h3>
+                <p class="text-muted-foreground">{% trans "Default nameservers will be automatically assigned to this zone" %}</p>
             </div>
-            <div class="info-card">
-                <div class="info-card-icon">
-                    <i class="fas fa-edit"></i>
+            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                    <i data-lucide="edit-3" class="w-8 h-8"></i>
                 </div>
-                <div class="info-card-title">{% trans "DNS Records" %}</div>
-                <div class="info-card-text">
-                    {% trans "After creation, you can add A, AAAA, CNAME, MX, and other records" %}
-                </div>
+                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "DNS Records" %}</h3>
+                <p class="text-muted-foreground">{% trans "After creation, you can add A, AAAA, CNAME, MX, and other records" %}</p>
             </div>
         </div>
 
         <!-- Main Form Card -->
-        <div class="create-zone-card">
-            <div class="card-header">
-                <h2 class="card-title">
+        <div class="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
+            <div class="bg-muted/30 p-8 border-bottom border-border">
+                <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                    <span class="w-2 h-8 bg-primary rounded-full"></span>
                     {% trans "New DNS Zone" %}
-                    <span ng-hide="createDNSZoneLoading" class="loading-spinner"></span>
+                    <span ng-hide="createDNSZoneLoading" class="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full ml-auto"></span>
                 </h2>
             </div>
 
-            <form class="zone-form">
-                <div class="form-section">
+            <div class="p-8 md:p-12">
+                <form class="space-y-8">
                     <!-- Domain Input Section -->
-                    <div class="domain-input-section">
-                        <div class="input-icon">
-                            <i class="fas fa-globe"></i>
+                    <div class="bg-muted/20 border-2 border-border rounded-2xl p-8 hover:border-primary transition-all duration-300">
+                        <div class="w-12 h-12 bg-background rounded-xl flex items-center justify-center mx-auto mb-6 shadow-sm text-primary">
+                            <i data-lucide="globe" class="w-6 h-6"></i>
                         </div>
-                        <label class="input-label">{% trans "Domain Name" %}</label>
+                        <label class="block text-center text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                            {% trans "Domain Name" %}
+                        </label>
                         <input type="text" 
-                               class="domain-input" 
+                               class="w-full bg-background border-2 border-border rounded-xl p-4 text-xl font-mono text-center focus:outline-none focus:border-primary transition-all duration-300" 
                                ng-model="zoneDomain" 
                                ng-change="updatePreview()"
                                placeholder="example.com" 
                                required>
-                        <div class="input-hint">
+                        <p class="text-center text-sm text-muted-foreground mt-4 italic">
                             {% trans "Enter the domain name without http:// or www" %}
-                        </div>
+                        </p>
                     </div>
 
                     <!-- Preview Section -->
-                    <div class="zone-preview" id="zonePreview" ng-show="zoneDomain">
-                        <div class="preview-title">{% trans "Zone Configuration Preview" %}</div>
-                        <div class="preview-content">
-                            <div class="preview-item">
-                                <span class="preview-label">{% trans "Zone Name:" %}</span>
-                                <span class="preview-value">{$ zoneDomain $}</span>
+                    <div id="zonePreview" ng-show="zoneDomain" class="bg-muted/30 border border-border rounded-2xl p-8 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <h4 class="text-center text-sm font-bold text-muted-foreground uppercase tracking-wider mb-6">
+                            {% trans "Zone Configuration Preview" %}
+                        </h4>
+                        <div class="bg-background border border-border rounded-xl overflow-hidden divide-y divide-border">
+                            <div class="flex items-center justify-between p-4">
+                                <span class="text-sm font-semibold text-muted-foreground">{% trans "Zone Name:" %}</span>
+                                <span class="text-sm font-mono font-bold text-foreground">{$ zoneDomain $}</span>
                             </div>
-                            <div class="preview-item">
-                                <span class="preview-label">{% trans "Zone Type:" %}</span>
-                                <span class="preview-value">{% trans "Master Zone" %}</span>
+                            <div class="flex items-center justify-between p-4">
+                                <span class="text-sm font-semibold text-muted-foreground">{% trans "Zone Type:" %}</span>
+                                <span class="text-sm font-mono font-bold text-foreground">{% trans "Master Zone" %}</span>
                             </div>
-                            <div class="preview-item">
-                                <span class="preview-label">{% trans "DNS Server:" %}</span>
-                                <span class="preview-value">PowerDNS</span>
+                            <div class="flex items-center justify-between p-4">
+                                <span class="text-sm font-semibold text-muted-foreground">{% trans "DNS Server:" %}</span>
+                                <span class="text-sm font-mono font-bold text-foreground">PowerDNS</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Form Actions -->
-                    <div class="form-actions">
+                    <div class="text-center pt-4">
                         <button type="button" 
                                 ng-click="createDNSZone()" 
-                                class="btn-create-zone" 
+                                class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-2xl font-bold text-lg hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20" 
                                 ng-disabled="!zoneDomain">
-                            <i class="fas fa-plus-circle"></i>
+                            <i data-lucide="plus-circle" class="w-6 h-6"></i>
                             {% trans "Create DNS Zone" %}
-                            <span ng-hide="createDNSZoneLoading" class="loading-spinner"></span>
+                            <span ng-hide="createDNSZoneLoading" class="animate-spin inline-block w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full"></span>
                         </button>
                     </div>
 
                     <!-- Alert Messages -->
-                    <div class="alert-section">
-                        <div ng-hide="dnsZoneCreationFailed" class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <div class="alert-content">
-                                <strong>{% trans "DNS Zone creation failed" %}</strong><br>
-                                {$ errorMessage $}
+                    <div class="space-y-4">
+                        <!-- Failed Alert -->
+                        <div ng-hide="dnsZoneCreationFailed" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <i data-lucide="alert-octagon" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <strong class="text-lg">{% trans "DNS Zone creation failed" %}</strong>
+                                <p class="mt-1">{$ errorMessage $}</p>
                             </div>
                         </div>
 
-                        <div ng-hide="dnsZoneCreated" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <div class="alert-content">
-                                <strong>{% trans "DNS Zone successfully created!" %}</strong><br>
-                                {% trans "Zone created for domain:" %} <span style="font-family: 'Courier New', monospace; font-weight: 600;">{$ zoneDomain $}</span>
+                        <!-- Success Alert -->
+                        <div ng-hide="dnsZoneCreated" class="space-y-6">
+                            <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                                <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
+                                <div>
+                                    <strong class="text-lg">{% trans "DNS Zone successfully created!" %}</strong>
+                                    <p class="mt-1">{% trans "Zone created for domain:" %} <span class="font-mono font-bold">{$ zoneDomain $}</span></p>
+                                </div>
                             </div>
                             
-                            <div class="zone-created-info">
-                                <div class="next-steps-title">
-                                    <i class="fas fa-tasks"></i>
+                            <div class="bg-muted/20 border border-border rounded-2xl p-8">
+                                <h5 class="text-lg font-bold text-foreground flex items-center gap-2 mb-6">
+                                    <i data-lucide="clipboard-list" class="w-6 h-6 text-primary"></i>
                                     {% trans "Next Steps:" %}
-                                </div>
-                                <ul class="next-steps-list">
-                                    <li>
-                                        <i class="fas fa-chevron-right"></i>
-                                        {% trans "Add DNS records (A, CNAME, MX, etc.) for your domain" %}
+                                </h5>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="chevron-right" class="w-5 h-5 text-primary mt-0.5"></i>
+                                        <span class="text-muted-foreground">{% trans "Add DNS records (A, CNAME, MX, etc.) for your domain" %}</span>
                                     </li>
-                                    <li>
-                                        <i class="fas fa-chevron-right"></i>
-                                        {% trans "Update your domain registrar to use our nameservers" %}
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="chevron-right" class="w-5 h-5 text-primary mt-0.5"></i>
+                                        <span class="text-muted-foreground">{% trans "Update your domain registrar to use our nameservers" %}</span>
                                     </li>
-                                    <li>
-                                        <i class="fas fa-chevron-right"></i>
-                                        {% trans "Wait for DNS propagation (24-48 hours)" %}
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="chevron-right" class="w-5 h-5 text-primary mt-0.5"></i>
+                                        <span class="text-muted-foreground">{% trans "Wait for DNS propagation (24-48 hours)" %}</span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
-                        <div ng-hide="couldNotConnect" class="alert alert-danger">
-                            <i class="fas fa-network-wired"></i>
-                            <div class="alert-content">
-                                {% trans "Could not connect to server. Please refresh this page." %}
-                            </div>
+                        <!-- Connection Error -->
+                        <div ng-hide="couldNotConnect" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4">
+                            <i data-lucide="wifi-off" class="w-8 h-8 shrink-0"></i>
+                            <div>{% trans "Could not connect to server. Please refresh this page." %}</div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-        
-        {% endif %}
     </div>
 </div>
 
-{% endblock %}
-
-{% block footer_scripts %}
 <script>
-// Enhance the form with visual feedback
-$(document).ready(function() {
-    // Initialize visibility states
-    var scope = angular.element($('[ng-controller="createDNSZone"]')).scope();
-    if (scope) {
-        scope.$apply(function() {
-            scope.createDNSZoneLoading = true;
-            scope.dnsZoneCreationFailed = true;
-            scope.dnsZoneCreated = true;
-            scope.couldNotConnect = true;
-            
-            // Add preview update function
-            scope.updatePreview = function() {
-                if (scope.zoneDomain) {
-                    $('#zonePreview').fadeIn();
-                } else {
-                    $('#zonePreview').fadeOut();
-                }
-            };
-        });
-        
-        // Override create function to add visual feedback
-        var originalCreate = scope.createDNSZone;
-        scope.createDNSZone = function() {
-            // Add animation
-            $('.domain-input-section').addClass('success-animation');
-            
-            // Call original function
-            if (originalCreate) {
-                originalCreate.call(scope);
-            }
-            
-            // Remove animation after completion
-            setTimeout(function() {
-                $('.domain-input-section').removeClass('success-animation');
-            }, 500);
-        };
-    }
-    
-    // Add visual feedback for domain input
-    $('.domain-input').on('input', function() {
-        if ($(this).val()) {
-            $('.domain-input-section').css('border-color', 'var(--accent-color, #5b5fcf)');
-        } else {
-            $('.domain-input-section').css('border-color', 'var(--border-color, #e8e9ff)');
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
         }
+
+        const observer = new MutationObserver((mutations) => {
+            let shouldCreate = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    shouldCreate = true;
+                }
+            });
+            if (shouldCreate && typeof lucide !== 'undefined') {
+                lucide.createIcons({
+                    root: document.querySelector('[ng-controller="createDNSZone"]')
+                });
+            }
+        });
+
+        observer.observe(document.querySelector('[ng-controller="createDNSZone"]'), {
+            childList: true,
+            subtree: true
+        });
     });
-});
 </script>
 {% endblock %}
