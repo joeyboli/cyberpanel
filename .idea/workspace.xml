@@ -7,6 +7,13 @@
     <list default="true" id="5251c5c9-f2a1-41f2-bc76-10b517091df1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.env.template" beforeDir="false" afterPath="$PROJECT_DIR$/.env.template" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseTemplate/templates/baseTemplate/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/baseTemplate/templates/baseTemplate/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/static/databases/databases.js" beforeDir="false" afterPath="$PROJECT_DIR$/databases/static/databases/databases.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/templates/databases/createDatabase.html" beforeDir="false" afterPath="$PROJECT_DIR$/databases/templates/databases/createDatabase.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/templates/databases/deleteDatabase.html" beforeDir="false" afterPath="$PROJECT_DIR$/databases/templates/databases/deleteDatabase.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/templates/databases/listDataBases.html" beforeDir="false" afterPath="$PROJECT_DIR$/databases/templates/databases/listDataBases.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preUpgrade.sh" beforeDir="false" afterPath="$PROJECT_DIR$/preUpgrade.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

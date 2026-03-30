@@ -239,6 +239,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 {% endblock %}
 
 {% block footer_scripts %}
@@ -269,18 +278,6 @@ $(document).ready(function() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
-
-    // Observe for dynamic changes to refresh Lucide icons
-    const observer = new MutationObserver((mutations) => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
 
     var scope = angular.element($('[ng-controller="createDatabase"]')).scope();
     if (scope) {

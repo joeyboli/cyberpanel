@@ -49,6 +49,11 @@ app.controller('createDatabase', function ($scope, $http) {
         
         // Apply scope to update Angular bindings
         $scope.$apply();
+
+        // Refresh icons if any were added dynamically
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     });
 
 
@@ -66,7 +71,7 @@ app.controller('createDatabase', function ($scope, $http) {
         }
     }
 
-    $scope.createDatabaseLoading = true;
+    $scope.createDatabaseLoading = false;
     
     // Watch for changes to databaseWebsite to update preview
     $scope.$watch('databaseWebsite', function(newValue, oldValue) {
@@ -78,10 +83,17 @@ app.controller('createDatabase', function ($scope, $http) {
     });
 
     $scope.createDatabase = function () {
-
-        $scope.createDatabaseLoading = false;
+        // In the template, ng-show="createDatabaseLoading" means it shows when true
+        $scope.createDatabaseLoading = true;
         $scope.dbDetails = false;
-
+        
+        try {
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+        } catch (e) {
+            // Already in digest cycle, no need to apply
+        }
 
         var databaseWebsite = $scope.databaseWebsite;
         var dbName = $scope.dbName;
@@ -117,7 +129,7 @@ app.controller('createDatabase', function ($scope, $http) {
 
             if (response.data.createDBStatus === 1) {
 
-                $scope.createDatabaseLoading = true;
+                $scope.createDatabaseLoading = false;
                 $scope.dbDetails = false;
                 var successMessage = 'Database successfully created.';
                 if (response.data.dbName && response.data.dbUsername) {
@@ -132,8 +144,8 @@ app.controller('createDatabase', function ($scope, $http) {
                 });
             } else {
 
-                $scope.createDatabaseLoading = true;
-                $scope.dbDetails = false;
+                $scope.createDatabaseLoading = false;
+                $scope.dbDetails = true;
                 new PNotify({
                     title: 'Operation Failed!',
                     text: response.data.error_message,
@@ -147,8 +159,7 @@ app.controller('createDatabase', function ($scope, $http) {
         }
 
         function cantLoadInitialDatas(response) {
-
-            $scope.createDatabaseLoading = true;
+            $scope.createDatabaseLoading = false;
             $scope.dbDetails = true;
             new PNotify({
                 title: 'Operation Failed!',
