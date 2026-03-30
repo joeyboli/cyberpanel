@@ -66,7 +66,7 @@
         <div class="space-y-8">
             <!-- Configuration Card -->
             <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
-                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <h2 class="text-4xl font-bold text-foreground mb-8 flex items-center gap-4">
                     <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                     {% trans "Database Configuration" %}
                     <span ng-show="createDatabaseLoading" class="ml-4">
@@ -76,9 +76,8 @@
 
                 <div class="space-y-8">
                     <form name="createDatabaseForm" class="space-y-10">
-                        <!-- Website Selector -->
                         <div class="space-y-4">
-                            <label class="text-xl font-bold text-foreground">
+                            <label class="text-2xl font-bold text-foreground">
                                 {% trans "Select Website" %}
                             </label>
                             <div class="relative">
@@ -93,20 +92,13 @@
                                     <i data-lucide="chevron-down" class="w-6 h-6 text-muted-foreground"></i>
                                 </div>
                             </div>
-                            <div class="flex items-start gap-3 p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl mt-2">
-                                <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5"></i>
-                                <p class="text-sm text-blue-700 dark:text-blue-300">
-                                    {% trans "Each database will be prefixed with your domain name for security and organization." %}
-                                </p>
-                            </div>
                         </div>
 
                         <!-- Database Details (Conditional) -->
                         <div class="dbDetails space-y-10 pt-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <!-- DB Name -->
                                 <div class="space-y-4">
-                                    <label class="text-xl font-bold text-foreground">
+                                    <label class="text-2xl font-bold text-foreground">
                                         {% trans "Database Name" %}
                                     </label>
                                     <div class="relative group">
@@ -121,13 +113,11 @@
                                         <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl text-sm font-mono text-primary self-start" ng-show="dbName">
                                             <span id="domainDatabase"></span>_{$ dbName $}
                                         </div>
-                                        <p class="text-sm text-muted-foreground">{% trans "Database name will be prefixed with your domain" %}</p>
                                     </div>
                                 </div>
 
-                                <!-- DB User -->
                                 <div class="space-y-4">
-                                    <label class="text-xl font-bold text-foreground">
+                                    <label class="text-2xl font-bold text-foreground">
                                         {% trans "Database User" %}
                                     </label>
                                     <div class="relative group">
@@ -142,14 +132,12 @@
                                         <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl text-sm font-mono text-primary self-start" ng-show="dbUsername">
                                             <span id="domainUsername"></span>_{$ dbUsername $}
                                         </div>
-                                        <p class="text-sm text-muted-foreground">{% trans "Username will be prefixed with your domain" %}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Password -->
                             <div class="space-y-4 pt-4">
-                                <label class="text-xl font-bold text-foreground">
+                                <label class="text-2xl font-bold text-foreground">
                                     {% trans "Password" %}
                                 </label>
                                 <div class="flex flex-col md:flex-row gap-6">
@@ -170,7 +158,6 @@
                                         {% trans "Generate" %}
                                     </button>
                                 </div>
-                                <p class="text-sm text-muted-foreground">{% trans "Use a strong password for security." %}</p>
                             </div>
 
                             <!-- Generated Password Preview -->
@@ -202,52 +189,10 @@
                     </form>
                 </div>
             </div>
-
-            <!-- Tips Section (Wide) -->
-            <div class="bg-card border border-border rounded-2xl p-10 shadow-sm">
-                <h3 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-4">
-                    <div class="h-6 w-1.5 rounded-full bg-amber-500"></div>
-                    {% trans "Quick Tips" %}
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
-                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="tag" class="w-5 h-5 text-primary"></i>
-                        </div>
-                        <p class="text-lg text-muted-foreground leading-relaxed">
-                            {% trans "Choose a descriptive name to easily identify your database later." %}
-                        </p>
-                    </div>
-                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
-                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="lock" class="w-5 h-5 text-primary"></i>
-                        </div>
-                        <p class="text-lg text-muted-foreground leading-relaxed">
-                            {% trans "CyberPanel automatically handles database user permissions for you." %}
-                        </p>
-                    </div>
-                    <div class="flex gap-4 p-6 bg-muted/20 rounded-2xl border border-border/50">
-                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="terminal" class="w-5 h-5 text-primary"></i>
-                        </div>
-                        <p class="text-lg text-muted-foreground leading-relaxed">
-                            {% trans "You can manage your data using phpMyAdmin after creating the database." %}
-                        </p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-    });
-</script>
 {% endblock %}
 
 {% block footer_scripts %}
@@ -274,10 +219,6 @@ function togglePasswordVisibility() {
 
 // Enhance the controller
 $(document).ready(function() {
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
 
     var scope = angular.element($('[ng-controller="createDatabase"]')).scope();
     if (scope) {
@@ -328,6 +269,28 @@ $(document).ready(function() {
             $('#dbPassword').val(scope.generatedPassword);
         };
     }
+    // Observe for dynamic changes to refresh Lucide icons
+    const observer = new MutationObserver((mutations) => {
+        let shouldRefresh = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                shouldRefresh = true;
+            }
+        });
+
+        if (shouldRefresh && typeof lucide !== 'undefined') {
+            // Debounce refresh
+            if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+            window.lucideTimeout = setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });
 </script>
 {% endblock %}

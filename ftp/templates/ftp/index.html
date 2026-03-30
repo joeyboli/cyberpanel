@@ -1,64 +1,73 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "FTP Functions - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "FTP Functions" %}</h2>
-   <p>{% trans "Delete and create FTP accounts on this page." %}</p>
-</div>
-
-    <div class="panel col-md-12">
-        <div class="panel-body">
-            <h3 class="content-box-header">
-            {% trans "Available Functions" %}
-            </h3>
-             <div class="example-box-wrapper">
-                <div class="row">
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'createFTPAccount' %}" title="{% trans 'Create FTP Account' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Create FTP Account" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-plus-square"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'deleteFTPAccount' %}" title="{% trans 'Delete FTP Account' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Delete FTP Account" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-trash"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-                    <div class="col-md-3 btn-min-width">
-                                    <a href="{% url 'listFTPAccounts' %}" title="{% trans 'List FTP Accounts' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "List FTP Accounts" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-list-ul"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
+<div class="w-full p-4 md:p-12">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="folder-key" class="h-8 w-8"></i>
                 </div>
-             </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "FTP Functions" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Manage FTP accounts and their access permissions." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Functions Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Available Functions" %}
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Create FTP Account -->
+                <a href="{% url 'createFTPAccount' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="plus-square" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Create FTP Account" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Set up a new FTP account" %}</p>
+                    </div>
+                </a>
+
+                <!-- Delete FTP Account -->
+                <a href="{% url 'deleteFTPAccount' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-destructive/50 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+                        <i data-lucide="trash-2" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground group-hover:text-destructive transition-colors">{% trans "Delete FTP Account" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Remove existing FTP accounts" %}</p>
+                    </div>
+                </a>
+
+                <!-- List FTP Accounts -->
+                <a href="{% url 'listFTPAccounts' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="list" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "List FTP Accounts" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "View and manage FTP accounts" %}</p>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
-
 </div>
-
 
 {% endblock %}

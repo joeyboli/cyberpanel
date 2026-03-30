@@ -1,137 +1,117 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Mail Functions - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-
-    <div id="cybermailBanner" style="display:none; margin-bottom:20px;">
-      <div style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#9333ea 100%);border-radius:10px;padding:20px 24px;display:flex;align-items:center;gap:18px;box-shadow:0 4px 15px rgba(79,70,229,0.3);">
-        <div style="flex-shrink:0;font-size:32px;">&#9993;</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:4px;letter-spacing:-0.3px;">Stop Landing in Spam</div>
-          <div style="font-size:13.5px;color:rgba(255,255,255,0.85);line-height:1.5;">Route your emails through CyberMail's optimized servers. <strong style="color:#fff;">15,000 emails/month free</strong> with automatic DNS configuration, real-time analytics, and dedicated IPs. <a href="https://cyberpanel.net/KnowledgeBase/cybermail-user-guide/" target="_blank" style="color:rgba(255,255,255,0.9);text-decoration:underline;font-weight:500;">Learn more</a></div>
-        </div>
-        <a href="/emailDelivery/" style="background:#fff;color:#4f46e5;padding:10px 24px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.15s;">Get Started Free &rarr;</a>
-        <button onclick="dismissCyberMailBanner()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;" title="Dismiss">&times;</button>
-      </div>
-    </div>
-    <script>
-    (function(){if(!document.cookie.includes('cybermail_dismiss=1')){document.getElementById('cybermailBanner').style.display='';}})();
-    function dismissCyberMailBanner(){document.getElementById('cybermailBanner').style.display='none';document.cookie='cybermail_dismiss=1; path=/; max-age='+7*86400;}
-    </script>
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Mail Functions" %}</h2>
-            <p>{% trans "Manage email accounts on this page." %}</p>
-        </div>
-
-        <div class="panel col-md-12">
-            <div class="panel-body">
-                <h3 class="content-box-header">
-                    {% trans "Available Functions" %}
-                </h3>
-
-                <div class="example-box-wrapper">
-                    <div class="row">
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'createEmailAccount' %}" title="{% trans 'Create Email' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Create Email" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-plus-square"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'listEmails' %}" title="{% trans 'List Emails' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "List Emails" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-plus-square"></i>
-                                </div>
-                            </a>
-                        </div>
-
-
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'deleteEmailAccount' %}" title="{% trans 'Delete Email' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Delete Email" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'emailForwarding' %}" title="{% trans 'Email Forwarding' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Email Forwarding" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-plus-square"></i>
-                                </div>
-                            </a>
-                        </div>
-
-
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'changeEmailAccountPassword' %}" title="{% trans 'Change Password' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Change Password" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-key"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'dkimManager' %}" title="{% trans 'DKIM Manager' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "DKIM Manager" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-key"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="/webmail/" title="{% trans 'Access Webmail' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Access Webmail" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-key"></i>
-                                </div>
-                            </a>
-                        </div>
-
-
-                    </div>
-
-
+<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
+                    <i data-lucide="mail" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Mail Functions" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Manage email accounts, forwarding, and security settings." %}
+                    </p>
                 </div>
             </div>
         </div>
 
-    </div>
+        <!-- Available Functions Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Available Functions" %}
+            </h2>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Create Email -->
+                <a href="{% url 'createEmailAccount' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="mail-plus" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Create Email" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Set up a new email account" %}</p>
+                    </div>
+                </a>
+
+                <!-- List Emails -->
+                <a href="{% url 'listEmails' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="list" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "List Emails" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "View and manage accounts" %}</p>
+                    </div>
+                </a>
+
+                <!-- Delete Email -->
+                <a href="{% url 'deleteEmailAccount' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:bg-destructive group-hover:text-destructive-foreground transition-all duration-300 text-destructive">
+                        <i data-lucide="trash-2" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-destructive transition-colors">{% trans "Delete Email" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Remove email accounts" %}</p>
+                    </div>
+                </a>
+
+                <!-- Email Forwarding -->
+                <a href="{% url 'emailForwarding' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="forward" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Email Forwarding" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Redirect incoming emails" %}</p>
+                    </div>
+                </a>
+
+                <!-- Change Password -->
+                <a href="{% url 'changeEmailAccountPassword' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="key-round" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Change Password" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Update account security" %}</p>
+                    </div>
+                </a>
+
+                <!-- DKIM Manager -->
+                <a href="{% url 'dkimManager' %}" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="shield-check" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "DKIM Manager" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Manage email authentication" %}</p>
+                    </div>
+                </a>
+
+                <!-- Access Webmail -->
+                <a target="_blank" href="/webmail/" class="group flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-6">
+                    <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                        <i data-lucide="monitor" class="h-8 w-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{% trans "Access Webmail" %}</h3>
+                        <p class="text-lg text-muted-foreground">{% trans "Open webmail interface" %}</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

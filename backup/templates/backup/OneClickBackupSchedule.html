@@ -371,358 +371,345 @@
         }
     </style>
 
-    <div class="modern-container">
-        <!-- Page header -->
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-clock"></i>
-                {% trans "Schedule Backup" %}
-            </h1>
-            <p class="page-subtitle">{% trans "Schedule automated backups to protect your data on localhost or remote server" %}</p>
-            <div class="header-actions">
-                <a href="https://cyberpanel.net/KnowledgeBase/home/schedule-backups-local-or-sftp/"
-                   target="_blank"
-                   class="btn-secondary">
-                    <i class="fas fa-book"></i>
-                    {% trans "Documentation" %}
-                </a>
-            </div>
+<div class="w-full p-4 md:p-12" ng-controller="scheduleBackup">
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-primary mb-4 flex items-center gap-4">
+            <i data-lucide="clock" class="w-12 h-12 text-primary"></i>
+            {% trans "Schedule Backup" %}
+        </h1>
+        <p class="text-xl text-muted-foreground max-w-4xl">
+            {% trans "Schedule automated backups to protect your data on localhost or remote server" %}
+        </p>
+        <div class="flex flex-wrap gap-4 mt-8">
+            <a href="https://cyberpanel.net/KnowledgeBase/home/schedule-backups-local-or-sftp/"
+               target="_blank"
+               class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-3 px-8 rounded-xl transition-all flex items-center gap-2">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                {% trans "Documentation" %}
+            </a>
         </div>
+    </div>
 
-        <!-- Storage and Backup Stats Section -->
-        <div class="main-card" style="margin-bottom: 2rem;">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fas fa-chart-pie"></i>
-                    {% trans "Backup Account Overview" %}
-                </h2>
-            </div>
-            <div class="card-body">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
-                    <!-- Storage Stats -->
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 12px; color: white;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                            <i class="fas fa-hdd" style="font-size: 2rem; opacity: 0.9;"></i>
-                            <div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">{% trans "Storage Used" %}</div>
-                                <div style="font-size: 1.5rem; font-weight: 700;">{{ storage_info.used_storage }}</div>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.875rem; opacity: 0.9;">{% trans "of" %} {{ storage_info.total_storage }}</div>
-                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin-top: 0.75rem; overflow: hidden;">
-                            <div style="background: rgba(255,255,255,0.9); height: 100%; width: {{ storage_info.usage_percentage }}%; transition: width 0.3s ease;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Last Backup -->
-                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 1.5rem; border-radius: 12px; color: white;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <i class="fas fa-clock" style="font-size: 2rem; opacity: 0.9;"></i>
-                            <div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">{% trans "Last Backup Run" %}</div>
-                                <div style="font-size: 1.125rem; font-weight: 600;">{{ storage_info.last_backup_run }}</div>
-                                <div style="font-size: 0.875rem; opacity: 0.9; margin-top: 0.25rem;">
-                                    {% if storage_info.last_backup_status == 'success' %}
-                                        <i class="fas fa-check-circle"></i> {% trans "Success" %}
-                                    {% elif storage_info.last_backup_status == 'failed' %}
-                                        <i class="fas fa-exclamation-circle"></i> {% trans "Failed" %}
-                                    {% else %}
-                                        {{ storage_info.last_backup_status }}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Backups -->
-                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 1.5rem; border-radius: 12px; color: white;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <i class="fas fa-database" style="font-size: 2rem; opacity: 0.9;"></i>
-                            <div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">{% trans "Total Backups" %}</div>
-                                <div style="font-size: 1.5rem; font-weight: 700;">{{ storage_info.total_backups }}</div>
-                                {% if storage_info.failed_backups > 0 %}
-                                    <div style="font-size: 0.875rem; opacity: 0.9; margin-top: 0.25rem;">
-                                        <i class="fas fa-exclamation-triangle"></i> {{ storage_info.failed_backups }} {% trans "failed" %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Account Info -->
-                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 1.5rem; border-radius: 12px; color: white;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <i class="fas fa-user-circle" style="font-size: 2rem; opacity: 0.9;"></i>
-                            <div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">{% trans "Backup Account" %}</div>
-                                <div style="font-size: 1.125rem; font-weight: 600;">{{ ocb_sftp_user }}</div>
-                                <div style="font-size: 0.875rem; opacity: 0.9; margin-top: 0.25rem;">{{ ocb_plan_name }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Storage and Backup Stats Section -->
+    <div class="bg-card rounded-2xl shadow-sm border border-border p-10 mb-8">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold flex items-center gap-3">
+                <i data-lucide="pie-chart" class="w-8 h-8 text-primary"></i>
+                {% trans "Backup Account Overview" %}
+            </h2>
         </div>
-
-        <!-- Error Logs Section -->
-        {% if storage_info.error_logs %}
-        <div class="main-card" style="margin-bottom: 2rem;">
-            <div class="card-header" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
-                <h2 class="card-title" style="color: #991b1b;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {% trans "Recent Backup Errors" %}
-                </h2>
-            </div>
-            <div class="card-body" style="padding: 0;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 180px;">{% trans "Date/Time" %}</th>
-                            <th style="width: 150px;">{% trans "Website" %}</th>
-                            <th>{% trans "Error Message" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for log in storage_info.error_logs %}
-                        <tr>
-                            <td>{{ log.timestamp }}</td>
-                            <td><strong>{{ log.website }}</strong></td>
-                            <td style="color: var(--danger-text, #991b1b);">{{ log.error_message }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {% endif %}
-
-        <div ng-controller="scheduleBackup">
-            <!-- Create New Schedule Card -->
-            <div class="main-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-plus-circle"></i>
-                        {% trans "Create New Backup Schedule" %}
-                        <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}" style="width: 24px; margin-left: 10px;">
-                    </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Storage Stats -->
+            <div class="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-2xl text-white shadow-md">
+                <div class="flex items-center gap-4 mb-4">
+                    <i data-lucide="hard-drive" class="w-10 h-10 opacity-90"></i>
+                    <div>
+                        <div class="text-sm opacity-80 uppercase tracking-wider font-bold">{% trans "Storage Used" %}</div>
+                        <div class="text-2xl font-black">{{ storage_info.used_storage }}</div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form action="/">
-                        <div style="display: none">
-                            <input type="text" ng-model="selectedAccountAdd" ng-init="selectedAccountAdd='{{ destination }}'" required>
-                        </div>
-
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Name" %}</label>
-                            <input type="text" class="form-control" ng-model="name" placeholder="{% trans 'Enter schedule name' %}" required>
-                        </div>
-
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Select Backup Frequency" %}</label>
-                            <select ng-model="backupFrequency" class="form-control">
-                                <option>Never</option>
-                                <option>Daily</option>
-                                <option>Weekly</option>
-                            </select>
-                        </div>
-
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Backup Retention" %}</label>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <input ng-model="backupRetention" type="number" value="0" min="0">
-                                <span style="color: var(--text-secondary, #64748b); font-size: 0.875rem;">{% trans "days (0 for no limit)" %}</span>
-                            </div>
-                        </div>
-
-                        <div style="text-align: center; margin-top: 2rem;">
-                            <button type="button" ng-click="addSchedule()" class="btn-primary">
-                                <i class="fas fa-plus"></i>
-                                {% trans "Add Schedule" %}
-                            </button>
-                        </div>
-                    </form>
+                <div class="text-sm opacity-80">{% trans "of" %} {{ storage_info.total_storage }}</div>
+                <div class="bg-white/20 h-2 rounded-full mt-4 overflow-hidden">
+                    <div class="bg-white h-full transition-all duration-500" style="width: {{ storage_info.usage_percentage }}%"></div>
                 </div>
             </div>
 
-            <!-- Manage Existing Schedules Card -->
-            <div class="main-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-list"></i>
-                        {% trans "Manage Existing Backup Schedules" %}
-                        <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}" style="width: 24px; margin-left: 10px;">
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <form action="/">
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Select Destination" %}</label>
-                            <select ng-change="fetchJobs()" ng-model="selectedAccount" class="form-control">
-                                <option>{{ destination }}</option>
-                            </select>
+            <!-- Last Backup -->
+            <div class="bg-gradient-to-br from-pink-500 to-rose-600 p-6 rounded-2xl text-white shadow-md">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="clock" class="w-10 h-10 opacity-90"></i>
+                    <div>
+                        <div class="text-sm opacity-80 uppercase tracking-wider font-bold">{% trans "Last Run" %}</div>
+                        <div class="text-lg font-bold truncate max-w-[150px]">{{ storage_info.last_backup_run }}</div>
+                        <div class="flex items-center gap-1 text-sm mt-1">
+                            {% if storage_info.last_backup_status == 'success' %}
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> {% trans "Success" %}
+                            {% elif storage_info.last_backup_status == 'failed' %}
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i> {% trans "Failed" %}
+                            {% else %}
+                                {{ storage_info.last_backup_status }}
+                            {% endif %}
                         </div>
-
-                        <div ng-hide="jobsHidden" class="form-row">
-                            <label class="form-label">{% trans "Select Job" %}</label>
-                            <div style="flex: 1; display: flex; gap: 1rem;">
-                                <select ng-change="fetchWebsites()" ng-model="selectedJob" class="form-control">
-                                    <option ng-repeat="job in jobs track by $index">{$ job $}</option>
-                                </select>
-                                <button ng-hide="driveHidden" type="button" ng-click="deleteAccount()" class="btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    {% trans "Delete" %}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div ng-hide="driveHidden" class="form-row">
-                            <label class="form-label">{% trans "Add Sites for Backup" %}</label>
-                            <div style="flex: 1; display: flex; gap: 1rem;">
-                                <select ng-model="selectedWebsite" class="form-control">
-                                    {% for items in websites %}
-                                        <option>{{ items }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button type="button" ng-click="addSite('one')" class="btn-primary" style="padding: 0.5rem 1rem;">
-                                    <i class="fas fa-plus"></i>
-                                    {% trans "Add Site" %}
-                                </button>
-                                <button type="button" ng-click="addSite('all')" class="btn-secondary" style="padding: 0.5rem 1rem;">
-                                    <i class="fas fa-plus-circle"></i>
-                                    {% trans "Add All" %}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Schedule Info Box -->
-                        <div ng-hide="driveHidden" class="info-box">
-                            <div class="info-box-content">
-                                <div class="info-item">
-                                    <span class="info-label">{% trans "Last Run" %}</span>
-                                    <span class="info-value">{$ lastRun $}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">{% trans "All Sites" %}</span>
-                                    <span class="info-value">{$ allSites $}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">{% trans "Frequency" %} ({$ currently $})</span>
-                                    <select ng-change="changeFrequency()" ng-model="backupFrequency" class="form-control" style="width: 150px;">
-                                        <option>Never</option>
-                                        <option>Daily</option>
-                                        <option>Weekly</option>
-                                    </select>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">{% trans "Current Status" %}</span>
-                                    <span class="info-value">{$ currentStatus $}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sites Table Section -->
-                        <div ng-hide="driveHidden" class="sites-section">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <h3 class="section-title">
-                                    <i class="fas fa-globe"></i>
-                                    {% trans "Backed Up Sites" %}
-                                </h3>
-                                <div style="display: flex; gap: 1rem; align-items: center;">
-                                    <button data-toggle="modal" data-target="#backupLogs" type="button" ng-click="fetchLogs()" class="btn-gray">
-                                        <i class="fas fa-file-alt"></i>
-                                        {% trans "View Logs" %}
-                                    </button>
-                                    <select ng-model="recordsToShow" ng-change="fetchWebsites()" class="form-control" style="width: 100px;">
-                                        <option>10</option>
-                                        <option>50</option>
-                                        <option>100</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans "Sites" %}</th>
-                                        <th style="width: 150px;">{% trans "Actions" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="website in websites track by $index">
-                                        <td ng-bind="website.name"></td>
-                                        <td>
-                                            <button type="button" ng-click="deleteSite(website.name)" class="btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                                {% trans "Delete" %}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div style="margin-top: 1.5rem; text-align: right;">
-                                <div style="display: inline-flex; align-items: center; gap: 1rem;">
-                                    <span style="color: var(--text-secondary, #64748b); font-size: 0.875rem;">{% trans "Page" %}</span>
-                                    <select ng-model="currentPage" class="form-control" ng-change="fetchWebsites()" style="width: 80px;">
-                                        <option ng-repeat="page in pagination">{$ $index + 1 $}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- Logs Modal -->
-            <div id="backupLogs" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">
-                                <i class="fas fa-file-alt" style="margin-right: 0.5rem;"></i>
-                                {% trans "Backup Logs" %}
-                                <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}" style="width: 20px; margin-left: 10px;">
-                            </h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                                <select ng-model="recordsToShowLogs" ng-change="fetchLogs()" class="form-control" style="width: 100px;">
-                                    <option>10</option>
-                                    <option>50</option>
-                                    <option>100</option>
-                                </select>
+            <!-- Total Backups -->
+            <div class="bg-gradient-to-br from-cyan-500 to-blue-600 p-6 rounded-2xl text-white shadow-md">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="database" class="w-10 h-10 opacity-90"></i>
+                    <div>
+                        <div class="text-sm opacity-80 uppercase tracking-wider font-bold">{% trans "Total Backups" %}</div>
+                        <div class="text-3xl font-black">{{ storage_info.total_backups }}</div>
+                        {% if storage_info.failed_backups > 0 %}
+                            <div class="flex items-center gap-1 text-sm mt-1 text-red-100">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i> {{ storage_info.failed_backups }} {% trans "failed" %}
                             </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 100px;">{% trans "Type" %}</th>
-                                        <th>{% trans "Message" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="log in logs track by $index">
-                                        <td ng-bind="log.type"></td>
-                                        <td ng-bind="log.message"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div style="margin-top: 1.5rem; text-align: right;">
-                                <div style="display: inline-flex; align-items: center; gap: 1rem;">
-                                    <span style="color: var(--text-secondary, #64748b); font-size: 0.875rem;">{% trans "Page" %}</span>
-                                    <select ng-model="currentPageLogs" class="form-control" ng-change="fetchLogs()" style="width: 80px;">
-                                        <option ng-repeat="page in paginationLogs">{$ $index + 1 $}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Account Info -->
+            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-2xl text-white shadow-md">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="user" class="w-10 h-10 opacity-90"></i>
+                    <div>
+                        <div class="text-sm opacity-80 uppercase tracking-wider font-bold">{% trans "Account" %}</div>
+                        <div class="text-lg font-bold truncate max-w-[150px]">{{ ocb_sftp_user }}</div>
+                        <div class="text-sm opacity-90 mt-1 truncate max-w-[150px]">{{ ocb_plan_name }}</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Error Logs Section -->
+    {% if storage_info.error_logs %}
+    <div class="bg-red-500/5 rounded-2xl shadow-sm border border-red-500/20 mb-8 overflow-hidden">
+        <div class="bg-red-500/10 p-6 border-b border-red-500/20">
+            <h2 class="text-2xl font-bold text-red-700 flex items-center gap-3">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                {% trans "Recent Backup Errors" %}
+            </h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b border-red-500/10">
+                        <th class="p-6 text-lg font-semibold text-red-800 w-64">{% trans "Date/Time" %}</th>
+                        <th class="p-6 text-lg font-semibold text-red-800 w-48">{% trans "Website" %}</th>
+                        <th class="p-6 text-lg font-semibold text-red-800">{% trans "Error Message" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-red-500/10">
+                    {% for log in storage_info.error_logs %}
+                    <tr class="hover:bg-red-500/5 transition-colors">
+                        <td class="p-6 text-red-700 font-medium">{{ log.timestamp }}</td>
+                        <td class="p-6 text-red-900 font-bold">{{ log.website }}</td>
+                        <td class="p-6 text-red-600">{{ log.error_message }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="space-y-8">
+        <!-- Create New Schedule Card -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+            <div class="mb-8 border-b border-border pb-6">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="plus-circle" class="w-8 h-8 text-primary"></i>
+                    {% trans "Create New Backup Schedule" %}
+                    <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}" class="w-6 h-6 ml-2">
+                </h2>
+            </div>
+            <form action="/" class="space-y-8">
+                <div style="display: none">
+                    <input type="text" ng-model="selectedAccountAdd" ng-init="selectedAccountAdd='{{ destination }}'" required>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Name" %}</label>
+                        <input type="text" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all" ng-model="name" placeholder="{% trans 'Enter schedule name' %}" required>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Frequency" %}</label>
+                        <select ng-model="backupFrequency" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option>Never</option>
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Retention (Days)" %}</label>
+                        <div class="flex items-center gap-4">
+                            <input ng-model="backupRetention" type="number" value="0" min="0" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="button" ng-click="addSchedule()" class="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-bold py-4 px-12 rounded-xl transition-all flex items-center justify-center gap-2 text-xl">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                        {% trans "Add Schedule" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Manage Existing Schedules Card -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+            <div class="mb-8 border-b border-border pb-6">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="list" class="w-8 h-8 text-primary"></i>
+                    {% trans "Manage Existing Backup Schedules" %}
+                    <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}" class="w-6 h-6 ml-2">
+                </h2>
+            </div>
+            <form action="/" class="space-y-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Select Destination" %}</label>
+                        <select ng-change="fetchJobs()" ng-model="selectedAccount" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option>{{ destination }}</option>
+                        </select>
+                    </div>
+
+                    <div ng-hide="jobsHidden" class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Select Job" %}</label>
+                        <div class="flex gap-4">
+                            <select ng-change="fetchWebsites()" ng-model="selectedJob" class="flex-1 bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                                <option ng-repeat="job in jobs track by $index">{$ job $}</option>
+                            </select>
+                            <button ng-hide="driveHidden" type="button" ng-click="deleteAccount()" class="bg-red-500 hover:bg-red-600 text-white p-4 rounded-xl transition-all">
+                                <i data-lucide="trash-2" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-hide="driveHidden" class="space-y-6">
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Add Sites for Backup" %}</label>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <select ng-model="selectedWebsite" class="flex-1 bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                                {% for items in websites %}
+                                    <option>{{ items }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" ng-click="addSite('one')" class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                                {% trans "Add Site" %}
+                            </button>
+                            <button type="button" ng-click="addSite('all')" class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                                {% trans "Add All" %}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Info Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-secondary/10 p-8 rounded-2xl border border-border mt-8">
+                        <div class="space-y-2">
+                            <div class="text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Last Run" %}</div>
+                            <div class="text-xl font-bold">{$ lastRun $}</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "All Sites" %}</div>
+                            <div class="text-xl font-bold">{$ allSites $}</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Frequency" %}</div>
+                            <select ng-change="changeFrequency()" ng-model="backupFrequency" class="bg-white border border-border rounded-lg px-3 py-1 font-bold text-primary">
+                                <option>Never</option>
+                                <option>Daily</option>
+                                <option>Weekly</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</div>
+                            <div class="text-xl font-bold">{$ currentStatus $}</div>
+                        </div>
+                    </div>
+
+                    <!-- Sites Table Section -->
+                    <div class="space-y-6 pt-10 border-t border-border mt-10">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                            <h3 class="text-3xl font-bold flex items-center gap-3">
+                                <i data-lucide="globe" class="w-8 h-8 text-primary"></i>
+                                {% trans "Backed Up Sites" %}
+                            </h3>
+                            <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
+                                <button data-toggle="modal" data-target="#backupLogs" type="button" ng-click="fetchLogs()" class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2 flex-1 md:flex-initial">
+                                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                                    {% trans "View Logs" %}
+                                </button>
+                                <select ng-model="recordsToShow" ng-change="fetchWebsites()" class="bg-secondary/20 border border-border rounded-xl px-4 py-3 text-lg focus:ring-2 focus:ring-primary outline-none transition-all w-24">
+                                    <option>10</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-border">
+                                        <th class="pb-4 text-xl font-semibold">{% trans "Website" %}</th>
+                                        <th class="pb-4 text-xl font-semibold text-center w-32">{% trans "Actions" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border">
+                                    <tr ng-repeat="website in websites track by $index" class="hover:bg-secondary/5 transition-colors">
+                                        <td class="py-6 text-xl font-bold">{$ website.name $}</td>
+                                        <td class="py-6 text-center">
+                                            <button type="button" ng-click="deleteSite(website.name)" class="text-red-500 hover:text-red-600 transition-colors p-2">
+                                                <i data-lucide="trash-2" class="w-6 h-6"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex justify-end pt-6">
+                            <div class="flex items-center gap-4">
+                                <span class="text-lg font-semibold">{% trans "Page" %}</span>
+                                <select ng-model="currentPage" class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg focus:ring-2 focus:ring-primary outline-none transition-all w-24" ng-change="fetchWebsites()">
+                                    <option ng-repeat="page in pagination">{$ $index + 1 $}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Logs Modal -->
+<div id="backupLogs" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-2xl border-none shadow-2xl">
+            <div class="modal-header bg-secondary/10 p-6 border-b border-border">
+                <h4 class="modal-title text-2xl font-bold flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                    {% trans "Backup Logs" %}
+                </h4>
+                <button type="button" class="text-2xl" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body p-8">
+                <div class="flex justify-end mb-6">
+                    <select ng-model="recordsToShowLogs" ng-change="fetchLogs()" class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg outline-none w-32">
+                        <option>10</option>
+                        <option>50</option>
+                        <option>100</option>
+                    </select>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead><tr class="border-b border-border"><th class="pb-4 font-bold text-xl">{% trans "Type" %}</th><th class="pb-4 font-bold text-xl">{% trans "Message" %}</th></tr></thead>
+                        <tbody class="divide-y divide-border">
+                            <tr ng-repeat="log in logs"><td class="py-4 text-lg">{$ log.type $}</td><td class="py-4 text-lg">{$ log.message $}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <select ng-model="currentPageLogs" class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg outline-none w-24" ng-change="fetchLogs()">
+                        <option ng-repeat="page in paginationLogs">{$ $index + 1 $}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

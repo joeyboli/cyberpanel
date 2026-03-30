@@ -55,7 +55,7 @@
     <!-- Website Selection -->
     <div class="bg-card border border-border rounded-2xl p-10 mb-12 shadow-sm">
         <div class="flex items-center justify-between mb-10">
-            <h2 class="text-3xl font-bold text-foreground flex items-center gap-4">
+            <h2 class="text-4xl font-bold text-foreground flex items-center gap-4">
                 <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                 {% trans "Select Website" %}
                 <span ng-show="!dbLoading" class="ml-4">
@@ -64,8 +64,8 @@
             </h2>
         </div>
         
-        <div class="max-w-3xl bg-muted/20 p-8 rounded-2xl border border-border/50">
-            <label class="block text-xl font-bold text-foreground mb-4">
+        <div class="bg-muted/20 p-8 rounded-2xl border border-border/50">
+            <label class="block text-2xl font-bold text-foreground mb-4">
                 {% trans "Select Domain" %}
             </label>
             <div class="relative">
@@ -108,14 +108,14 @@
 
     <!-- Password Change Section -->
     <div class="bg-card border-4 border-primary/20 rounded-3xl p-10 mb-12 shadow-xl" ng-show="!changePasswordBox">
-        <h3 class="text-3xl font-black text-foreground mb-10 flex items-center gap-4">
+        <h3 class="text-4xl font-black text-foreground mb-10 flex items-center gap-4">
             <i data-lucide="key" class="w-10 h-10 text-primary"></i>
             {% trans "Change Password for" %} <span class="text-primary">{$ dbUsername $}</span>
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
             <div class="space-y-4">
-                <label class="block text-xl font-bold text-foreground">
+                <label class="block text-2xl font-bold text-foreground">
                     {% trans "New Password" %}
                 </label>
                 <div class="flex flex-col sm:flex-row gap-6">
@@ -154,7 +154,7 @@
     <!-- Database List -->
     <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-12" ng-show="!dbAccounts">
         <div class="p-10 border-b border-border">
-            <h2 class="text-3xl font-bold text-foreground flex items-center gap-4">
+            <h2 class="text-4xl font-bold text-foreground flex items-center gap-4">
                 <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                 {% trans "Database Accounts" %}
             </h2>
@@ -210,7 +210,7 @@
                                         <div class="p-10">
                                             <form name="remoteAccessForm" class="space-y-8">
                                                 <div class="space-y-4">
-                                                    <label class="block text-xl font-bold text-foreground uppercase tracking-wider">
+                                                    <label class="block text-2xl font-bold text-foreground uppercase tracking-wider">
                                                         {% trans "Allow Remote Access from IP" %}
                                                     </label>
                                                     <div class="relative group">
@@ -224,9 +224,6 @@
                                                                ng-model="$parent.remoteIP" 
                                                                required>
                                                     </div>
-                                                    <p class="text-sm text-muted-foreground">
-                                                        {% trans "Use % for wildcard (e.g., 192.168.1.% for subnet)" %}
-                                                    </p>
                                                 </div>
                                                 
                                                 <button type="button" ng-click="allowRemoteIP()" class="inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground font-black rounded-xl hover:bg-primary/90 transition-all text-lg shadow-lg shadow-primary/20">
@@ -278,13 +275,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-    });
-</script>
 {% endblock %}
 
 {% block footer_scripts %}
@@ -298,8 +288,19 @@ $(document).ready(function() {
 
     // Observe for dynamic changes to refresh Lucide icons
     const observer = new MutationObserver((mutations) => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        let shouldRefresh = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                shouldRefresh = true;
+            }
+        });
+
+        if (shouldRefresh && typeof lucide !== 'undefined') {
+            // Debounce refresh
+            if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+            window.lucideTimeout = setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
         }
     });
 

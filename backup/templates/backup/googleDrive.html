@@ -422,57 +422,60 @@
     }
 </style>
 
-<div class="modern-container" ng-controller="googleDrive">
-    <div class="page-header">
-        <h1 class="page-title">
-            <div class="google-drive-icon">
+<div class="w-full p-4 md:p-12" ng-controller="googleDrive">
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-primary mb-4 flex items-center gap-4">
+            <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border p-2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" 
-                     alt="Google Drive" style="width: 36px; height: 36px;">
+                     alt="Google Drive" class="w-10 h-10">
             </div>
             {% trans "Google Drive Backups" %}
         </h1>
-        <p class="page-subtitle">{% trans "Set up and manage automatic backups to Google Drive" %}</p>
-        <div class="header-actions">
+        <p class="text-xl text-muted-foreground max-w-4xl">
+            {% trans "Set up and manage automatic backups to Google Drive" %}
+        </p>
+        <div class="flex flex-wrap gap-4 mt-8">
             <a href="https://cyberpanel.net/docs/backup-to-google-drive/" 
                target="_blank" 
                rel="noopener"
-               class="btn-secondary">
-                <i class="fas fa-book"></i>
+               class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-3 px-8 rounded-xl transition-all flex items-center gap-2">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
                 {% trans "Documentation" %}
             </a>
-            <button type="button" class="btn-primary" data-toggle="modal" data-target="#setupGdrive">
-                <i class="fas fa-plus-circle"></i>
+            <button type="button" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2" data-toggle="modal" data-target="#setupGdrive">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 {% trans "Setup New Account" %}
             </button>
         </div>
     </div>
 
     <!-- Main Configuration Card -->
-    <div class="main-card">
-        <div class="card-header">
-            <h2 class="card-title">
-                <i class="fas fa-cog"></i>
+    <div class="bg-card rounded-2xl shadow-sm border border-border p-10 mb-8">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold flex items-center gap-3">
+                <i data-lucide="settings" class="w-8 h-8 text-primary"></i>
                 {% trans "Google Drive Backup Configuration" %}
-                <span ng-hide="cyberPanelLoading" class="loading-spinner"></span>
+                <span ng-hide="cyberPanelLoading" class="animate-spin inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full ml-2"></span>
             </h2>
         </div>
-        <div class="card-body">
+
+        <div class="space-y-10">
             <!-- Account Selector -->
-            <div class="account-selector">
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
+            <div class="bg-secondary/10 rounded-2xl p-8 border border-border">
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold flex items-center gap-2">
+                        <i data-lucide="user" class="w-6 h-6 text-primary"></i>
                         {% trans "Select Google Drive Account" %}
                     </label>
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                        <select ng-change="fetchWebsites()" ng-model="selectedAccount" class="form-control">
+                    <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+                        <select ng-change="fetchWebsites()" ng-model="selectedAccount" class="flex-1 bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
                             <option value="">{% trans "Choose an account..." %}</option>
                             {% for items in accounts %}
                                 <option>{{ items }}</option>
                             {% endfor %}
                         </select>
-                        <button ng-hide="driveHidden" type="button" ng-click="deleteAccount()" class="btn-danger">
-                            <i class="fas fa-trash"></i>
+                        <button ng-hide="driveHidden" type="button" ng-click="deleteAccount()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
                             {% trans "Delete" %}
                         </button>
                     </div>
@@ -480,117 +483,121 @@
             </div>
 
             <!-- Backup Settings -->
-            <div ng-hide="driveHidden">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>
-                                {% trans "Backup Frequency" %}
-                            </label>
-                            <select ng-change="changeFrequency()" ng-model="backupFrequency" class="form-control">
-                                <option>Never</option>
-                                <option>Daily</option>
-                                <option>Weekly</option>
-                            </select>
-                            <small class="form-text text-muted" style="margin-top: 0.5rem;">
-                                {% trans "Currently" %}: <span class="frequency-badge">{$ currently $}</span>
-                            </small>
+            <div ng-hide="driveHidden" class="space-y-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-6 h-6 text-primary"></i>
+                            {% trans "Backup Frequency" %}
+                        </label>
+                        <select ng-change="changeFrequency()" ng-model="backupFrequency" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option>Never</option>
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                        </select>
+                        <div class="text-lg text-muted-foreground mt-2">
+                            {% trans "Currently" %}: <span class="font-bold text-primary">{$ currently $}</span>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-history" style="margin-right: 0.5rem;"></i>
-                                {% trans "Backup File Retention" %}
-                            </label>
-                            <select id="fileretention" ng-model="Retentiontime" ng-change="changeRetention()" class="form-control">
-                                <option value="1d">1 day</option>
-                                <option value="1w">1 week</option>
-                                <option value="1m">1 month</option>
-                                <option value="6m">6 months</option>
-                            </select>
-                        </div>
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold flex items-center gap-2">
+                            <i data-lucide="clock" class="w-6 h-6 text-primary"></i>
+                            {% trans "Backup File Retention" %}
+                        </label>
+                        <select id="fileretention" ng-model="Retentiontime" ng-change="changeRetention()" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option value="1d">1 day</option>
+                            <option value="1w">1 week</option>
+                            <option value="1m">1 month</option>
+                            <option value="6m">6 months</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Retention Info -->
-                <div class="retention-info">
-                    <i class="fas fa-info-circle"></i>
-                    <p>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6 flex items-start gap-4 text-blue-700">
+                    <i data-lucide="info" class="w-6 h-6 mt-1 flex-shrink-0"></i>
+                    <p class="text-lg">
                         {% trans "Backup retention is a" %} 
-                        <a href="https://cyberpanel.net/cyberpanel-addons" target="_blank" rel="noopener">{% trans "paid feature" %}</a>. 
+                        <a href="https://cyberpanel.net/cyberpanel-addons" target="_blank" rel="noopener" class="font-bold underline">{% trans "paid feature" %}</a>. 
                         {% trans "Upgrade to manage how long backups are stored." %}
                     </p>
                 </div>
 
                 <!-- Site Management -->
-                <div class="form-section">
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-globe" style="margin-right: 0.5rem;"></i>
-                            {% trans "Add Sites for Backup" %}
-                        </label>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <select ng-model="selectedWebsite" class="form-control">
-                                <option value="">{% trans "Choose a website..." %}</option>
-                                {% for items in websites %}
-                                    <option>{{ items }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="button" ng-click="addSite()" class="btn-primary">
-                                <i class="fas fa-plus"></i>
-                                {% trans "Add Site" %}
-                            </button>
-                        </div>
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold flex items-center gap-2">
+                        <i data-lucide="globe" class="w-6 h-6 text-primary"></i>
+                        {% trans "Add Sites for Backup" %}
+                    </label>
+                    <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+                        <select ng-model="selectedWebsite" class="flex-1 bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option value="">{% trans "Choose a website..." %}</option>
+                            {% for items in websites %}
+                                <option>{{ items }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" ng-click="addSite()" class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            {% trans "Add Site" %}
+                        </button>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <button data-toggle="modal" data-target="#backupLogs" 
-                            type="button" ng-click="fetchLogs()" class="btn-gray">
-                        <i class="fas fa-file-alt"></i>
-                        {% trans "View Logs" %}
-                    </button>
-                    <select ng-model="recordsToShow" ng-change="fetchWebsites()" 
-                            class="form-control" style="width: auto;">
-                        <option>10</option>
-                        <option>50</option>
-                        <option>100</option>
-                    </select>
-                </div>
+                <!-- Sites Table Section -->
+                <div class="space-y-6 pt-10 border-t border-border">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <button data-toggle="modal" data-target="#backupLogs" 
+                                type="button" ng-click="fetchLogs()" class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-3 px-6 rounded-xl transition-all flex items-center gap-2 w-full md:w-auto">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                            {% trans "View Logs" %}
+                        </button>
+                        <div class="flex items-center gap-4 w-full md:w-auto">
+                            <span class="text-lg font-semibold whitespace-nowrap">{% trans "Show" %}</span>
+                            <select ng-model="recordsToShow" ng-change="fetchWebsites()" 
+                                    class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg focus:ring-2 focus:ring-primary outline-none transition-all w-full md:w-24">
+                                <option>10</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <!-- Sites Table -->
-                <table class="gdrive-table">
-                    <thead>
-                        <tr>
-                            <th>{% trans "Website" %}</th>
-                            <th style="text-align: center;">{% trans "Actions" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="website in websites track by $index">
-                            <td>
-                                <i class="fas fa-globe" style="color: #5b5fcf; margin-right: 0.5rem;"></i>
-                                <strong ng-bind="website.name"></strong>
-                            </td>
-                            <td style="text-align: center;">
-                                <button type="button" ng-click="deleteSite(website.name)" class="btn-danger">
-                                    <i class="fas fa-times"></i>
-                                    {% trans "Remove" %}
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-border">
+                                    <th class="pb-4 text-xl font-semibold">{% trans "Website" %}</th>
+                                    <th class="pb-4 text-xl font-semibold text-center">{% trans "Actions" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border">
+                                <tr ng-repeat="website in websites track by $index">
+                                    <td class="py-6">
+                                        <div class="flex items-center gap-3">
+                                            <i data-lucide="globe" class="w-6 h-6 text-primary"></i>
+                                            <span class="text-xl font-bold" ng-bind="website.name"></span>
+                                        </div>
+                                    </td>
+                                    <td class="py-6 text-center">
+                                        <button type="button" ng-click="deleteSite(website.name)" class="text-red-500 hover:text-red-600 transition-colors">
+                                            <i data-lucide="trash-2" class="w-6 h-6 mx-auto"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <!-- Pagination -->
-                <div style="display: flex; justify-content: center; margin-top: 2rem;">
-                    <select ng-model="currentPage" class="form-control" 
-                            ng-change="fetchWebsites()" style="width: auto;">
-                        <option ng-repeat="page in pagination">{$ $index + 1 $}</option>
-                    </select>
+                    <!-- Pagination -->
+                    <div class="flex justify-end pt-6">
+                        <div class="flex items-center gap-4">
+                            <span class="text-lg font-semibold">{% trans "Page" %}</span>
+                            <select ng-model="currentPage" class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg focus:ring-2 focus:ring-primary outline-none transition-all" 
+                                    ng-change="fetchWebsites()">
+                                <option ng-repeat="page in pagination">{$ $index + 1 $}</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

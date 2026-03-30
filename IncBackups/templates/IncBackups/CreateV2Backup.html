@@ -1,162 +1,136 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Create v2 Backup" %}{% endblock %}
+{% block title %}{% trans "Create v2 Backup - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-    <style>
-
-    </style>
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Create V2 Backup" %} - <a target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/backup-v2-in-cyberpanel/"
-                                                    style="height: 23px;line-height: 21px;"
-                                                    class="btn btn-border btn-alt border-red btn-link font-red"
-                                                    title=""><span>{% trans "Backup Docs" %}</span></a></h2>
-            <p>{% trans "This page can be used to create your backup" %}</p>
+<div class="w-full p-4 md:p-12" ng-controller="CreateV2Backup">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="plus-square" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Create V2 Backup" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Launch an instant incremental backup using the V2 engine" %}
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div ng-show="backupLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                    <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+                </div>
+                <a href="{% url 'RestoreV2backupSite' %}" class="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-foreground rounded-xl font-bold transition-all border border-border hover:bg-secondary/80">
+                    <i data-lucide="rotate-ccw" class="h-5 w-5"></i>
+                    {% trans "Restore Backups" %}
+                </a>
+            </div>
         </div>
 
-        <div ng-controller="CreateV2Backup" class="panel">
-            <div class="panel-body">
-                <h3 class="title-hero">
-                    {% trans "Create v2 Backup" %} <img ng-hide="backupLoading" src="{% static 'images/loading.gif' %}">
-                    - <a href="{% url 'RestoreV2backupSite' %}">Restore Backups</a>
-                </h3>
-                <div class="example-box-wrapper">
-                    <p align="center" style="margin-top: 2%; margin-bottom: 2%">
-                        <iframe width="788.54" height="443" src="https://www.youtube.com/embed/7dI1013xvUc"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen></iframe>
-                    </p>
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10" ng-hide="!installationProgress">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Backup Configuration" %}
+            </h2>
 
-                    <form class="form-horizontal bordered-row">
-
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Select Website" %} </label>
-                            <div class="col-sm-6">
-                                <select id="create-backup-select" ng-change="selectwebsite()" ng-model="selwebsite"
-                                        class="form-control">
-                                    {% for items in websiteList %}
-                                        <option value="{{ items }}">{{ items }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Select Repo" %} </label>
-                            <div class="col-sm-6">
-                                <select id="reposelectbox" ng-change="selectrepo()" ng-model="testhabbi"
-                                        class="form-control">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Backup Contents" %}</label>
-                            <div class="col-sm-9">
-                                <div class="checkbox">
-                                    <label>
-                                        <input ng-model="websiteData" type="checkbox" value="">
-                                        Data
-                                    </label>
-                                </div>
-                            </div>
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-9">
-                                <div class="checkbox">
-                                    <label>
-                                        <input ng-model="websiteDatabases" type="checkbox" value="">
-                                        Databases
-                                    </label>
-                                </div>
-                            </div>
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-9">
-                                <div class="checkbox">
-                                    <label>
-                                        <input ng-model="websiteEmails" type="checkbox" value="">
-                                        Emails
-                                    </label>
-                                </div>
-                            </div>
-                            <!---
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-9">
-                                <div class="checkbox">
-                                    <label>
-                                        <input ng-model="websiteSSLs" type="checkbox" value="">
-                                        SSL Certificates
-                                    </label>
-                                </div>
-                            </div> -->
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans " " %} </label>
-                            <div class="col-sm-6">
-                                <button class="btn" id="CreateV2BackupButton" ng-click="CreateV2BackupButton()"
-                                        style="border-radius: 6px;background-color: var(--accent-color, #3447b7);color: var(--bg-secondary, white) !important;">
-                                    Create Backup
-                                </button>
-                            </div>
-                        </div>
-
-
-                        <div ng-hide="installationProgress" class="form-group">
-                            <label class="col-sm-2 control-label"></label>
-                            <div class="col-sm-7">
-
-                                <div class="alert alert-success text-center">
-                                    <h2>{$ currentStatus $}</h2>
-                                </div>
-
-                                <div class="progress">
-                                    <div id="installProgress" class="progress-bar" role="progressbar" aria-valuenow="70"
-                                         aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                        <span class="sr-only">70% Complete</span>
-                                    </div>
-                                </div>
-
-                                <div ng-hide="errorMessageBox" class="alert alert-danger">
-                                    <p>{% trans "Error message:" %} {$ errorMessage $}</p>
-                                </div>
-
-                                <div ng-hide="success" class="alert alert-success">
-                                    <p>{% trans "Backup succesfully." %}</p>
-                                </div>
-
-
-                                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                    <p>{% trans "Could not connect to server. Please refresh this page." %}</p>
-                                </div>
-
-
-                            </div>
-                        </div>
-
-                        <div ng-hide="installationProgress" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-4">
-                                <button type="button" ng-disabled="goBackDisable" ng-click="goBack()"
-                                        class="btn btn-primary btn-lg">{% trans "Go Back" %}</button>
-                            </div>
-                        </div>
-
-                    </form>
-
-
-                </div>
-
+            <div class="aspect-video w-full mx-auto rounded-3xl overflow-hidden border border-border/50 shadow-xl mb-12">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/7dI1013xvUc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
 
+            <form action="/" method="post" class="space-y-8">
+                <div class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Select Website" %}</label>
+                            <select ng-change="selectwebsite()" ng-model="selwebsite" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                <option value="">-- {% trans "Choose a website" %} --</option>
+                                {% for items in websiteList %}
+                                    <option value="{{ items }}">{{ items }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Select Repo" %}</label>
+                            <select id="reposelectbox" ng-change="selectrepo()" ng-model="testhabbi" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold text-foreground">{% trans "Backup Contents" %}</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteData" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Data" %}</span>
+                            </label>
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteDatabases" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Databases" %}</span>
+                            </label>
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteEmails" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Emails" %}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="button" ng-click="CreateV2BackupButton()" class="flex items-center justify-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-xl text-2xl font-bold transition-all w-full md:w-auto shadow-xl">
+                            <i data-lucide="play" class="h-8 w-8"></i>
+                            {% trans "Create Backup" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
 
-
+        <!-- Progress Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10" ng-hide="installationProgress">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Backup Progress" %}
+            </h2>
+            
+            <div class="bg-secondary/20 rounded-2xl p-8 space-y-6">
+                <div class="text-2xl font-bold text-foreground text-center">{$ currentStatus $}</div>
+                
+                <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
+                    <div id="installProgress" class="bg-primary h-full transition-all duration-300" style="width:0%"></div>
+                </div>
+                
+                <div ng-hide="errorMessageBox" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                    <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                    <span class="text-lg font-semibold">{% trans "Error message:" %} {$ errorMessage $}</span>
+                </div>
+                
+                <div ng-hide="success" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
+                    <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                    <span class="text-lg font-semibold">{% trans "Backup successful." %}</span>
+                </div>
+                
+                <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                    <i data-lucide="x-circle" class="h-6 w-6 shrink-0"></i>
+                    <span class="text-lg font-semibold">{% trans "Could not connect to server. Please refresh this page." %}</span>
+                </div>
+            </div>
+            
+            <div class="pt-8 flex justify-center">
+                <button type="button" ng-disabled="goBackDisable" ng-click="goBack()"
+                        class="flex items-center justify-center gap-3 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all disabled:opacity-50 w-full md:w-auto">
+                    <i data-lucide="arrow-left" class="h-6 w-6"></i>
+                    {% trans "Go Back" %}
+                </button>
+            </div>
+        </div>
     </div>
-
-
+</div>
 {% endblock %}

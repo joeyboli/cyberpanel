@@ -915,18 +915,6 @@
 
     <!-- SERVER SECTION (admin only) -->
     {% if admin %}
-    <div class="nav-section">Server</div>
-
-    <a href="{% url 'MysqlManager' %}" class="nav-item">
-      <i data-lucide="database" class="nav-icon"></i>
-      <span class="nav-label">MySQL Manager</span>
-      <span class="nav-badge">New</span>
-    </a>
-
-    <a href="{% url 'Filemanager' %}" class="nav-item">
-      <i data-lucide="folder-open" class="nav-icon"></i>
-      <span class="nav-label">Root File Manager</span>
-    </a>
 
     <!-- Tuning -->
     <button class="nav-item" onclick="toggleSubmenu('tuning-submenu', this)">
@@ -1026,16 +1014,6 @@
       <a href="{% url 'managePowerDNS' %}" class="nav-item">Manage PowerDNS</a>
       <a href="{% url 'managePostfix' %}" class="nav-item">Manage Postfix</a>
       <a href="{% url 'managePureFtpd' %}" class="nav-item">Manage FTP</a>
-    </div>
-
-    <!-- Plugins -->
-    <button class="nav-item" onclick="toggleSubmenu('plugins-submenu', this)">
-      <i data-lucide="plug" class="nav-icon"></i>
-      <span class="nav-label">Plugins</span>
-      <i data-lucide="chevron-right" class="nav-chevron"></i>
-    </button>
-    <div id="plugins-submenu" class="submenu">
-      <a href="{% url 'installed' %}" class="nav-item">Installed</a>
     </div>
     {% endif %}
 

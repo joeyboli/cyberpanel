@@ -1,585 +1,210 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Create Incremental Backup" %}{% endblock %}
-
-{% block header_scripts %}
-<style>
-    /* Page Specific Styles */
-    .backup-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .backup-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    /* Page Header */
-    .page-header {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .page-header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin: 0 0 10px 0;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .page-header .icon {
-        width: 48px;
-        height: 48px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--bg-secondary, white);
-        font-size: 24px;
-        box-shadow: 0 4px 12px rgba(91,95,207,0.3);
-    }
-    
-    .page-header p {
-        font-size: 14px;
-        color: var(--text-secondary, #64748b);
-        margin: 0;
-        line-height: 1.6;
-    }
-    
-    .docs-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--accent-color, #5b5fcf);
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        margin-top: 10px;
-    }
-    
-    .docs-link:hover {
-        color: var(--accent-hover, #4b4fbf);
-        transform: translateX(2px);
-    }
-    
-    /* Content Section */
-    .content-section {
-        background: var(--bg-secondary, white);
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .section-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .section-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: var(--accent-color, #5b5fcf);
-        border-radius: 2px;
-    }
-    
-    /* Form Styles */
-    .form-group {
-        margin-bottom: 25px;
-    }
-    
-    .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-primary, #2f3640);
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--text-primary, #2f3640);
-        transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        background: var(--bg-secondary, white);
-        box-shadow: 0 0 0 3px rgba(91,95,207,0.1);
-    }
-    
-    .form-select {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 14px;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--text-primary, #2f3640);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .form-select:focus {
-        outline: none;
-        border-color: var(--accent-color, #5b5fcf);
-        background: var(--bg-secondary, white);
-        box-shadow: 0 0 0 3px rgba(91,95,207,0.1);
-    }
-    
-    /* Checkbox Styles */
-    .checkbox-group {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .checkbox-wrapper {
-        display: flex;
-        align-items: center;
-        padding: 15px;
-        background: var(--bg-hover, #f8f9ff);
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .checkbox-wrapper:hover {
-        background: var(--hover-light, #f0f0ff);
-        border-color: var(--accent-color, #5b5fcf);
-    }
-    
-    .checkbox-wrapper input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        margin-right: 12px;
-        cursor: pointer;
-    }
-    
-    .checkbox-label {
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        font-weight: 500;
-        cursor: pointer;
-        user-select: none;
-    }
-    
-    /* Button Styles */
-    .btn-primary {
-        background: var(--accent-color, #5b5fcf);
-        color: var(--bg-secondary, white);
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-hover, #4b4fbf);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(91,95,207,0.3);
-    }
-    
-    .btn-primary:disabled {
-        background: var(--text-muted, #94a3b8);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    /* Status Textarea */
-    .status-textarea {
-        width: 100%;
-        padding: 15px;
-        font-size: 13px;
-        font-family: 'Monaco', 'Consolas', monospace;
-        line-height: 1.5;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        background: var(--bg-hover, #f8f9ff);
-        color: var(--text-primary, #2f3640);
-        resize: vertical;
-        min-height: 200px;
-    }
-    
-    /* Table Styles */
-    .backups-table {
-        width: 100%;
-        background: var(--bg-secondary, white);
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .backups-table th {
-        background: var(--bg-hover, #f8f9ff);
-        padding: 15px;
-        text-align: left;
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--text-secondary, #64748b);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .backups-table td {
-        padding: 15px;
-        font-size: 14px;
-        color: var(--text-primary, #2f3640);
-        border-bottom: 1px solid var(--border-light, #f0f0ff);
-    }
-    
-    .backups-table tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .backups-table tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .action-btn {
-        background: var(--accent-color, #5b5fcf);
-        color: var(--bg-secondary, white);
-        border: none;
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
-    }
-    
-    .action-btn:hover {
-        background: var(--accent-hover, #4b4fbf);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(91,95,207,0.3);
-        color: var(--bg-secondary, white);
-        text-decoration: none;
-    }
-    
-    .delete-btn {
-        background: var(--danger-color, #ef4444);
-        color: var(--bg-secondary, white);
-        border: none;
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .delete-btn:hover {
-        background: var(--danger-hover, #dc2626);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(239,68,68,0.3);
-    }
-    
-    /* Modal Styles */
-    .modal-content {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-    }
-    
-    .modal-header {
-        background: var(--bg-hover, #f8f9ff);
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 12px 12px 0 0;
-        padding: 20px;
-    }
-    
-    .modal-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-primary, #2f3640);
-    }
-    
-    .modal-body {
-        padding: 25px;
-    }
-    
-    .modal-footer {
-        background: var(--bg-hover, #f8f9ff);
-        border-top: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 0 0 12px 12px;
-        padding: 15px 20px;
-    }
-    
-    /* Loading Spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--accent-color, #5b5fcf);
-        border-radius: 50%;
-        border-top-color: transparent;
-        animation: spin 0.8s linear infinite;
-        margin-left: 8px;
-    }
-    
-    /* Angular cloak */
-    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-        display: none !important;
-    }
-    
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 40px;
-        color: var(--text-muted, #8893a7);
-    }
-    
-    .empty-state i {
-        font-size: 48px;
-        color: var(--border-color, #e8e9ff);
-        margin-bottom: 15px;
-    }
-    
-    .empty-state p {
-        font-size: 14px;
-        margin: 0;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .backup-wrapper {
-            padding: 15px;
-        }
-        
-        .content-section {
-            padding: 20px;
-        }
-        
-        .backups-table {
-            font-size: 12px;
-        }
-        
-        .backups-table th,
-        .backups-table td {
-            padding: 10px;
-        }
-    }
-</style>
-{% endblock %}
+{% block title %}{% trans "Create Incremental Backup - CyberPanel" %}{% endblock %}
 
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="backup-wrapper">
-    <div class="backup-container" ng-controller="createIncrementalBackups" ng-init="cyberpanelLoading=false" ng-cloak>
+<div class="w-full p-4 md:p-12" ng-controller="createIncrementalBackups" ng-init="cyberpanelLoading=false" ng-cloak>
+    <div class="space-y-12">
         <!-- Page Header -->
-        <div class="page-header">
-            <h1>
-                <div class="icon">
-                    <i class="fas fa-shield-alt"></i>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="shield-check" class="h-8 w-8"></i>
                 </div>
-                {% trans "Create Incremental Backup" %}
-            </h1>
-            <p>{% trans "Create incremental backups for your websites with efficient storage usage and quick restore capabilities." %}</p>
-            <a href="https://cyberpanel.net/docs/2-create-restore-incremental-backups/" target="_blank" class="docs-link">
-                <i class="fas fa-book"></i>
-                {% trans "View Documentation" %}
-                <i class="fas fa-external-link-alt" style="font-size: 11px;"></i>
-            </a>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Create Incremental Backup" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Efficient storage usage and quick restore capabilities" %}
+                    </p>
+                </div>
+            </div>
+            <div ng-show="cyberpanelLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+            </div>
         </div>
 
-        <!-- Configuration Section -->
-        <div class="content-section">
-            <h2 class="section-title">{% trans "Backup Configuration" %}</h2>
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Backup Configuration" %}
+            </h2>
 
-
-            <form>
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select Website" %}</label>
-                    <select ng-change="fetchDetails()" ng-model="websiteToBeBacked" class="form-select">
-                        <option value="">{% trans "Choose a website to backup" %}</option>
-                        {% for items in websiteList %}
-                            <option>{{ items }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div ng-hide="destination" class="form-group">
-                    <label class="form-label">{% trans "Backup Destination" %}</label>
-                    <select ng-change="destinationSelection()" ng-model="backupDestinations" class="form-select">
-                        <option value="">{% trans "Select backup destination" %}</option>
-                        {% for items in destinations %}
-                            <option>{{ items }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div ng-hide="destination" class="form-group">
-                    <label class="form-label">{% trans "Backup Content" %}</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-wrapper">
-                            <input ng-model="websiteData" type="checkbox" id="backup-data" checked>
-                            <label for="backup-data" class="checkbox-label">{% trans "Website Data" %}</label>
+            <form action="/" method="post" class="space-y-8">
+                <div class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Select Website" %}</label>
+                            <select ng-change="fetchDetails()" ng-model="websiteToBeBacked" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                <option value="">{% trans "Choose a website..." %}</option>
+                                {% for items in websiteList %}
+                                    <option>{{ items }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="checkbox-wrapper">
-                            <input ng-model="websiteDatabases" type="checkbox" id="backup-databases">
-                            <label for="backup-databases" class="checkbox-label">{% trans "Databases" %}</label>
-                        </div>
-                        <div class="checkbox-wrapper">
-                            <input ng-model="websiteEmails" type="checkbox" id="backup-emails">
-                            <label for="backup-emails" class="checkbox-label">{% trans "Email Accounts" %}</label>
+
+                        <div ng-hide="destination" class="space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Backup Destination" %}</label>
+                            <select ng-change="destinationSelection()" ng-model="backupDestinations" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                <option value="">{% trans "Select destination..." %}</option>
+                                {% for items in destinations %}
+                                    <option>{{ items }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                </div>
 
+                    <div ng-hide="destination" class="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <label class="text-xl font-semibold text-foreground">{% trans "Backup Content" %}</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteData" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Website Data" %}</span>
+                            </label>
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteDatabases" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Databases" %}</span>
+                            </label>
+                            <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                <input ng-model="websiteEmails" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-medium text-foreground">{% trans "Email Accounts" %}</span>
+                            </label>
+                        </div>
+                    </div>
 
-                <!-- Backup Status -->
-                <div ng-hide="runningBackup" class="form-group">
-                    <label class="form-label">{% trans "Backup Progress" %}</label>
-                    <textarea ng-model="status" class="status-textarea" readonly></textarea>
-                </div>
+                    <!-- Backup Status -->
+                    <div ng-hide="runningBackup" class="space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <label class="text-xl font-semibold text-foreground flex items-center gap-2">
+                            <i data-lucide="terminal" class="h-5 w-5 text-primary"></i>
+                            {% trans "Backup Progress" %}
+                        </label>
+                        <textarea ng-model="status" class="w-full p-6 bg-zinc-950 text-zinc-300 font-mono text-base rounded-2xl border border-zinc-800 shadow-inner min-h-[200px]" readonly></textarea>
+                    </div>
 
-                <!-- Create Backup Button -->
-                <div ng-hide="backupButton" class="form-group" style="text-align: center; margin-top: 30px;">
-                    <button type="button" ng-click="createBackup()" class="btn-primary" ng-disabled="cyberpanelLoading">
-                        <i class="fas fa-shield-alt" ng-if="!cyberpanelLoading"></i>
-                        <i class="fas fa-spinner fa-spin" ng-if="cyberpanelLoading"></i>
-                        <span ng-if="!cyberpanelLoading">{% trans "Create Backup" %}</span>
-                        <span ng-if="cyberpanelLoading">{% trans "Creating Backup..." %}</span>
-                    </button>
+                    <div ng-hide="backupButton" class="pt-4">
+                        <button type="button" ng-click="createBackup()" class="flex items-center justify-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-xl text-2xl font-bold transition-all w-full md:w-auto shadow-xl disabled:opacity-50" ng-disabled="cyberpanelLoading">
+                            <i data-lucide="shield-check" class="h-8 w-8" ng-if="!cyberpanelLoading"></i>
+                            <div ng-if="cyberpanelLoading" class="h-6 w-6 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
+                            <span ng-if="!cyberpanelLoading">{% trans "Create Backup" %}</span>
+                            <span ng-if="cyberpanelLoading">{% trans "Creating Backup..." %}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
-
         <!-- Existing Backups -->
-        <div class="content-section">
-            <h2 class="section-title">{% trans "Existing Backups" %}</h2>
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Existing Backups" %}
+            </h2>
             
-            <div ng-if="!records || records.length === 0" class="empty-state">
-                <i class="fas fa-folder-open"></i>
-                <p>{% trans "No backups created yet" %}</p>
+            <div ng-if="!records || records.length === 0" class="flex flex-col items-center justify-center p-12 bg-secondary/10 rounded-2xl border border-border/50 text-center">
+                <i data-lucide="folder-open" class="h-16 w-16 text-muted-foreground mb-4 opacity-50"></i>
+                <p class="text-xl text-muted-foreground">{% trans "No backups created yet" %}</p>
             </div>
             
-            <table class="backups-table" ng-if="records && records.length > 0">
-                <thead>
-                    <tr>
-                        <th>{% trans "Backup ID" %}</th>
-                        <th>{% trans "Date Created" %}</th>
-                        <th style="text-align: center;">{% trans "Actions" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="record in records track by $index">
-                        <td>
-                            <i class="fas fa-archive" style="color: var(--accent-color, #5b5fcf); margin-right: 8px;"></i>
-                            <span ng-bind="record.id"></span>
-                        </td>
-                        <td ng-bind="record.date"></td>
-                        <td style="text-align: center;">
-                            <a ng-click="restore(record.id)" data-toggle="modal" data-target="#settings"
-                               class="action-btn" title="Restore">
-                                <i class="fas fa-undo"></i>
-                                {% trans "Restore Points" %}
-                            </a>
-                            <button type="button" class="delete-btn" ng-click="deleteBackup(record.id)" style="margin-left: 10px;">
-                                <i class="fas fa-trash-alt"></i>
-                                {% trans "Delete" %}
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="overflow-x-auto rounded-2xl border border-border/50 bg-card" ng-if="records && records.length > 0">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-secondary/20">
+                            <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Backup ID" %}</th>
+                            <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Date Created" %}</th>
+                            <th class="p-6 text-xl font-bold text-foreground border-b border-border/50 text-right">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border/30">
+                        <tr ng-repeat="record in records track by $index" class="hover:bg-secondary/5 transition-colors group text-lg">
+                            <td class="p-6 font-bold text-primary">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="archive" class="h-5 w-5 opacity-50"></i>
+                                    <span ng-bind="record.id"></span>
+                                </div>
+                            </td>
+                            <td class="p-6 text-muted-foreground font-medium" ng-bind="record.date"></td>
+                            <td class="p-6 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button ng-click="restore(record.id)" data-toggle="modal" data-target="#settings" class="flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-xl font-bold transition-all border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary">
+                                        <i data-lucide="history" class="h-4 w-4"></i>
+                                        {% trans "Restore Points" %}
+                                    </button>
+                                    <button ng-click="deleteBackup(record.id)" class="flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-xl font-bold transition-all border border-border hover:bg-destructive hover:text-destructive-foreground hover:border-destructive">
+                                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                        {% trans "Delete" %}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- Restore Points Modal -->
-        <div id="settings" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            {% trans "Restore Points" %}
-                            <span class="loading-spinner" ng-show="cyberpanelLoading"></span>
-                        </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <table class="backups-table">
-                            <thead>
-                                <tr>
-                                    <th>{% trans "Job ID" %}</th>
-                                    <th>{% trans "Snapshot ID" %}</th>
-                                    <th>{% trans "Type" %}</th>
-                                    <th>{% trans "Destination" %}</th>
-                                    <th style="text-align: center;">{% trans "Action" %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="job in jobs track by $index">
-                                    <td ng-bind="job.id"></td>
-                                    <td ng-bind="job.snapshotid"></td>
-                                    <td ng-bind="job.type"></td>
-                                    <td ng-bind="job.destination"></td>
-                                    <td style="text-align: center;">
-                                        <button ng-click="restorePoint(job.id, 0)" class="action-btn">
-                                            <i class="fas fa-undo"></i>
-                                            {% trans "Restore" %}
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
 
-                        <div ng-hide="restoreSt" style="margin-top: 20px;">
-                            <label class="form-label">{% trans "Restore Progress" %}</label>
-                            <textarea ng-model="status" class="status-textarea" rows="7" readonly></textarea>
+        <!-- Restore Points Modal -->
+        <div id="settings" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content bg-card border border-border/50 shadow-2xl rounded-3xl overflow-hidden">
+                    <div class="modal-header bg-secondary/20 p-8 flex items-center justify-between border-b border-border/50">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                                <i data-lucide="history" class="h-6 w-6"></i>
+                            </div>
+                            <h4 class="text-3xl font-extrabold text-foreground">
+                                {% trans "Restore Points" %}
+                                <div ng-show="cyberpanelLoading" class="inline-block h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin ml-4"></div>
+                            </h4>
+                        </div>
+                        <button type="button" class="text-muted-foreground hover:text-foreground transition-colors" data-dismiss="modal">
+                            <i data-lucide="x" class="h-8 w-8"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-8 space-y-8">
+                        <div class="overflow-x-auto rounded-2xl border border-border/50 bg-card">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-secondary/20">
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Job ID" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Snapshot ID" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Type" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Destination" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50 text-right">{% trans "Action" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border/30">
+                                    <tr ng-repeat="job in jobs track by $index" class="hover:bg-secondary/5 transition-colors text-lg">
+                                        <td class="p-6 font-bold text-primary" ng-bind="job.id"></td>
+                                        <td class="p-6 font-mono text-base" ng-bind="job.snapshotid"></td>
+                                        <td class="p-6">
+                                            <span class="px-3 py-1 bg-primary/10 text-primary rounded-lg font-bold" ng-bind="job.type"></span>
+                                        </td>
+                                        <td class="p-6" ng-bind="job.destination"></td>
+                                        <td class="p-6 text-right">
+                                            <button ng-click="restorePoint(job.id, 0)" class="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90 ml-auto">
+                                                <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                                                {% trans "Restore" %}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div ng-hide="restoreSt" class="space-y-3 animate-in fade-in duration-500">
+                            <label class="text-xl font-semibold text-foreground flex items-center gap-2">
+                                <i data-lucide="terminal" class="h-5 w-5 text-primary"></i>
+                                {% trans "Restore Progress" %}
+                            </label>
+                            <textarea ng-model="status" class="w-full p-6 bg-zinc-950 text-zinc-300 font-mono text-base rounded-2xl border border-zinc-800 shadow-inner min-h-[200px]" readonly></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <div class="modal-footer bg-secondary/10 p-6 flex justify-end">
+                        <button type="button" class="px-8 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border transition-all hover:bg-secondary/20" data-dismiss="modal">
                             {% trans "Close" %}
                         </button>
                     </div>

@@ -12,7 +12,7 @@
             <i data-lucide="rotate-ccw" class="w-12 h-12 text-destructive"></i>
             {% trans "Reset DNS Configurations" %}
         </h1>
-        <p class="mt-6 max-w-3xl mx-auto text-2xl text-muted-foreground">
+        <p class="mt-6 mx-auto text-2xl text-muted-foreground">
             {% trans "Reset your DNS configurations to their default state. This will restore all DNS settings to their initial values." %}
         </p>
         <div class="mt-8 flex justify-center gap-4">
@@ -150,16 +150,21 @@
         }
 
         const observer = new MutationObserver((mutations) => {
-            let shouldCreate = false;
+            let shouldRefresh = false;
             mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    shouldCreate = true;
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
                 }
             });
-            if (shouldCreate && typeof lucide !== 'undefined') {
-                lucide.createIcons({
-                    root: document.querySelector('[ng-controller="ResetDNSconf"]')
-                });
+
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                // Debounce refresh
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons({
+                        root: document.querySelector('[ng-controller="ResetDNSconf"]')
+                    });
+                }, 100);
             }
         });
 

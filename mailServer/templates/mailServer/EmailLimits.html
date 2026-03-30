@@ -5,380 +5,111 @@
 
     {% load static %}
     {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
 
-    <style>
-        .modern-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.5s ease-out;
-        }
-        
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary, #1e293b);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-        
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 0;
-        }
-        
-        .docs-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--bg-primary, #fff);
-            border: 1px solid var(--border-primary, #e8e9ff);
-            border-radius: 8px;
-            color: #5b5fcf;
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-        }
-        
-        .docs-link:hover {
-            background: #5b5fcf;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(91, 95, 207, 0.3);
-        }
-        
-        .main-card {
-            background: var(--bg-primary, white);
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05)), var(--shadow-lg, 0 10px 40px rgba(0,0,0,0.08));
-            border: 1px solid var(--border-primary, #e8e9ff);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--bg-secondary, #f8f9ff) 0%, var(--bg-hover, #f0f1ff) 100%);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-primary, #e8e9ff);
-        }
-        
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .card-body {
-            padding: 2rem;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-primary, #e8e9ff);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            background: var(--bg-primary, #fff);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #5b5fcf;
-            box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-        }
-        
-        .btn-primary {
-            background: #5b5fcf;
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary:hover {
-            background: #4547a9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-        }
-        
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slideInRight 0.3s ease-out;
-        }
-        
-        .alert-success {
-            background: var(--success-light, #d1fae5);
-            color: var(--success-text, #065f46);
-            border: 1px solid var(--success-border, #a7f3d0);
-        }
-        
-        .alert-danger {
-            background: var(--danger-light, #fee2e2);
-            color: var(--danger-text, #991b1b);
-            border: 1px solid var(--danger-border, #fecaca);
-        }
-        
-        .alert-info {
-            background: var(--info-light, #dbeafe);
-            color: var(--info-text, #1e40af);
-            border: 1px solid var(--info-border, #bfdbfe);
-        }
-        
-        .disabled-notice {
-            background: var(--warning-light, #fef3c7);
-            border: 1px solid var(--warning-border, #fde68a);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .disabled-notice h3 {
-            color: var(--warning-text, #92400e);
-            margin-bottom: 1rem;
-        }
-        
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-primary, #e8e9ff);
-            border-top-color: #5b5fcf;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        .limits-config {
-            background: var(--bg-secondary, #f8f9ff);
-            border: 1px solid var(--border-primary, #e8e9ff);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .limits-form {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-        }
-        
-        .limits-form .form-group {
-            flex: 1;
-            min-width: 200px;
-            margin-bottom: 0;
-        }
-        
-        .preview-box {
-            background: var(--accent-light, #e0e7ff);
-            border: 1px solid var(--accent-border, #c7d2fe);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            color: var(--info-dark, #3730a3);
-        }
-        
-        .preview-box i {
-            color: #5b5fcf;
-            margin-right: 0.5rem;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-    </style>
-
-    <div class="modern-container" ng-controller="EmailLimitsNew">
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-tachometer-alt"></i>
-                {% trans "Email Limits Configuration" %}
-                <a target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/email-limits/" class="docs-link">
-                    <i class="fas fa-book"></i>
-                    {% trans "Documentation" %}
-                </a>
-            </h1>
-            <p class="page-subtitle">{% trans "Control email sending limits for your email accounts" %}</p>
+    <div class="w-full p-4 md:p-12" ng-controller="EmailLimitsNew">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="gauge" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Email Limits" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Control email sending limits for your email accounts" %}
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div class="main-card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fas fa-cog"></i>
-                    {% trans "Setup Email Limits" %}
-                    <span ng-show="forwardLoading" class="loading-spinner"></span>
+        <div class="grid grid-cols-1 gap-8">
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Limits Configuration" %}
+                    <span ng-show="forwardLoading" class="animate-spin ml-4">
+                        <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
+                    </span>
                 </h2>
-            </div>
-            <div class="card-body">
+
                 {% if not status %}
-                    <div class="disabled-notice">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: #ffa000;"></i>
-                        <h3>{% trans "Postfix is disabled" %}</h3>
-                        <p class="mb-3">{% trans "You need to enable Postfix to manage email limits" %}</p>
-                        <a href="{% url 'managePostfix' %}" class="btn-primary">
-                            <i class="fas fa-power-off"></i>
+                    <div class="bg-secondary/20 rounded-2xl p-10 text-center border border-border">
+                        <i data-lucide="alert-triangle" class="w-16 h-16 text-amber-500 mx-auto mb-6"></i>
+                        <h3 class="text-2xl font-bold text-foreground mb-4">{% trans "Postfix is disabled" %}</h3>
+                        <p class="text-xl text-muted-foreground mb-8">{% trans "You need to enable Postfix to manage email limits" %}</p>
+                        <a href="{% url 'managePostfix' %}" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all">
+                            <i data-lucide="power" class="w-6 h-6"></i>
                             {% trans "Enable Postfix Now" %}
                         </a>
                     </div>
                 {% else %}
-                    <form action="/" method="post">
-                        <div class="form-section">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Select Website" %}</label>
-                                        <select ng-change="showEmailDetails()" ng-model="emailDomain" class="form-control">
-                                            <option value="">{% trans "Choose a website..." %}</option>
-                                            {% for items in websiteList %}
-                                                <option value="{{ items }}">{{ items }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                    <form action="/" method="post" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Website" %}</label>
+                                <select ng-change="showEmailDetails()" ng-model="emailDomain" 
+                                        class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">{% trans "Choose a website..." %}</option>
+                                    {% for items in websiteList %}
+                                        <option value="{{ items }}">{{ items }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                                    <div ng-hide="emailDetails" class="form-group">
-                                        <label class="form-label">{% trans "Select Email Account" %}</label>
-                                        <select ng-change="selectForwardingEmail()" ng-model="selectedEmail" class="form-control">
-                                            <option value="">{% trans "Choose an email account..." %}</option>
-                                            <option ng-repeat="email in emails track by $index" value="{$ email.email $}">{$ email.email $}</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div ng-hide="emailDetails" class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Email Account" %}</label>
+                                <select ng-change="selectForwardingEmail()" ng-model="selectedEmail" 
+                                        class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">{% trans "Choose an email account..." %}</option>
+                                    <option ng-repeat="email in emails track by $index" value="{$ email.email $}">{$ email.email $}</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div ng-hide="creationBox" class="limits-config">
-                            <h3 style="color: var(--text-primary, #1e293b); font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
-                                <i class="fas fa-sliders-h"></i>
-                                {% trans "Configure Email Limits" %}
+                        <div ng-hide="creationBox" class="p-8 bg-secondary/10 border border-border/40 rounded-2xl space-y-8">
+                            <h3 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                                <i data-lucide="sliders" class="w-7 h-7 text-primary"></i>
+                                {% trans "Set Limits" %}
                             </h3>
                             
-                            <div class="preview-box">
-                                <i class="fas fa-info-circle"></i>
-                                <span>{$ selectedEmail $} {% trans "will be able to send" %} <strong>{$ numberofEmails $}</strong> {% trans "emails every" %} <strong>{$ duration $}</strong>.</span>
-                            </div>
-
-                            <div class="limits-form">
-                                <div class="form-group">
-                                    <label class="form-label">{% trans "Number of Emails" %}</label>
-                                    <input type="number" class="form-control" ng-model="numberofEmails" 
-                                           placeholder="{% trans 'e.g., 100' %}" min="1">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+                                <div class="space-y-3">
+                                    <label class="text-lg font-semibold text-foreground">{% trans "Number of Emails" %}</label>
+                                    <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                           ng-model="numberofEmails" placeholder="e.g., 100" min="1">
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="form-label">{% trans "Duration" %}</label>
-                                    <input type="text" class="form-control" ng-model="duration" 
-                                           placeholder="{% trans 'e.g., 1h, 24h, 1d' %}" required>
+                                <div class="space-y-3">
+                                    <label class="text-lg font-semibold text-foreground">{% trans "Duration" %}</label>
+                                    <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                           ng-model="duration" placeholder="e.g., 1h, 24h, 1d" required>
                                 </div>
 
-                                <button type="button" ng-click="SaveChanges()" class="btn-primary">
-                                    <i class="fas fa-save"></i>
+                                <button type="button" ng-click="SaveChanges()" 
+                                        class="h-14 flex items-center justify-center gap-3 bg-primary text-primary-foreground rounded-xl text-lg font-bold hover:bg-primary/90 transition-all shadow-lg">
+                                    <i data-lucide="save" class="w-5 h-5"></i>
                                     {% trans "Save Changes" %}
                                 </button>
                             </div>
                         </div>
 
                         <!-- Alert Messages -->
-                        <div ng-hide="notifyBox" class="form-section">
-                            <div ng-hide="forwardError" class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {$ errorMessage $}
+                        <div ng-hide="notifyBox" class="space-y-4">
+                            <div ng-hide="forwardError" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                                <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{$ errorMessage $}</span>
                             </div>
 
-                            <div ng-hide="forwardSuccess" class="alert alert-success">
-                                <i class="fas fa-check-circle"></i>
-                                {$ successMessage $}
+                            <div ng-hide="forwardSuccess" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
+                                <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{$ successMessage $}</span>
                             </div>
                             
-                            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                <i class="fas fa-times-circle"></i>
-                                {% trans "Could not connect to server. Please refresh this page." %}
+                            <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                                <i data-lucide="x-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{% trans "Could not connect to server. Please refresh this page." %}</span>
                             </div>
                         </div>
                     </form>

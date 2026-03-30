@@ -1,504 +1,182 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "List FTP Accounts - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-
-    <style>
-        .modern-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.5s ease-out;
-        }
-        
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary, #1e293b);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 0;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .main-card {
-            background: var(--bg-secondary, white);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px var(--shadow-light, rgba(0,0,0,0.05)), 0 10px 40px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--bg-hover, #f8f9ff) 0%, var(--bg-gradient, #f0f1ff) 100%);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color, #e8e9ff);
-        }
-        
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .card-body {
-            padding: 2rem;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary, #fff);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px var(--accent-focus, rgba(91, 95, 207, 0.1));
-        }
-        
-        .btn-primary {
-            background: var(--accent-color, #5b5fcf);
-            color: var(--bg-secondary, white);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-        
-        .btn-primary:hover {
-            background: var(--accent-hover, #4547a9);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--accent-shadow-hover, rgba(91, 95, 207, 0.4));
-            color: var(--bg-secondary, white);
-        }
-        
-        .btn-secondary {
-            background: var(--bg-secondary, #fff);
-            color: var(--accent-color, #5b5fcf);
-            border: 1px solid var(--border-color, #e8e9ff);
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background: var(--bg-hover, #f8f9ff);
-            border-color: var(--accent-color, #5b5fcf);
-        }
-        
-        .btn-action {
-            background: var(--bg-secondary, #fff);
-            color: var(--accent-color, #5b5fcf);
-            border: 1px solid var(--border-color, #e8e9ff);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            font-size: 0.875rem;
-        }
-        
-        .btn-action:hover {
-            background: var(--accent-color, #5b5fcf);
-            color: var(--bg-secondary, white);
-            transform: translateY(-1px);
-        }
-        
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slideInRight 0.3s ease-out;
-        }
-        
-        .alert-success {
-            background: var(--success-bg, #d1fae5);
-            color: var(--success-text, #065f46);
-            border: 1px solid var(--success-border, #a7f3d0);
-        }
-        
-        .alert-danger {
-            background: var(--danger-bg, #fee2e2);
-            color: var(--danger-text, #991b1b);
-            border: 1px solid var(--danger-border, #fecaca);
-        }
-        
-        .alert-info {
-            background: var(--info-bg, #dbeafe);
-            color: var(--info-text, #1e40af);
-            border: 1px solid var(--info-border, #bfdbfe);
-        }
-        
-        .disabled-notice {
-            background: var(--warning-bg, #fef3c7);
-            border: 1px solid var(--warning-border, #fde68a);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .disabled-notice h3 {
-            color: var(--warning-text, #92400e);
-            margin-bottom: 1rem;
-        }
-        
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color, #e8e9ff);
-            border-top-color: var(--accent-color, #5b5fcf);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-        
-        .ftp-table {
-            width: 100%;
-            background: var(--bg-secondary, white);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color, #e8e9ff);
-            margin-top: 1.5rem;
-        }
-        
-        .ftp-table thead {
-            background: var(--bg-hover, #f8f9ff);
-        }
-        
-        .ftp-table th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border-color, #e8e9ff);
-        }
-        
-        .ftp-table td {
-            padding: 1rem;
-            color: var(--text-secondary, #64748b);
-            font-size: 0.875rem;
-            border-bottom: 1px solid var(--border-light, #f3f4f6);
-        }
-        
-        .ftp-table tbody tr:hover {
-            background: var(--bg-hover, #f8f9ff);
-        }
-        
-        .ftp-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .password-section {
-            background: var(--bg-hover, #f8f9ff);
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .password-section h3 {
-            color: var(--text-primary, #1e293b);
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .directory-badge {
-            background: var(--accent-bg, #e0e7ff);
-            color: var(--accent-color, #5b5fcf);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .quota-badge {
-            background: var(--border-light, #f3f4f6);
-            color: var(--text-primary, #1e293b);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-    </style>
-
-    <div class="modern-container" ng-controller="listFTPAccounts">
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-list"></i>
-                {% trans "List FTP Accounts" %}
-            </h1>
-            <p class="page-subtitle">{% trans "View and manage FTP accounts, change passwords, and monitor usage" %}</p>
-            <div class="header-actions">
-                <a href="{% url 'createFTPAccount' %}" class="btn-primary">
-                    <i class="fas fa-plus-circle"></i>
+<div class="w-full p-4 md:p-12" ng-controller="listFTPAccounts">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="list" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "List FTP Accounts" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "View and manage FTP accounts, change passwords, and monitor usage" %}
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div ng-show="ftpLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                    <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+                </div>
+                <a href="{% url 'createFTPAccount' %}" class="flex items-center justify-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all shadow-lg shadow-primary/20">
+                    <i data-lucide="plus-circle" class="h-5 w-5"></i>
                     {% trans "Create FTP Account" %}
                 </a>
             </div>
         </div>
 
-        <div class="main-card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fas fa-folder-open"></i>
-                    {% trans "FTP Account Management" %}
-                    <span ng-show="ftpLoading" class="loading-spinner"></span>
-                </h2>
-            </div>
-            <div class="card-body">
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "FTP Account Management" %}
+            </h2>
+
+            <div class="space-y-8">
                 {% if not status %}
-                    <div class="disabled-notice">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: var(--warning-color, #ffa000);"></i>
-                        <h3>{% trans "PureFTPD is disabled" %}</h3>
-                        <p class="mb-3">{% trans "You need to enable PureFTPD to manage FTP accounts" %}</p>
-                        <a href="{% url 'managePureFtpd' %}" class="btn-primary">
-                            <i class="fas fa-power-off"></i>
+                    <div class="flex flex-col items-center justify-center p-12 bg-warning/5 border border-warning/20 rounded-2xl text-center">
+                        <div class="h-20 w-20 bg-warning/10 text-warning rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="alert-triangle" class="h-10 w-10"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-foreground mb-2">{% trans "PureFTPD is disabled" %}</h3>
+                        <p class="text-lg text-muted-foreground mb-8">{% trans "You need to enable PureFTPD to manage FTP accounts" %}</p>
+                        <a href="{% url 'managePureFtpd' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all">
+                            <i data-lucide="power" class="h-5 w-5"></i>
                             {% trans "Enable PureFTPD Now" %}
                         </a>
                     </div>
                 {% else %}
-                    <form action="/" method="post">
-                        <div class="form-section">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Select Domain" %}</label>
-                                        <select ng-change="fetchFTPAccounts()" ng-model="selectedDomain" class="form-control">
-                                            <option value="">{% trans "Choose a domain..." %}</option>
-                                            {% for items in websiteList %}
-                                                <option value="{{ items }}">{{ items }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
+                    <form action="/" method="post" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">
+                                    {% trans "Select Domain" %}
+                                </label>
+                                <select ng-change="fetchFTPAccounts()" ng-model="selectedDomain" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">{% trans "Choose a domain..." %}</option>
+                                    {% for items in websiteList %}
+                                        <option value="{{ items }}">{{ items }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
 
                         <!-- Change Password Section -->
-                        <div ng-hide="changePasswordBox" class="password-section">
-                            <h3><i class="fas fa-key"></i> {% trans "Change Password for" %} {$ ftpUsername $}</h3>
+                        <div ng-hide="changePasswordBox" class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <h3 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                                <i data-lucide="key" class="h-6 w-6 text-primary"></i>
+                                {% trans "Change Password for" %} <span class="text-primary">{$ ftpUsername $}</span>
+                            </h3>
                             
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "New Password" %}</label>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control" ng-model="ftpPassword" 
-                                                   placeholder="{% trans 'Enter new password' %}" required>
-                                            <button type="button" ng-click="generatePassword()" class="btn-secondary">
-                                                <i class="fas fa-dice"></i>
-                                                {% trans "Generate" %}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div ng-hide="generatedPasswordView" class="form-group">
-                                        <label class="form-label">{% trans "Generated Password" %}</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" ng-model="ftpPassword" readonly>
-                                            <button type="button" ng-click="usePassword()" class="btn-secondary">
-                                                <i class="fas fa-check"></i>
-                                                {% trans "Use This Password" %}
-                                            </button>
-                                        </div>
-                                        <small style="color: var(--text-secondary, #64748b); margin-top: 0.5rem; display: block; font-size: 0.875rem;">
-                                            <i class="fas fa-info-circle"></i>
-                                            {% trans "Make sure to save this password in a secure location" %}
-                                        </small>
-                                    </div>
-
-                                    <div style="margin-top: 1.5rem;">
-                                        <button type="button" ng-click="changePasswordBtn()" class="btn-primary">
-                                            <i class="fas fa-save"></i>
-                                            {% trans "Change Password" %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-3">
+                                    <label class="text-xl font-semibold text-foreground">{% trans "New Password" %}</label>
+                                    <div class="flex gap-2">
+                                        <input type="password" class="flex-1 p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                               ng-model="ftpPassword" placeholder="{% trans 'Enter new password' %}" required>
+                                        <button type="button" ng-click="generatePassword()" class="px-6 py-4 bg-secondary/30 border border-border rounded-xl hover:bg-secondary/50 transition-all flex items-center gap-2 text-primary font-semibold">
+                                            <i data-lucide="refresh-cw" class="h-5 w-5"></i>
+                                            {% trans "Generate" %}
                                         </button>
                                     </div>
                                 </div>
+
+                                <div ng-hide="generatedPasswordView" class="col-md-12 space-y-3">
+                                    <label class="text-xl font-semibold text-foreground text-primary">{% trans "Generated Password" %}</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" class="flex-1 p-4 bg-primary/5 border border-primary/20 rounded-xl text-xl outline-none font-mono" 
+                                               ng-model="ftpPassword" readonly>
+                                        <button type="button" ng-click="usePassword()" class="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all">
+                                            {% trans "Use This Password" %}
+                                        </button>
+                                    </div>
+                                    <p class="text-base text-muted-foreground flex items-center gap-2">
+                                        <i data-lucide="info" class="h-4 w-4"></i>
+                                        {% trans "Make sure to save this password in a secure location" %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="pt-4">
+                                <button type="button" ng-click="changePasswordBtn()" class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all w-full md:w-auto">
+                                    <i data-lucide="save" class="h-6 w-6"></i>
+                                    {% trans "Update Password" %}
+                                </button>
                             </div>
                         </div>
 
                         <!-- FTP Accounts Table -->
-                        <div ng-hide="ftpAccounts">
-                            <table class="ftp-table">
+                        <div ng-hide="ftpAccounts" class="overflow-x-auto rounded-2xl border border-border/50">
+                            <table class="w-full text-left border-collapse bg-card">
                                 <thead>
-                                <tr>
-                                    <th style="width: 8%;">{% trans "ID" %}</th>
-                                    <th style="width: 25%;">{% trans "User Name" %}</th>
-                                    <th style="width: 35%;">{% trans "Directory" %}</th>
-                                    <th style="width: 15%;">{% trans "Quota" %}</th>
-                                    <th style="width: 17%; text-align: center;">{% trans "Actions" %}</th>
-                                </tr>
+                                    <tr class="bg-secondary/20">
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "ID" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "User Name" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Directory" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Quota" %}</th>
+                                        <th class="p-6 text-xl font-bold text-foreground border-b border-border/50 text-center">{% trans "Actions" %}</th>
+                                    </tr>
                                 </thead>
-                                <tbody>
-                                <tr ng-repeat="record in records track by $index">
-                                    <td><strong ng-bind="record.id"></strong></td>
-                                    <td>
-                                        <i class="fas fa-user-circle" style="color: var(--accent-color, #5b5fcf); margin-right: 0.5rem;"></i>
-                                        <span ng-bind="record.user"></span>
-                                    </td>
-                                    <td>
-                                        <span class="directory-badge">
-                                            <i class="fas fa-folder"></i>
-                                            <span ng-bind="record.dir"></span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="quota-badge" ng-bind="record.quotasize"></span>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button type="button" ng-click="changePassword(record.user)" class="btn-action">
-                                            <i class="fas fa-key"></i>
-                                            {% trans "Change Password" %}
-                                        </button>
-                                    </td>
-                                </tr>
+                                <tbody class="divide-y divide-border/30">
+                                    <tr ng-repeat="record in records track by $index" class="hover:bg-secondary/5 transition-colors group">
+                                        <td class="p-6 text-lg font-bold text-primary" ng-bind="record.id"></td>
+                                        <td class="p-6">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                                    <i data-lucide="user" class="h-5 w-5"></i>
+                                                </div>
+                                                <span class="text-lg font-semibold text-foreground" ng-bind="record.user"></span>
+                                            </div>
+                                        </td>
+                                        <td class="p-6">
+                                            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/5 text-primary rounded-lg border border-primary/10 font-mono text-base">
+                                                <i data-lucide="folder" class="h-4 w-4"></i>
+                                                <span ng-bind="record.dir"></span>
+                                            </div>
+                                        </td>
+                                        <td class="p-6">
+                                            <span class="px-3 py-1 bg-secondary text-foreground rounded-lg font-medium text-lg" ng-bind="record.quotasize"></span>
+                                        </td>
+                                        <td class="p-6 text-center">
+                                            <button type="button" ng-click="changePassword(record.user)" class="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-foreground rounded-xl font-bold transition-all border border-border hover:bg-primary hover:text-primary-foreground">
+                                                <i data-lucide="key" class="h-5 w-5"></i>
+                                                {% trans "Change Password" %}
+                                            </button>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <!-- Alert Messages -->
-                        <div ng-hide="notificationsBox" class="form-section">
-                            <div ng-hide="recordsFetched" class="alert alert-success">
-                                <i class="fas fa-check-circle"></i>
-                                {% trans "Records successfully fetched for" %} <strong>{$ domainFeteched $}</strong>
+                        <!-- Alerts -->
+                        <div ng-hide="notificationsBox" class="space-y-4 pt-8">
+                            <div ng-hide="recordsFetched" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-600 text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                                <i data-lucide="check-circle" class="h-6 w-6"></i>
+                                <span>{% trans "Records successfully fetched for" %} <strong class="ml-2">{$ domainFeteched $}</strong></span>
                             </div>
 
-                            <div ng-hide="passwordChanged" class="alert alert-success">
-                                <i class="fas fa-check-circle"></i>
-                                {% trans "Password changed for" %} <strong>{$ ftpUsername $}</strong>
+                            <div ng-hide="passwordChanged" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-600 text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                                <i data-lucide="check-circle" class="h-6 w-6"></i>
+                                <span>{% trans "Password changed for" %} <strong class="ml-2">{$ ftpUsername $}</strong></span>
                             </div>
 
-                            <div ng-hide="canNotChangePassword" class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {% trans "Cannot change password for" %} <strong>{$ ftpUsername $}</strong>. {% trans "Error message:" %} {$ errorMessage $}
+                            <div ng-hide="canNotChangePassword" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                                <i data-lucide="x-circle" class="h-6 w-6"></i>
+                                <span>{% trans "Cannot change password for" %} <strong class="mx-2">{$ ftpUsername $}</strong>. {% trans "Error message:" %} {$ errorMessage $}</span>
                             </div>
 
-                            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                <i class="fas fa-times-circle"></i>
-                                {% trans "Could not connect to server. Please refresh this page." %}
+                            <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                                <i data-lucide="alert-circle" class="h-6 w-6"></i>
+                                <span>{% trans "Could not connect to server. Please refresh this page." %}</span>
                             </div>
                         </div>
                     </form>
@@ -506,5 +184,6 @@
             </div>
         </div>
     </div>
+</div>
 
 {% endblock %}

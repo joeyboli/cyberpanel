@@ -3,371 +3,128 @@
 {% load static %}
 {% block title %}{% trans "Manage SSL - CyberPanel" %}{% endblock %}
 
-{% block header_scripts %}
-<style>
-    /* SSL Management Page Specific Styles */
-    .ssl-wrapper {
-        background: transparent;
-        padding: 20px;
-    }
-    
-    .ssl-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .ssl-section {
-        background: hsl(var(--card));
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid hsl(var(--border) / 0.5);
-    }
-    
-    .section-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: hsl(var(--foreground));
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .section-title::before {
-        content: '';
-        width: 4px;
-        height: 24px;
-        background: hsl(var(--primary));
-        border-radius: 2px;
-    }
-    
-    .ssl-docs-link {
-        background: hsl(var(--muted));
-        border: 1px solid hsl(var(--border));
-        color: hsl(var(--foreground));
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-left: auto;
-    }
-    
-    .ssl-docs-link:hover {
-        background: hsl(var(--accent));
-        color: hsl(var(--accent-foreground));
-        border-color: hsl(var(--border));
-        text-decoration: none;
-    }
-    
-    .ssl-description {
-        color: hsl(var(--muted-foreground));
-        font-size: 14px;
-        margin-bottom: 25px;
-        line-height: 1.5;
-    }
-    
-    .form-container {
-        background: hsl(var(--muted) / 0.3);
-        border: 1px solid hsl(var(--border) / 0.5);
-        border-radius: 8px;
-        padding: 25px;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: hsl(var(--foreground));
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid hsl(var(--border));
-        border-radius: 8px;
-        font-size: 14px;
-        color: hsl(var(--foreground));
-        background: hsl(var(--background));
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: hsl(var(--primary));
-        box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
-    }
-    
-    /* Windows selectbox fix */
-    select.form-control {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 20px;
-        padding-right: 40px;
-        line-height: 1.5;
-        min-height: 44px;
-    }
-    
-    /* Windows-specific fixes */
-    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        select.form-control {
-            color: hsl(var(--foreground)) !important;
-            background-color: hsl(var(--background)) !important;
-        }
-    }
-    
-    /* Fix for Windows Edge and Chrome */
-    select.form-control::-ms-expand {
-        display: none;
-    }
-    
-    select.form-control:focus {
-        color: hsl(var(--foreground));
-        background-color: hsl(var(--background));
-    }
-    
-    .btn-primary {
-        background: hsl(var(--primary));
-        border: 1px solid hsl(var(--primary));
-        color: hsl(var(--primary-foreground));
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-    
-    .btn-primary:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-    }
-    
-    .btn-primary:disabled {
-        background: hsl(var(--muted));
-        border-color: hsl(var(--border));
-        color: hsl(var(--muted-foreground));
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .ssl-details-card {
-        background: hsl(var(--muted) / 0.5);
-        border: 1px solid hsl(var(--border));
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .ssl-details-card h4 {
-        font-size: 14px;
-        font-weight: 700;
-        color: hsl(var(--foreground));
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .ssl-detail-item {
-        margin-bottom: 10px;
-        font-size: 14px;
-        color: hsl(var(--muted-foreground));
-    }
-    
-    .ssl-detail-item strong {
-        color: hsl(var(--foreground));
-        font-weight: 600;
-        margin-right: 8px;
-    }
-    
-    .ssl-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .ssl-status.active {
-        background: #d1fae5;
-        color: #065f46;
-    }
-    
-    .ssl-status.inactive {
-        background: #fef3c7;
-        color: #92400e;
-    }
-    
-    .alert {
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-    
-    .alert-success {
-        background: #f0f9ff;
-        border: 1px solid #bae6fd;
-        color: #0c4a6e;
-    }
-    
-    .alert-danger {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #991b1b;
-    }
-    
-    .loading-spinner {
-        width: 16px;
-        height: 16px;
-        margin-left: 8px;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .ssl-wrapper {
-            padding: 15px;
-        }
-        
-        .ssl-section {
-            padding: 20px;
-        }
-        
-        .form-container {
-            padding: 20px;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="ssl-wrapper">
-    <div class="ssl-container" ng-controller="sslIssueCtrl">
-        <!-- Header Section -->
-        <div class="ssl-section">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                <h2 class="section-title">MANAGE SSL</h2>
-                <a href="https://cyberpanel.net/KnowledgeBase/home/cyberpanel-ssl-manager-v1/" target="_blank" class="ssl-docs-link">
-                    <i class="fas fa-book"></i>
-                    {% trans "SSL Docs" %}
-                </a>
+{% get_current_language as LANGUAGE_CODE %}
+
+<div class="w-full p-4 md:p-12" ng-controller="sslIssueCtrl">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="shield-check" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Manage SSL" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Issue Let's Encrypt SSL certificates for your websites" %}
+                    </p>
+                </div>
             </div>
-            <p class="ssl-description">{% trans "This page can be used to issue Let's Encrypt SSL for existing websites on server." %}</p>
+            <div ng-hide="manageSSLLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+            </div>
         </div>
 
-        <!-- SSL Management Section -->
-        <div class="ssl-section">
-            <h3 class="section-title">
-                SSL CERTIFICATE MANAGEMENT
-                <img ng-hide="manageSSLLoading" src="{% static 'images/loading.gif' %}" class="loading-spinner">
-            </h3>
-            
-            <div class="form-container">
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "SSL Certificate Management" %}
+            </h2>
 
-
-                <div class="form-group">
-                    <label class="form-label">{% trans "Select Website" %}</label>
-                    <select ng-change="showbtn()" ng-model="virtualHost" class="form-control" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='{$ 'currentColor' $}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e&quot;);">
-                        <option value="">-- Select a website --</option>
-                        {% for items in websiteList %}
-                            <option>{{ items }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- SSL Details Card -->
-                <div ng-if="sslDetails" class="ssl-details-card">
-                    <h4>
-                        <i class="fas fa-shield-alt" style="margin-right: 8px;"></i>
-                        SSL CERTIFICATE STATUS
-                    </h4>
-                    <div ng-if="sslDetails.hasSSL">
-                        <div class="ssl-detail-item">
-                            <strong>Status:</strong>
-                            <span class="ssl-status active">
-                                <i class="fas fa-check-circle"></i>
-                                Active
-                            </span>
-                        </div>
-                        <div class="ssl-detail-item">
-                            <strong>Issued By:</strong> {$ sslDetails.authority $}
-                        </div>
-                        <div class="ssl-detail-item">
-                            <strong>Expiry Date:</strong> {$ sslDetails.expiryDate $}
-                        </div>
-                        <div class="ssl-detail-item">
-                            <strong>Days Remaining:</strong> 
-                            <span style="color: var(--success-color, #16a34a); font-weight: 600;">{$ sslDetails.days $} days</span>
+            <form action="/" method="post" class="space-y-8">
+                <div class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">
+                                {% trans "Select Website" %}
+                            </label>
+                            <select ng-change="showbtn()" ng-model="virtualHost" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                <option value="">-- {% trans "Select a website" %} --</option>
+                                {% for items in websiteList %}
+                                    <option>{{ items }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                    <div ng-if="!sslDetails.hasSSL">
-                        <div class="ssl-detail-item">
-                            <strong>Status:</strong>
-                            <span class="ssl-status inactive">
-                                <i class="fas fa-exclamation-circle"></i>
-                                No SSL Certificate
-                            </span>
+
+                    <!-- SSL Details Card -->
+                    <div ng-if="sslDetails" class="p-8 bg-card border border-border/50 rounded-2xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                        <h3 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                            <i data-lucide="info" class="h-6 w-6 text-primary"></i>
+                            {% trans "SSL Certificate Status" %}
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div ng-if="sslDetails.hasSSL" class="space-y-4">
+                                <div class="flex items-center gap-3 text-lg">
+                                    <span class="font-semibold text-muted-foreground">{% trans "Status:" %}</span>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 text-green-600 rounded-lg font-bold">
+                                        <i data-lucide="check-circle" class="h-4 w-4"></i>
+                                        {% trans "Active" %}
+                                    </span>
+                                </div>
+                                <div class="text-lg">
+                                    <span class="font-semibold text-muted-foreground">{% trans "Issued By:" %}</span>
+                                    <span class="text-foreground ml-2">{$ sslDetails.authority $}</span>
+                                </div>
+                                <div class="text-lg">
+                                    <span class="font-semibold text-muted-foreground">{% trans "Expiry Date:" %}</span>
+                                    <span class="text-foreground ml-2">{$ sslDetails.expiryDate $}</span>
+                                </div>
+                                <div class="text-lg">
+                                    <span class="font-semibold text-muted-foreground">{% trans "Days Remaining:" %}</span>
+                                    <span class="text-green-600 font-bold ml-2">{$ sslDetails.days $} days</span>
+                                </div>
+                            </div>
+
+                            <div ng-if="!sslDetails.hasSSL" class="space-y-4">
+                                <div class="flex items-center gap-3 text-lg">
+                                    <span class="font-semibold text-muted-foreground">{% trans "Status:" %}</span>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 bg-warning/10 text-warning rounded-lg font-bold">
+                                        <i data-lucide="alert-circle" class="h-4 w-4"></i>
+                                        {% trans "No SSL Certificate" %}
+                                    </span>
+                                </div>
+                                <div ng-if="sslDetails.error_message" class="p-4 bg-destructive/5 border border-destructive/20 rounded-xl text-destructive text-base font-medium">
+                                    <strong>{% trans "Error:" %}</strong> {$ sslDetails.error_message $}
+                                </div>
+                            </div>
                         </div>
-                        <div ng-if="sslDetails.error_message" class="ssl-detail-item" style="color: var(--danger-color, #dc2626);">
-                            <strong>Error:</strong> {$ sslDetails.error_message $}
-                        </div>
+                    </div>
+
+                    <div ng-hide="issueSSLBtn" class="pt-4">
+                        <button type="button" ng-click="issueSSL()" class="flex items-center justify-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-xl text-2xl font-bold transition-all w-full md:w-auto shadow-xl">
+                            <i data-lucide="lock" class="h-8 w-8"></i>
+                            {% trans "Issue SSL" %}
+                        </button>
                     </div>
                 </div>
 
-                <div ng-hide="issueSSLBtn" class="form-group">
-                    <button type="button" ng-click="issueSSL()" class="btn-primary">
-                        <i class="fas fa-lock"></i>
-                        {% trans "Issue SSL" %}
-                    </button>
+                <!-- Alerts -->
+                <div class="space-y-4">
+                    <div ng-hide="canNotIssue" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                        <i data-lucide="alert-triangle" class="h-6 w-6 shrink-0"></i>
+                        <span><strong>{% trans "Cannot issue SSL." %}</strong> {$ errorMessage $}</span>
+                    </div>
+
+                    <div ng-hide="sslIssued" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-600 text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                        <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                        <div>
+                            <p class="font-bold">{% trans "SSL Issued Successfully!" %}</p>
+                            <p class="text-base opacity-90">{% trans "SSL Issued for" %} {$ sslDomain $}</p>
+                        </div>
+                    </div>
+
+                    <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive text-lg font-medium animate-in fade-in slide-in-from-top-4 duration-300">
+                        <i data-lucide="x-circle" class="h-6 w-6 shrink-0"></i>
+                        <span>{% trans "Could not connect to server. Please refresh this page." %}</span>
+                    </div>
                 </div>
-
-                <!-- Success/Error Messages -->
-                <div ng-hide="canNotIssue" class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                    <strong>{% trans "Cannot issue SSL." %}</strong> {% trans "Error message:" %} {$ errorMessage $}
-                </div>
-
-                <div ng-hide="sslIssued" class="alert alert-success">
-                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                    <strong>{% trans "SSL Issued Successfully!" %}</strong><br>
-                    {% trans "SSL Issued for" %} <strong>{$ sslDomain $}</strong>
-                </div>
-
-                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                    <strong>{% trans "Connection Error" %}</strong><br>
-                    {% trans "Could not connect to server. Please refresh this page." %}
-                </div>
-
-
-            </div>
+            </form>
         </div>
     </div>
 </div>

@@ -1,301 +1,211 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Backup Website" %}{% endblock %}
+{% block title %}{% trans "Restore v2 Backup - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-    <style>
-
-    </style>
-
+<div class="w-full p-4 md:p-12" ng-controller="restorev2backupoage">
     {% if BackupStat %}
-        <div class="container">
-            <div id="page-title">
-                <h2>{% trans "Restore V2 Backups" %} - <a target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/backup-v2-in-cyberpanel/"
-                                                          style="height: 23px;line-height: 21px;"
-                                                          class="btn btn-border btn-alt border-red btn-link font-red"
-                                                          title=""><span>{% trans "Backup Docs" %}</span></a></h2>
-                <p>{% trans "This page can be used to restore your backup sites" %}</p>
-            </div>
-
-            <div ng-controller="restorev2backupoage" class="panel">
-                <div class="panel-body">
-                    <h3 class="title-hero">
-                        {% trans "Restore V2 Backups" %} <img ng-hide="backupLoading"
-                                                              src="{% static 'images/loading.gif' %}">
-                    </h3>
-                    <div class="example-box-wrapper">
-
-                        <form action="/IncBackups/static" class="form-horizontal bordered-row">
-
-
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Select Website" %} </label>
-                                <div class="col-sm-6">
-                                    <select id="create-backup-select" ng-change="selectwebsite()" ng-model="selwebsite"
-                                            class="form-control">
-                                        {% for items in websiteList %}
-                                            <option value="{{ items }}">{{ items }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Select Repo" %} </label>
-                                <div class="col-sm-6">
-
-                                    <select ng-change="selectrepo()" ng-model="testhabbi"
-                                            class="form-control">
-                                        <option ng-repeat="repo in repos track by $index">{$ repo $}</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                        </form>
-
-
+        <div class="space-y-12">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+                <div class="flex items-center gap-6">
+                    <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                        <i data-lucide="rotate-ccw" class="h-8 w-8"></i>
                     </div>
-
-                    <div ng-hide="runningSnapshot" class="form-group">
-
-                        <div class="col-sm-12">
-
-                            <table id="snapshotstable" class="table">
-                                <thead>
-                                <tr style="border-bottom: #cccccc solid 1px!important;">
-                                    <th style="border: none">{% trans "Snapshot ID" %}</th>
-                                    <th style="border: none">{% trans "Time" %}</th>
-                                    <th style="border: none">{% trans "Action" %} ></th>
-                                </tr>
-                                </thead>
-                                <tbody id="listsnapshots">
-
-
-                                </tbody>
-
-                            </table>
-                        </div>
-                        <div id="RestoreSnapshotPath" class="modal fade" role="dialog">
-                            <div class="modal-dialog modal-lg">
-
-                                <!-- Modal content-->
-                                <div class="modal-content" style="height: 80%">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;
-                                        </button>
-                                        <h4 id="restore_header_text" class="modal-title">{% trans "Restore" %} <img
-                                                ng-hide="backupLoading" src="{% static 'images/loading.gif' %}"></h4>
-                                    </div>
-                                    <div class="modal-body" style="">
-
-                                        <span style="font-weight: bolder">ID: <span style="font-weight: normal"
-                                                                                    id="Snapshot_id"></span></span><br>
-                                        <span style="font-weight: bolder">PATH: <span style="font-weight: normal"
-                                                                                      id="Snapshot_Path_id"></span></span><br>
-                                        <span style="display: flex;justify-content: center;margin-top: 20px;font-weight: bolder">{% trans "Are you ready to restore the backup? This may overwrite existing files." %} </span>
-                                        <div style="display: flex;justify-content: center;margin-top: 10px;margin-bottom: 20px">
-                                            <button type="button" class="btn btn-primary "
-                                                    style="margin-right: 20px!important;"
-                                                    ng-click="RestorePathV2()">Yes <img
-                                                    ng-hide="backupLoading"
-                                                    src="">
-                                            </button>
-                                            <button type="button" ng-disabled="savingSettings"
-                                                    class="btn btn-default mx-3" data-dismiss="modal">
-                                                No
-                                            </button>
-                                        </div>
-
-                                        <div ng-hide="installationProgress" class="form-group">
-                                            <label class="col-sm-12 control-label"></label>
-                                            <div class="col-sm-12">
-
-                                                <div class="alert alert-success text-center">
-                                                    {#                                                <h2>{$ currentStatus $}</h2>#}
-                                                    <h2 class="ng-binding">Successfully Restored</h2>
-                                                </div>
-
-                                                <div class="progress">
-                                                    <div id="installProgress" class="progress-bar" role="progressbar"
-                                                         aria-valuenow="70"
-                                                         aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                                        <span class="sr-only">70% Complete</span>
-                                                    </div>
-                                                </div>
-
-                                                <div ng-hide="errorMessageBox" class="alert alert-danger">
-                                                    <p>{% trans "Error message:" %} {$ errorMessage $}</p>
-                                                </div>
-
-                                                <div ng-hide="success" class="alert alert-success">
-                                                    <p>{% trans "Restored succesfully." %}</p>
-                                                </div>
-
-
-                                                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                                    <p>{% trans "Could not connect to server. Please refresh this page." %}</p>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-
-                                        <div ng-hide="installationProgress" class="form-group">
-                                            <label class="col-sm-12 control-label"></label>
-                                            <div class="col-sm-4">
-                                                <button type="button" ng-disabled="goBackDisable" ng-click="goBack()"
-                                                        class="btn btn-primary btn-lg">{% trans "Go Back" %}</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-
-                                        <button type="button" ng-disabled="savingSettings"
-                                                class="btn btn-default" data-dismiss="modal">
-                                            Close
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div id="DeleteSnapshotmodelv2" class="modal fade" role="dialog">
-                            <div class="modal-dialog modal-lg">
-
-                                <!-- Modal content-->
-                                <div class="modal-content" style="height: 80%">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;
-                                        </button>
-                                        <h4 id="restore_header_text" class="modal-title">{% trans "Delete" %} <img
-                                                ng-hide="backupLoading" src="{% static 'images/loading.gif' %}"></h4>
-                                    </div>
-                                    <div class="modal-body" style="">
-
-                                        <span style="font-weight: bolder"><span style="font-weight: bolder">ID: <span
-                                                style="font-weight: normal"
-                                                id="Snapshot_id_delete"></span></span><br>
-                                        <span style="display: flex;justify-content: center;margin-top: 20px;font-weight: bolder">{% trans "Are you ready to delete this snapshot? This process can not be undone." %} </span>
-                                        <div style="display: flex;justify-content: center;margin-top: 10px;margin-bottom: 20px">
-                                            <button type="button" class="btn btn-primary "
-                                                    style="margin-right: 20px!important;"
-                                                    ng-click="DeleteSnapshotV2Final()">Yes <img
-                                                    ng-hide="backupLoading"
-                                                    src="">
-                                            </button>
-                                            <button type="button" ng-disabled="savingSettings"
-                                                    class="btn btn-default mx-3" data-dismiss="modal">
-                                                No
-                                            </button>
-                                        </div>
-
-                                        <div ng-hide="installationProgress" class="form-group">
-                                            <label class="col-sm-12 control-label"></label>
-                                            <div class="col-sm-12">
-
-                                                <div class="alert alert-success text-center">
-                                                    {#                                                <h2>{$ currentStatus $}</h2>#}
-                                                    <h2 class="ng-binding">Successfully Restored</h2>
-                                                </div>
-
-                                                <div class="progress">
-                                                    <div id="installProgress" class="progress-bar" role="progressbar"
-                                                         aria-valuenow="70"
-                                                         aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                                        <span class="sr-only">70% Complete</span>
-                                                    </div>
-                                                </div>
-
-                                                <div ng-hide="errorMessageBox" class="alert alert-danger">
-                                                    <p>{% trans "Error message:" %} {$ errorMessage $}</p>
-                                                </div>
-
-                                                <div ng-hide="success" class="alert alert-success">
-                                                    <p>{% trans "Restored succesfully." %}</p>
-                                                </div>
-
-
-                                                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                                    <p>{% trans "Could not connect to server. Please refresh this page." %}</p>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-
-                                        <div ng-hide="installationProgress" class="form-group">
-                                            <label class="col-sm-12 control-label"></label>
-                                            <div class="col-sm-4">
-                                                <button type="button" ng-disabled="goBackDisable" ng-click="goBack()"
-                                                        class="btn btn-primary btn-lg">{% trans "Go Back" %}</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-
-                                        <button type="button" ng-disabled="savingSettings"
-                                                class="btn btn-default" data-dismiss="modal">
-                                            Close
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div>
+                        <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                            {% trans "Restore V2 Backups" %}
+                        </h1>
+                        <p class="text-xl text-muted-foreground">
+                            {% trans "Restore your website data from V2 incremental backup repositories" %}
+                        </p>
                     </div>
                 </div>
-
+                <div ng-hide="backupLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                    <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+                </div>
             </div>
 
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Select Backup to Restore" %}
+                </h2>
 
+                <form action="/IncBackups/static" method="post" class="space-y-8">
+                    <div class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Website" %}</label>
+                                <select ng-change="selectwebsite()" ng-model="selwebsite" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">-- {% trans "Choose a website" %} --</option>
+                                    {% for items in websiteList %}
+                                        <option value="{{ items }}">{{ items }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Repo" %}</label>
+                                <select ng-change="selectrepo()" ng-model="testhabbi" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">-- {% trans "Choose a repository" %} --</option>
+                                    <option ng-repeat="repo in repos track by $index">{$ repo $}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Snapshots Table -->
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10" ng-hide="runningSnapshot">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Available Restore Points" %}
+                </h2>
+
+                <div class="overflow-x-auto rounded-2xl border border-border/50 bg-card">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-secondary/20">
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Snapshot ID" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Time" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50 text-right">{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listsnapshots" class="divide-y divide-border/30">
+                            <!-- Angular note: snapshots are populated by JS/Angular usually -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Modal -->
+        <div id="RestoreSnapshotPath" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content bg-card border border-border/50 shadow-2xl rounded-3xl overflow-hidden">
+                    <div class="modal-header bg-secondary/20 p-8 flex items-center justify-between border-b border-border/50">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                                <i data-lucide="rotate-ccw" class="h-6 w-6"></i>
+                            </div>
+                            <h4 class="text-3xl font-extrabold text-foreground">{% trans "Restore Snapshot" %}</h4>
+                        </div>
+                        <button type="button" class="text-muted-foreground hover:text-foreground transition-colors" data-dismiss="modal">
+                            <i data-lucide="x" class="h-8 w-8"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-8 space-y-8">
+                        <div class="p-6 bg-secondary/10 rounded-2xl border border-border/50 space-y-2">
+                            <div class="text-xl"><span class="font-bold text-muted-foreground uppercase text-sm tracking-wider">ID:</span> <span id="Snapshot_id" class="font-mono"></span></div>
+                            <div class="text-xl"><span class="font-bold text-muted-foreground uppercase text-sm tracking-wider">PATH:</span> <span id="Snapshot_Path_id" class="font-mono"></span></div>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center p-12 bg-warning/5 border border-warning/20 rounded-2xl text-center space-y-6">
+                            <i data-lucide="alert-triangle" class="h-16 w-16 text-warning"></i>
+                            <h3 class="text-2xl font-bold text-foreground">{% trans "Are you ready to restore?" %}</h3>
+                            <p class="text-xl text-muted-foreground">{% trans "This process may overwrite existing files. Please ensure you have a current backup if needed." %}</p>
+                            
+                            <div class="flex gap-4">
+                                <button type="button" ng-click="RestorePathV2()" class="px-10 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:opacity-90">
+                                    {% trans "Yes, Restore Now" %}
+                                </button>
+                                <button type="button" class="px-10 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold transition-all border border-border hover:bg-secondary/20" data-dismiss="modal">
+                                    {% trans "No, Cancel" %}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress inside modal -->
+                        <div ng-hide="installationProgress" class="space-y-6">
+                            <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 text-green-600 text-center font-bold text-2xl animate-in zoom-in duration-300">
+                                {% trans "Successfully Restored" %}
+                            </div>
+                            
+                            <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
+                                <div id="installProgress" class="bg-primary h-full transition-all duration-300" style="width:0%"></div>
+                            </div>
+
+                            <div ng-hide="errorMessageBox" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                                <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{% trans "Error:" %} {$ errorMessage $}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-secondary/10 p-6 flex justify-end">
+                        <button type="button" class="px-8 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border transition-all hover:bg-secondary/20" data-dismiss="modal">{% trans "Close" %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div id="DeleteSnapshotmodelv2" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content bg-card border border-border/50 shadow-2xl rounded-3xl overflow-hidden">
+                    <div class="modal-header bg-destructive/10 p-8 flex items-center justify-between border-b border-destructive/20">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
+                                <i data-lucide="trash-2" class="h-6 w-6"></i>
+                            </div>
+                            <h4 class="text-3xl font-extrabold text-foreground">{% trans "Delete Snapshot" %}</h4>
+                        </div>
+                        <button type="button" class="text-muted-foreground hover:text-foreground transition-colors" data-dismiss="modal">
+                            <i data-lucide="x" class="h-8 w-8"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-8 space-y-8">
+                        <div class="p-6 bg-secondary/10 rounded-2xl border border-border/50">
+                            <div class="text-xl font-bold"><span class="text-muted-foreground uppercase text-sm tracking-wider">Snapshot ID:</span> <span id="Snapshot_id_delete" class="font-mono"></span></div>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center p-12 bg-destructive/5 border border-destructive/20 rounded-2xl text-center space-y-6">
+                            <i data-lucide="alert-circle" class="h-16 w-16 text-destructive"></i>
+                            <h3 class="text-2xl font-bold text-foreground">{% trans "Are you absolutely sure?" %}</h3>
+                            <p class="text-xl text-muted-foreground">{% trans "This process can not be undone. This snapshot will be permanently removed from the repository." %}</p>
+                            
+                            <div class="flex gap-4">
+                                <button type="button" ng-click="DeleteSnapshotV2Final()" class="px-10 py-4 bg-destructive text-destructive-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:opacity-90">
+                                    {% trans "Yes, Delete Forever" %}
+                                </button>
+                                <button type="button" class="px-10 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold transition-all border border-border hover:bg-secondary/20" data-dismiss="modal">
+                                    {% trans "No, Keep It" %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-secondary/10 p-6 flex justify-end">
+                        <button type="button" class="px-8 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border transition-all hover:bg-secondary/20" data-dismiss="modal">{% trans "Close" %}</button>
+                    </div>
+                </div>
+            </div>
         </div>
     {% else %}
-        <style>
-            .feturecard {
-                width: 30%;
-                padding: 46px;
-                margin: 15px
-            }
-        </style>
-        <div class="container">
-            <div id="page-title" align="center">
-                <h1 style="color: var(--text-primary, black)"><strong>Backups v2 - Incremental Backups! </strong></h1>
-                <p style="font-size: 15px; color: var(--text-primary, black); margin-top: 1%">Is your website's data protection strategy up
-                    to par? Are you tired of dealing with slow and unreliable backup solutions that don't offer the
-                    level of robustness you need? <br><br>
-
-                    Introducing CyberPanel's latest feature, Backups v2! With Backups v2, you can ensure that your
-                    website's data is protected like never before. Our advanced incremental backup system utilizes
-                    rclone, a powerful backup tool that supports over 30+ backends, including popular cloud storage
-                    providers like Google Drive, Dropbox, Amazon S3, and more!<br><br>
-
-                    Gone are the days of slow and cumbersome full backups. With Backups v2, you can take advantage of
-                    incremental backups that only capture changes to your data, making the process lightning-fast and
-                    highly efficient. This means you can save time and bandwidth while still maintaining the highest
-                    level of data integrity.<br><br>
-
-                    Whether you have a small blog or a large e-commerce website, Backups v2 is tailored to meet your
-                    needs. With its robustness and versatility, you can have peace of mind knowing that your website's
-                    data is backed up securely and can be easily restored whenever you need it.
-                    <br></p>
+        <div class="mx-auto space-y-12 py-12">
+            <div class="text-center space-y-6">
+                <h1 class="text-5xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Backups v2 - Incremental Backups!" %}
+                </h1>
+                <div class="prose prose-xl prose-zinc dark:prose-invert mx-auto text-muted-foreground leading-relaxed text-left">
+                    <p>{% trans "Is your website's data protection strategy up to par? Are you tired of dealing with slow and unreliable backup solutions that don't offer the level of robustness you need?" %}</p>
+                    <p>{% trans "Introducing CyberPanel's latest feature, Backups v2! With Backups v2, you can ensure that your website's data is protected like never before. Our advanced incremental backup system utilizes rclone, a powerful backup tool that supports over 30+ backends, including popular cloud storage providers like Google Drive, Dropbox, Amazon S3, and more!" %}</p>
+                </div>
             </div>
-            <p align="center">
-                <iframe width="788.54" height="443" src="https://www.youtube.com/embed/7dI1013xvUc"
-                        title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen></iframe>
-            </p>
-            <div style="margin-top: 2%">
-                <stripe-pricing-table pricing-table-id="prctbl_1PhTRPRs6rG0dTDlJZMzTw0k"
-                                      publishable-key="pk_live_51PgodkRs6rG0dTDl3jCUgxjyjI983GmCdHjzuLfZIsssmDLgKgnXnwQghVCctKMNFIC5K4oMcviTFrHf1ytsYZGa00AGySiWlF">
+
+            <div class="aspect-video w-full rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/7dI1013xvUc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+
+            <div class="bg-card rounded-3xl border border-border/50 p-8 shadow-xl overflow-hidden">
+                <stripe-pricing-table pricing-table-id="prctbl_1PhTRPRs6rG0dTDlJZMzTw0k" publishable-key="pk_live_51PgodkRs6rG0dTDl3jCUgxjyjI983GmCdHjzuLfZIsssmDLgKgnXnwQghVCctKMNFIC5K4oMcviTFrHf1ytsYZGa00AGySiWlF">
                 </stripe-pricing-table>
             </div>
-
         </div>
     {% endif %}
-
-
+</div>
 {% endblock %}

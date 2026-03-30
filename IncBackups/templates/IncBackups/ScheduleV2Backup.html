@@ -1,263 +1,201 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Schedule v2 Backup" %}{% endblock %}
+{% block title %}{% trans "Schedule v2 Backup - CyberPanel" %}{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-    <style>
-
-    </style>
-
+<div class="w-full p-4 md:p-12" ng-controller="ScheduleV2Backup">
     {% if BackupStat %}
-        <div class="container">
-            <div id="page-title">
-                <h2>{% trans "Schedule V2 Backup" %} - <a target="_blank" href="https://cyberpanel.net/KnowledgeBase/home/backup-v2-in-cyberpanel/"
-                                                          style="height: 23px;line-height: 21px;"
-                                                          class="btn btn-border btn-alt border-red btn-link font-red"
-                                                          title=""><span>{% trans "Backup Docs" %}</span></a></h2>
-                <p>{% trans "This page can be used to schedule your backups." %}</p>
-            </div>
-
-            <div ng-controller="ScheduleV2Backup" class="panel">
-                <div class="panel-body">
-                    <h3 class="title-hero">
-                        {% trans "Schedule v2 Backup" %} <img ng-hide="backupLoading"
-                                                              src="{% static 'images/loading.gif' %}">
-                    </h3>
-                    <div class="example-box-wrapper">
-
-                        <form class="form-horizontal bordered-row">
-
-
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Select Website" %} </label>
-                                <div class="col-sm-6">
-                                    <select id="create-backup-select" ng-change="selectwebsite()" ng-model="selwebsite"
-                                            class="form-control">
-                                        {% for items in websiteList %}
-                                            <option value="{{ items }}">{{ items }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Backup Frequency" %} </label>
-                                <div class="col-sm-6">
-                                    <select id="create-backup-select" ng-model="frequency"
-                                            class="form-control">
-                                        <option>30 Minutes</option>
-                                        <option>1 Hour</option>
-                                        <option>6 Hours</option>
-                                        <option>12 Hours</option>
-                                        <option>1 Day</option>
-                                        <option>3 Days</option>
-                                        <option>1 Week</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Select Repo" %} </label>
-                                <div class="col-sm-6">
-                                    <select id="reposelectbox" ng-change="selectrepo()" ng-model="testhabbi"
-                                            class="form-control">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Backup Retention" %} </label>
-                                <div class="col-sm-6">
-                                    <select id="create-backup-select" ng-model="retention"
-                                            class="form-control">
-                                        <option value="1">1 Day</option>
-                                        <option value="3">3 Days</option>
-                                        <option value="30">30 Days</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "Backup Content" %}</label>
-                                <div class="col-sm-9">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input ng-model="websiteData" type="checkbox" value="">
-                                            Data
-                                        </label>
-                                    </div>
-                                </div>
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-9">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input ng-model="websiteDatabases" type="checkbox" value="">
-                                            Databases
-                                        </label>
-                                    </div>
-                                </div>
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-9">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input ng-model="websiteEmails" type="checkbox" value="">
-                                            Emails
-                                        </label>
-                                    </div>
-                                </div>
-                                <!---
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-9">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input ng-model="websiteSSLs" type="checkbox" value="">
-                                            SSL Certificates
-                                        </label>
-                                    </div>
-                                </div> -->
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans " " %} </label>
-                                <div class="col-sm-6">
-                                    <button class="btn" id="CreateV2BackupButton" ng-click="CreateScheduleV2()"
-                                            style="border-radius: 6px;background-color: var(--accent-color, #3447b7);color: var(--bg-secondary, white) !important;">
-                                        Create Schedule
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!------ List of records --------------->
-
-                            <div class="form-group">
-
-                                <div class="col-sm-12">
-
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>{% trans "Repo" %}</th>
-                                            <th>{% trans "Frequency" %}</th>
-                                            <th>{% trans "Retention" %}</th>
-                                            <th>{% trans "Backup Websites?" %}</th>
-                                            <th>{% trans "Backup Databases?" %}</th>
-                                            <th>{% trans "Backup Emails?" %}</th>
-                                            <th>{% trans "Last Run" %}</th>
-                                            <th>{% trans "Delete" %}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="record in records track by $index">
-                                            <td ng-bind="record.repo"></td>
-                                            <td ng-bind="record.frequency"></td>
-                                            <td ng-bind="record.retention"></td>
-                                            <td ng-bind="record.websiteData"></td>
-                                            <td ng-bind="record.websiteDatabases"></td>
-                                            <td ng-bind="record.websiteEmails"></td>
-                                            <td ng-bind="record.lastRun"></td>
-                                            <a data-toggle="modal" href="" data-target="#DeleteScheduleV2">
-                                                <td data-toggle="modal" data-target="#DeleteScheduleV2"
-                                                    ng-click="deleteBackupInitialv2(record.repo, record.frequency, record.websiteData, record.websiteDatabases, record.websiteEmails)">
-                                                    <img
-                                                            src="{% static 'images/delete.png' %}"></td>
-                                            </a>
-                                            <div id="DeleteScheduleV2" class="modal fade" role="dialog">
-                                                <div class="modal-dialog">
-                                                    <!-- Modal content-->
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal">
-                                                                &times;
-                                                            </button>
-                                                            <h4 class="modal-title">{% trans "Set up account" %}</h4>
-                                                        </div>
-                                                        <div class="modal-body">
-
-                                                            <form name="containerSettingsForm" action="/"
-                                                                  class="form-horizontal">
-                                                                <div ng-hide="installationDetailsForm"
-                                                                     class="form-group">
-                                                                    <label class="col-sm-3 control-label">{% trans "Are you sure?" %}</label>
-                                                                </div>
-
-                                                            </form>
-
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-primary"
-                                                                    ng-click="DeleteScheduleV2()">Delete <img
-                                                                    ng-hide="backupLoading"
-                                                                    src="{% static 'images/loading.gif' %}">
-                                                            </button>
-                                                            <button type="button"
-                                                                    class="btn btn-default" data-dismiss="modal">
-                                                                Close
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!------ List of records --------------->
-
-                        </form>
-
+        <div class="space-y-12">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+                <div class="flex items-center gap-6">
+                    <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                        <i data-lucide="calendar-clock" class="h-8 w-8"></i>
                     </div>
-
+                    <div>
+                        <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                            {% trans "Schedule V2 Backup" %}
+                        </h1>
+                        <p class="text-xl text-muted-foreground">
+                            {% trans "Advanced incremental backup scheduling with V2 engine" %}
+                        </p>
+                    </div>
                 </div>
-
+                <div ng-hide="backupLoading" class="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                    <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
+                </div>
             </div>
 
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Create Backup Schedule" %}
+                </h2>
 
+                <form action="/" method="post" class="space-y-8">
+                    <div class="p-8 bg-secondary/10 rounded-2xl border border-border/50 space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Website" %}</label>
+                                <select ng-change="selectwebsite()" ng-model="selwebsite" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="">-- {% trans "Choose a website" %} --</option>
+                                    {% for items in websiteList %}
+                                        <option value="{{ items }}">{{ items }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Backup Frequency" %}</label>
+                                <select ng-model="frequency" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option>30 Minutes</option>
+                                    <option>1 Hour</option>
+                                    <option>6 Hours</option>
+                                    <option>12 Hours</option>
+                                    <option>1 Day</option>
+                                    <option>3 Days</option>
+                                    <option>1 Week</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select Repo" %}</label>
+                                <select id="reposelectbox" ng-change="selectrepo()" ng-model="testhabbi" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                </select>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Backup Retention" %}</label>
+                                <select ng-model="retention" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <option value="1">1 Day</option>
+                                    <option value="3">3 Days</option>
+                                    <option value="30">30 Days</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Backup Content" %}</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                    <input ng-model="websiteData" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                    <span class="text-lg font-medium text-foreground">{% trans "Data" %}</span>
+                                </label>
+                                <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                    <input ng-model="websiteDatabases" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                    <span class="text-lg font-medium text-foreground">{% trans "Databases" %}</span>
+                                </label>
+                                <label class="flex items-center p-4 bg-card border border-border/50 rounded-xl cursor-pointer hover:bg-secondary/10 transition-all gap-3">
+                                    <input ng-model="websiteEmails" type="checkbox" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                    <span class="text-lg font-medium text-foreground">{% trans "Emails" %}</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="button" ng-click="CreateScheduleV2()" class="flex items-center justify-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-xl text-2xl font-bold transition-all w-full md:w-auto shadow-xl">
+                                <i data-lucide="plus-circle" class="h-8 w-8"></i>
+                                {% trans "Create Schedule" %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Managed Backup Jobs -->
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Existing Backup Schedules" %}
+                </h2>
+
+                <div class="overflow-x-auto rounded-2xl border border-border/50 bg-card">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-secondary/20">
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Repo" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Frequency" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Retention" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50">{% trans "Last Run" %}</th>
+                                <th class="p-6 text-xl font-bold text-foreground border-b border-border/50 text-right">{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border/30">
+                            <tr ng-repeat="record in records track by $index" class="hover:bg-secondary/5 transition-colors text-lg">
+                                <td class="p-6 font-bold text-primary" ng-bind="record.repo"></td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-lg font-bold" ng-bind="record.frequency"></span>
+                                </td>
+                                <td class="p-6 font-medium">{$ record.retention $} Days</td>
+                                <td class="p-6 text-muted-foreground" ng-bind="record.lastRun"></td>
+                                <td class="p-6 text-right">
+                                    <button data-toggle="modal" data-target="#DeleteScheduleV2" ng-click="deleteBackupInitialv2(record.repo, record.frequency, record.websiteData, record.websiteDatabases, record.websiteEmails)" class="flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-xl font-bold transition-all border border-border hover:bg-destructive hover:text-destructive-foreground hover:border-destructive ml-auto">
+                                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                        {% trans "Delete" %}
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="DeleteScheduleV2" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-card border border-border/50 shadow-2xl rounded-3xl overflow-hidden">
+                    <div class="modal-header bg-destructive/10 p-8 flex items-center justify-between border-b border-destructive/20">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
+                                <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+                            </div>
+                            <h4 class="text-3xl font-extrabold text-foreground">{% trans "Confirm Deletion" %}</h4>
+                        </div>
+                        <button type="button" class="text-muted-foreground hover:text-foreground transition-colors" data-dismiss="modal">
+                            <i data-lucide="x" class="h-8 w-8"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-8 text-center space-y-6">
+                        <p class="text-2xl font-medium text-foreground">{% trans "Are you sure you want to delete this backup schedule?" %}</p>
+                        <p class="text-lg text-muted-foreground">{% trans "This action will permanently remove the schedule. Existing backups in the repository will not be deleted." %}</p>
+                    </div>
+                    <div class="modal-footer bg-secondary/10 p-6 flex justify-end gap-4">
+                        <button type="button" class="px-8 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border transition-all hover:bg-secondary/20" data-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="button" class="px-8 py-3 bg-destructive text-destructive-foreground rounded-xl font-bold transition-all hover:opacity-90 flex items-center gap-2 shadow-lg" ng-click="DeleteScheduleV2()">
+                            <i data-lucide="trash-2" class="h-5 w-5"></i>
+                            {% trans "Delete" %}
+                            <div ng-hide="backupLoading" class="h-4 w-4 border-2 border-destructive-foreground border-t-transparent rounded-full animate-spin ml-2"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     {% else %}
-        <style>
-            .feturecard {
-                width: 30%;
-                padding: 46px;
-                margin: 15px
-            }
-        </style>
-        <div class="container">
-            <div id="page-title" align="center">
-                <h1 style="color: var(--text-primary, black)"><strong>Backups v2 - Incremental Backups! </strong></h1>
-                <p style="font-size: 15px; color: var(--text-primary, black); margin-top: 1%">Is your website's data protection strategy up
-                    to par? Are you tired of dealing with slow and unreliable backup solutions that don't offer the
-                    level of robustness you need? <br><br>
-
-                    Introducing CyberPanel's latest feature, Backups v2! With Backups v2, you can ensure that your
-                    website's data is protected like never before. Our advanced incremental backup system utilizes
-                    rclone, a powerful backup tool that supports over 30+ backends, including popular cloud storage
-                    providers like Google Drive, Dropbox, Amazon S3, and more!<br><br>
-
-                    Gone are the days of slow and cumbersome full backups. With Backups v2, you can take advantage of
-                    incremental backups that only capture changes to your data, making the process lightning-fast and
-                    highly efficient. This means you can save time and bandwidth while still maintaining the highest
-                    level of data integrity.<br><br>
-
-                    Whether you have a small blog or a large e-commerce website, Backups v2 is tailored to meet your
-                    needs. With its robustness and versatility, you can have peace of mind knowing that your website's
-                    data is backed up securely and can be easily restored whenever you need it.
-                    <br></p>
+        <div class="mx-auto space-y-12 py-12">
+            <div class="text-center space-y-6">
+                <h1 class="text-5xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Backups v2 - Incremental Backups!" %}
+                </h1>
+                <div class="prose prose-xl prose-zinc dark:prose-invert mx-auto text-muted-foreground leading-relaxed">
+                    <p>{% trans "Is your website's data protection strategy up to par? Are you tired of dealing with slow and unreliable backup solutions that don't offer the level of robustness you need?" %}</p>
+                    <p>{% trans "Introducing CyberPanel's latest feature, Backups v2! With Backups v2, you can ensure that your website's data is protected like never before. Our advanced incremental backup system utilizes rclone, a powerful backup tool that supports over 30+ backends, including popular cloud storage providers like Google Drive, Dropbox, Amazon S3, and more!" %}</p>
+                </div>
             </div>
-            <p align="center">
-                <iframe width="788.54" height="443" src="https://www.youtube.com/embed/7dI1013xvUc"
-                        title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen></iframe>
-            </p>
-            <div style="margin-top: 2%">
-                <stripe-pricing-table pricing-table-id="prctbl_1PhTRPRs6rG0dTDlJZMzTw0k"
-                                      publishable-key="pk_live_51PgodkRs6rG0dTDl3jCUgxjyjI983GmCdHjzuLfZIsssmDLgKgnXnwQghVCctKMNFIC5K4oMcviTFrHf1ytsYZGa00AGySiWlF">
+
+            <div class="aspect-video w-full rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/7dI1013xvUc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+
+            <div class="bg-card rounded-3xl border border-border/50 p-8 shadow-xl overflow-hidden">
+                <stripe-pricing-table pricing-table-id="prctbl_1PhTRPRs6rG0dTDlJZMzTw0k" publishable-key="pk_live_51PgodkRs6rG0dTDl3jCUgxjyjI983GmCdHjzuLfZIsssmDLgKgnXnwQghVCctKMNFIC5K4oMcviTFrHf1ytsYZGa00AGySiWlF">
                 </stripe-pricing-table>
             </div>
-
         </div>
     {% endif %}
-
-
+</div>
 {% endblock %}

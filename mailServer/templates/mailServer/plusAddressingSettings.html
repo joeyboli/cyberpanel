@@ -6,401 +6,138 @@
     {% load static %}
     {% get_current_language as LANGUAGE_CODE %}
 
-    <style>
-        .modern-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.5s ease-out;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary, #1e293b);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 0;
-        }
-
-        .main-card {
-            background: var(--bg-secondary, white);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px var(--shadow-light, rgba(0,0,0,0.05)), 0 10px 40px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease-out;
-            margin-bottom: 2rem;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--bg-hover, #f8f9ff) 0%, var(--bg-gradient, #f0f1ff) 100%);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color, #e8e9ff);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary, #fff);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px var(--accent-focus, rgba(91, 95, 207, 0.1));
-        }
-
-        .btn-primary {
-            background: var(--accent-color, #5b5fcf);
-            color: var(--text-inverse, white);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-dark, #4547a9);
-            transform: translateY(-2px);
-        }
-
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: var(--success-bg, #d1fae5);
-            color: var(--success-text, #065f46);
-            border: 1px solid var(--success-border, #a7f3d0);
-        }
-
-        .alert-danger {
-            background: var(--danger-bg-light, #fee2e2);
-            color: var(--danger-text, #991b1b);
-            border: 1px solid var(--danger-border, #fecaca);
-        }
-
-        .alert-info {
-            background: var(--info-bg, #dbeafe);
-            color: var(--info-text, #1e40af);
-            border: 1px solid var(--info-border, #bfdbfe);
-        }
-
-        .disabled-notice {
-            background: var(--warning-bg, #fef3c7);
-            border: 1px solid var(--warning-border, #fde68a);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color, #e8e9ff);
-            border-top-color: var(--accent-color, #5b5fcf);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: 0.4s;
-            border-radius: 26px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: var(--accent-color, #5b5fcf);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-
-        .info-box {
-            background: var(--info-bg, #dbeafe);
-            border: 1px solid var(--info-border, #bfdbfe);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-box h4 {
-            color: var(--info-text, #1e40af);
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .info-box p {
-            color: var(--info-text, #1e40af);
-            margin: 0;
-            font-size: 0.875rem;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .status-enabled {
-            background: var(--success-bg, #d1fae5);
-            color: var(--success-text, #065f46);
-        }
-
-        .status-disabled {
-            background: var(--danger-bg-light, #fee2e2);
-            color: var(--danger-text, #991b1b);
-        }
-
-        .warning-icon {
-            color: var(--warning-color, #ffa000);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-
-    <div class="modern-container" ng-controller="plusAddressing" ng-init="isAdmin={{ admin|yesno:'true,false' }}">
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-plus-circle"></i>
-                {% trans "Plus-Addressing" %}
-            </h1>
-            <p class="page-subtitle">{% trans "Enable email sub-addressing (user+tag@domain.com)" %}</p>
+    <div class="w-full p-4 md:p-12" ng-controller="plusAddressing" ng-init="isAdmin = {% if admin %}true{% else %}false{% endif %}">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="plus-circle" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Plus-Addressing" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Enable email sub-addressing (user+tag@domain.com) for your domains" %}
+                    </p>
+                </div>
+            </div>
         </div>
 
-        {% if not status %}
-            <div class="main-card">
-                <div class="card-body">
-                    <div class="disabled-notice">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3 warning-icon"></i>
-                        <h3>{% trans "Postfix is disabled" %}</h3>
-                        <p class="mb-3">{% trans "You need to enable Postfix to configure plus-addressing" %}</p>
-                        <a href="{% url 'managePostfix' %}" class="btn-primary">
-                            <i class="fas fa-power-off"></i>
+        <div class="grid grid-cols-1 gap-8">
+            {% if not status %}
+                <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                    <div class="bg-secondary/20 rounded-2xl p-10 text-center border border-border">
+                        <i data-lucide="alert-triangle" class="w-16 h-16 text-amber-500 mx-auto mb-6"></i>
+                        <h3 class="text-2xl font-bold text-foreground mb-4">{% trans "Postfix is disabled" %}</h3>
+                        <p class="text-xl text-muted-foreground mb-8">{% trans "You need to enable Postfix to configure plus-addressing" %}</p>
+                        <a href="{% url 'managePostfix' %}" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all">
+                            <i data-lucide="power" class="w-6 h-6"></i>
                             {% trans "Enable Postfix Now" %}
                         </a>
                     </div>
                 </div>
-            </div>
-        {% else %}
-            <!-- Global Settings (Admin Only) -->
-            <div class="main-card" ng-show="isAdmin">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-globe"></i>
+            {% else %}
+                <!-- Global Settings (Admin Only) -->
+                <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10" ng-show="isAdmin">
+                    <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                        <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                         {% trans "Global Settings" %}
-                        <span ng-show="loading" class="loading-spinner"></span>
+                        <span ng-show="loading" class="animate-spin ml-4">
+                            <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
+                        </span>
                     </h2>
-                </div>
-                <div class="card-body">
-                    <div class="info-box">
-                        <h4><i class="fas fa-info-circle"></i> {% trans "What is Plus-Addressing?" %}</h4>
-                        <p>{% trans "Plus-addressing allows users to receive email at user+anything@domain.com which will be delivered to user@domain.com. This is useful for filtering and tracking email sources." %}</p>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Enable Plus-Addressing (Server-wide)" %}</label>
-                                <div class="mt-2">
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" ng-model="globalEnabled">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span class="ml-2 status-badge" ng-class="globalEnabled ? 'status-enabled' : 'status-disabled'">
-                                        {$ globalEnabled ? 'Enabled' : 'Disabled' $}
-                                    </span>
-                                </div>
-                            </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Delimiter Character" %}</label>
+                            <select class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                    ng-model="delimiter">
+                                <option value="+">+ ({% trans "Plus" %})</option>
+                                <option value="-">- ({% trans "Hyphen" %})</option>
+                                <option value="_">_ ({% trans "Underscore" %})</option>
+                            </select>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Delimiter Character" %}</label>
-                                <select class="form-control" ng-model="delimiter" style="width: auto;">
-                                    <option value="+">+ (Plus)</option>
-                                    <option value="-">- (Hyphen)</option>
-                                    <option value="_">_ (Underscore)</option>
-                                </select>
-                            </div>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 p-4 bg-card rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                <input type="checkbox" ng-model="globalEnabled" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-semibold text-foreground">{% trans "Enable Server-wide" %}</span>
+                                <span class="ml-auto text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded" ng-class="globalEnabled ? 'bg-green-500/10 text-green-600' : 'bg-destructive/10 text-destructive'">
+                                    {$ globalEnabled ? '{% trans "Enabled" %}' : '{% trans "Disabled" %}' $}
+                                </span>
+                            </label>
                         </div>
                     </div>
 
-                    <button type="button" ng-click="saveGlobalSettings()" class="btn-primary">
-                        <i class="fas fa-save"></i>
-                        {% trans "Save Global Settings" %}
-                    </button>
+                    <div class="pt-8">
+                        <button type="button" ng-click="saveGlobalSettings()" 
+                                class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg w-full md:w-auto">
+                            <i data-lucide="save" class="w-6 h-6"></i>
+                            {% trans "Save Global Settings" %}
+                        </button>
+                    </div>
 
-                    <!-- Alert Messages -->
-                    <div ng-hide="globalNotifyBox" class="mt-3">
-                        <div ng-hide="globalErrorBox" class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            {$ globalErrorMessage $}
+                    <!-- Global Alert Messages -->
+                    <div ng-hide="globalNotifyBox" class="mt-8 space-y-4">
+                        <div ng-hide="globalErrorBox" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                            <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                            <span class="text-lg font-semibold">{$ globalErrorMessage $}</span>
                         </div>
-                        <div ng-hide="globalSuccessBox" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            {$ globalSuccessMessage $}
+                        <div ng-hide="globalSuccessBox" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
+                            <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                            <span class="text-lg font-semibold">{$ globalSuccessMessage $}</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Per-Domain Override -->
-            <div class="main-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-sitemap"></i>
+                <!-- Per-Domain Override -->
+                <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                    <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                        <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                         {% trans "Per-Domain Settings" %}
                     </h2>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info mb-3">
-                        <i class="fas fa-info-circle"></i>
-                        {% trans "Per-domain settings allow you to track which domains should use plus-addressing. Note: Actual filtering is server-wide in Postfix." %}
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Select Domain" %}</label>
-                                <select ng-model="selectedDomain" class="form-control">
-                                    <option value="">{% trans "Choose a domain..." %}</option>
-                                    {% for items in websiteList %}
-                                        <option value="{{ items }}">{{ items }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Select Domain" %}</label>
+                            <select ng-model="selectedDomain" 
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                <option value="">{% trans "Choose a domain..." %}</option>
+                                {% for items in websiteList %}
+                                    <option value="{{ items }}">{{ items }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="col-md-6" ng-show="selectedDomain">
-                            <div class="form-group">
-                                <label class="form-label">{% trans "Enable for this domain" %}</label>
-                                <div class="mt-2">
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" ng-model="domainEnabled">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="space-y-3" ng-show="selectedDomain">
+                            <label class="flex items-center gap-3 p-4 bg-card rounded-xl border border-border/40 cursor-pointer hover:bg-secondary/50 transition-colors">
+                                <input type="checkbox" ng-model="domainEnabled" class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                                <span class="text-lg font-semibold text-foreground">{% trans "Enable for this domain" %}</span>
+                            </label>
                         </div>
                     </div>
 
-                    <button type="button" ng-show="selectedDomain" ng-click="saveDomainSettings()" class="btn-primary">
-                        <i class="fas fa-save"></i>
-                        {% trans "Save Domain Settings" %}
-                    </button>
+                    <div class="pt-8" ng-show="selectedDomain">
+                        <button type="button" ng-click="saveDomainSettings()" 
+                                class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg w-full md:w-auto">
+                            <i data-lucide="save" class="w-6 h-6"></i>
+                            {% trans "Save Domain Settings" %}
+                        </button>
+                    </div>
 
-                    <!-- Alert Messages -->
-                    <div ng-hide="domainNotifyBox" class="mt-3">
-                        <div ng-hide="domainErrorBox" class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            {$ domainErrorMessage $}
+                    <!-- Domain Alert Messages -->
+                    <div ng-hide="domainNotifyBox" class="mt-8 space-y-4">
+                        <div ng-hide="domainErrorBox" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                            <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                            <span class="text-lg font-semibold">{$ domainErrorMessage $}</span>
                         </div>
-                        <div ng-hide="domainSuccessBox" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            {$ domainSuccessMessage $}
+                        <div ng-hide="domainSuccessBox" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
+                            <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                            <span class="text-lg font-semibold">{$ domainSuccessMessage $}</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
 {% endblock %}

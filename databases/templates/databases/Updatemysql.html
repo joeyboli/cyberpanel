@@ -29,7 +29,7 @@
         <div class="space-y-8">
             <!-- Configuration Card -->
             <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
-                <h2 class="text-3xl font-bold text-foreground mb-10 flex items-center gap-4">
+                <h2 class="text-4xl font-bold text-foreground mb-10 flex items-center gap-4">
                     <div class="h-6 w-1.5 rounded-full bg-primary"></div>
                     {% trans "Update MySQL" %}
                     <span ng-hide="dbLoading" class="ml-4">
@@ -40,8 +40,8 @@
                 <div class="space-y-10">
                     <form name="websiteCreationForm" class="space-y-10">
                         <!-- Version Selection -->
-                        <div ng-hide="installform" class="max-w-2xl bg-muted/20 p-8 rounded-2xl border border-border/50">
-                            <label class="block text-xl font-bold text-foreground mb-4">
+                        <div ng-hide="installform" class="bg-muted/20 p-8 rounded-2xl border border-border/50">
+                            <label class="block text-2xl font-bold text-foreground mb-4">
                                 {% trans "Target MySQL Version" %}
                             </label>
                             <div class="relative">
@@ -166,8 +166,19 @@
 
         // Observe for dynamic changes to refresh Lucide icons
         const observer = new MutationObserver((mutations) => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            let shouldRefresh = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
+                }
+            });
+
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                // Debounce refresh
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons();
+                }, 100);
             }
         });
 

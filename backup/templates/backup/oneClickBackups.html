@@ -517,373 +517,388 @@
         }
     </style>
 
-    <div class="modern-container">
+    <div class="w-full p-4 md:p-12">
 
-        <!-- Page header -->
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-cloud-upload-alt"></i>
-                {% trans "One-click Backups" %}
-            </h1>
-            <p class="page-subtitle">{% trans "Secure, automated backup solutions to protect your valuable data" %}</p>
-            <div class="header-actions">
-                <a href="https://youtu.be/mLjMg8Anq70" target="_blank" class="btn-secondary">
-                    <i class="fas fa-play-circle"></i>
-                    {% trans "Watch Tutorial" %}
-                </a>
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-primary mb-4 flex items-center gap-4">
+            <i data-lucide="cloud-upload" class="w-12 h-12 text-primary"></i>
+            {% trans "One-click Backups" %}
+        </h1>
+        <p class="text-xl text-muted-foreground max-w-4xl">
+            {% trans "Secure, automated backup solutions to protect your valuable data" %}
+        </p>
+        <div class="flex flex-wrap gap-4 mt-8">
+            <a href="https://youtu.be/mLjMg8Anq70" target="_blank" class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-3 px-8 rounded-xl transition-all flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-5 h-5"></i>
+                {% trans "Watch Tutorial" %}
+            </a>
+        </div>
+    </div>
+
+    <div ng-controller="backupPlanNowOneClick" class="space-y-12">
+        <!-- Fetch Plans Section -->
+        <div class="bg-primary/10 rounded-2xl p-16 text-center border border-primary/20" ng-hide="showVerification || showSubscriptionsTable">
+            <button type="button" class="bg-white hover:shadow-xl text-primary font-bold py-6 px-12 rounded-full transition-all flex items-center gap-3 mx-auto text-xl border border-primary/20" ng-click="showEmailVerification()">
+                <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                {% trans "Fetch existing backup plans if any" %}
+            </button>
+        </div>
+
+        <!-- Email Verification Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10 max-w-4xl mx-auto" ng-show="showVerification">
+            <div class="mb-8 border-b border-border pb-6">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="mail" class="w-8 h-8 text-primary"></i>
+                    {% trans "Verify Your Email" %}
+                </h2>
+            </div>
+            <div class="space-y-8">
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Email Address" %}</label>
+                    <input type="email" 
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all" 
+                           ng-model="verificationEmail" 
+                           placeholder="{% trans 'Enter your email address' %}">
+                </div>
+
+                <div class="space-y-4" ng-show="verificationCodeSent">
+                    <label class="text-xl font-semibold">{% trans "Verification Code" %}</label>
+                    <input type="text" 
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all" 
+                           ng-model="verificationCode" 
+                           placeholder="{% trans 'Enter verification code' %}">
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-center gap-4 pt-6">
+                    <button type="button" 
+                            ng-click="sendVerificationCode()" 
+                            ng-hide="verificationCodeSent" 
+                            class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        {% trans "Send Verification Code" %}
+                    </button>
+                    <button type="button" 
+                            ng-click="verifyCode()" 
+                            ng-show="verificationCodeSent" 
+                            class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        {% trans "Verify Code" %}
+                    </button>
+                    <button type="button" 
+                            ng-click="cancelVerification()" 
+                            class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                        {% trans "Cancel" %}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div ng-controller="backupPlanNowOneClick">
-            <!-- Fetch Plans Button -->
-            <div class="fetch-plans-section" ng-hide="showVerification || showSubscriptionsTable">
-                <button type="button" class="fetch-plans-btn" ng-click="showEmailVerification()">
-                    <i class="fas fa-sync-alt"></i>
-                    {% trans "Fetch existing backup plans if any" %}
-                </button>
+        <!-- Active Subscriptions -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10" ng-show="showSubscriptionsTable">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="credit-card" class="w-8 h-8 text-primary"></i>
+                    {% trans "Your Active Subscriptions" %}
+                </h2>
             </div>
-
-            <!-- Email Verification Section -->
-            <div class="main-card verification-card" ng-show="showVerification">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-envelope-open-text"></i>
-                        {% trans "Verify Your Email" %}
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Email Address" %}</label>
-                        <input type="email" 
-                               class="form-control" 
-                               ng-model="verificationEmail" 
-                               placeholder="{% trans 'Enter your email address' %}">
-                    </div>
-
-                    <div class="form-group" ng-show="verificationCodeSent">
-                        <label class="form-label">{% trans "Verification Code" %}</label>
-                        <input type="text" 
-                               class="form-control" 
-                               ng-model="verificationCode" 
-                               placeholder="{% trans 'Enter verification code' %}">
-                    </div>
-
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <button type="button" 
-                                ng-click="sendVerificationCode()" 
-                                ng-hide="verificationCodeSent" 
-                                class="btn-primary">
-                            <i class="fas fa-paper-plane"></i>
-                            {% trans "Send Verification Code" %}
-                        </button>
-                        <button type="button" 
-                                ng-click="verifyCode()" 
-                                ng-show="verificationCodeSent" 
-                                class="btn-primary">
-                            <i class="fas fa-check-circle"></i>
-                            {% trans "Verify Code" %}
-                        </button>
-                        <button type="button" 
-                                ng-click="cancelVerification()" 
-                                class="btn-secondary" style="margin-left: 1rem;">
-                            <i class="fas fa-times"></i>
-                            {% trans "Cancel" %}
-                        </button>
-                    </div>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-border">
+                            <th class="pb-4 text-xl font-semibold">{% trans "Subscription ID" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Status" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Amount" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Billing Interval" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Next Billing Date" %}</th>
+                            <th class="pb-4 text-xl font-semibold text-center">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        <tr ng-repeat="sub in subscriptions">
+                            <td class="py-6 text-lg"><code class="bg-secondary/30 px-3 py-1 rounded-lg">{$ sub.subscription_id $}</code></td>
+                            <td class="py-6 text-lg">
+                                <span class="px-3 py-1 rounded-full text-sm font-bold uppercase" 
+                                      ng-class="{'bg-green-500/10 text-green-500': sub.status === 'active', 'bg-red-500/10 text-red-500': sub.status !== 'active'}">
+                                    {$ sub.status $}
+                                </span>
+                            </td>
+                            <td class="py-6 text-lg font-bold">${$ sub.amount $}</td>
+                            <td class="py-6 text-lg">{$ sub.interval $}</td>
+                            <td class="py-6 text-lg">{$ sub.current_period_end | date:'medium' $}</td>
+                            <td class="py-6 text-center">
+                                <button class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 mx-auto"
+                                        ng-click="ReconfigureSubscription(sub)">
+                                    <i data-lucide="settings" class="w-5 h-5"></i>
+                                    {% trans "Configure Server" %}
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <!-- Active Subscriptions -->
-            <div class="main-card" ng-show="showSubscriptionsTable">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-credit-card"></i>
-                        {% trans "Your Active Subscriptions" %}
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>{% trans "Subscription ID" %}</th>
-                                <th>{% trans "Status" %}</th>
-                                <th>{% trans "Amount" %}</th>
-                                <th>{% trans "Billing Interval" %}</th>
-                                <th>{% trans "Next Billing Date" %}</th>
-                                <th>{% trans "Actions" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="sub in subscriptions">
-                                <td><code style="background: var(--border-light, #f3f4f6); padding: 0.25rem 0.5rem; border-radius: 4px;">{$ sub.subscription_id $}</code></td>
-                                <td>
-                                    <span class="status-badge" 
-                                          ng-class="{'active': sub.status === 'active', 'inactive': sub.status !== 'active'}">
-                                        <i class="fas fa-circle" style="font-size: 0.625rem;"></i>
-                                        {$ sub.status $}
-                                    </span>
-                                </td>
-                                <td><strong>${$ sub.amount $}</strong></td>
-                                <td>{$ sub.interval $}</td>
-                                <td>{$ sub.current_period_end | date:'medium' $}</td>
-                                <td>
-                                    <button class="btn-primary" style="padding: 0.625rem 1.25rem; font-size: 1rem;"
-                                            ng-click="ReconfigureSubscription(sub)">
-                                        <i class="fas fa-cog"></i>
-                                        {% trans "Configure Server" %}
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Status Messages -->
+        <!-- Status Messages -->
+        <div class="space-y-4">
             {% if status == 1 %}
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    <strong>{% trans "Success!" %}</strong> {% trans "You have successfully purchased a backup plan." %}
+                <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 flex items-center gap-4 text-green-700">
+                    <i data-lucide="check-circle" class="w-8 h-8"></i>
+                    <p class="text-xl font-semibold">
+                        <strong>{% trans "Success!" %}</strong> {% trans "You have successfully purchased a backup plan." %}
+                    </p>
                 </div>
             {% elif status == 0 %}
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <strong>{% trans "Error!" %}</strong> {% trans "Your purchase was not successful." %} {{ message }}
+                <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 flex items-center gap-4 text-red-700">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                    <p class="text-xl font-semibold">
+                        <strong>{% trans "Error!" %}</strong> {% trans "Your purchase was not successful." %} {{ message }}
+                    </p>
                 </div>
             {% elif status == 4 %}
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i>
-                    {{ message }}
+                <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 flex items-center gap-4 text-red-700">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                    <p class="text-xl font-semibold">{{ message }}</p>
                 </div>
             {% endif %}
+        </div>
 
-            <!-- Your Backup Plans Section -->
-            {% if bPlans %}
-            <div class="main-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-database"></i>
-                        {% trans "Your Backup Plans" %}
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    <table class="data-table">
-                        <thead>
+        <!-- Your Backup Plans Section -->
+        {% if bPlans %}
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="database" class="w-8 h-8 text-primary"></i>
+                    {% trans "Your Backup Plans" %}
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-border">
+                            <th class="pb-4 text-xl font-semibold">{% trans "Account" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Plan Name" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Subscription" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Billing Cycle" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Purchase Date" %}</th>
+                            <th class="pb-4 text-xl font-semibold text-center">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        {% for plan in bPlans %}
                             <tr>
-                                <th>{% trans "Account" %}</th>
-                                <th>{% trans "Plan Name" %}</th>
-                                <th>{% trans "Subscription" %}</th>
-                                <th>{% trans "Billing Cycle" %}</th>
-                                <th>{% trans "Purchase Date" %}</th>
-                                <th>{% trans "Actions" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for plan in bPlans %}
-                                <tr>
-                                    <td>
-                                        <i class="fas fa-user-circle" style="color: var(--accent-color, #5b5fcf); margin-right: 0.5rem;"></i>
+                                <td class="py-6">
+                                    <div class="flex items-center gap-3 text-xl">
+                                        <i data-lucide="user" class="w-6 h-6 text-primary"></i>
                                         {{ plan.sftpUser }}
-                                    </td>
-                                    <td><strong>{{ plan.planName }}</strong></td>
-                                    <td>{{ plan.subscription }}</td>
-                                    <td>
-                                        <span style="background: var(--accent-bg, #e0e7ff); color: var(--accent-color, #5b5fcf); padding: 0.375rem 1rem; border-radius: 20px; font-size: 1rem; font-weight: 500;">
-                                            {% if plan.months == '1' %}
-                                                ${{ plan.price }}/month
-                                            {% else %}
-                                                ${{ plan.price }}/year
-                                            {% endif %}
-                                        </span>
-                                    </td>
-                                    <td>{{ plan.date }}</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            {% if plan.state == 1 %}
-                                                <a href="{% url 'ManageOCBackups' %}?id={{ plan.id }}" 
-                                                   class="btn-primary">
-                                                    <i class="fas fa-clock"></i>
-                                                    {% trans "Schedule Backups" %}
-                                                </a>
-                                                <a href="{% url 'RestoreOCBackups' %}?id={{ plan.id }}" 
-                                                   class="btn-secondary">
-                                                    <i class="fas fa-undo"></i>
-                                                    {% trans "Restore Backups" %}
-                                                </a>
-                                            {% else %}
-                                                <button type="button"
-                                                        ng-click="DeployAccount('{{ plan.id }}')"
-                                                        class="btn-primary">
-                                                    <i class="fas fa-rocket"></i>
-                                                    {% trans "Deploy Account" %}
-                                                </button>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </td>
+                                <td class="py-6 text-xl font-bold">{{ plan.planName }}</td>
+                                <td class="py-6 text-xl">{{ plan.subscription }}</td>
+                                <td class="py-6">
+                                    <span class="bg-primary/10 text-primary px-4 py-2 rounded-full text-lg font-bold">
+                                        {% if plan.months == '1' %}
+                                            ${{ plan.price }}/month
+                                        {% else %}
+                                            ${{ plan.price }}/year
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="py-6 text-xl text-muted-foreground">{{ plan.date }}</td>
+                                <td class="py-6">
+                                    <div class="flex flex-wrap justify-center gap-4">
+                                        {% if plan.state == 1 %}
+                                            <a href="{% url 'ManageOCBackups' %}?id={{ plan.id }}" 
+                                               class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
+                                                <i data-lucide="calendar" class="w-5 h-5"></i>
+                                                {% trans "Schedule" %}
+                                            </a>
+                                            <a href="{% url 'RestoreOCBackups' %}?id={{ plan.id }}" 
+                                               class="bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-semibold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
+                                                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                                                {% trans "Restore" %}
+                                            </a>
+                                        {% else %}
+                                            <button type="button"
+                                                    ng-click="DeployAccount('{{ plan.id }}')"
+                                                    class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2">
+                                                <i data-lucide="rocket" class="w-5 h-5"></i>
+                                                {% trans "Deploy Account" %}
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
 
-            <!-- Available Backup Plans Section -->
-            <div class="section-header">
-                <h2 class="section-title">{% trans "Available Backup Plans" %}</h2>
-            </div>
+        <!-- Available Backup Plans Section -->
+        <div class="space-y-12 pt-8">
+            <h2 class="text-5xl font-extrabold text-center">{% trans "Available Backup Plans" %}</h2>
             
-            <div class="plan-grid">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- 100GB Plan -->
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-storage">100GB</div>
+                <div class="bg-card rounded-3xl shadow-sm border-2 border-border p-10 hover:border-primary transition-all group flex flex-col">
+                    <div class="text-center mb-8">
+                        <div class="text-5xl font-black text-primary group-hover:scale-110 transition-transform mb-2">100GB</div>
+                        <div class="text-xl text-muted-foreground font-semibold">{% trans "Cloud Storage" %}</div>
                     </div>
-                    <div class="price-container">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.0.monthlyPrice }}</span>
-                        <span class="price-period">/month</span>
+                    <div class="space-y-4 mb-10 flex-grow">
+                        <div class="bg-secondary/20 rounded-2xl p-6 text-center">
+                            <span class="text-4xl font-bold text-primary">${{ plans.0.monthlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/month</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-2xl p-6 text-center border border-primary/20">
+                            <span class="text-4xl font-bold text-primary">${{ plans.0.yearlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/year</span>
+                        </div>
                     </div>
-                    <div class="price-container" style="background: var(--accent-bg, #e0e7ff);">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.0.yearlyPrice }}</span>
-                        <span class="price-period">/year</span>
-                    </div>
-                    <div class="plan-actions">
-                        <button type="button"
-                                ng-click="BuyNowBackupP('{{ plans.0.name }}', '{{ plans.0.monthlyPrice }}', '{{ plans.0.yearlyPrice }}', 12)" 
-                                class="btn-outline btn-block">
-                            <i class="fas fa-shopping-cart"></i>
-                            {% trans "Yearly via Card" %}
-                        </button>
-                    </div>
+                    <button type="button"
+                            ng-click="BuyNowBackupP('{{ plans.0.name }}', '{{ plans.0.monthlyPrice }}', '{{ plans.0.yearlyPrice }}', 12)" 
+                            class="w-full bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-xl">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        {% trans "Yearly via Card" %}
+                    </button>
                 </div>
                 
-                <!-- 500GB Plan -->
-                <div class="plan-card featured">
-                    <div class="plan-header">
-                        <div class="plan-storage">500GB</div>
+                <!-- 500GB Plan (Featured) -->
+                <div class="bg-card rounded-3xl shadow-xl border-4 border-primary p-10 transform scale-105 relative z-10 flex flex-col">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-primary text-white py-2 px-8 rounded-full font-black text-lg tracking-widest shadow-lg uppercase">
+                        {% trans "Popular" %}
                     </div>
-                    <div class="price-container">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.1.monthlyPrice }}</span>
-                        <span class="price-period">/month</span>
+                    <div class="text-center mb-8">
+                        <div class="text-6xl font-black text-primary mb-2">500GB</div>
+                        <div class="text-xl text-muted-foreground font-semibold">{% trans "Cloud Storage" %}</div>
                     </div>
-                    <div class="price-container" style="background: var(--accent-bg, #e0e7ff);">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.1.yearlyPrice }}</span>
-                        <span class="price-period">/year</span>
+                    <div class="space-y-4 mb-10 flex-grow">
+                        <div class="bg-secondary/20 rounded-2xl p-6 text-center">
+                            <span class="text-4xl font-bold text-primary">${{ plans.1.monthlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/month</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-2xl p-6 text-center border border-primary/20">
+                            <span class="text-4xl font-bold text-primary">${{ plans.1.yearlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/year</span>
+                        </div>
                     </div>
-                    <div class="plan-actions">
+                    <div class="space-y-4">
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.1.name }}', '{{ plans.1.monthlyPrice }}', '{{ plans.1.yearlyPrice }}', 1)" 
-                                class="btn-outline btn-block">
-                            <i class="fas fa-calendar-alt"></i>
+                                class="w-full bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-lg">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                             {% trans "Monthly via Card" %}
                         </button>
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.1.name }}', '{{ plans.1.monthlyPrice }}', '{{ plans.1.yearlyPrice }}', 12)" 
-                                class="btn-primary btn-block">
-                            <i class="fas fa-shopping-cart"></i>
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-xl shadow-lg">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                             {% trans "Yearly via Card" %}
                         </button>
                     </div>
                 </div>
                 
                 <!-- 1TB Plan -->
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-storage">1TB</div>
+                <div class="bg-card rounded-3xl shadow-sm border-2 border-border p-10 hover:border-primary transition-all group flex flex-col">
+                    <div class="text-center mb-8">
+                        <div class="text-5xl font-black text-primary group-hover:scale-110 transition-transform mb-2">1TB</div>
+                        <div class="text-xl text-muted-foreground font-semibold">{% trans "Cloud Storage" %}</div>
                     </div>
-                    <div class="price-container">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.2.monthlyPrice }}</span>
-                        <span class="price-period">/month</span>
+                    <div class="space-y-4 mb-10 flex-grow">
+                        <div class="bg-secondary/20 rounded-2xl p-6 text-center">
+                            <span class="text-4xl font-bold text-primary">${{ plans.2.monthlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/month</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-2xl p-6 text-center border border-primary/20">
+                            <span class="text-4xl font-bold text-primary">${{ plans.2.yearlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/year</span>
+                        </div>
                     </div>
-                    <div class="price-container" style="background: var(--accent-bg, #e0e7ff);">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.2.yearlyPrice }}</span>
-                        <span class="price-period">/year</span>
-                    </div>
-                    <div class="plan-actions">
+                    <div class="space-y-4">
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.2.name }}', '{{ plans.2.monthlyPrice }}', '{{ plans.2.yearlyPrice }}', 1)" 
-                                class="btn-outline btn-block">
-                            <i class="fas fa-calendar-alt"></i>
+                                class="w-full bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-lg">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                             {% trans "Monthly via Card" %}
                         </button>
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.2.name }}', '{{ plans.2.monthlyPrice }}', '{{ plans.2.yearlyPrice }}', 12)" 
-                                class="btn-primary btn-block">
-                            <i class="fas fa-shopping-cart"></i>
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-xl shadow-lg">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                             {% trans "Yearly via Card" %}
                         </button>
                     </div>
                 </div>
-                
+            </div>
+
+            <!-- More Plans (2TB & 3TB) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:px-40">
                 <!-- 2TB Plan -->
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-storage">2TB</div>
+                <div class="bg-card rounded-3xl shadow-sm border-2 border-border p-10 hover:border-primary transition-all group flex flex-col">
+                    <div class="text-center mb-8">
+                        <div class="text-5xl font-black text-primary group-hover:scale-110 transition-transform mb-2">2TB</div>
+                        <div class="text-xl text-muted-foreground font-semibold">{% trans "Cloud Storage" %}</div>
                     </div>
-                    <div class="price-container">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.3.monthlyPrice }}</span>
-                        <span class="price-period">/month</span>
+                    <div class="space-y-4 mb-10 flex-grow">
+                        <div class="bg-secondary/20 rounded-2xl p-6 text-center">
+                            <span class="text-4xl font-bold text-primary">${{ plans.3.monthlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/month</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-2xl p-6 text-center border border-primary/20">
+                            <span class="text-4xl font-bold text-primary">${{ plans.3.yearlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/year</span>
+                        </div>
                     </div>
-                    <div class="price-container" style="background: var(--accent-bg, #e0e7ff);">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.3.yearlyPrice }}</span>
-                        <span class="price-period">/year</span>
-                    </div>
-                    <div class="plan-actions">
+                    <div class="space-y-4">
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.3.name }}', '{{ plans.3.monthlyPrice }}', '{{ plans.3.yearlyPrice }}', 1)" 
-                                class="btn-outline btn-block">
-                            <i class="fas fa-calendar-alt"></i>
+                                class="w-full bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-lg">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                             {% trans "Monthly via Card" %}
                         </button>
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.3.name }}', '{{ plans.3.monthlyPrice }}', '{{ plans.3.yearlyPrice }}', 12)" 
-                                class="btn-primary btn-block">
-                            <i class="fas fa-shopping-cart"></i>
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-xl shadow-lg">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                             {% trans "Yearly via Card" %}
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- 3TB Plan -->
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-storage">3TB</div>
+                <div class="bg-card rounded-3xl shadow-sm border-2 border-border p-10 hover:border-primary transition-all group flex flex-col">
+                    <div class="text-center mb-8">
+                        <div class="text-5xl font-black text-primary group-hover:scale-110 transition-transform mb-2">3TB</div>
+                        <div class="text-xl text-muted-foreground font-semibold">{% trans "Cloud Storage" %}</div>
                     </div>
-                    <div class="price-container">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.4.monthlyPrice }}</span>
-                        <span class="price-period">/month</span>
+                    <div class="space-y-4 mb-10 flex-grow">
+                        <div class="bg-secondary/20 rounded-2xl p-6 text-center">
+                            <span class="text-4xl font-bold text-primary">${{ plans.4.monthlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/month</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-2xl p-6 text-center border border-primary/20">
+                            <span class="text-4xl font-bold text-primary">${{ plans.4.yearlyPrice }}</span>
+                            <span class="text-muted-foreground font-semibold">/year</span>
+                        </div>
                     </div>
-                    <div class="price-container" style="background: var(--accent-bg, #e0e7ff);">
-                        <span class="price-currency">$</span>
-                        <span class="price-amount">{{ plans.4.yearlyPrice }}</span>
-                        <span class="price-period">/year</span>
-                    </div>
-                    <div class="plan-actions">
+                    <div class="space-y-4">
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.4.name }}', '{{ plans.4.monthlyPrice }}', '{{ plans.4.yearlyPrice }}', 1)" 
-                                class="btn-outline btn-block">
-                            <i class="fas fa-calendar-alt"></i>
+                                class="w-full bg-secondary/20 hover:bg-secondary/40 border border-border text-primary font-bold py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-lg">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                             {% trans "Monthly via Card" %}
                         </button>
                         <button type="button"
                                 ng-click="BuyNowBackupP('{{ plans.4.name }}', '{{ plans.4.monthlyPrice }}', '{{ plans.4.yearlyPrice }}', 12)" 
-                                class="btn-primary btn-block">
-                            <i class="fas fa-shopping-cart"></i>
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 text-xl shadow-lg">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                             {% trans "Yearly via Card" %}
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+</div>
 {% endblock %}

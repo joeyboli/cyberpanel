@@ -6,454 +6,146 @@
     {% load static %}
     {% get_current_language as LANGUAGE_CODE %}
 
-    <style>
-        .modern-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.5s ease-out;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary, #1e293b);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 0;
-        }
-
-        .main-card {
-            background: var(--bg-secondary, white);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px var(--shadow-light, rgba(0,0,0,0.05)), 0 10px 40px var(--shadow-color, rgba(0,0,0,0.08));
-            border: 1px solid var(--border-color, #e8e9ff);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--bg-hover, #f8f9ff) 0%, var(--bg-gradient, #f0f1ff) 100%);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color, #e8e9ff);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary, #fff);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color, #5b5fcf);
-            box-shadow: 0 0 0 3px var(--accent-focus, rgba(91, 95, 207, 0.1));
-        }
-
-        .btn-primary {
-            background: var(--accent-color, #5b5fcf);
-            color: var(--text-inverse, white);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-dark, #4547a9);
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: var(--bg-secondary, #fff);
-            color: var(--danger-color, #ef4444);
-            border: 1px solid var(--danger-bg-light, #fee2e2);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.875rem;
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-color, #ef4444);
-            color: var(--text-inverse, white);
-        }
-
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: var(--success-bg, #d1fae5);
-            color: var(--success-text, #065f46);
-            border: 1px solid var(--success-border, #a7f3d0);
-        }
-
-        .alert-danger {
-            background: var(--danger-bg-light, #fee2e2);
-            color: var(--danger-text, #991b1b);
-            border: 1px solid var(--danger-border, #fecaca);
-        }
-
-        .alert-info {
-            background: var(--info-bg, #dbeafe);
-            color: var(--info-text, #1e40af);
-            border: 1px solid var(--info-border, #bfdbfe);
-        }
-
-        .disabled-notice {
-            background: var(--warning-bg, #fef3c7);
-            border: 1px solid var(--warning-border, #fde68a);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color, #e8e9ff);
-            border-top-color: var(--accent-color, #5b5fcf);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .config-box {
-            background: var(--bg-hover, #f8f9ff);
-            border: 1px solid var(--border-color, #e8e9ff);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 1.5rem;
-        }
-
-        .config-box h3 {
-            color: var(--text-primary, #1e293b);
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .rules-table {
-            width: 100%;
-            background: var(--bg-secondary, white);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color, #e8e9ff);
-            margin-top: 2rem;
-        }
-
-        .rules-table thead {
-            background: var(--bg-hover, #f8f9ff);
-        }
-
-        .rules-table th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border-color, #e8e9ff);
-        }
-
-        .rules-table td {
-            padding: 1rem;
-            color: var(--text-secondary, #64748b);
-            font-size: 0.875rem;
-            border-bottom: 1px solid var(--border-light, #f3f4f6);
-        }
-
-        .rules-table tbody tr:hover {
-            background: var(--bg-hover, #f8f9ff);
-        }
-
-        .rules-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .pattern-type-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .type-wildcard {
-            background: var(--accent-bg, #e0e7ff);
-            color: var(--accent-color, #5b5fcf);
-        }
-
-        .type-regex {
-            background: var(--warning-bg, #fef3c7);
-            color: var(--warning-text, #92400e);
-        }
-
-        .help-text {
-            background: var(--info-bg, #dbeafe);
-            border: 1px solid var(--info-border, #bfdbfe);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .help-text h4 {
-            color: var(--info-text, #1e40af);
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .help-text ul {
-            color: var(--info-text, #1e40af);
-            margin: 0;
-            padding-left: 1.5rem;
-            font-size: 0.875rem;
-        }
-
-        .help-text li {
-            margin-bottom: 0.25rem;
-        }
-
-        .warning-icon {
-            color: var(--warning-color, #ffa000);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-
-    <div class="modern-container" ng-controller="patternForwarding">
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-asterisk"></i>
-                {% trans "Pattern Forwarding" %}
-            </h1>
-            <p class="page-subtitle">{% trans "Create wildcard and regex-based email forwarding rules" %}</p>
+    <div class="w-full p-4 md:p-12" ng-controller="patternForwarding">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="split" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Pattern Forwarding" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Create wildcard and regex-based email forwarding rules" %}
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div class="main-card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fas fa-code-branch"></i>
-                    {% trans "Pattern Forwarding Rules" %}
-                    <span ng-show="loading" class="loading-spinner"></span>
+        <div class="grid grid-cols-1 gap-8">
+            <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                    <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                    {% trans "Pattern Rules" %}
+                    <span ng-show="loading" class="animate-spin ml-4">
+                        <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
+                    </span>
                 </h2>
-            </div>
-            <div class="card-body">
+
                 {% if not status %}
-                    <div class="disabled-notice">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3 warning-icon"></i>
-                        <h3>{% trans "Postfix is disabled" %}</h3>
-                        <p class="mb-3">{% trans "You need to enable Postfix to configure pattern forwarding" %}</p>
-                        <a href="{% url 'managePostfix' %}" class="btn-primary">
-                            <i class="fas fa-power-off"></i>
+                    <div class="bg-secondary/20 rounded-2xl p-10 text-center border border-border">
+                        <i data-lucide="alert-triangle" class="w-16 h-16 text-amber-500 mx-auto mb-6"></i>
+                        <h3 class="text-2xl font-bold text-foreground mb-4">{% trans "Postfix is disabled" %}</h3>
+                        <p class="text-xl text-muted-foreground mb-8">{% trans "You need to enable Postfix to configure pattern forwarding" %}</p>
+                        <a href="{% url 'managePostfix' %}" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all">
+                            <i data-lucide="power" class="w-6 h-6"></i>
                             {% trans "Enable Postfix Now" %}
                         </a>
                     </div>
                 {% else %}
-                    <form action="/" method="post">
-                        <div class="form-section">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Select Domain" %}</label>
-                                        <select ng-change="fetchRules()" ng-model="selectedDomain" class="form-control">
-                                            <option value="">{% trans "Choose a domain..." %}</option>
-                                            {% for items in websiteList %}
-                                                <option value="{{ items }}">{{ items }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+                    <form action="/" method="post" class="space-y-8">
+                        <div class="space-y-3">
+                            <label class="text-xl font-semibold text-foreground">{% trans "Select Domain" %}</label>
+                            <select ng-change="fetchRules()" ng-model="selectedDomain" 
+                                    class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                    aria-label="{% trans 'Select Domain' %}">
+                                <option value="">{% trans "Choose a domain..." %}</option>
+                                {% for items in websiteList %}
+                                    <option value="{{ items }}">{{ items }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
-                        <div ng-hide="configBox" class="config-box">
-                            <h3><i class="fas fa-plus-circle"></i> {% trans "Create New Rule" %}</h3>
+                        <div ng-hide="configBox" class="p-8 bg-secondary/10 border border-border/40 rounded-2xl space-y-8">
+                            <h3 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                                <i data-lucide="plus-circle" class="w-7 h-7 text-primary"></i>
+                                {% trans "Create New Rule" %}
+                            </h3>
 
-                            <div class="help-text" ng-show="patternType === 'wildcard'">
-                                <h4><i class="fas fa-lightbulb"></i> {% trans "Wildcard Pattern Examples" %}</h4>
-                                <ul>
-                                    <li><code>user_*</code> - {% trans "Matches user_anything (e.g., user_sales, user_123)" %}</li>
-                                    <li><code>support-?</code> - {% trans "Matches support- followed by any single character" %}</li>
-                                    <li><code>team*</code> - {% trans "Matches anything starting with team" %}</li>
-                                </ul>
-                            </div>
-
-                            <div class="help-text" ng-show="patternType === 'regex'">
-                                <h4><i class="fas fa-exclamation-triangle"></i> {% trans "Regex Pattern (Advanced)" %}</h4>
-                                <ul>
-                                    <li><code>user_[0-9]+</code> - {% trans "Matches user_ followed by digits" %}</li>
-                                    <li><code>support-(sales|billing)</code> - {% trans "Matches support-sales or support-billing" %}</li>
-                                    <li>{% trans "Note: Pattern is matched against the local part only (before @)" %}</li>
-                                </ul>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Pattern Type" %}</label>
-                                        <select class="form-control" ng-model="patternType" ng-init="patternType='wildcard'">
-                                            <option value="wildcard">{% trans "Wildcard" %}</option>
-                                            <option value="regex">{% trans "Regex (Advanced)" %}</option>
-                                        </select>
-                                    </div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                                <div class="space-y-3">
+                                    <label class="text-lg font-semibold text-foreground">{% trans "Pattern Type" %}</label>
+                                    <select class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                            ng-model="patternType" ng-init="patternType='wildcard'">
+                                        <option value="wildcard">{% trans "Wildcard" %}</option>
+                                        <option value="regex">{% trans "Regex (Advanced)" %}</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Pattern" %}</label>
-                                        <input type="text" class="form-control" ng-model="pattern"
-                                               placeholder="{% trans 'e.g., user_*' %}">
-                                    </div>
+                                <div class="space-y-3">
+                                    <label class="text-lg font-semibold text-foreground">{% trans "Pattern" %}</label>
+                                    <input type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                           ng-model="pattern" placeholder="e.g., user_*">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Destination Email" %}</label>
-                                        <input type="email" class="form-control" ng-model="destination"
-                                               placeholder="{% trans 'forward@example.com' %}">
-                                    </div>
+                                <div class="space-y-3">
+                                    <label class="text-lg font-semibold text-foreground">{% trans "Destination Email" %}</label>
+                                    <input type="email" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                           ng-model="destination" placeholder="forward@example.com">
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="form-label">{% trans "Priority" %}</label>
-                                        <input type="number" class="form-control" ng-model="priority"
-                                               ng-init="priority=100" min="1" max="999">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-3">
+                                        <label class="text-lg font-semibold text-foreground">{% trans "Priority" %}</label>
+                                        <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                               ng-model="priority" ng-init="priority=100" min="1" max="999">
                                     </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label class="form-label">&nbsp;</label>
-                                        <button type="button" ng-click="createRule()" class="btn-primary" style="width:100%">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    <button type="button" ng-click="createRule()" 
+                                            class="h-14 flex items-center justify-center bg-primary text-primary-foreground rounded-xl text-lg font-bold hover:bg-primary/90 transition-all shadow-lg self-end">
+                                        <i data-lucide="plus" class="w-6 h-6"></i>
+                                    </button>
                                 </div>
                             </div>
 
-                            <table class="rules-table" ng-show="rules.length > 0">
-                                <thead>
-                                <tr>
-                                    <th style="width:10%">{% trans "Priority" %}</th>
-                                    <th style="width:15%">{% trans "Type" %}</th>
-                                    <th style="width:25%">{% trans "Pattern" %}</th>
-                                    <th style="width:35%">{% trans "Destination" %}</th>
-                                    <th style="width:15%">{% trans "Actions" %}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="rule in rules track by $index">
-                                    <td><strong ng-bind="rule.priority"></strong></td>
-                                    <td>
-                                        <span class="pattern-type-badge" ng-class="rule.pattern_type === 'wildcard' ? 'type-wildcard' : 'type-regex'">
-                                            <i ng-class="rule.pattern_type === 'wildcard' ? 'fas fa-asterisk' : 'fas fa-code'"></i>
-                                            {$ rule.pattern_type $}
-                                        </span>
-                                    </td>
-                                    <td><code ng-bind="rule.pattern"></code>@{$ selectedDomain $}</td>
-                                    <td ng-bind="rule.destination"></td>
-                                    <td>
-                                        <button type="button" ng-click="deleteRule(rule.id)" class="btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                            <div ng-hide="rules.length > 0" class="alert alert-info mt-3">
-                                <i class="fas fa-info-circle"></i>
-                                {% trans "No pattern forwarding rules configured for this domain yet." %}
+                            <div class="overflow-x-auto border border-border rounded-2xl bg-card mt-8" ng-show="rules.length > 0">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-secondary/30 border-b border-border">
+                                            <th class="p-6 text-lg font-bold text-foreground">{% trans "Priority" %}</th>
+                                            <th class="p-6 text-lg font-bold text-foreground">{% trans "Type" %}</th>
+                                            <th class="p-6 text-lg font-bold text-foreground">{% trans "Pattern" %}</th>
+                                            <th class="p-6 text-lg font-bold text-foreground">{% trans "Destination" %}</th>
+                                            <th class="p-6 text-lg font-bold text-foreground text-right">{% trans "Actions" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="rule in rules track by $index" class="border-b border-border/50 hover:bg-secondary/10 transition-colors">
+                                            <td class="p-6 font-mono font-bold" ng-bind="rule.priority"></td>
+                                            <td class="p-6">
+                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-secondary text-primary border border-border/50">
+                                                    {$ rule.pattern_type $}
+                                                </span>
+                                            </td>
+                                            <td class="p-6">
+                                                <span class="text-lg font-mono" ng-bind="rule.pattern"></span><span class="text-lg text-muted-foreground">@{$ selectedDomain $}</span>
+                                            </td>
+                                            <td class="p-6 text-lg font-medium" ng-bind="rule.destination"></td>
+                                            <td class="p-6 text-right">
+                                                <button type="button" ng-click="deleteRule(rule.id)" 
+                                                        class="inline-flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive font-bold rounded-lg border border-destructive/20 hover:bg-destructive hover:text-white transition-all">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
                         <!-- Alert Messages -->
-                        <div ng-hide="notifyBox" class="form-section mt-3">
-                            <div ng-hide="errorBox" class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {$ errorMessage $}
+                        <div ng-hide="notifyBox" class="space-y-4">
+                            <div ng-hide="errorBox" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                                <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{$ errorMessage $}</span>
                             </div>
 
-                            <div ng-hide="successBox" class="alert alert-success">
-                                <i class="fas fa-check-circle"></i>
-                                {$ successMessage $}
+                            <div ng-hide="successBox" class="flex items-center gap-4 p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600">
+                                <i data-lucide="check-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{$ successMessage $}</span>
                             </div>
 
-                            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                                <i class="fas fa-times-circle"></i>
-                                {% trans "Could not connect to server. Please refresh this page." %}
+                            <div ng-hide="couldNotConnect" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
+                                <i data-lucide="x-circle" class="h-6 w-6 shrink-0"></i>
+                                <span class="text-lg font-semibold">{% trans "Could not connect to server. Please refresh this page." %}</span>
                             </div>
                         </div>
                     </form>
@@ -461,5 +153,7 @@
             </div>
         </div>
     </div>
+
+{% endblock %}
 
 {% endblock %}

@@ -9,116 +9,123 @@
     <!-- Current language: {{ LANGUAGE_CODE }} -->
 
 
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Backup Logs" %}</h2>
-            <p>{% trans "On this page you can view detailed logs of your local and remote scheduled backups." %}</p>
+    <div class="w-full p-4 md:p-12" ng-controller="backupLogsScheduled">
+        <div class="mb-12">
+            <h1 class="text-4xl font-extrabold text-primary mb-4 flex items-center gap-4">
+                <i data-lucide="file-text" class="w-12 h-12 text-primary"></i>
+                {% trans "Backup Logs" %}
+            </h1>
+            <p class="text-xl text-muted-foreground max-w-4xl">
+                {% trans "On this page you can view detailed logs of your local and remote scheduled backups." %}
+            </p>
         </div>
 
-        <div ng-controller="backupLogsScheduled" class="panel">
-            <div class="panel-body">
-                <h3 class="title-hero">
-                    {% trans "Backup Logs" %} <img ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}">
-                </h3>
-                <div class="example-box-wrapper">
+        <div class="bg-card rounded-2xl shadow-sm border border-border p-10 mb-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i data-lucide="search" class="w-8 h-8 text-primary"></i>
+                    {% trans "Select Log File" %}
+                    <img ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" class="w-6 h-6 ml-2">
+                </h2>
+            </div>
 
-                    <form action="/" class="form-horizontal bordered-row">
+            <form action="/" class="space-y-8">
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Select Log File" %}</label>
+                    <select ng-change="fetchLogs()" ng-model="logFile" class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                        {% for items in backups %}
+                            <option>{{ items }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
 
+        <div ng-hide="logDetails" class="space-y-8">
+            <!-- Job Summary -->
+            <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+                <h2 class="text-3xl font-bold mb-8 flex items-center gap-3">
+                    <i data-lucide="info" class="w-8 h-8 text-primary"></i>
+                    {% trans "Job Summary" %}
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-border">
+                                <th class="pb-4 text-xl font-semibold">{% trans "Successful Sites" %}</th>
+                                <th class="pb-4 text-xl font-semibold">{% trans "Failed Sites" %}</th>
+                                <th class="pb-4 text-xl font-semibold">{% trans "Location" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            <tr>
+                                <td class="py-6 text-lg">{$ jobSuccessSites $}</td>
+                                <td class="py-6 text-lg">{$ jobFailedSites $}</td>
+                                <td class="py-6 text-lg">{$ location $}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Select Log File" %}</label>
-                            <div class="col-sm-6">
-                                <select ng-change="fetchLogs()" ng-model="logFile" class="form-control">
-                                    {% for items in backups %}
-                                        <option>{{ items }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+            <!-- Detailed Logs -->
+            <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <h2 class="text-3xl font-bold flex items-center gap-3">
+                        <i data-lucide="list" class="w-8 h-8 text-primary"></i>
+                        {% trans "Detailed Logs" %}
+                    </h2>
+                    <div class="flex flex-col md:flex-row gap-4 flex-1 max-w-2xl">
+                        <div class="relative flex-1">
+                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"></i>
+                            <input placeholder="{% trans 'Search logs...' %}"
+                                   ng-model="packSearch" name="packSearch" type="text"
+                                   class="w-full bg-secondary/20 border border-border rounded-xl py-3 pl-12 pr-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
                         </div>
-
-                    </form>
-
-                    <div ng-hide="logDetails" class="form-group">
-                        <div style="margin-bottom: 2%" class="col-sm-12">
-
-                            <table class="table" style="margin: 0px; padding: 0px">
-                                <thead>
-                                <tr>
-                                    <th>{% trans "Successful Sites" %}</th>
-                                    <th>{% trans "Failed Sites" %}</th>
-                                    <th>{% trans "Location" %}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>{$ jobSuccessSites $}</td>
-                                    <td>{$ jobFailedSites $}</td>
-                                    <td>{$ location $}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <select ng-model="recordsToShow" ng-change="fetchLogs()"
+                                class="bg-secondary/20 border border-border rounded-xl px-4 py-3 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                            <option>10</option>
+                            <option>50</option>
+                            <option>100</option>
+                            <option>500</option>
+                        </select>
                     </div>
+                </div>
 
-                    <div ng-hide="logDetails" class="col-sm-10"
-                         style="padding: 0px; box-shadow: 0px 0px 1px 0px #888888; margin-bottom: 2%">
-                        <input placeholder="Search..."
-                               ng-model="packSearch" name="packSearch" type="text"
-                               class="form-control" required>
-                    </div>
-                    <div ng-hide="logDetails" class="col-sm-2">
-                        <div class="form-group">
-                            <select ng-model="recordsToShow" ng-change="fetchLogs()"
-                                    class="form-control" id="example-select">
-                                <option>10</option>
-                                <option>50</option>
-                                <option>100</option>
-                                <option>500</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div ng-hide="logDetails" class="form-group">
-                        <div class="col-sm-12">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-border">
+                                <th class="pb-4 text-xl font-semibold w-32">{% trans "LEVEL" %}</th>
+                                <th class="pb-4 text-xl font-semibold">{% trans "Message" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            <tr ng-repeat="log in logs | filter:packSearch">
+                                <td class="py-4 text-lg font-medium">
+                                    <span class="px-3 py-1 rounded-lg text-sm uppercase" 
+                                          ng-class="{'bg-green-500/10 text-green-500': log.LEVEL === 'INFO', 'bg-red-500/10 text-red-500': log.LEVEL === 'ERROR', 'bg-yellow-500/10 text-yellow-500': log.LEVEL === 'WARNING'}">
+                                        {$ log.LEVEL $}
+                                    </span>
+                                </td>
+                                <td class="py-4 text-lg" ng-bind="log.Message"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                            <table class="table" style="margin: 0px; padding: 0px">
-                                <thead>
-                                <tr>
-                                    <th>{% trans "LEVEL" %}</th>
-                                    <th>{% trans "Message" %}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="log in logs | filter:packSearch">
-                                    <td ng-bind="log.LEVEL"></td>
-                                    <td ng-bind="log.Message"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Pagination -->
+                <div class="mt-10 flex justify-end">
+                    <div class="flex items-center gap-4">
+                        <label class="text-lg font-semibold">{% trans "Page" %}</label>
+                        <select ng-model="currentPage" class="bg-secondary/20 border border-border rounded-xl px-4 py-2 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                                ng-change="fetchLogs()">
+                            <option ng-repeat="page in pagination">{$ $index + 1 $}</option>
+                        </select>
                     </div>
-                    <div ng-hide="logDetails" style="margin-top: 2%" class="row">
-                        <div style="margin-top: 2%" class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-9">
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <select ng-model="currentPage" class="form-control"
-                                                ng-change="fetchLogs()">
-                                            <option ng-repeat="page in pagination">{$ $index + 1 $}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div> <!-- end row -->
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
-
-
     </div>
 
 

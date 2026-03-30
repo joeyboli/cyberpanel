@@ -11,7 +11,7 @@
             <i data-lucide="cloud" class="w-12 h-12 text-primary"></i>
             {% trans "CloudFlare DNS Manager" %}
         </h1>
-        <p class="mt-6 max-w-3xl mx-auto text-2xl text-muted-foreground">
+        <p class="mt-6 mx-auto text-2xl text-muted-foreground">
             {% trans "Manage DNS records for your domains through CloudFlare integration" %}
         </p>
         <div class="mt-8">
@@ -42,7 +42,7 @@
             {% if not CloudFlare %}
                 <!-- CloudFlare Setup -->
                 <div class="p-8 md:p-12">
-                    <div class="max-w-2xl mx-auto">
+                    <div class="mx-auto">
                         <div class="flex items-center gap-3 mb-8">
                             <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary shadow-sm">
                                 <i data-lucide="settings" class="w-6 h-6"></i>
@@ -278,7 +278,7 @@
                     </div>
 
                     <!-- API Settings Tab -->
-                    <div ng-show="activeTab === 'api-settings'" class="max-w-2xl mx-auto animate-in fade-in duration-300">
+                    <div ng-show="activeTab === 'api-settings'" class="mx-auto animate-in fade-in duration-300">
                         <div class="flex items-center gap-3 mb-8">
                             <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary shadow-sm">
                                 <i data-lucide="key" class="w-6 h-6"></i>
@@ -350,16 +350,21 @@
         }
 
         const observer = new MutationObserver((mutations) => {
-            let shouldCreate = false;
+            let shouldRefresh = false;
             mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    shouldCreate = true;
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
                 }
             });
-            if (shouldCreate && typeof lucide !== 'undefined') {
-                lucide.createIcons({
-                    root: document.querySelector('[ng-controller="addModifyDNSRecordsCloudFlare"]')
-                });
+
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                // Debounce refresh
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons({
+                        root: document.querySelector('[ng-controller="addModifyDNSRecordsCloudFlare"]')
+                    });
+                }, 100);
             }
         });
 

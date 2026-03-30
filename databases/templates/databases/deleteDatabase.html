@@ -66,7 +66,7 @@
 
             <!-- Selection Card -->
             <div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-10">
-                <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <h2 class="text-4xl font-bold text-foreground mb-8 flex items-center gap-4">
                     <div class="h-6 w-1.5 rounded-full bg-destructive"></div>
                     {% trans "Database Selection" %}
                     <span ng-hide="deleteDatabaseLoading" class="ml-4">
@@ -77,10 +77,10 @@
                 <div class="space-y-10">
                     <!-- Website Selector -->
                     <div class="space-y-4">
-                        <label class="text-xl font-bold text-foreground">
+                        <label class="text-2xl font-bold text-foreground">
                             {% trans "Select Website" %}
                         </label>
-                        <div class="relative max-w-2xl">
+                        <div class="relative">
                             <select ng-change="fetchDatabases()" ng-model="databaseWebsite" 
                                     class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-destructive/20 focus:border-destructive transition-all outline-none cursor-pointer text-xl font-medium">
                                 <option value="">-- {% trans "Select a website" %} --</option>
@@ -97,10 +97,10 @@
                     <!-- Database Selector (Conditional) -->
                     <div class="database-selector-section space-y-10 pt-4" ng-hide="fetchedDatabases">
                         <div class="space-y-4">
-                            <label class="text-xl font-bold text-foreground">
+                            <label class="text-2xl font-bold text-foreground">
                                 {% trans "Select Database to Delete" %}
                             </label>
-                            <div class="relative max-w-2xl">
+                            <div class="relative">
                                 <select ng-model="selectedDB" ng-change="databaseSelected()" 
                                         class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-destructive/20 focus:border-destructive transition-all outline-none cursor-pointer text-xl font-medium border-destructive/30">
                                     <option value="">-- {% trans "Select a database" %} --</option>
@@ -213,13 +213,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-    });
-</script>
 {% endblock %}
 
 {% block footer_scripts %}
@@ -233,8 +226,19 @@ $(document).ready(function() {
 
     // Observe for dynamic changes to refresh Lucide icons
     const observer = new MutationObserver((mutations) => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        let shouldRefresh = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                shouldRefresh = true;
+            }
+        });
+
+        if (shouldRefresh && typeof lucide !== 'undefined') {
+            // Debounce refresh
+            if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+            window.lucideTimeout = setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
         }
     });
 

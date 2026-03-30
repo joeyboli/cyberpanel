@@ -62,12 +62,13 @@ class CPBackupsV2(multi.Thread):
             self.LocalRclonePath = f'/home/{self.website.domain}/.config/rclone'
             self.ConfigFilePath = f'{self.LocalRclonePath}/rclone.conf'
 
-            reponame =  self.data['BackendName']
+            reponame = self.data['BackendName']
 
             try:
                 ### refresh token if gdrie
                 command = f"rclone config dump"
-                token = json.loads(ProcessUtilities.outputExecutioner(command, self.website.externalApp, True).rstrip('\n'))
+                token = json.loads(
+                    ProcessUtilities.outputExecutioner(command, self.website.externalApp, True).rstrip('\n'))
 
                 refreshToken = json.loads(token[reponame]['token'])['refresh_token']
 
@@ -88,7 +89,6 @@ class CPBackupsV2(multi.Thread):
 
             # command = 'cat %s' % (path)
             # CurrentContent = pu.outputExecutioner(command)
-
 
             # if CurrentContent.find(reponame) > -1:
             #     config = configparser.ConfigParser()
@@ -115,9 +115,7 @@ class CPBackupsV2(multi.Thread):
             # else:
             #     logging.CyberCPLogFileWriter.writeToFile("Token Not upadate..........")
         except BaseException as msg:
-            logging.CyberCPLogFileWriter.writeToFile("Error update token............%s"%msg)
-
-
+            logging.CyberCPLogFileWriter.writeToFile("Error update token............%s" % msg)
 
         ## Set up the repo name to be used
 
@@ -141,7 +139,6 @@ class CPBackupsV2(multi.Thread):
 
         if os.path.exists(self.StatusFile):
             os.remove(self.StatusFile)
-
 
         #### i want to keep a merge flag, if not delete all snapshots in case of backup fail
 
@@ -180,10 +177,8 @@ class CPBackupsV2(multi.Thread):
             command = f'mkdir -p {self.LocalRclonePath}'
             ProcessUtilities.executioner(command, self.website.externalApp)
 
-
             if type == CPBackupsV2.SFTP:
                 ## config = {"name":, "host":, "user":, "port":, "path":, "password":,}
-
 
                 ### first check sftp credentails details
 
@@ -193,14 +188,14 @@ class CPBackupsV2(multi.Thread):
 
                 try:
                     # Connect to the server using the private key
-                    ssh.connect(config["host"], username=config["user"], password=config["password"], port=config["sshPort"])
+                    ssh.connect(config["host"], username=config["user"], password=config["password"],
+                                port=config["sshPort"])
                     ssh.close()
                     if os.path.exists(ProcessUtilities.debugPath):
-                        logging.CyberCPLogFileWriter.writeToFile(f'Successfully connected to {config["host"]} through user {config["user"]}')
+                        logging.CyberCPLogFileWriter.writeToFile(
+                            f'Successfully connected to {config["host"]} through user {config["user"]}')
                 except BaseException as msg:
                     return 0, str(msg)
-
-
 
                 command = f'rclone obscure {config["password"]}'
                 ObsecurePassword = ProcessUtilities.outputExecutioner(command).rstrip('\n')
@@ -223,7 +218,7 @@ port = {config["sshPort"]}
                 return 1, None
             elif type == CPBackupsV2.GDrive:
                 token = """{"access_token":"%s","token_type":"Bearer","refresh_token":"%s", "expiry":"2024-04-08T21:53:00.123456789Z"}""" % (
-                config["token"], config["refresh_token"])
+                    config["token"], config["refresh_token"])
 
                 if config["client_id"] == 'undefined':
                     config["client_id"] = ''
@@ -369,8 +364,8 @@ team_drive =
             command = f"mkdir -p {self.data['BasePath']}"
             ProcessUtilities.executioner(command)
 
-            #command = f"chmod 711 {self.data['BasePath']}"
-            #ProcessUtilities.executioner(command)
+            # command = f"chmod 711 {self.data['BasePath']}"
+            # ProcessUtilities.executioner(command)
 
         self.StartingTimeStamp = CPBackupsV2.FetchCurrentTimeStamp()
 
@@ -562,7 +557,7 @@ team_drive =
                         if self.BackupDataBasesRustic() == 0:
                             self.UpdateStatus(f'Failed to create backup for databases.', CPBackupsV2.FAILED)
                             self.MergeSnapshotFlag = 0
-                            #return 0
+                            # return 0
                         else:
                             self.UpdateStatus('Database backups completed successfully..,25', CPBackupsV2.RUNNING)
 
@@ -796,7 +791,8 @@ team_drive =
             command = f'rustic -r {self.repo} restore {self.data["snapshotid"]}:{ConfigPath} {RestoreConfigPath} --password ""  2>/dev/null'
             result = ProcessUtilities.outputExecutioner(command, self.website.externalApp, True)
 
-            ConfigContent = json.loads(ProcessUtilities.outputExecutioner(f'cat {RestoreConfigPath}/config.json').rstrip('\n'))
+            ConfigContent = json.loads(
+                ProcessUtilities.outputExecutioner(f'cat {RestoreConfigPath}/config.json').rstrip('\n'))
 
             ### ACL Creation code
 
@@ -835,13 +831,11 @@ team_drive =
                     DNS.createDNSRecord(zone, record['name'], record['type'], record['content'], 0, record['ttl'])
             except BaseException as msg:
                 self.UpdateStatus(f'Error in RestoreConfig while restoring dns config. Error: {str(msg)}',
-                                      CPBackupsV2.RUNNING)
-
+                                  CPBackupsV2.RUNNING)
 
             ### Create Emails Accounts
 
-
-            #logging.statusWriter(statusPath, "Restoring email accounts!", 1)
+            # logging.statusWriter(statusPath, "Restoring email accounts!", 1)
 
             try:
 
@@ -875,8 +869,7 @@ team_drive =
                         #                          email))
             except BaseException as msg:
                 self.UpdateStatus(f'Error in RestoreConfig while restoring email config. Error: {str(msg)}',
-                                          CPBackupsV2.RUNNING)
-
+                                  CPBackupsV2.RUNNING)
 
             ### Restoring DBs
 
@@ -912,29 +905,36 @@ team_drive =
 
                             try:
                                 dbExist = Databases.objects.get(dbName=dbName)
-                                logging.CyberCPLogFileWriter.writeToFile('Database exists, changing Database password.. %s' % (dbName))
+                                logging.CyberCPLogFileWriter.writeToFile(
+                                    'Database exists, changing Database password.. %s' % (dbName))
 
                                 if mysqlUtilities.mysqlUtilities.changePassword(dbUser, password, 1, dbHost) == 0:
-                                    logging.CyberCPLogFileWriter.writeToFile('Failed changing password for database: %s' % (dbName))
+                                    logging.CyberCPLogFileWriter.writeToFile(
+                                        'Failed changing password for database: %s' % (dbName))
                                 else:
-                                    logging.CyberCPLogFileWriter.writeToFile('Password successfully changed for database: %s.' % (dbName))
+                                    logging.CyberCPLogFileWriter.writeToFile(
+                                        'Password successfully changed for database: %s.' % (dbName))
 
                             except:
 
-                                logging.CyberCPLogFileWriter.writeToFile('Database did not exist, creating new.. %s' % (dbName))
+                                logging.CyberCPLogFileWriter.writeToFile(
+                                    'Database did not exist, creating new.. %s' % (dbName))
 
                                 if mysqlUtilities.mysqlUtilities.createDatabase(dbName, dbUser, "cyberpanel") == 0:
-                                    logging.CyberCPLogFileWriter.writeToFile('Failed the creation of database: %s' % (dbName))
+                                    logging.CyberCPLogFileWriter.writeToFile(
+                                        'Failed the creation of database: %s' % (dbName))
                                 else:
-                                    logging.CyberCPLogFileWriter.writeToFile('Database: %s successfully created.' % (dbName))
+                                    logging.CyberCPLogFileWriter.writeToFile(
+                                        'Database: %s successfully created.' % (dbName))
 
                                 mysqlUtilities.mysqlUtilities.changePassword(dbUser, password, 1)
 
                                 if mysqlUtilities.mysqlUtilities.changePassword(dbUser, password, 1) == 0:
-                                    logging.CyberCPLogFileWriter.writeToFile('Failed changing password for database: %s' % (dbName))
+                                    logging.CyberCPLogFileWriter.writeToFile(
+                                        'Failed changing password for database: %s' % (dbName))
                                 else:
                                     logging.CyberCPLogFileWriter.writeToFile(
-                                                         'Password successfully changed for database: %s.' % (dbName))
+                                        'Password successfully changed for database: %s.' % (dbName))
 
                                 try:
                                     newDB = Databases(website=self.website, dbName=dbName, dbUser=dbUser)
@@ -947,7 +947,8 @@ team_drive =
                         mysqlUtilities.mysqlUtilities.createDatabase(dbName, dbUser, password, 0, dbHost)
                         mysqlUtilities.mysqlUtilities.changePassword(dbUser, password, 1, dbHost)
             except BaseException as msg:
-                self.UpdateStatus(f'Error in RestoreConfig while restoring database config. Error: {str(msg)}', CPBackupsV2.RUNNING)
+                self.UpdateStatus(f'Error in RestoreConfig while restoring database config. Error: {str(msg)}',
+                                  CPBackupsV2.RUNNING)
 
             return 1, None
 
@@ -973,8 +974,8 @@ team_drive =
             command = f"mkdir -p {self.data['BasePath']}"
             ProcessUtilities.executioner(command)
 
-            #command = f"chmod 711 {self.data['BasePath']}"
-            #ProcessUtilities.executioner(command)
+            # command = f"chmod 711 {self.data['BasePath']}"
+            # ProcessUtilities.executioner(command)
 
         self.StartingTimeStamp = CPBackupsV2.FetchCurrentTimeStamp()
 
@@ -1083,17 +1084,16 @@ team_drive =
 
                 schedules = []
                 for value in BackupConfig['schedules']:
-
                     schedules.append({
-                                      'repo': value['repo'],
-                                      'frequency': value['frequency'],
-                                      'websiteData': value['websiteData'],
-                                      'websiteEmails': value['websiteEmails'],
-                                      'websiteDatabases': value['websiteDatabases'],
-                                      'lastRun': value['lastRun'],
-                                      'retention': value['retention'],
-                                      'domain': website
-                                      })
+                        'repo': value['repo'],
+                        'frequency': value['frequency'],
+                        'websiteData': value['websiteData'],
+                        'websiteEmails': value['websiteEmails'],
+                        'websiteDatabases': value['websiteDatabases'],
+                        'lastRun': value['lastRun'],
+                        'retention': value['retention'],
+                        'domain': website
+                    })
 
                 return 1, schedules
             else:
@@ -1108,7 +1108,7 @@ team_drive =
             # refresh_token = "1//09pPJHjUgyp09CgYIARAAGAkSNgF-L9IrZ0FLMhuKVfPEwmv_6neFto3JJ-B9uXBYu1kPPdsPhSk1OJXDBA3ZvC3v_AH9S1rTIQ"
 
             if os.path.exists(ProcessUtilities.debugPath):
-                logging.CyberCPLogFileWriter.writeToFile('Current Token: ' + refresh_token )
+                logging.CyberCPLogFileWriter.writeToFile('Current Token: ' + refresh_token)
 
             finalData = json.dumps({'refresh_token': refresh_token})
             r = requests.post("https://platform.cyberpersons.com/refreshToken", data=finalData
@@ -1116,7 +1116,7 @@ team_drive =
             newtoken = json.loads(r.text)['access_token']
 
             if os.path.exists(ProcessUtilities.debugPath):
-                logging.CyberCPLogFileWriter.writeToFile('newtoken: ' + newtoken )
+                logging.CyberCPLogFileWriter.writeToFile('newtoken: ' + newtoken)
                 logging.CyberCPLogFileWriter.writeToFile(r.text)
 
             return newtoken
@@ -1139,12 +1139,13 @@ team_drive =
 
                 for value in BackupConfig['schedules']:
 
-                    if value['repo'] == repo and value['frequency'] == frequency and value['websiteData'] == websiteData and \
+                    if value['repo'] == repo and value['frequency'] == frequency and value[
+                        'websiteData'] == websiteData and \
                             value['websiteEmails'] == websiteEmails and value['websiteDatabases'] == websiteDatabases:
                         del BackupConfig['schedules'][counter]
                         break
                     else:
-                        counter = counter  + 1
+                        counter = counter + 1
 
                 FinalContent = json.dumps(BackupConfig)
                 WriteToFile = open(finalConfigPath, 'w')
@@ -1165,10 +1166,8 @@ team_drive =
             finalConfigPath = f'/home/cyberpanel/v2backups/{website}'
 
             if not os.path.exists('/home/cyberpanel/v2backups/'):
-
                 command = 'mkdir -p /home/cyberpanel/v2backups/'
                 ProcessUtilities.executioner(command, 'cyberpanel')
-
 
             if os.path.exists(finalConfigPath):
 
@@ -1178,13 +1177,15 @@ team_drive =
                 BackupConfig = json.loads(ProcessUtilities.outputExecutioner(command).rstrip('\n'))
 
                 try:
-                    BackupConfig['schedules'].append({"repo": repo, "retention": retention, "frequency": frequency, "websiteData": websiteData,
-                                      "websiteEmails": websiteEmails, "websiteDatabases": websiteDatabases,
-                                      "lastRun": ""})
+                    BackupConfig['schedules'].append(
+                        {"repo": repo, "retention": retention, "frequency": frequency, "websiteData": websiteData,
+                         "websiteEmails": websiteEmails, "websiteDatabases": websiteDatabases,
+                         "lastRun": ""})
                 except:
-                    BackupConfig['schedules'] = [{"repo": repo, "retention": retention, "frequency": frequency, "websiteData": websiteData,
-                                      "websiteEmails": websiteEmails, "websiteDatabases": websiteDatabases,
-                                      "lastRun": ""}]
+                    BackupConfig['schedules'] = [
+                        {"repo": repo, "retention": retention, "frequency": frequency, "websiteData": websiteData,
+                         "websiteEmails": websiteEmails, "websiteDatabases": websiteDatabases,
+                         "lastRun": ""}]
 
                 # BackupConfig['schedules'] = {"retention": "7", "frequency": frequency, "websiteData": websiteData,
                 #                       "websiteEmails": websiteEmails, "websiteDatabases": websiteDatabases,
@@ -1213,8 +1214,6 @@ team_drive =
         except BaseException as msg:
             return 0, str(msg)
 
-
-
     @staticmethod
     def DeleteRepoScheduleV2(website, repo, eu):
         try:
@@ -1224,12 +1223,12 @@ team_drive =
                 command = f"sed -i '/\[{repo}\]/,/^$/d' {finalConfigPath}"
                 ProcessUtilities.outputExecutioner(command, eu, True)
 
-
                 return 1, 'Done'
             else:
                 return 0, "Repo not found!"
         except BaseException as msg:
             return 0, str(msg)
+
     # def BackupEmails(self):
     #
     #     ### This function will backup emails of the website, also need to take care of emails that we need to exclude
@@ -1325,8 +1324,6 @@ team_drive =
                 command = 'curl https://rclone.org/install.sh | sudo bash'
                 ProcessUtilities.executioner(command, None, True)
 
-
-
                 url = "https://api.github.com/repos/rustic-rs/rustic/releases/latest"
                 response = requests.get(url)
 
@@ -1351,7 +1348,7 @@ team_drive =
 
                 else:
                     command = 'wget -P /home/rustic https://github.com/rustic-rs/rustic/releases/download/%s/rustic-%s-x86_64-unknown-linux-musl.tar.gz' % (
-                version, version)
+                        version, version)
                     ProcessUtilities.executioner(command)
 
                     command = 'tar xzf /home/rustic/rustic-%s-x86_64-unknown-linux-musl.tar.gz -C /home/rustic//' % (

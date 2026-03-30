@@ -1,111 +1,105 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Backup Home - CyberPanel" %}{% endblock %}
+
 {% block content %}
-
 {% load static %}
-
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Backup" %}</h2>
-   <p>{% trans "Backup and restore sites." %}</p>
-</div>
-    <div class="panel col-md-11">
-        <div class="panel-body">
-            <h3 class="content-box-header">
-            {% trans "Available Functions" %}
-            </h3>
-
-             <div class="example-box-wrapper">
-                <div class="row">
-
-                    {% if createBackup or admin %}
-
-                        <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'backupSite' %}" title="{% trans 'Backup Site' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Backup" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-clone"></i>
-                                            </div>
-                                        </a>
-                        </div>
-
-                    {% endif %}
-
-                    {% if restoreBackup or admin %}
-
-
-                        <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'restoreSite' %}" title="{% trans 'Restore Backup' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Restore" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-undo"></i>
-                                            </div>
-                                        </a>
-                        </div>
-
-                    {% endif %}
-
-
-                    {% if addDeleteDestinations or admin %}
-
-                        <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'backupDestinations' %}" title="{% trans 'Add/Delete Destinations' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Add/Delete Destinations" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-map-pin"></i>
-                                            </div>
-                                        </a>
-                        </div>
-
-                    {% endif %}
-
-                    {% if scheduleBackups or admin %}
-
-                        <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'scheduleBackup' %}" title="{% trans 'Schedule Backup' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Schedule Backup" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-refresh"></i>
-                                            </div>
-                                        </a>
-                        </div>
-
-                    {% endif %}
-
-                    {% if remoteBackups or admin %}
-
-                        <div class="col-md-3 btn-min-width">
-                                        <a href="{% url 'remoteBackups' %}" title="{% trans 'Remote Backups' %}" class="tile-box tile-box-shortcut btn-primary">
-                                            <div class="tile-header">
-                                                {% trans "Remote Backups" %}
-                                            </div>
-                                            <div class="tile-content-wrapper">
-                                                <i class="fa fa-cloud-upload"></i>
-                                            </div>
-                                        </a>
-                        </div>
-
-                    {% endif %}
-
-
+<div class="w-full p-4 md:p-12">
+    <div class="space-y-12">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="archive" class="h-8 w-8"></i>
                 </div>
-             </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Backup" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Backup and restore your websites and data." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Functions Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Available Functions" %}
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if createBackup or admin %}
+                    <!-- Backup -->
+                    <a href="{% url 'backupSite' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="copy" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Create Backup" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Create a manual site backup" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+
+                {% if restoreBackup or admin %}
+                    <!-- Restore -->
+                    <a href="{% url 'restoreSite' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="rotate-ccw" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Restore Backup" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Restore from a previous backup" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+
+                {% if addDeleteDestinations or admin %}
+                    <!-- Destinations -->
+                    <a href="{% url 'backupDestinations' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="map-pin" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Destinations" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Manage backup storage locations" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+
+                {% if scheduleBackups or admin %}
+                    <!-- Schedule -->
+                    <a href="{% url 'scheduleBackup' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="calendar" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Schedule Backup" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Automate your backup routines" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+
+                {% if remoteBackups or admin %}
+                    <!-- Remote Backups -->
+                    <a href="{% url 'remoteBackups' %}" class="group flex items-center p-6 bg-secondary/20 rounded-2xl border border-border/40 hover:border-primary/50 transition-all gap-6">
+                        <div class="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-primary">
+                            <i data-lucide="cloud-upload" class="h-8 w-8"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{% trans "Remote Backups" %}</h3>
+                            <p class="text-lg text-muted-foreground">{% trans "Send backups to remote servers" %}</p>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-
 </div>
-
 
 {% endblock %}

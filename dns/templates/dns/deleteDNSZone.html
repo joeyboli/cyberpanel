@@ -12,7 +12,7 @@
             <i data-lucide="trash-2" class="w-12 h-12 text-destructive"></i>
             {% trans "Delete DNS Zone" %}
         </h1>
-        <p class="mt-6 max-w-3xl mx-auto text-2xl text-muted-foreground">
+        <p class="mt-6 mx-auto text-2xl text-muted-foreground">
             {% trans "This page can be used to delete DNS Zone. Deleting the DNS zone will remove all its related records as well." %}
         </p>
         <div class="mt-8 flex justify-center gap-4">
@@ -108,16 +108,21 @@
         }
 
         const observer = new MutationObserver((mutations) => {
-            let shouldCreate = false;
+            let shouldRefresh = false;
             mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    shouldCreate = true;
+                if (mutation.addedNodes.length > 0) {
+                    shouldRefresh = true;
                 }
             });
-            if (shouldCreate && typeof lucide !== 'undefined') {
-                lucide.createIcons({
-                    root: document.querySelector('[ng-controller="deleteDNSZone"]')
-                });
+
+            if (shouldRefresh && typeof lucide !== 'undefined') {
+                // Debounce refresh
+                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                window.lucideTimeout = setTimeout(() => {
+                    lucide.createIcons({
+                        root: document.querySelector('[ng-controller="deleteDNSZone"]')
+                    });
+                }, 100);
             }
         });
 
