@@ -62,7 +62,27 @@ class mysqlUtilities:
     @staticmethod
     def setupConnection():
         try:
+            # First priority: check environment variables (secure method)
+            db_host = os.getenv('DB_HOST', os.getenv('ROOT_DB_HOST'))
+            db_user = os.getenv('DB_USER', os.getenv('ROOT_DB_USER', 'root'))
+            db_pass = os.getenv('DB_PASSWORD', os.getenv('ROOT_DB_PASSWORD'))
+            db_port = os.getenv('DB_PORT', os.getenv('ROOT_DB_PORT', '3306'))
 
+            if db_pass is not None:
+                try:
+                    conn = mysql.connect(
+                        host=db_host or 'localhost',
+                        user=db_user,
+                        passwd=db_pass,
+                        port=int(db_port),
+                        cursorclass=cursors.SSCursor
+                    )
+                    return conn, conn.cursor()
+                except Exception as e:
+                    if os.path.exists(ProcessUtilities.debugPath):
+                        logging.CyberCPLogFileWriter.writeToFile(f'Env connection failed: {str(e)}')
+
+            # Second priority: legacy /etc/cyberpanel/mysqlPassword
             passFile = "/etc/cyberpanel/mysqlPassword"
 
             try:

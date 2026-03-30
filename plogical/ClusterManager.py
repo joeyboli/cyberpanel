@@ -211,21 +211,21 @@ class ClusterManager:
             completDBString = """\nDATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '%s',
-        'USER': '%s',
-        'PASSWORD': '%s',
-        'HOST': '%s',
-        'PORT':'%s'
+        'NAME': os.getenv('DB_NAME', 'cyberpanel'),
+        'USER': os.getenv('DB_USER', 'cyberpanel'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     },
     'rootdb': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '%s',
-        'USER': '%s',
-        'PASSWORD': '%s',
-        'HOST': '%s',
-        'PORT': '%s',
+        'NAME': os.getenv('ROOT_DB_NAME', 'mysql'),
+        'USER': os.getenv('ROOT_DB_USER', 'root'),
+        'PASSWORD': os.getenv('ROOT_DB_PASSWORD', ''),
+        'HOST': os.getenv('ROOT_DB_HOST', 'localhost'),
+        'PORT': os.getenv('ROOT_DB_PORT', '3306'),
     },
-}\n""" % (dbName, dbUser, password, host, port, rootdbName, rootdbdbUser, rootdbpassword, host, port)
+}\n"""
 
             settingsFile = '/usr/local/CyberCP/CyberCP/settings.py'
 
