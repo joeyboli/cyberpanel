@@ -2282,7 +2282,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp82 lsphp82-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
             # Check if PHP 8.3 exists
             if not os.path.exists('/usr/local/lsws/lsphp83/bin/php'):
@@ -2294,7 +2294,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp83 lsphp83-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
                 
                 # Verify installation
                 if not os.path.exists('/usr/local/lsws/lsphp83/bin/php'):
@@ -2310,7 +2310,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp84 lsphp84-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
             # Install PHP 8.5
             if not os.path.exists('/usr/local/lsws/lsphp85/bin/php'):
@@ -2321,7 +2321,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp85 lsphp85-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
             
             # Remove existing PHP symlink if it exists
             if os.path.exists('/usr/bin/php'):
@@ -2449,7 +2449,7 @@ milter_default_action = accept
 
     @staticmethod
     def installOne(package):
-        res = subprocess.call(shlex.split('DEBIAN_FRONTEND=noninteractive apt-get -y install ' + package))
+        res = subprocess.call('DEBIAN_FRONTEND=noninteractive apt-get -y install ' + package, shell=True)
         if res != 0:
             preFlightsChecks.stdOut("Error #" + str(res) + ' installing:' + package + '.  This may not be an issue ' \
                                                                                       'but may affect installation of something later',
