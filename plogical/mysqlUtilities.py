@@ -62,6 +62,35 @@ class mysqlUtilities:
     @staticmethod
     def setupConnection():
         try:
+            def _log(msg: str):
+                try:
+                    if os.path.exists(ProcessUtilities.debugPath):
+                        logging.CyberCPLogFileWriter.writeToFile(msg)
+                except:
+                    pass
+
+            def _try_connect(*, host=None, user=None, passwd=None, port=None, unix_socket=None, label=""):
+                kwargs = {
+                    "user": user,
+                    "passwd": passwd,
+                    "cursorclass": cursors.SSCursor,
+                }
+                if host is not None:
+                    kwargs["host"] = host
+                if port is not None:
+                    kwargs["port"] = int(port)
+                if unix_socket is not None:
+                    kwargs["unix_socket"] = unix_socket
+                try:
+                    conn = mysql.connect(**kwargs)
+                    return conn, conn.cursor(), None
+                except Exception as e:
+                    safe_host = host if host is not None else "(default)"
+                    safe_port = str(port) if port is not None else "(default)"
+                    safe_socket = unix_socket if unix_socket is not None else "(none)"
+                    _log(f"MySQL connect failed {label} host={safe_host} port={safe_port} socket={safe_socket} user={user}: {str(e)}")
+                    return None, None, e
+
             # First priority: check environment variables (secure method)
             db_host = os.getenv('DB_HOST', os.getenv('ROOT_DB_HOST'))
             db_user = os.getenv('DB_USER', os.getenv('ROOT_DB_USER', 'root'))
@@ -69,18 +98,41 @@ class mysqlUtilities:
             db_port = os.getenv('DB_PORT', os.getenv('ROOT_DB_PORT', '3306'))
 
             if db_pass is not None:
-                try:
-                    conn = mysql.connect(
-                        host=db_host or 'localhost',
+                env_host = db_host or 'localhost'
+                conn, cursor, err = _try_connect(
+                    host=env_host,
+                    user=db_user,
+                    passwd=db_pass,
+                    port=db_port,
+                    label="[env]"
+                )
+                if conn is not None:
+                    return conn, cursor
+
+                # If TCP host fails, fall back to localhost socket (common on production when root uses unix_socket auth)
+                if env_host not in ('localhost', '127.0.0.1'):
+                    conn, cursor, _ = _try_connect(
+                        host='localhost',
                         user=db_user,
                         passwd=db_pass,
-                        port=int(db_port),
-                        cursorclass=cursors.SSCursor
+                        port=db_port,
+                        label="[env->localhost]"
                     )
-                    return conn, conn.cursor()
-                except Exception as e:
-                    if os.path.exists(ProcessUtilities.debugPath):
-                        logging.CyberCPLogFileWriter.writeToFile(f'Env connection failed: {str(e)}')
+                    if conn is not None:
+                        return conn, cursor
+
+                for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
+                    if os.path.exists(sock):
+                        conn, cursor, _ = _try_connect(
+                            host='localhost',
+                            user=db_user,
+                            passwd=db_pass,
+                            port=db_port,
+                            unix_socket=sock,
+                            label=f"[env->socket:{sock}]"
+                        )
+                        if conn is not None:
+                            return conn, cursor
 
             # Second priority: legacy /etc/cyberpanel/mysqlPassword
             passFile = "/etc/cyberpanel/mysqlPassword"
@@ -106,28 +158,79 @@ class mysqlUtilities:
 
                 mysqlUtilities.LOCALHOST = ipAddressLocal
 
-                if os.path.exists(ProcessUtilities.debugPath):
-                    logging.CyberCPLogFileWriter.writeToFile('Local IP for MySQL: %s' % (mysqlUtilities.LOCALHOST))
+                _log('Local IP for MySQL: %s' % (mysqlUtilities.LOCALHOST))
 
-                conn = mysql.connect(host=mysqlhost ,user=mysqluser, passwd=mysqlpassword, port=int(mysqlport), cursorclass=cursors.SSCursor)
-                cursor = conn.cursor()
+                # Try the configured host first
+                conn, cursor, err = _try_connect(
+                    host=mysqlhost,
+                    user=mysqluser,
+                    passwd=mysqlpassword,
+                    port=mysqlport,
+                    label="[json]"
+                )
+                if conn is not None:
+                    return conn, cursor
 
-                return conn, cursor
+                # Production hardening: if host is an IP/hostname and root is socket-auth only, localhost often works
+                if mysqlhost not in ('localhost', '127.0.0.1'):
+                    conn, cursor, _ = _try_connect(
+                        host='localhost',
+                        user=mysqluser,
+                        passwd=mysqlpassword,
+                        port=mysqlport,
+                        label="[json->localhost]"
+                    )
+                    if conn is not None:
+                        return conn, cursor
+
+                # Try common socket paths (MariaDB/MySQL differ across distros)
+                for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
+                    if os.path.exists(sock):
+                        conn, cursor, _ = _try_connect(
+                            host='localhost',
+                            user=mysqluser,
+                            passwd=mysqlpassword,
+                            port=mysqlport,
+                            unix_socket=sock,
+                            label=f"[json->socket:{sock}]"
+                        )
+                        if conn is not None:
+                            return conn, cursor
+
+                # If all attempts fail, surface a consistent failure to callers
+                raise BaseException("All MySQL connection attempts failed (json config).")
 
             except BaseException as msg:
 
-                if os.path.exists(ProcessUtilities.debugPath):
-                    logging.CyberCPLogFileWriter.writeToFile('Error connecting to MySQL using JSON config: %s' % (str(msg)))
+                _log('Error connecting to MySQL using JSON config: %s' % (str(msg)))
 
                 f = open(passFile)
                 data = f.read()
                 password = data.split('\n', 1)[0]
                 password = password.strip('\n').strip('\r')
 
-                conn = mysql.connect(user='root', passwd=password, cursorclass=cursors.SSCursor)
-                cursor = conn.cursor()
+                # Legacy fallback: no host/port forces default socket behavior on most systems
+                conn, cursor, err = _try_connect(
+                    user='root',
+                    passwd=password,
+                    label="[legacy]"
+                )
+                if conn is not None:
+                    return conn, cursor
 
-                return conn, cursor
+                for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
+                    if os.path.exists(sock):
+                        conn, cursor, _ = _try_connect(
+                            host='localhost',
+                            user='root',
+                            passwd=password,
+                            unix_socket=sock,
+                            label=f"[legacy->socket:{sock}]"
+                        )
+                        if conn is not None:
+                            return conn, cursor
+
+                raise BaseException("All MySQL connection attempts failed (legacy config).")
 
         except BaseException as msg:
             logging.CyberCPLogFileWriter.writeToFile('MySQL Connection failure in setupConnection: %s' % (str(msg)))
