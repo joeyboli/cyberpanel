@@ -1625,7 +1625,14 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             command = f'wget -O /usr/local/CyberCP/snappymail_cyberpanel.php  https://raw.githubusercontent.com/the-djmaze/snappymail/master/integrations/cyberpanel/install.php'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-            command = f'/usr/local/lsws/lsphp80/bin/php /usr/local/CyberCP/snappymail_cyberpanel.php'
+            if os.path.exists('/usr/local/lsws/lsphp80/bin/php'):
+                php_path = '/usr/local/lsws/lsphp80/bin/php'
+            elif os.path.exists('/usr/local/lsws/lsphp81/bin/php'):
+                php_path = '/usr/local/lsws/lsphp81/bin/php'
+            else:
+                php_path = '/usr/local/lsws/lsphp74/bin/php'
+
+            command = f'{php_path} /usr/local/CyberCP/snappymail_cyberpanel.php'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
 

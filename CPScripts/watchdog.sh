@@ -158,7 +158,7 @@ while [ true = true ]
 			if  [ -f /home/cyberpanel/postfix ] ; then
 				check_service
 			fi
-		elif [[ $name == "pure-ftpd" ]] || [[ $name == "pure-ftpd-mysql" ]] ; then
+		elif [[ $NAME == "pure-ftpd" ]] || [[ $NAME == "pure-ftpd-mysql" ]] ; then
 			if [ -f /home/cyberpanel/pureftpd ] ; then
 				if [ -f /etc/lsb-release ] ; then
 					NAME="pure-ftpd-mysql"

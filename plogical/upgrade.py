@@ -1203,19 +1203,26 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             for items in data:
                 if items.find("$sCustomDataPath = '';") > -1:
                     writeToFile.writelines(
-                        "			$sCustomDataPath = '/usr/local/lscp/cyberpanel/rainloop/data';\n")
+                        "			$sCustomDataPath = '/usr/local/lscp/cyberpanel/snappymail/data';\n")
                 else:
                     writeToFile.writelines(items)
 
             writeToFile.close()
 
-            command = "mkdir -p /usr/local/lscp/cyberpanel/rainloop/data/_data_/_default_/configs/"
+            command = "mkdir -p /usr/local/lscp/cyberpanel/snappymail/data/_data_/_default_/configs/"
             Upgrade.executioner_silent(command, 'mkdir snappymail configs', 0)
 
             command = f'wget -q -O /usr/local/CyberCP/snappymail_cyberpanel.php  https://raw.githubusercontent.com/the-djmaze/snappymail/master/integrations/cyberpanel/install.php'
             Upgrade.executioner_silent(command, 'verify certificate', 0)
 
-            command = f'/usr/local/lsws/lsphp80/bin/php /usr/local/CyberCP/snappymail_cyberpanel.php'
+            if os.path.exists('/usr/local/lsws/lsphp80/bin/php'):
+                php_path = '/usr/local/lsws/lsphp80/bin/php'
+            elif os.path.exists('/usr/local/lsws/lsphp81/bin/php'):
+                php_path = '/usr/local/lsws/lsphp81/bin/php'
+            else:
+                php_path = '/usr/local/lsws/lsphp74/bin/php'
+
+            command = f'{php_path} /usr/local/CyberCP/snappymail_cyberpanel.php'
             Upgrade.executioner_silent(command, 'verify certificate', 0)
 
             # labsPath = '/usr/local/lscp/cyberpanel/rainloop/data/_data_/_default_/configs/application.ini'
