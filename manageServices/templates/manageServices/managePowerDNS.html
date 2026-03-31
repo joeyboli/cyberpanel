@@ -3,18 +3,21 @@
 {% block title %}{% trans "Manage PowerDNS - CyberPanel" %}{% endblock %}
 
 {% block header_scripts %}
+<!-- Ensure Bootstrap Toggle CSS is loaded -->
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
 <style>
-    /* Manage PowerDNS Specific Styles */
+    /* Manage PowerDNS Specific Styles - Mirroring Pure-FTPd Template */
     .powerdns-wrapper {
         background: transparent;
         padding: 20px;
     }
-    
+
     .powerdns-container {
         max-width: 1200px;
         margin: 0 auto;
     }
-    
+
     /* Page Header */
     .page-header {
         background: var(--bg-primary, white);
@@ -24,7 +27,7 @@
         box-shadow: 0 2px 8px var(--shadow-light, rgba(0,0,0,0.08));
         border: 1px solid var(--border-color, #e8e9ff);
     }
-    
+
     .page-header h1 {
         font-size: 28px;
         font-weight: 700;
@@ -34,7 +37,7 @@
         align-items: center;
         gap: 15px;
     }
-    
+
     .page-header .icon {
         width: 48px;
         height: 48px;
@@ -47,13 +50,13 @@
         font-size: 24px;
         box-shadow: 0 4px 12px rgba(88,86,214,0.3);
     }
-    
+
     .page-header p {
         font-size: 15px;
         color: var(--text-secondary, #64748b);
         margin: 0;
     }
-    
+
     .docs-link {
         background: #3b82f6;
         color: white !important;
@@ -67,14 +70,14 @@
         gap: 8px;
         transition: all 0.3s ease;
     }
-    
+
     .docs-link:hover {
         background: #2563eb;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(59,130,246,0.3);
         text-decoration: none;
     }
-    
+
     /* Content Section */
     .content-section {
         background: var(--bg-primary, white);
@@ -84,7 +87,7 @@
         box-shadow: 0 2px 8px var(--shadow-light, rgba(0,0,0,0.08));
         border: 1px solid var(--border-color, #e8e9ff);
     }
-    
+
     .section-title {
         font-size: 18px;
         font-weight: 700;
@@ -94,7 +97,7 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .section-title::before {
         content: '';
         width: 4px;
@@ -102,13 +105,13 @@
         background: #5856d6;
         border-radius: 2px;
     }
-    
+
     /* Form Styles */
     .form-group {
         margin-bottom: 25px;
         padding: 0 15px;
     }
-    
+
     .form-label {
         font-size: 14px;
         font-weight: 600;
@@ -117,7 +120,7 @@
         display: block;
         text-transform: none;
     }
-    
+
     .form-control {
         width: 100%;
         padding: 10px 15px;
@@ -128,13 +131,13 @@
         background: var(--bg-primary, white);
         transition: all 0.3s ease;
     }
-    
+
     .form-control:focus {
         outline: none;
         border-color: #5856d6;
         box-shadow: 0 0 0 3px rgba(88,86,214,0.1);
     }
-    
+
     .form-select {
         width: 100%;
         padding: 10px 15px;
@@ -146,21 +149,21 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .form-select:focus {
         outline: none;
         border-color: #5856d6;
         box-shadow: 0 0 0 3px rgba(88,86,214,0.1);
     }
-    
-    /* Toggle Switch */
+
+    /* Toggle Switch - Custom CSS Fallback if JS fails, but primarily styled by BS Toggle */
     .toggle-switch {
         position: relative;
         display: inline-block;
         width: 50px;
         height: 26px;
     }
-    
+
     .toggle-switch input {
         position: absolute;
         opacity: 0;
@@ -170,7 +173,7 @@
         cursor: pointer;
         z-index: 2;
     }
-    
+
     .toggle-slider {
         position: absolute;
         cursor: pointer;
@@ -183,7 +186,7 @@
         border-radius: 26px;
         pointer-events: none;
     }
-    
+
     .toggle-slider:before {
         position: absolute;
         content: "";
@@ -196,15 +199,15 @@
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    
+
     input:checked + .toggle-slider {
         background-color: #5856d6;
     }
-    
+
     input:checked + .toggle-slider:before {
         transform: translateX(24px);
     }
-    
+
     /* Status Box */
     .status-box {
         background: var(--bg-secondary, #f8f9ff);
@@ -215,7 +218,7 @@
         align-items: center;
         gap: 15px;
     }
-    
+
     .status-icon {
         width: 48px;
         height: 48px;
@@ -227,23 +230,23 @@
         color: white;
         font-size: 24px;
     }
-    
+
     .status-info {
         flex: 1;
     }
-    
+
     .status-label {
         font-size: 14px;
         color: var(--text-secondary, #64748b);
         margin-bottom: 5px;
     }
-    
+
     .status-toggle {
         display: flex;
         align-items: center;
         gap: 15px;
     }
-    
+
     /* Save Button */
     .save-btn {
         background: #5856d6;
@@ -260,13 +263,13 @@
         gap: 10px;
         box-shadow: 0 4px 12px rgba(88,86,214,0.3);
     }
-    
+
     .save-btn:hover {
         background: #4644c0;
         transform: translateY(-1px);
         box-shadow: 0 6px 20px rgba(88,86,214,0.4);
     }
-    
+
     /* Alert Messages */
     .alert {
         padding: 15px 20px;
@@ -277,32 +280,32 @@
         gap: 12px;
         font-size: 14px;
     }
-    
+
     .alert-icon {
         font-size: 20px;
         flex-shrink: 0;
     }
-    
+
     .alert-success {
         background: var(--alert-success-bg, #d1fae5);
         color: var(--alert-success-color, #065f46);
         border: 1px solid var(--alert-success-border, #a7f3d0);
     }
-    
+
     .alert-success .alert-icon {
         color: #10b981;
     }
-    
+
     .alert-danger {
         background: var(--alert-danger-bg, #fee2e2);
         color: var(--alert-danger-color, #991b1b);
         border: 1px solid var(--alert-danger-border, #fecaca);
     }
-    
+
     .alert-danger .alert-icon {
         color: #ef4444;
     }
-    
+
     /* Loading Spinner */
     .loading-spinner {
         width: 24px;
@@ -314,12 +317,12 @@
         display: inline-block;
         margin-left: 10px;
     }
-    
+
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    
+
     /* Configuration Cards */
     .config-card {
         background: var(--bg-secondary, #f8f9ff);
@@ -327,7 +330,7 @@
         padding: 20px;
         margin-bottom: 20px;
     }
-    
+
     .config-card-title {
         font-size: 16px;
         font-weight: 600;
@@ -337,7 +340,7 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .config-card-icon {
         width: 32px;
         height: 32px;
@@ -349,7 +352,7 @@
         color: #5856d6;
         font-size: 16px;
     }
-    
+
     /* Help Text */
     .help-text {
         font-size: 13px;
@@ -357,23 +360,70 @@
         margin-top: 5px;
         font-style: italic;
     }
-    
+
+    /* Info Cards Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .info-card {
+        background: var(--bg-secondary, #f8f9ff);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(88,86,214,0.1);
+    }
+
+    .info-card-icon {
+        width: 48px;
+        height: 48px;
+        background: #5856d6;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        margin: 0 auto 15px;
+    }
+
+    .info-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary, #2f3640);
+        margin-bottom: 8px;
+    }
+
+    .info-card-description {
+        font-size: 14px;
+        color: var(--text-secondary, #64748b);
+        line-height: 1.5;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .powerdns-wrapper {
             padding: 15px;
         }
-        
+
         .page-header h1 {
             font-size: 24px;
             flex-direction: column;
             text-align: center;
         }
-        
+
         .content-section {
             padding: 20px;
         }
-        
+
         .status-box {
             flex-direction: column;
             text-align: center;
@@ -413,7 +463,7 @@
                     {% trans "PowerDNS Status" %}
                     <span ng-hide="pdnsLoading" class="loading-spinner"></span>
                 </h2>
-                
+
                 <div class="status-box">
                     <div class="status-icon">
                         <i class="fas fa-power-off"></i>
@@ -421,11 +471,9 @@
                     <div class="status-info">
                         <div class="status-label">{% trans "Service Status" %}</div>
                         <div class="status-toggle">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="pdnsStatus">
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span style="font-weight: 600; color: var(--text-primary, #2f3640);">{% trans "Enable/Disable PowerDNS" %}</span>
+                            <!-- TOGGLE SWITCH: Using standard checkbox with data-toggle attribute -->
+                            <input type="checkbox" id="pdnsStatus" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="secondary" data-size="small">
+                            <span style="font-weight: 600; color: var(--text-primary, #2f3640); margin-left: 10px;">{% trans "Enable/Disable PowerDNS" %}</span>
                         </div>
                     </div>
                 </div>
@@ -434,7 +482,7 @@
             <!-- Configuration Section -->
             <div class="content-section">
                 <h2 class="section-title">{% trans "DNS Configuration" %}</h2>
-                
+
                 <form>
 
                     <div class="form-group">
@@ -455,7 +503,7 @@
                             </div>
                             {% trans "Slave Mode Configuration" %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">{% trans "Slave Server" %}</label>
                             <input type="text" class="form-control" ng-init="slaveServerNS='{{ slaveServerNS }}'" ng-model="slaveServerNS" placeholder="ns1.example.com" required>
@@ -477,7 +525,7 @@
                             </div>
                             {% trans "Master Mode Configuration" %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">{% trans "Slave Server 1" %}</label>
                             <input type="text" class="form-control" ng-init="slaveServer='{{ slaveServer }}'" ng-model="slaveServer" placeholder="ns2.example.com" required>
@@ -541,6 +589,62 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Information Section (Mirroring Pure-FTPd Features Grid) -->
+            <div class="content-section">
+                <h2 class="section-title">{% trans "DNS Service Features" %}</h2>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "High Performance" %}</h3>
+                        <p class="info-card-description">{% trans "Optimized for fast query responses and low latency" %}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "Master/Slave" %}</h3>
+                        <p class="info-card-description">{% trans "Supports robust zone replication and synchronization" %}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "Backend Support" %}</h3>
+                        <p class="info-card-description">{% trans "Compatible with MySQL, PostgreSQL, and more" %}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "DNSSEC" %}</h3>
+                        <p class="info-card-description">{% trans "Built-in support for DNS security extensions" %}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "API Driven" %}</h3>
+                        <p class="info-card-description">{% trans "Fully manageable via RESTful API" %}</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3 class="info-card-title">{% trans "Analytics" %}</h3>
+                        <p class="info-card-description">{% trans "Detailed logging and query statistics" %}</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         {% else %}
@@ -554,16 +658,19 @@
     </div>
 </div>
 
+<!-- Ensure Bootstrap Toggle JS is loaded -->
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 <script>
 $(document).ready(function() {
-    // Initialize toggle switch
+    // Initialize toggle switch exactly like Pure-FTPd
     setTimeout(function() {
         $('#pdnsStatus').bootstrapToggle({
             on: 'Enabled',
             off: 'Disabled',
             onstyle: 'success',
             offstyle: 'secondary',
-            size: 'normal'
+            size: 'small'
         });
     }, 100);
 });

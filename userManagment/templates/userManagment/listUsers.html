@@ -1,234 +1,303 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "List Users - CyberPanel" %}{% endblock %}
+
+{% block header_scripts %}
+<style>
+    /* Custom styles for List Users - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards/modals */
+    .bg-card, .modal-content { box-shadow: none !important; }
+    /* Table hover state - subtle */
+    tbody tr:hover { background: hsl(var(--muted) / 0.3) !important; }
+</style>
+{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
- {% load static %}
- {% get_current_language as LANGUAGE_CODE %}
- <!-- Current language: {{ LANGUAGE_CODE }} -->
+<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="listTableUsers">
+    <div class="space-y-12">
 
- <div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="listTableUsers">
- <div class="space-y-12">
- <!-- Page Header -->
- <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
-    <div class="flex items-center gap-6">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
-            <i data-lucide="users" class="h-8 w-8"></i>
+        <!-- Page Header - Flat design -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <i data-lucide="users" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "List Users" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Manage and monitor all system user accounts" %}
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <!-- Primary Button - Base pattern -->
+                <a href="{% url 'createUser' %}" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90">
+                    <i data-lucide="user-plus" class="h-5 w-5 mr-2"></i>
+                    {% trans "Create User" %}
+                </a>
+            </div>
         </div>
-        <div>
-            <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
-                {% trans "List Users" %}
-            </h1>
-            <p class="text-xl text-muted-foreground">
-                {% trans "Manage and monitor all system user accounts" %}
-            </p>
+
+        <!-- Users Table Card - Flat design -->
+        <div class="bg-card rounded-2xl border border-border overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-muted/50 border-b border-border">
+                            <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "User Info" %}</th>
+                            <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Limits & Usage" %}</th>
+                            <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "ACL & Owner" %}</th>
+                            <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-center">{% trans "Status" %}</th>
+                            <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        <tr ng-repeat="record in records track by $index" class="transition-colors">
+                            <!-- User Info Column -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-primary/20">
+                                        {$ record.name.charAt(0).toUpperCase() $}
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-foreground" ng-bind="record.name"></span>
+                                        <span class="text-sm text-muted-foreground">{% trans "System User" %}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Limits Column -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2 text-sm text-foreground">
+                                        <i data-lucide="globe" class="h-4 w-4 text-muted-foreground"></i>
+                                        <span>{% trans "Websites:" %} <span class="font-semibold">{$ record.websites $}</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm text-foreground">
+                                        <i data-lucide="hard-drive" class="h-4 w-4 text-muted-foreground"></i>
+                                        <span>{% trans "Disk:" %} <span class="font-semibold">{$ record.diskUsage $}</span></span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- ACL Column -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-2">
+                                    <!-- ACL Badge - Flat pattern -->
+                                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-secondary text-secondary-foreground border border-border w-fit">
+                                        {$ record.acl $}
+                                    </span>
+                                    <span class="text-sm text-muted-foreground flex items-center gap-1.5">
+                                        <i data-lucide="user" class="h-3.5 w-3.5"></i>
+                                        {% trans "Owner:" %} <span class="font-medium text-foreground">{$ record.owner $}</span>
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Status Column - Flat badges -->
+                            <td class="px-6 py-4 text-center">
+                                <span ng-if="record.state=='ACTIVE'"
+                                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                    {% trans "Active" %}
+                                </span>
+                                <span ng-if="record.state=='SUSPENDED'"
+                                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                                    <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+                                    {% trans "Suspended" %}
+                                </span>
+                            </td>
+
+                            <!-- Actions Column - Icon buttons with base patterns -->
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <!-- View Profile Button -->
+                                    <a href="/users/viewProfile?user={$ record.name $}"
+                                            class="p-2.5 text-primary hover:bg-primary/10 rounded-xl transition-all border border-transparent hover:border-primary/20"
+                                            title="{% trans 'View Profile' %}">
+                                        <i data-lucide="user" class="h-4.5 w-4.5"></i>
+                                    </a>
+                                    <!-- Modify Button -->
+                                    <a href="/users/modifyUsers?user={$ record.name $}"
+                                            class="p-2.5 text-primary hover:bg-primary/10 rounded-xl transition-all border border-transparent hover:border-primary/20"
+                                            title="{% trans 'Modify User' %}">
+                                        <i data-lucide="user-cog" class="h-4.5 w-4.5"></i>
+                                    </a>
+                                    <!-- Suspend Button -->
+                                    <button ng-show="record.state=='ACTIVE'"
+                                            class="p-2.5 text-amber-600 hover:bg-amber-500/10 rounded-xl transition-all border border-transparent hover:border-amber-500/20"
+                                            ng-click="controlUserState(record.name, 'SUSPEND')"
+                                            title="{% trans 'Suspend User' %}">
+                                        <i data-lucide="pause-circle" class="h-4.5 w-4.5"></i>
+                                    </button>
+                                    <!-- Activate Button -->
+                                    <button ng-show="record.state=='SUSPENDED'"
+                                            class="p-2.5 text-emerald-600 hover:bg-emerald-500/10 rounded-xl transition-all border border-transparent hover:border-emerald-500/20"
+                                            ng-click="controlUserState(record.name, 'ACTIVATE')"
+                                            title="{% trans 'Activate User' %}">
+                                        <i data-lucide="play-circle" class="h-4.5 w-4.5"></i>
+                                    </button>
+                                    <!-- Edit Button - Secondary pattern -->
+                                    <button ng-click="editInitial(record.name)"
+                                            class="p-2.5 text-primary hover:bg-primary/10 rounded-xl transition-all border border-transparent hover:border-primary/20"
+                                            title="{% trans 'Edit User' %}">
+                                        <i data-lucide="edit-3" class="h-4.5 w-4.5"></i>
+                                    </button>
+                                    <!-- Delete Button - Danger pattern -->
+                                    <button ng-click="deleteUserInitial(record.name)"
+                                            class="p-2.5 text-destructive hover:bg-destructive/10 rounded-xl transition-all border border-transparent hover:border-destructive/20"
+                                            title="{% trans 'Delete User' %}">
+                                        <i data-lucide="trash-2" class="h-4.5 w-4.5"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State - Flat design -->
+            <div ng-if="records.length == 0" class="p-16 text-center">
+                <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
+                    <i data-lucide="users" class="h-8 w-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-foreground">{% trans "No users found" %}</h3>
+                <p class="text-sm text-muted-foreground mt-1">{% trans "Try creating a new user to get started" %}</p>
+            </div>
         </div>
-    </div>
-    <div class="flex flex-wrap gap-4">
-        <a href="{% url 'createUser' %}" class="inline-flex items-center justify-center px-6 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-lg transition-all active:translate-y-0 gap-3">
- <i data-lucide="user-plus" class="h-6 w-6"></i>
- {% trans "Create User" %}
- </a>
+
+        <!-- Modals - Flat design, no shadows -->
+
+        <!-- Delete User Modal -->
+        <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content bg-card border border-border rounded-2xl overflow-hidden">
+                    <div class="p-6 border-b border-border flex items-center justify-between">
+                        <h4 class="text-xl font-bold text-foreground flex items-center gap-3">
+                            <i data-lucide="alert-triangle" class="text-destructive h-5 w-5"></i>
+                            {% trans "Delete User:" %} <span class="text-primary">{$ UserToDelete $}</span>
+                        </h4>
+                        <div class="flex items-center gap-4">
+                            <img class="h-5 w-5" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" alt="Loading...">
+                            <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" data-dismiss="modal">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="p-4 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
+                            <p class="text-destructive font-medium text-sm leading-relaxed flex items-start gap-2">
+                                <i data-lucide="info" class="h-4 w-4 mt-0.5 flex-shrink-0"></i>
+                                {% trans "This will delete all sites owned by this user and this process cannot be reversed." %}
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
+                            <!-- Cancel - Secondary pattern -->
+                            <button type="button" class="flex-1 py-3 bg-secondary text-secondary-foreground rounded-xl font-bold transition-all border border-border hover:bg-muted" data-dismiss="modal">
+                                {% trans "Cancel" %}
+                            </button>
+                            <!-- Delete - Danger pattern -->
+                            <button ng-click="deleteUserFinal()" type="button" class="flex-1 py-3 bg-destructive text-destructive-foreground rounded-xl font-bold transition-all hover:opacity-90 border border-destructive/20 flex items-center justify-center gap-2">
+                                <i data-lucide="trash-2" class="h-5 w-5"></i>
+                                {% trans "Delete Now" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content bg-card border border-border rounded-2xl overflow-hidden">
+                    <div class="p-6 border-b border-border flex items-center justify-between">
+                        <h4 class="text-xl font-bold text-foreground flex items-center gap-3">
+                            <i data-lucide="user-cog" class="text-primary h-5 w-5"></i>
+                            {% trans "Edit User" %}
+                        </h4>
+                        <div class="flex items-center gap-4">
+                            <img class="h-5 w-5" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" alt="Loading...">
+                            <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" data-dismiss="modal">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <form class="space-y-5">
+                            <!-- Username (Readonly) -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Username" %}</label>
+                                <input type="text"
+                                       class="w-full px-4 py-3 bg-muted border border-border rounded-xl text-muted-foreground cursor-not-allowed font-mono text-sm"
+                                       ng-model="name" readonly>
+                            </div>
+
+                            <!-- New Owner Select -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "New Owner" %}</label>
+                                <div class="relative">
+                                    <select ng-change="saveResellerChanges()" ng-model="$parent.newOwner"
+                                            class="w-full px-4 py-3 bg-secondary/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-foreground appearance-none pr-10">
+                                        <option value="">-- {% trans "Select new owner" %} --</option>
+                                        {% for items in resellerPrivUsers %}
+                                        <option>{{ items }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <i data-lucide="chevron-down" class="h-4 w-4 text-muted-foreground"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ACL Select -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Access Control List" %}</label>
+                                <div class="relative">
+                                    <select ng-change="changeACLFunc()" ng-model="$parent.selectedACL"
+                                            class="w-full px-4 py-3 bg-secondary/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-foreground appearance-none pr-10">
+                                        <option value="">-- {% trans "Select ACL" %} --</option>
+                                        {% for items in aclNames %}
+                                        <option>{{ items }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <i data-lucide="chevron-down" class="h-4 w-4 text-muted-foreground"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mt-8">
+                            <!-- Save Button - Primary pattern -->
+                            <button type="button" class="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90" data-dismiss="modal">
+                                {% trans "Done" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
- <!-- Users Table Card -->
- <div class="bg-card rounded-2xl shadow-sm border border-border/50 overflow-hidden">
- <div class="overflow-x-auto">
- <table class="w-full text-left border-collapse">
- <thead>
- <tr class="bg-secondary/50 border-b border-border/40">
- <th class="px-6 py-4 text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "User Info" %}</th>
- <th class="px-6 py-4 text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "Limits & Usage" %}</th>
- <th class="px-6 py-4 text-lg font-bold text-muted-foreground uppercase tracking-wider">{% trans "ACL & Owner" %}</th>
- <th class="px-6 py-4 text-lg font-bold text-muted-foreground uppercase tracking-wider text-center">{% trans "Status" %}</th>
- <th class="px-6 py-4 text-lg font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
- </tr>
- </thead>
- <tbody class="divide-y divide-border/40">
- <tr ng-repeat="record in records track by $index" class="hover:bg-muted/30 transition-colors">
- <td class="px-6 py-4">
- <div class="flex items-center gap-3">
- <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
- {$ record.name.charAt(0).toUpperCase() $}
- </div>
- <div class="flex flex-col">
- <span class="font-bold text-foreground" ng-bind="record.name"></span>
- <span class="text-lg text-muted-foreground">{% trans "System User" %}</span>
- </div>
- </div>
- </td>
- <td class="px-6 py-4">
- <div class="flex flex-col gap-1">
- <div class="flex items-center gap-2 text-xl text-foreground/80">
- <i data-lucide="globe" class="h-4 w-4 text-muted-foreground"></i>
- <span>{% trans "Websites:" %} <span class="font-semibold">{$ record.websites $}</span></span>
- </div>
- <div class="flex items-center gap-2 text-xl text-foreground/80">
- <i data-lucide="hard-drive" class="h-4 w-4 text-muted-foreground"></i>
- <span>{% trans "Disk:" %} <span class="font-semibold">{$ record.diskUsage $}</span></span>
- </div>
- </div>
- </td>
- <td class="px-6 py-4 text-xl">
- <div class="flex flex-col gap-1">
- <span class="inline-flex items-center px-2 py-0.5 rounded text-lg font-medium bg-secondary text-secondary-foreground w-fit">
- {$ record.acl $}
- </span>
- <span class="text-lg text-muted-foreground flex items-center gap-1">
- <i data-lucide="user" class="h-4 w-4"></i>
- {% trans "Owner:" %} {$ record.owner $}
- </span>
- </div>
- </td>
- <td class="px-6 py-4 text-center">
- <span ng-if="record.state=='ACTIVE'" 
- class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-lg font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
- <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
- {% trans "Active" %}
- </span>
- <span ng-if="record.state=='SUSPENDED'" 
- class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-lg font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">
- <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
- {% trans "Suspended" %}
- </span>
- </td>
- <td class="px-6 py-4 text-right">
- <div class="flex items-center justify-end gap-2">
- <!-- Suspend/Activate Toggle -->
- <button ng-show="record.state=='ACTIVE'"
- class="p-2 text-amber-600 hover:bg-amber-500/10 rounded-lg transition-colors"
- ng-click="controlUserState(record.name, 'SUSPEND')"
- title="{% trans 'Suspend User' %}">
- <i data-lucide="pause-circle" class="h-5 w-5"></i>
- </button>
- <button ng-show="record.state=='SUSPENDED'"
- class="p-2 text-emerald-600 hover:bg-emerald-500/10 rounded-lg transition-colors"
- ng-click="controlUserState(record.name, 'ACTIVATE')"
- title="{% trans 'Activate User' %}">
- <i data-lucide="play-circle" class="h-5 w-5"></i>
- </button>
- <!-- Edit -->
- <button ng-click="editInitial(record.name)"
- class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
- title="{% trans 'Edit User' %}">
- <i data-lucide="edit-3" class="h-5 w-5"></i>
- </button>
- <!-- Delete -->
- <button ng-click="deleteUserInitial(record.name)"
- class="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
- title="{% trans 'Delete User' %}">
- <i data-lucide="trash-2" class="h-5 w-5"></i>
- </button>
- </div>
- </td>
- </tr>
- </tbody>
- </table>
- </div>
- 
- <!-- Empty State -->
- <div ng-if="records.length == 0" class="p-20 text-center">
- <div class="inline-flex items-center justify-center h-20 w-20 rounded-full bg-secondary text-muted-foreground/30 mb-4">
- <i data-lucide="users" class="h-10 w-10"></i>
- </div>
- <h3 class="text-2xl font-bold text-foreground">{% trans "No users found" %}</h3>
- <p class="text-muted-foreground">{% trans "Try creating a new user to get started" %}</p>
- </div>
- </div>
+{% endblock %}
 
- <!-- Modals -->
- 
- <!-- Delete User Modal -->
- <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered" role="document">
- <div class="modal-content bg-card border-none shadow-2xl rounded-2xl overflow-hidden">
- <div class="p-6 border-b border-border/40 flex items-center justify-between">
- <h4 class="text-3xl font-bold text-foreground flex items-center gap-3">
- <i data-lucide="alert-triangle" class="text-destructive h-6 w-6"></i>
- {% trans "Delete User:" %} {$ UserToDelete $}
- </h4>
- <img class="h-6 w-6" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" alt="Loading...">
- <button type="button" class="text-muted-foreground hover:text-xl text-foreground" data-dismiss="modal">
- <i data-lucide="x" class="h-5 w-5"></i>
- </button>
- </div>
- <div class="p-8">
- <div class="p-4 bg-destructive/5 border border-destructive/10 rounded-xl mb-6">
- <p class="text-destructive font-medium text-xl leading-relaxed">
- <i data-lucide="info" class="h-5 w-5 inline mr-1 mb-1"></i>
- {% trans "This will delete all sites owned by this user and this process cannot be reversed." %}
- </p>
- </div>
- <div class="flex gap-3">
- <button type="button" class="flex-1 py-2.5 bg-secondary hover:bg-accent text-secondary-foreground rounded-lg font-bold transition-colors" data-dismiss="modal">
- {% trans "Cancel" %}
- </button>
- <button ng-click="deleteUserFinal()" type="button" class="flex-1 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg font-bold transition-all shadow-md flex items-center justify-center gap-2">
- <i data-lucide="trash-2" class="h-5 w-5"></i>
- {% trans "Delete Now" %}
- </button>
- </div>
- </div>
- </div>
- </div>
- </div>
-
- <!-- Edit User Modal -->
- <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered" role="document">
- <div class="modal-content bg-card border-none shadow-2xl rounded-2xl overflow-hidden">
- <div class="p-6 border-b border-border/40 flex items-center justify-between">
- <h4 class="text-3xl font-bold text-foreground flex items-center gap-3">
- <i data-lucide="user-cog" class="text-primary h-6 w-6"></i>
- {% trans "Edit User" %}
- </h4>
- <img class="h-6 w-6" ng-hide="cyberpanelLoading" src="{% static 'images/loading.gif' %}" alt="Loading...">
- <button type="button" class="text-muted-foreground hover:text-xl text-foreground" data-dismiss="modal">
- <i data-lucide="x" class="h-5 w-5"></i>
- </button>
- </div>
- <div class="p-8">
- <form class="space-y-5">
- <div class="space-y-2">
- <label class="text-xl font-semibold text-foreground">{% trans "Username" %}</label>
- <input type="text" 
- class="w-full px-4 py-2 bg-secondary/50 border border-border/40 rounded-lg text-muted-foreground cursor-not-allowed" 
- ng-model="name" readonly>
- </div>
-
- <div class="space-y-2">
- <label class="text-xl font-semibold text-foreground">{% trans "New Owner" %}</label>
- <select ng-change="saveResellerChanges()" ng-model="$parent.newOwner" 
- class="w-full px-4 py-2 bg-card border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground">
- <option value="">-- {% trans "Select new owner" %} --</option>
- {% for items in resellerPrivUsers %}
- <option>{{ items }}</option>
- {% endfor %}
- </select>
- </div>
-
- <div class="space-y-2">
- <label class="text-xl font-semibold text-foreground">{% trans "Access Control List" %}</label>
- <select ng-change="changeACLFunc()" ng-model="$parent.selectedACL" 
- class="w-full px-4 py-2 bg-card border border-border/40 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-xl text-foreground">
- <option value="">-- {% trans "Select ACL" %} --</option>
- {% for items in aclNames %}
- <option>{{ items }}</option>
- {% endfor %}
- </select>
- </div>
- </form>
- <div class="mt-8">
- <button type="button" class="w-full py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-bold transition-all shadow-md" data-dismiss="modal">
- {% trans "Done" %}
- </button>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
-</div>
-
+{% block footer_scripts %}
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
 {% endblock %}

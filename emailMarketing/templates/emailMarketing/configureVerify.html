@@ -1,99 +1,153 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Configure Email Verification - CyberPanel" %}{% endblock %}
+
+{% block header_scripts %}
+<style>
+    /* Custom styles for Email Verification - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+</style>
+{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12" ng-controller="configureVerify">
+    <div class="max-w-4xl mx-auto space-y-12">
 
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Configure Email Verification" %}</h2>
-            <p>{% trans "On this page you can configure parameters regarding how email verification is performed for " %}<span id="domainName">{{ domain }}</span></p>
-        </div>
-        <div ng-controller="configureVerify" class="panel" style="background: var(--bg-primary, white); border-color: var(--border-color, #ddd);">
-            <div class="panel-body" style="background: var(--bg-primary, white); color: var(--text-primary, #333);">
-                <h3 class="title-hero">
-                    {% trans "Compose Email Message" %} <img ng-hide="cyberPanelLoading"
-                                                             src="{% static 'images/loading.gif' %}">
-                </h3>
-                <div class="example-box-wrapper">
-
-
-                    <form action="/" class="form-horizontal bordered-row">
-
-                        <!---- Create Email Template --->
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Configure Delay" %} </label>
-                            <div class="col-sm-6">
-                                <select ng-change="delayInitial()" ng-model="delay" class="form-control">
-                                    <option>Disable</option>
-                                    <option>Enable</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div ng-hide="delayHidden" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Delay After" %}</label>
-                            <div class="col-sm-6">
-                                <input placeholder="{% trans 'Start delay after this many verifications are done.' %}" type="number" class="form-control" ng-model="delayAfter" required>
-                            </div>
-                        </div>
-
-                        <div ng-hide="delayHidden" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Delay Time" %}</label>
-                            <div class="col-sm-6">
-                                <input placeholder="{% trans 'Set the number of seconds to wait.' %}" type="number" class="form-control" ng-model="delayTime" required>
-                            </div>
-                        </div>
-
-                         <div class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "IP Rotation" %} </label>
-                            <div class="col-sm-6">
-                                <select ng-change="rotateInitial()" ng-model="rotation" class="form-control">
-                                    <option>Disable</option>
-                                    <option>IPv4</option>
-                                    <option>IPv6</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div ng-hide="ipv4Hidden" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "IPv4" %}</label>
-                            <div class="col-sm-6">
-                                <input placeholder="{% trans 'Enter IPv4(s) to be used separate with commas.' %}" type="text" class="form-control" ng-model="ipv4" required>
-                            </div>
-                        </div>
-
-                        <div ng-hide="ipv6Hidden" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "IPv6" %}</label>
-                            <div class="col-sm-6">
-                                <input placeholder="{% trans 'Enter IPv6(s) to be used separate with commas.' %}" type="text" class="form-control" ng-model="ipv6" required>
-                            </div>
-                        </div>
-
-
-
-                        <div ng-hide="installationProgress" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-4">
-                                <button type="button" ng-click="saveChanges()"
-                                        class="btn btn-primary btn-lg btn-block">{% trans "Save" %}</button>
-                            </div>
-                        </div>
-
-                        <!---- Create Email Template --->
-
-                    </form>
-
-
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="shield-check" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Configure Email Verification" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "On this page you can configure parameters regarding how email verification is performed for" %} <span class="font-bold text-primary" id="domainName">{{ domain }}</span>
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Configuration Form Panel - Flat design -->
+        <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+            <!-- Panel Header -->
+            <div class="flex items-center justify-between px-8 py-6 bg-muted/30 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <i data-lucide="settings" class="h-5 w-5"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-foreground">{% trans "Verification Settings" %}</h2>
+                </div>
+                <div ng-hide="cyberPanelLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+
+            <div class="p-8 space-y-8">
+                <form class="space-y-8">
+
+                    <!-- Configure Delay -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Configure Delay" %}</label>
+                        <div class="relative">
+                            <select ng-change="delayInitial()" ng-model="delay"
+                                    class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
+                                <option>{% trans "Disable" %}</option>
+                                <option>{% trans "Enable" %}</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delay After (Conditional) -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="delayHidden">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Delay After" %}</label>
+                        <input placeholder="{% trans 'Start delay after this many verifications are done.' %}"
+                               type="number"
+                               class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="delayAfter" required>
+                    </div>
+
+                    <!-- Delay Time (Conditional) -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="delayHidden">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Delay Time" %}</label>
+                        <input placeholder="{% trans 'Set the number of seconds to wait.' %}"
+                               type="number"
+                               class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="delayTime" required>
+                    </div>
+
+                    <!-- IP Rotation -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "IP Rotation" %}</label>
+                        <div class="relative">
+                            <select ng-change="rotateInitial()" ng-model="rotation"
+                                    class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
+                                <option>{% trans "Disable" %}</option>
+                                <option>IPv4</option>
+                                <option>IPv6</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IPv4 Input (Conditional) -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="ipv4Hidden">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "IPv4" %}</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i data-lucide="globe" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                            <input placeholder="{% trans 'Enter IPv4(s) to be used separate with commas.' %}"
+                                   type="text"
+                                   class="w-full pl-12 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                   ng-model="ipv4" required>
+                        </div>
+                    </div>
+
+                    <!-- IPv6 Input (Conditional) -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="ipv6Hidden">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "IPv6" %}</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i data-lucide="globe" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                            <input placeholder="{% trans 'Enter IPv6(s) to be used separate with commas.' %}"
+                                   type="text"
+                                   class="w-full pl-12 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                   ng-model="ipv6" required>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="pt-6 border-t border-border" ng-hide="installationProgress">
+                        <button type="button" ng-click="saveChanges()"
+                                class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto">
+                            <i data-lucide="save" class="h-6 w-6 mr-3"></i>
+                            {% trans "Save" %}
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}

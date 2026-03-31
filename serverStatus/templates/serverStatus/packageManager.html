@@ -1,900 +1,205 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Package Manager - CyberPanel" %}{% endblock %}
-{% block content %}
 
-{% load static %}
-{% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
-
+{% block header_scripts %}
 <style>
-    /* CSS Variables for Dark Mode Support */
-    :root {
-        /* Text colors */
-        --text-primary: #1e293b;
-        --text-secondary: #475569;
-        --text-muted: #64748b;
-        --text-on-gradient: rgba(255, 255, 255, 0.9);
-        
-        /* Background colors */
-        --bg-primary: #ffffff;
-        --bg-secondary: #f8f9ff;
-        --bg-light: #f3f4f6;
-        --bg-hover: #f8f9ff;
-        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        
-        /* Border colors */
-        --border-color: #e8e9ff;
-        --border-light: #f1f5f9;
-        
-        /* Accent colors */
-        --accent-color: #667eea;
-        --accent-hover: #764ba2;
-        --accent-bg: #f3e8ff;
-        --accent-focus: rgba(102, 126, 234, 0.1);
-        --accent-shadow: rgba(102, 126, 234, 0.3);
-        
-        /* Status colors */
-        --success-bg: #d1fae5;
-        --success-color: #065f46;
-        --success-border: #a7f3d0;
-        --success-accent: #10b981;
-        --success-hover: #059669;
-        
-        --danger-bg: #fee2e2;
-        --danger-color: #991b1b;
-        --danger-border: #fecaca;
-        --danger-accent: #dc2626;
-        --danger-hover: #b91c1c;
-        
-        --warning-bg: #fef3c7;
-        --warning-color: #92400e;
-        --warning-border: #fde68a;
-        
-        --info-bg: #dbeafe;
-        --info-color: #1e40af;
-        --info-border: #bfdbfe;
-        
-        /* Shadow colors */
-        --shadow-light: rgba(0,0,0,0.05);
-        --shadow-medium: rgba(0,0,0,0.08);
-        --shadow-color: rgba(0,0,0,0.1);
-        
-        /* Console colors */
-        --console-bg: #1e293b;
-        --console-text: #10b981;
-        
-        /* Lock colors */
-        --lock-color: #dc2626;
-        --unlock-color: #10b981;
-        
-        /* Table specific */
-        --table-header-bg: #f8f9ff;
-        --version-badge-bg: #f3f4f6;
-        --package-type-bg: #f3e8ff;
-        --lock-hover-bg: #f3f4f6;
-        --empty-icon-bg: #f3f4f6;
+    /* Custom styles for Package Manager - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
     }
-    
-    [data-theme="dark"] {
-        /* Dark mode overrides */
-        --text-primary: #e4e4e7;
-        --text-secondary: #9ca3af;
-        --text-muted: #6b7280;
-        --text-on-gradient: rgba(255, 255, 255, 0.9);
-        
-        --bg-primary: #1a1a3e;
-        --bg-secondary: #1e1e42;
-        --bg-light: #252550;
-        --bg-hover: #252550;
-        --bg-gradient: linear-gradient(135deg, #7c7ff3 0%, #9b5de5 100%);
-        
-        --border-color: #2a2a5e;
-        --border-light: #374151;
-        
-        --accent-color: #7c7ff3;
-        --accent-hover: #9b5de5;
-        --accent-bg: #3730a3;
-        --accent-focus: rgba(124, 127, 243, 0.1);
-        --accent-shadow: rgba(124, 127, 243, 0.3);
-        
-        --success-bg: #064e3b;
-        --success-color: #34d399;
-        --success-border: #065f46;
-        --success-accent: #10b981;
-        --success-hover: #15803d;
-        
-        --danger-bg: #7f1d1d;
-        --danger-color: #fca5a5;
-        --danger-border: #991b1b;
-        --danger-accent: #ef4444;
-        --danger-hover: #dc2626;
-        
-        --warning-bg: #78350f;
-        --warning-color: #fbbf24;
-        --warning-border: #92400e;
-        
-        --info-bg: #1e3a8a;
-        --info-color: #93c5fd;
-        --info-border: #1e40af;
-        
-        --shadow-light: rgba(0,0,0,0.3);
-        --shadow-medium: rgba(0,0,0,0.4);
-        --shadow-color: rgba(0,0,0,0.5);
-        
-        --console-bg: #0f0f23;
-        --console-text: #4ade80;
-        
-        --lock-color: #ef4444;
-        --unlock-color: #10b981;
-        
-        --table-header-bg: #252550;
-        --version-badge-bg: #16162e;
-        --package-type-bg: #3730a3;
-        --lock-hover-bg: #252550;
-        --empty-icon-bg: #252550;
-    }
-    .modern-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
-    
-    .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-        padding: 3rem 0;
-        background: var(--bg-gradient);
-        border-radius: 20px;
-        animation: fadeInDown 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-        color: var(--bg-primary);
-    }
-    
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-        animation: rotate 30s linear infinite;
-    }
-    
-    .header-content {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .package-icon {
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.2);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .package-icon i {
-        font-size: 1.75rem;
-    }
-    
-    .loading-spinner-inline {
-        margin-left: 1rem;
-    }
-    
-    .page-subtitle {
-        font-size: 1.125rem;
-        color: var(--text-on-gradient);
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    
-    .stats-bar {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-    }
-    
-    .stat-badge {
-        background: rgba(255, 255, 255, 0.2);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        padding: 0.5rem 1.5rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .stat-value {
-        font-weight: 700;
-    }
-    
-    .tabs-container {
-        background: var(--bg-primary);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px var(--shadow-light), 0 10px 40px var(--shadow-medium);
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    .modern-tabs {
-        display: flex;
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border-color);
-        overflow-x: auto;
-    }
-    
-    .tab-item {
-        padding: 1.25rem 2rem;
-        cursor: pointer;
-        border: none;
-        background: none;
-        font-weight: 500;
-        color: var(--text-muted);
-        position: relative;
-        white-space: nowrap;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .tab-item:hover {
-        color: var(--accent-color);
-        background: rgba(102, 126, 234, 0.05);
-    }
-    
-    .tab-item.active {
-        color: var(--accent-color);
-        background: var(--bg-primary);
-    }
-    
-    .tab-item.active::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: var(--bg-gradient);
-    }
-    
-    .tab-icon {
-        font-size: 1.125rem;
-    }
-    
-    .tab-content {
-        padding: 2rem;
-    }
-    
-    .controls-bar {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .search-box {
-        flex: 1;
-        min-width: 300px;
-        position: relative;
-    }
-    
-    .search-input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-    }
-    
-    .search-input:focus {
-        outline: none;
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px var(--accent-focus);
-    }
-    
-    .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-    }
-    
-    .control-group {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-    
-    .select-control {
-        padding: 0.75rem 2.5rem 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.875rem;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        cursor: pointer;
-    }
-    
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-primary {
-        background: var(--accent-color);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: var(--accent-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px var(--accent-shadow);
-    }
-    
-    .btn-success {
-        background: var(--success-accent);
-        color: white;
-    }
-    
-    .btn-success:hover {
-        background: var(--success-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-    
-    .btn-info {
-        background: var(--info-color);
-        color: white;
-    }
-    
-    .btn-info:hover {
-        background: #2563eb;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px var(--accent-shadow);
-    }
-    
-    .btn-secondary {
-        background: var(--bg-primary);
-        color: var(--text-muted);
-        border: 1px solid var(--border-color);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--bg-secondary);
-        border-color: var(--border-color);
-    }
-    
-    .package-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: var(--bg-primary);
-    }
-    
-    .package-table thead {
-        background: var(--table-header-bg);
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Table sticky header */
+    .table-sticky-header thead {
         position: sticky;
         top: 0;
         z-index: 10;
     }
-    
-    .package-table th {
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid var(--border-color);
-    }
-    
-    .package-table td {
-        padding: 1rem;
-        font-size: 0.875rem;
-        color: var(--text-primary);
-        border-bottom: 1px solid var(--border-light);
-    }
-    
-    .package-table tbody tr {
-        transition: all 0.2s ease;
-    }
-    
-    .package-table tbody tr:hover {
-        background: var(--bg-secondary);
-    }
-    
-    .package-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .package-type {
-        font-size: 0.625rem;
-        padding: 0.125rem 0.5rem;
-        border-radius: 4px;
-        background: var(--package-type-bg);
-        color: var(--accent-color);
-        font-weight: 500;
-    }
-    
-    .version-badge {
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        background: var(--version-badge-bg);
-        padding: 0.25rem 0.75rem;
-        border-radius: 6px;
-        display: inline-block;
-        color: var(--text-primary);
-    }
-    
-    .upgrade-badge {
-        background: var(--success-bg);
-        color: var(--success-color);
-        padding: 0.25rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
+
+    /* Lock toggle animation */
     .lock-toggle {
-        cursor: pointer;
-        font-size: 1.125rem;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-    }
-    
-    .lock-toggle:hover {
-        background: var(--lock-hover-bg);
-    }
-    
-    .lock-toggle.locked {
-        color: var(--lock-color);
-    }
-    
-    .lock-toggle.unlocked {
-        color: var(--unlock-color);
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-    }
-    
-    .loading-spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--border-color);
-        border-top: 2px solid var(--accent-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-    }
-    
-    .pagination-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--border-color);
-    }
-    
-    .pagination-info {
-        font-size: 0.875rem;
-        color: var(--text-muted);
-    }
-    
-    .pagination-controls {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-    
-    .page-select {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        font-size: 0.875rem;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-    }
-    
-    /* Modal Styles */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        -webkit-backdrop-filter: blur(4px);
-        backdrop-filter: blur(4px);
-    }
-    
-    .modal-content {
-        background: var(--bg-primary);
-        border-radius: 16px;
-        max-width: 800px;
-        width: 90%;
-        max-height: 90vh;
-        overflow: hidden;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        animation: modalSlideIn 0.3s ease-out;
-    }
-    
-    .modal-header {
-        background: var(--bg-gradient);
-        color: var(--bg-primary);
-        padding: 1.5rem 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .modal-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .modal-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 6px;
         transition: all 0.2s ease;
     }
-    
-    .modal-close:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
-    
-    .modal-body {
-        padding: 2rem;
-        max-height: calc(90vh - 140px);
-        overflow-y: auto;
-    }
-    
-    .console-output {
-        background: var(--console-bg);
-        color: var(--console-text);
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        padding: 1.5rem;
-        border-radius: 8px;
-        height: 400px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-    
-    .detail-output {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1.5rem;
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        max-height: 400px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-muted);
-    }
-    
-    .empty-icon {
-        width: 80px;
-        height: 80px;
-        background: var(--empty-icon-bg);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 2rem;
-        color: var(--text-muted);
-    }
-    
-    .alert {
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
-        animation: slideIn 0.3s ease-out;
-    }
-    
-    .alert-info {
-        background: var(--info-bg);
-        border: 1px solid var(--info-border);
-        color: var(--info-color);
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateX(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .controls-bar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .search-box {
-            min-width: auto;
-        }
-        
-        .control-group {
-            justify-content: space-between;
-        }
-        
-        .package-table {
-            font-size: 0.75rem;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
+    .lock-toggle:hover {
+        background: hsl(var(--muted) / 0.3);
     }
 </style>
+{% endblock %}
 
-<div class="modern-container" ng-controller="listOSPackages">
-    <div class="page-header">
-        <div class="header-content">
-            <h1 class="page-title">
-                <div class="package-icon">
-                    <i class="fas fa-cube"></i>
-                </div>
-                {% trans "System Package Manager" %}
-            </h1>
-            <p class="page-subtitle">
-                {% trans "Manage system packages, updates, and dependencies using your system's package manager (apt/yum)" %}
-            </p>
-            <div class="stats-bar">
-                <div class="stat-badge">
-                    <i class="fas fa-boxes"></i>
-                    <span>{% trans "Total Packages:" %} <span class="stat-value">{$ totalPackages || 0 $}</span></span>
-                </div>
-                <div class="stat-badge">
-                    <i class="fas fa-eye"></i>
-                    <span>{% trans "Showing:" %} <span class="stat-value">{$ fetchedPackages || 0 $}</span></span>
-                </div>
-                <div class="stat-badge" ng-hide="cyberpanelLoading">
-                    <span class="loading-spinner"></span>
+{% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<div class="w-full p-4 md:p-12 space-y-12" ng-controller="listOSPackages">
+
+    <!-- Page Header - Full width -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="package" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
+                    {% trans "System Package Manager" %}
+                    <span ng-hide="cyberpanelLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Manage system packages, updates, and dependencies using your system's package manager (apt/yum)" %}
+                </p>
+                <div class="mt-3 flex flex-wrap gap-3">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-bold">
+                        <i data-lucide="box" class="h-4 w-4"></i>
+                        {% trans "Total Packages:" %} <span class="text-foreground">{$ totalPackages || 0 $}</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/50 border border-border rounded-xl text-muted-foreground text-sm font-bold">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                        {% trans "Showing:" %} <span class="text-foreground">{$ fetchedPackages || 0 $}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="tabs-container">
+    <!-- Tabs Container - Flat design -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden">
         <!-- Tab Navigation -->
-        <div class="modern-tabs">
-            <button type="button" class="tab-item active" ng-click="fetchPackages('upgrade')" data-tab="updates" aria-label="{% trans 'View available updates' %}">
-                <i class="fas fa-sync-alt tab-icon"></i>
+        <div class="flex items-center gap-2 p-2 bg-muted/30 border-b border-border overflow-x-auto">
+            <button type="button"
+                    ng-click="fetchPackages('upgrade'); setActiveTab('updates')"
+                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'updates'}"
+                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
                 {% trans "Available Updates" %}
+                <span ng-if="activeTab === 'updates'" class="tab-active-indicator"></span>
             </button>
-            <button type="button" class="tab-item" ng-click="fetchPackages()" data-tab="all" aria-label="{% trans 'View all packages' %}">
-                <i class="fas fa-list tab-icon"></i>
+            <button type="button"
+                    ng-click="fetchPackages(); setActiveTab('all')"
+                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'all'}"
+                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="list" class="h-4 w-4"></i>
                 {% trans "All Packages" %}
+                <span ng-if="activeTab === 'all'" class="tab-active-indicator"></span>
             </button>
-            <button type="button" class="tab-item" ng-click="fetchPackages('CyberPanel')" data-tab="cyberpanel" aria-label="{% trans 'View CyberPanel packages' %}">
-                <i class="fas fa-shield-alt tab-icon"></i>
+            <button type="button"
+                    ng-click="fetchPackages('CyberPanel'); setActiveTab('cyberpanel')"
+                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'cyberpanel'}"
+                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="shield" class="h-4 w-4"></i>
                 {% trans "CyberPanel Packages" %}
+                <span ng-if="activeTab === 'cyberpanel'" class="tab-active-indicator"></span>
             </button>
         </div>
 
         <!-- Tab Content -->
-        <div class="tab-content">
+        <div class="p-8">
             <!-- Controls Bar -->
-            <div class="controls-bar">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="{% trans 'Search packages...' %}" 
-                           ng-model="packSearch" aria-label="{% trans 'Search packages' %}">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div class="relative w-full md:w-96">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                    </div>
+                    <input type="text" ng-model="packSearch" placeholder="{% trans 'Search packages...' %}"
+                           class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                 </div>
-                
-                <div class="control-group">
-                    <select ng-model="recordsToShow" class="select-control" 
-                            ng-change="fetchPackages(currentTab)" aria-label="{% trans 'Records per page' %}">
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <select ng-model="recordsToShow" ng-change="fetchPackages(currentTab)"
+                            class="px-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none appearance-none pr-10">
                         <option value="10">10 {% trans "per page" %}</option>
                         <option value="50">50 {% trans "per page" %}</option>
                         <option value="100">100 {% trans "per page" %}</option>
                         <option value="500">500 {% trans "per page" %}</option>
                     </select>
-                    
-                    <button type="button" class="btn btn-success" ng-click="updatePackage('all')" 
-                            ng-show="currentTab === 'upgrade'" aria-label="{% trans 'Update all packages' %}">
-                        <i class="fas fa-download"></i>
+
+                    <button type="button" ng-click="updatePackage('all')" ng-show="currentTab === 'upgrade'"
+                            class="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all hover:opacity-90">
+                        <i data-lucide="download" class="h-5 w-5 mr-2"></i>
                         {% trans "Update All" %}
                     </button>
                 </div>
             </div>
 
             <!-- Alert for important info -->
-            <div class="alert alert-info" ng-show="currentTab === 'upgrade' && totalPackages > 0">
-                <i class="fas fa-info-circle"></i>
-                <span>{% trans "Important: Always backup your system before performing major updates. Some updates may require system restart." %}</span>
+            <div ng-show="currentTab === 'upgrade' && totalPackages > 0" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl mb-6">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-primary">{% trans "Important" %}</h4>
+                        <p class="text-primary/80">{% trans "Always backup your system before performing major updates. Some updates may require system restart." %}</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Package Table -->
-            <div class="table-container" ng-show="allPackages.length > 0">
-                <table class="package-table">
-                    <thead>
+            <!-- Package Table - Flat design -->
+            <div class="overflow-x-auto table-sticky-header" ng-show="allPackages.length > 0">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-muted/50 border-b border-border">
                         <tr>
-                            <th>{% trans "Package" %}</th>
-                            <th>{% trans "Current Version" %}</th>
-                            <th ng-show="currentTab === 'upgrade'">{% trans "New Version" %}</th>
-                            <th>{% trans "Status" %}</th>
-                            <th>{% trans "Actions" %}</th>
+                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Package" %}</th>
+                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Current Version" %}</th>
+                            <th ng-show="currentTab === 'upgrade'" class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "New Version" %}</th>
+                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</th>
+                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr ng-repeat="package in allPackages | filter:packSearch">
-                            <td>
-                                <div class="package-name">
-                                    <span>{$ package.package $}</span>
-                                    <span class="package-type" ng-if="package.type">
-                                        {$ package.type $}
-                                    </span>
+                    <tbody class="divide-y divide-border">
+                        <tr ng-repeat="package in allPackages | filter:packSearch" class="transition-colors hover:bg-muted/30">
+                            <!-- Package Name -->
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20">
+                                        <i data-lucide="package" class="h-5 w-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-foreground">{$ package.package $}</div>
+                                        <span ng-if="package.type" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-secondary/50 border border-border text-secondary-foreground">
+                                            {$ package.type $}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
-                            <td>
-                                <span class="version-badge">{$ package.version $}</span>
+
+                            <!-- Current Version -->
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-3 py-1.5 bg-muted border border-border rounded-lg text-sm font-mono">{$ package.version $}</span>
                             </td>
-                            <td ng-show="currentTab === 'upgrade'">
-                                <span class="upgrade-badge">
-                                    <i class="fas fa-arrow-up"></i>
-                                    {$ package.upgrade || '-' $}
+
+                            <!-- New Version (Updates tab only) -->
+                            <td ng-show="currentTab === 'upgrade'" class="px-4 py-3">
+                                <span ng-if="package.upgrade" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-sm font-bold text-emerald-600">
+                                    <i data-lucide="arrow-up" class="h-3.5 w-3.5"></i>
+                                    {$ package.upgrade $}
                                 </span>
+                                <span ng-if="!package.upgrade" class="text-muted-foreground">-</span>
                             </td>
-                            <td>
-                                <button type="button" class="lock-toggle" 
-                                        ng-class="{'locked': package.lock == 1, 'unlocked': package.lock == 0}"
+
+                            <!-- Lock Status -->
+                            <td class="px-4 py-3">
+                                <button type="button" class="lock-toggle p-2.5 rounded-xl transition-all"
+                                        ng-class="{'text-amber-600 hover:bg-amber-500/10': package.lock == 1, 'text-emerald-600 hover:bg-emerald-500/10': package.lock == 0}"
                                         ng-click="lockStatus(package.package, package.lock == 1 ? 1 : 0)"
-                                        aria-label="{$ package.lock == 1 ? 'Unlock package' : 'Lock package' $}">
-                                    <i class="fas" 
-                                       ng-class="{'fa-lock': package.lock == 1, 'fa-lock-open': package.lock == 0}"></i>
+                                        title="{$ package.lock == 1 ? 'Unlock package' : 'Lock package' $}">
+                                    <i data-lucide="{$ package.lock == 1 ? 'lock' : 'lock-open' $}" class="h-5 w-5"></i>
                                 </button>
                             </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button type="button" class="btn btn-info btn-sm" 
-                                            ng-click="showPackageDetails(package.package)" aria-label="{% trans 'View package details' %}">
-                                        <i class="fas fa-info-circle"></i>
+
+                            <!-- Actions -->
+                            <td class="px-4 py-3 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button" ng-click="showPackageDetails(package.package)"
+                                            class="inline-flex items-center justify-center px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
+                                        <i data-lucide="info" class="h-4 w-4 mr-2"></i>
                                         {% trans "Details" %}
                                     </button>
-                                    <button type="button" class="btn btn-primary btn-sm" 
-                                            ng-click="showUpdateModal(package.package)"
-                                            ng-show="currentTab === 'upgrade' || currentTab === 'cyberpanel'" aria-label="{% trans 'Update package' %}">
-                                        <i class="fas fa-download"></i>
+                                    <button type="button" ng-click="showUpdateModal(package.package)"
+                                            ng-show="currentTab === 'upgrade' || currentTab === 'cyberpanel'"
+                                            class="inline-flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
+                                        <i data-lucide="download" class="h-4 w-4 mr-2"></i>
                                         {% trans "Update" %}
                                     </button>
                                 </div>
@@ -905,145 +210,103 @@
             </div>
 
             <!-- Empty State -->
-            <div class="empty-state" ng-show="allPackages.length === 0 && cyberpanelLoading">
-                <div class="empty-icon">
-                    <i class="fas fa-cube"></i>
+            <div class="p-16 text-center" ng-show="allPackages.length === 0 && cyberpanelLoading">
+                <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
+                    <i data-lucide="package-search" class="h-8 w-8"></i>
                 </div>
-                <h3>{% trans "No packages found" %}</h3>
-                <p>{% trans "Try adjusting your search criteria or check your connection" %}</p>
+                <h3 class="text-xl font-bold text-foreground">{% trans "No packages found" %}</h3>
+                <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or check your connection" %}</p>
             </div>
 
             <!-- Pagination -->
-            <div class="pagination-bar" ng-show="allPackages.length > 0">
-                <div class="pagination-info">
-                    {% trans "Showing" %} {$ ((currentPage - 1) * recordsToShow) + 1 $} - 
-                    {$ Math.min(currentPage * recordsToShow, totalPackages) $} 
-                    {% trans "of" %} {$ totalPackages $} {% trans "packages" %}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-6 border-t border-border" ng-show="allPackages.length > 0">
+                <div class="text-sm text-muted-foreground">
+                    {% trans "Showing" %} <span class="font-bold text-foreground">{$ ((currentPage - 1) * recordsToShow) + 1 $}</span> -
+                    <span class="font-bold text-foreground">{$ Math.min(currentPage * recordsToShow, totalPackages) $}</span>
+                    {% trans "of" %} <span class="font-bold text-foreground">{$ totalPackages $}</span> {% trans "packages" %}
                 </div>
-                <div class="pagination-controls">
-                    <span>{% trans "Page:" %}</span>
-                    <select ng-model="currentPage" class="page-select" 
-                            ng-change="fetchPackages(currentTab)" aria-label="{% trans 'Select page' %}">
+
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-muted-foreground">{% trans "Page:" %}</span>
+                    <select ng-model="currentPage" ng-change="fetchPackages(currentTab)"
+                            class="px-4 py-2 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none">
                         <option ng-repeat="page in pagination" value="{$ $index + 1 $}">
                             {$ $index + 1 $}
                         </option>
                     </select>
-                    <span>{% trans "of" %} {$ pagination.length $}</span>
+                    <span class="text-sm text-muted-foreground">{% trans "of" %} {$ pagination.length $}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Package Details Modal -->
-    <div class="modal-overlay" ng-show="showDetails" ng-click="closeModal($event)">
-        <div class="modal-content" ng-click="$event.stopPropagation()">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-info-circle"></i>
-                    {% trans "Package Details:" %} {$ selectedPackage $}
+    <!-- Package Details Modal - Flat design -->
+    <div ng-show="showDetails" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6" ng-click="closeModal($event)">
+        <div class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden" ng-click="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-6 border-b border-border">
+                <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
+                    <i data-lucide="info" class="h-6 w-6 text-primary"></i>
+                    {% trans "Package Details:" %} <span class="text-primary">{$ selectedPackage $}</span>
                 </h3>
-                <button type="button" class="modal-close" ng-click="closeDetails()" aria-label="{% trans 'Close details modal' %}">
-                    <i class="fas fa-times"></i>
+                <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" ng-click="closeDetails()">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="detail-output" ng-bind="packageDetails"></div>
+            <div class="p-6">
+                <div class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
+                    {$ packageDetails $}
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Update Progress Modal -->
-    <div class="modal-overlay" ng-show="showUpdate" ng-click="closeModal($event)">
-        <div class="modal-content" ng-click="$event.stopPropagation()">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-download"></i>
-                    {% trans "Updating Package:" %} {$ updatingPackage $}
-                    <span ng-hide="cyberpanelLoading" class="loading-spinner loading-spinner-inline"></span>
+    <!-- Update Progress Modal - Flat design -->
+    <div ng-show="showUpdate" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6" ng-click="closeModal($event)">
+        <div class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden" ng-click="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-6 border-b border-border">
+                <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
+                    <i data-lucide="download" class="h-6 w-6 text-primary"></i>
+                    {% trans "Updating Package:" %} <span class="text-primary">{$ updatingPackage $}</span>
+                    <span ng-hide="cyberpanelLoading" class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
                 </h3>
-                <button type="button" class="modal-close" ng-click="closeUpdate()" ng-disabled="!updateComplete" aria-label="{% trans 'Close update modal' %}">
-                    <i class="fas fa-times"></i>
+                <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" ng-click="closeUpdate()" ng-disabled="!updateComplete">
+                    <i data-lucide="x" class="h-5 w-5"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="console-output" ng-bind="requestData"></div>
+            <div class="p-6">
+                <div class="p-4 bg-card border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
+                    {$ requestData $}
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <script>
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-item');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all tabs
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked tab
-            this.classList.add('active');
-        });
-    });
+    const scope = angular.element(document.querySelector('[ng-controller="listOSPackages"]')).scope();
+    if (scope) {
+        scope.setActiveTab = function(tab) {
+            scope.activeTab = tab;
+            scope.$apply();
+        };
+        // Initialize active tab
+        scope.activeTab = 'updates';
+    }
 });
 
-// Add to the Angular controller
-app.controller('listOSPackages', function($scope, $http, $timeout) {
-    // ... existing controller code ...
-    
-    // Initialize current tab
-    $scope.currentTab = 'upgrade';
-    
-    // Show/hide modals
-    $scope.showDetails = false;
-    $scope.showUpdate = false;
-    $scope.selectedPackage = '';
-    $scope.updatingPackage = '';
-    $scope.updateComplete = false;
-    
-    $scope.showPackageDetails = function(packageName) {
-        $scope.selectedPackage = packageName;
-        $scope.showDetails = true;
-        $scope.fetchPackageDetails(packageName);
-    };
-    
-    $scope.closeDetails = function() {
-        $scope.showDetails = false;
-        $scope.selectedPackage = '';
-        $scope.packageDetails = '';
-    };
-    
-    $scope.showUpdateModal = function(packageName) {
-        $scope.updatingPackage = packageName;
-        $scope.showUpdate = true;
-        $scope.updateComplete = false;
-        $scope.updatePackage(packageName);
-    };
-    
-    $scope.closeUpdate = function() {
-        $scope.showUpdate = false;
-        $scope.updatingPackage = '';
-        $scope.requestData = '';
-    };
-    
-    $scope.closeModal = function(event) {
-        if (event.target.classList.contains('modal-overlay')) {
-            if ($scope.showDetails) $scope.closeDetails();
-            if ($scope.showUpdate && $scope.updateComplete) $scope.closeUpdate();
+// Modal close on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const scope = angular.element(document.querySelector('[ng-controller="listOSPackages"]')).scope();
+        if (scope) {
+            if (scope.showDetails) scope.closeDetails();
+            if (scope.showUpdate && scope.updateComplete) scope.closeUpdate();
+            scope.$apply();
         }
-    };
-    
-    // Override fetchPackages to set current tab
-    var originalFetchPackages = $scope.fetchPackages;
-    $scope.fetchPackages = function(type) {
-        if (type === 'upgrade') $scope.currentTab = 'upgrade';
-        else if (type === 'CyberPanel') $scope.currentTab = 'cyberpanel';
-        else $scope.currentTab = 'all';
-        
-        if (originalFetchPackages) {
-            originalFetchPackages(type);
-        }
-    };
+    }
 });
 </script>
 

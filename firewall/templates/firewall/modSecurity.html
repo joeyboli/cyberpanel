@@ -1,458 +1,69 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "ModSecurity - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "ModSecurity" %}{% endblock %}
 
 {% block header_scripts %}
 <style>
-    .modern-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
+    /* Custom styles for ModSecurity - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
     }
-    
-    .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-        padding: 3rem 0;
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        border-radius: 20px;
-        animation: fadeInDown 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-        color: white;
-    }
-    
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-        animation: rotate 30s linear infinite;
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .header-content {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .modsec-icon {
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .page-subtitle {
-        font-size: 1.125rem;
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 700px;
-        margin: 0 auto;
-        line-height: 1.6;
-    }
-    
-    .docs-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-    }
-    
-    .docs-link:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    /* Install Panel */
-    .install-panel {
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-        text-align: center;
-        padding: 3rem;
-    }
-    
-    .install-icon {
-        font-size: 4rem;
-        color: #5b5fcf;
-        margin-bottom: 1.5rem;
-    }
-    
-    .install-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 1rem;
-    }
-    
-    .install-subtitle {
-        color: var(--text-secondary, #64748b);
-        margin-bottom: 2rem;
-    }
-    
-    .btn-install {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        color: white;
-        padding: 1rem 3rem;
-        border-radius: 10px;
-        font-weight: 500;
-        font-size: 1.125rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .btn-install:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-    }
-    
-    /* Installation Progress */
-    .install-progress {
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-        padding: 2rem;
-    }
-    
-    .progress-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .progress-icon {
-        font-size: 2rem;
-        color: #5b5fcf;
-        animation: spin 2s linear infinite;
-    }
-    
-    .progress-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-    }
-    
-    .log-textarea {
-        width: 100%;
-        padding: 1rem;
-        border: 2px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        background: var(--bg-tertiary, #1e293b);
-        color: var(--text-accent, #5b5fcf);
-        resize: vertical;
-        min-height: 300px;
-    }
-    
-    /* Configuration Panel */
-    .config-panel {
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-color, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    .panel-header {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        color: white;
-        padding: 1.5rem 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .panel-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .panel-icon {
-        width: 32px;
-        height: 32px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .panel-content {
-        padding: 2rem;
-    }
-    
-    /* Form Styles */
-    .form-group {
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-    }
-    
-    .form-label {
-        flex: 0 0 200px;
-        font-weight: 600;
-        color: var(--text-secondary, #334155);
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .form-control {
-        flex: 1;
-        padding: 0.75rem 1rem;
-        border: 2px solid var(--border-color, #e8e9ff);
-        border-radius: 10px;
-        font-size: 0.9375rem;
-        transition: all 0.3s ease;
-        background: var(--bg-secondary, #f8f9ff);
-        color: var(--text-primary, #1e293b);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: #22c55e;
-        background: var(--bg-primary, white);
-        box-shadow: 0 0 0 3px rgba(91, 95, 207, 0.1);
-    }
-    
-    .select-control {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        padding-right: 2.5rem;
-    }
-    
-    /* Custom Switch */
-    .switch {
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Toggle Switch Styling - Base Aligned */
+    .toggle-switch {
         position: relative;
         display: inline-block;
         width: 50px;
         height: 26px;
     }
-    
-    .switch input {
+    .toggle-switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
-    
-    .slider {
+    .toggle-slider {
         position: absolute;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--bg-tertiary, #cbd5e1);
-        transition: .4s;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: hsl(var(--muted));
+        transition: .3s;
         border-radius: 26px;
+        border: 1px solid hsl(var(--border));
     }
-    
-    .slider:before {
+    .toggle-slider:before {
         position: absolute;
         content: "";
         height: 18px;
         width: 18px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: .4s;
+        left: 3px;
+        bottom: 3px;
+        background-color: hsl(var(--background));
+        transition: .3s;
         border-radius: 50%;
+        border: 1px solid hsl(var(--border));
     }
-    
-    input:checked + .slider {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
+    input:checked + .toggle-slider {
+        background-color: hsl(var(--primary));
+        border-color: hsl(var(--primary));
     }
-    
-    input:checked + .slider:before {
+    input:checked + .toggle-slider:before {
         transform: translateX(24px);
     }
-    
-    .switch-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    
-    /* Buttons */
-    .btn-primary {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        color: white;
-        padding: 0.75rem 2rem;
-        border-radius: 10px;
-        font-weight: 500;
-        font-size: 0.9375rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-    }
-    
-    /* Alerts */
-    .alert {
-        padding: 1rem 1.5rem;
-        border-radius: 10px;
-        margin: 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        animation: fadeInUp 0.3s ease-out;
-    }
-    
-    .alert-success {
-        background: var(--alert-success-bg, #e8e6ff);
-        color: var(--alert-success-text, #5856d6);
-        border: 1px solid var(--alert-success-border, #d4d4ff);
-    }
-    
-    .alert-danger {
-        background: var(--alert-error-bg, #fee2e2);
-        color: var(--alert-error-text, #991b1b);
-        border: 1px solid var(--alert-error-border, #fecaca);
-    }
-    
-    .alert-icon {
-        font-size: 1.25rem;
-    }
-    
-    /* Info Box */
-    .info-box {
-        background: var(--alert-info-bg, #f0f9ff);
-        border: 1px solid var(--alert-info-border, #bae6fd);
-        border-radius: 10px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .info-icon {
-        color: var(--alert-info-text, #0284c7);
-        font-size: 1.25rem;
-    }
-    
-    .info-text {
-        color: var(--alert-info-text, #075985);
-        font-size: 0.875rem;
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--border-color, #f3f3f3);
-        border-top: 2px solid #5b5fcf;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .modern-container {
-            padding: 1rem;
-        }
-        
-        .page-title {
-            font-size: 2rem;
-        }
-        
-        .form-group {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-        
-        .form-label {
-            flex: none;
-        }
-        
-        .panel-content {
-            padding: 1rem;
-        }
+
+    /* Log Textarea */
+    .log-textarea {
+        background: hsl(var(--background));
+        color: hsl(var(--muted-foreground));
+        font-family: 'DM Mono', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        resize: vertical;
+        min-height: 300px;
     }
 </style>
 {% endblock %}
@@ -460,134 +71,177 @@
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="modern-container" ng-controller="modSec">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="page-title">
-                <div class="modsec-icon">
-                    <i class="fas fa-shield-alt fa-2x"></i>
-                </div>
-                {% trans "ModSecurity WAF" %}
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12 space-y-12" ng-controller="modSec">
+
+    <!-- Page Header - Full width -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="shield" class="h-8 w-8"></i>
             </div>
-            <p class="page-subtitle">
-                {% trans "Configure ModSecurity Web Application Firewall to protect your websites from common attacks and vulnerabilities." %}
-            </p>
-            <a href="https://community.cyberpanel.net/t/2-mod-security-configurations/135" target="_blank" class="docs-link">
-                <i class="fas fa-book"></i>
-                {% trans "ModSecurity Documentation" %}
-            </a>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "ModSecurity WAF" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Configure ModSecurity Web Application Firewall to protect your websites from common attacks and vulnerabilities." %}
+                </p>
+                <a href="https://community.cyberpanel.net/t/2-mod-security-configurations/135" target="_blank"
+                   class="mt-3 inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-lg font-bold transition-all border border-border hover:bg-muted !no-underline">
+                    <i data-lucide="book-open" class="h-5 w-5"></i>
+                    {% trans "ModSecurity Documentation" %}
+                </a>
+            </div>
         </div>
     </div>
-    
+
     {% if modSecInstalled == 0 %}
-        <!-- Installation Panel -->
-        <div class="install-panel">
-            <i class="fas fa-shield-alt install-icon"></i>
-            <h2 class="install-title">{% trans "ModSecurity Not Installed" %}</h2>
-            <p class="install-subtitle">
-                {% trans "Install ModSecurity to add an extra layer of protection to your web applications." %}
-            </p>
-            <button ng-click="installModSec()" class="btn-install">
-                <i class="fas fa-download"></i>
+    <!-- Installation Panel - Flat design, Full width -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <div class="p-12 text-center space-y-6">
+            <div class="inline-flex items-center justify-center h-20 w-20 rounded-2xl bg-primary/10 text-primary border border-primary/20 mb-4">
+                <i data-lucide="shield-off" class="h-10 w-10"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-foreground mb-2">{% trans "ModSecurity Not Installed" %}</h2>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    {% trans "Install ModSecurity to add an extra layer of protection to your web applications." %}
+                </p>
+            </div>
+            <button ng-click="installModSec()"
+                    class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i data-lucide="download" class="h-6 w-6 mr-3"></i>
                 {% trans "Install ModSecurity" %}
             </button>
         </div>
-        
-        <!-- Installation Progress (Hidden by default) -->
-        <div ng-hide="modeSecInstallBox" class="install-progress" style="margin-top: 2rem;">
-            <div class="progress-header">
-                <i class="fas fa-cog progress-icon"></i>
-                <h3 class="progress-title">{% trans "Installing ModSecurity..." %}</h3>
+    </div>
+
+    <!-- Installation Progress (Hidden by default) -->
+    <div ng-hide="modeSecInstallBox" class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <div class="p-8 space-y-6">
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <h3 class="text-xl font-bold text-foreground">{% trans "Installing ModSecurity..." %}</h3>
             </div>
-            <textarea ng-model="requestData" class="log-textarea" readonly></textarea>
+            <textarea ng-model="requestData" class="log-textarea w-full p-4 bg-card border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" readonly></textarea>
         </div>
-        
-        <!-- Status Messages -->
-        <div ng-hide="modSecNotifyBox" style="margin-top: 2rem;">
-            <div ng-hide="failedToStartInallation" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle alert-icon"></i>
-                <span>{% trans "Failed to start installation. Error message:" %} {$ errorMessage $}</span>
-            </div>
-            
-            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle alert-icon"></i>
-                <span>{% trans "Could not connect. Please refresh this page." %}</span>
-            </div>
-            
-            <div ng-hide="installationFailed" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle alert-icon"></i>
-                <span>{% trans "Installation failed." %} {$ errorMessage $}</span>
-            </div>
-            
-            <div ng-hide="modSecSuccessfullyInstalled" class="alert alert-success">
-                <i class="fas fa-check-circle alert-icon"></i>
-                <span>{% trans "ModSecurity successfully installed, refreshing page in 3 seconds..." %}</span>
+    </div>
+
+    <!-- Status Messages -->
+    <div class="space-y-4">
+        <div ng-hide="failedToStartInallation" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Installation Failed" %}</h4>
+                    <p class="text-destructive/80">{% trans "Failed to start installation. Error message:" %} {$ errorMessage $}</p>
+                </div>
             </div>
         </div>
-        
+
+        <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
+                    <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="installationFailed" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Installation Failed" %}</h4>
+                    <p class="text-destructive/80">{% trans "Installation failed." %} {$ errorMessage $}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="modSecSuccessfullyInstalled" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="check-circle" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary">{% trans "Success" %}</h4>
+                    <p class="text-primary/80">{% trans "ModSecurity successfully installed, refreshing page in 3 seconds..." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% else %}
-        <!-- Configuration Panel -->
-        <div class="config-panel">
-            <div class="panel-header">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    {% trans "ModSecurity Configuration" %}
+    <!-- Configuration Panel - Flat design, Full width -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <!-- Panel Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-8 py-6 bg-muted/30 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <i data-lucide="settings" class="h-5 w-5"></i>
                 </div>
-                <div ng-show="modsecLoading" class="loading-spinner"></div>
+                <h2 class="text-xl font-bold text-foreground">{% trans "ModSecurity Configuration" %}</h2>
             </div>
-            
-            <div class="panel-content">
-                <div class="info-box">
-                    <i class="fas fa-info-circle info-icon"></i>
-                    <span class="info-text">
-                        {% trans "Configure ModSecurity settings below. Changes will be applied immediately after saving." %}
-                    </span>
+            <div ng-show="modsecLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <div class="p-8 space-y-8">
+            <!-- Info Box -->
+            <div class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-primary">{% trans "Configuration Guide" %}</h4>
+                        <p class="text-primary/80 mt-2">{% trans "Configure ModSecurity settings below. Changes will be applied immediately after saving." %}</p>
+                    </div>
                 </div>
-                
-                <form>
-                    {% if OLS %}
-                    <div class="form-group">
-                        <label class="form-label">{% trans "ModSecurity Status" %}</label>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="modsecurity_status">
-                                <span class="slider"></span>
-                            </label>
-                            <span>{% trans "Enable ModSecurity engine" %}</span>
-                        </div>
+            </div>
+
+            <form class="space-y-6">
+                {% if OLS %}
+                <!-- ModSecurity Status Toggle -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-secondary/10 border border-border rounded-2xl">
+                    <label class="text-lg font-bold text-foreground">{% trans "ModSecurity Status" %}</label>
+                    <div class="flex items-center gap-3">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="modsecurity_status">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-sm font-medium text-muted-foreground">{% trans "Enable ModSecurity engine" %}</span>
                     </div>
-                    {% endif %}
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Audit Engine" %}</label>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="SecAuditEngine">
-                                <span class="slider"></span>
-                            </label>
-                            <span>{% trans "Enable audit logging" %}</span>
-                        </div>
+                </div>
+                {% endif %}
+
+                <!-- Audit Engine Toggle -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-secondary/10 border border-border rounded-2xl">
+                    <label class="text-lg font-bold text-foreground">{% trans "Audit Engine" %}</label>
+                    <div class="flex items-center gap-3">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="SecAuditEngine">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-sm font-medium text-muted-foreground">{% trans "Enable audit logging" %}</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Rule Engine" %}</label>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="SecRuleEngine">
-                                <span class="slider"></span>
-                            </label>
-                            <span>{% trans "Enable rule processing" %}</span>
-                        </div>
+                </div>
+
+                <!-- Rule Engine Toggle -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-secondary/10 border border-border rounded-2xl">
+                    <label class="text-lg font-bold text-foreground">{% trans "Rule Engine" %}</label>
+                    <div class="flex items-center gap-3">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="SecRuleEngine">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-sm font-medium text-muted-foreground">{% trans "Enable rule processing" %}</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Debug Log Level" %}</label>
-                        <select ng-model="SecDebugLogLevel" class="form-control select-control">
+                </div>
+
+                <!-- Debug Log Level Select -->
+                <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Debug Log Level" %}</label>
+                    <div class="relative">
+                        <select ng-model="SecDebugLogLevel" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
                             <option value="0">0 - {% trans "No logging" %}</option>
                             <option value="1">1 - {% trans "Errors only" %}</option>
                             <option value="2">2 - {% trans "Warnings" %}</option>
@@ -599,53 +253,79 @@
                             <option value="8">8 - {% trans "Developer debug" %}</option>
                             <option value="9">9 - {% trans "Maximum debug" %}</option>
                         </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+                        </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Audit Log Parts" %}</label>
-                        <input type="text" class="form-control" ng-model="SecAuditLogParts" 
-                               placeholder="ABIJDEFHZ" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Relevant Status" %}</label>
-                        <input type="text" class="form-control" ng-model="SecAuditLogRelevantStatus" 
-                               placeholder="^(?:5|4\d[^4])" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">{% trans "Audit Log Type" %}</label>
-                        <input type="text" class="form-control" ng-model="SecAuditLogType" 
-                               placeholder="Serial" required>
-                    </div>
-                    
-                    <div class="form-group" style="margin-top: 2rem;">
-                        <label class="form-label"></label>
-                        <button type="button" ng-click="saveModSecConfigurations()" class="btn-primary">
-                            <i class="fas fa-save"></i>
-                            {% trans "Save Configuration" %}
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Status Messages -->
-                <div ng-hide="failedToSave" class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle alert-icon"></i>
-                    <span>{% trans "Failed to save ModSecurity configurations. Error message:" %} {$ errorMessage $}</span>
                 </div>
-                
-                <div ng-hide="successfullySaved" class="alert alert-success">
-                    <i class="fas fa-check-circle alert-icon"></i>
-                    <span>{% trans "ModSecurity configurations successfully saved." %}</span>
+
+                <!-- Audit Log Parts Input -->
+                <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Audit Log Parts" %}</label>
+                    <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                           ng-model="SecAuditLogParts" placeholder="ABIJDEFHZ" required>
                 </div>
-                
-                <div ng-hide="couldNotConnect" class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle alert-icon"></i>
-                    <span>{% trans "Could not connect. Please refresh this page." %}</span>
+
+                <!-- Relevant Status Input -->
+                <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Relevant Status" %}</label>
+                    <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                           ng-model="SecAuditLogRelevantStatus" placeholder="^(?:5|4\d[^4])" required>
+                </div>
+
+                <!-- Audit Log Type Input -->
+                <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Audit Log Type" %}</label>
+                    <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                           ng-model="SecAuditLogType" placeholder="Serial" required>
+                </div>
+
+                <!-- Save Button -->
+                <div class="pt-6 border-t border-border">
+                    <button type="button" ng-click="saveModSecConfigurations()"
+                            class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="save" class="h-6 w-6 mr-3"></i>
+                        {% trans "Save Configuration" %}
+                    </button>
+                </div>
+            </form>
+
+            <!-- Status Messages -->
+            <div class="space-y-4">
+                <div ng-hide="failedToSave" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                        <div>
+                            <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
+                            <p class="text-destructive/80">{% trans "Failed to save ModSecurity configurations. Error message:" %} {$ errorMessage $}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-hide="successfullySaved" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="check-circle" class="h-6 w-6 text-primary shrink-0"></i>
+                        <div>
+                            <h4 class="font-bold text-primary">{% trans "Success" %}</h4>
+                            <p class="text-primary/80">{% trans "ModSecurity configurations successfully saved." %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
+                        <div>
+                            <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
+                            <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     {% endif %}
+
 </div>
 
 {% endblock %}

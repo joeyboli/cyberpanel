@@ -4,487 +4,30 @@
 
 {% block header_scripts %}
 <style>
-    .modern-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
+    /* Custom styles for PHP Extensions - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
     }
-    
-    .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-        padding: 3rem 0;
-        background: linear-gradient(135deg, var(--php-gradient-start, #667eea) 0%, var(--php-gradient-end, #764ba2) 100%);
-        border-radius: 20px;
-        animation: fadeInDown 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-        color: var(--text-primary, white);
-    }
-    
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at 70% 30%, var(--bg-light, rgba(255, 255, 255, 0.1)) 0%, transparent 50%);
-        animation: rotate 30s linear infinite;
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .header-content {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .php-icon {
-        width: 60px;
-        height: 60px;
-        background: var(--bg-light, rgba(255, 255, 255, 0.2));
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: var(--shadow-light, 0 4px 12px rgba(0,0,0,0.1));
-    }
-    
-    .page-subtitle {
-        font-size: 1.125rem;
-        color: var(--text-secondary, rgba(255, 255, 255, 0.9));
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    
-    .apache-link {
-        margin-top: 1rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--bg-light, rgba(255, 255, 255, 0.2));
-        backdrop-filter: blur(10px);
-        padding: 0.5rem 1.5rem;
-        border-radius: 20px;
-        color: var(--text-primary, white);
-        text-decoration: none;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-    
-    .apache-link:hover {
-        background: var(--bg-hover, rgba(255, 255, 255, 0.3));
-        transform: translateY(-2px);
-        color: var(--text-primary, white);
-        text-decoration: none;
-    }
-    
-    .selector-panel {
-        background: var(--bg-secondary, white);
-        border-radius: 16px;
-        box-shadow: var(--shadow-medium, 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    .selector-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .selector-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--php-gradient-start, #667eea) 0%, var(--php-gradient-end, #764ba2) 100%);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-primary, white);
-    }
-    
-    .selector-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-    }
-    
-    .selector-form {
-        display: flex;
-        gap: 1rem;
-        align-items: flex-end;
-    }
-    
-    .form-group {
-        flex: 1;
-    }
-    
-    .form-label {
-        font-weight: 500;
-        color: var(--text-secondary, #475569);
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: var(--bg-secondary, #fff);
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: var(--accent-color, #667eea);
-        box-shadow: var(--accent-shadow, 0 0 0 3px rgba(102, 126, 234, 0.1));
-    }
-    
-    .select-control {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        padding-right: 2.5rem;
-    }
-    
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, var(--php-gradient-start, #667eea) 0%, var(--php-gradient-end, #764ba2) 100%);
-        color: var(--text-primary, white);
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--accent-shadow, 0 4px 12px rgba(102, 126, 234, 0.3));
-    }
-    
-    .btn-primary:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-    
-    .extensions-panel {
-        background: var(--bg-secondary, white);
-        border-radius: 16px;
-        box-shadow: var(--shadow-medium, 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out 0.2s;
-        animation-fill-mode: both;
-    }
-    
-    .controls-bar {
-        padding: 1.5rem 2rem;
-        background: var(--bg-light, #f8f9ff);
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
-    }
-    
-    .search-box {
-        position: relative;
-        max-width: 400px;
-    }
-    
-    .search-input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border: 1px solid var(--border-color, #e8e9ff);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: var(--bg-secondary, white);
-        color: var(--text-primary, inherit);
-    }
-    
-    .search-input:focus {
-        outline: none;
-        border-color: var(--accent-color, #667eea);
-        box-shadow: var(--accent-shadow, 0 0 0 3px rgba(102, 126, 234, 0.1));
-    }
-    
-    .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted, #94a3b8);
-    }
-    
-    .extensions-table {
-        width: 100%;
-        background: var(--bg-secondary, white);
-    }
-    
-    .extensions-table thead {
-        background: var(--bg-light, #f8f9ff);
-    }
-    
-    .extensions-table th {
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-secondary, #475569);
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--border-color, #e8e9ff);
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Table sticky header */
+    .table-sticky-header thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 
-    .extensions-table td {
-        padding: 1rem;
-        border-bottom: 1px solid var(--border-light, #f1f5f9);
-        color: var(--text-primary, #334155);
-        font-size: 1rem;
+    /* Status badge animation */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
-    
-    .extensions-table tbody tr {
-        transition: all 0.2s ease;
-    }
-    
-    .extensions-table tbody tr:hover {
-        background: var(--bg-hover, #f8f9ff);
-    }
-    
-    .extension-name {
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-    }
-    
-    .php-version-badge {
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        background: var(--accent-bg, #e0e7ff);
-        color: var(--accent-color, #4c1d95);
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-weight: 500;
-    }
-    
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
-    .status-installed {
-        background: var(--success-bg, #d1fae5);
-        color: var(--success-color, #065f46);
-    }
-    
-    .status-not-installed {
-        background: var(--danger-bg, #fee2e2);
-        color: var(--danger-color, #991b1b);
-    }
-    
-    .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-    }
-    
-    .btn-install {
-        background: var(--success-color, #10b981);
-        color: var(--text-primary, white);
-    }
-    
-    .btn-install:hover:not(:disabled) {
-        background: var(--success-hover, #059669);
-        transform: translateY(-2px);
-        box-shadow: var(--success-shadow, 0 4px 12px rgba(16, 185, 129, 0.3));
-    }
-    
-    .btn-uninstall {
-        background: var(--danger-color, #ef4444);
-        color: var(--text-primary, white);
-    }
-    
-    .btn-uninstall:hover:not(:disabled) {
-        background: var(--danger-hover, #dc2626);
-        transform: translateY(-2px);
-        box-shadow: var(--danger-shadow, 0 4px 12px rgba(239, 68, 68, 0.3));
-    }
-    
-    .log-panel {
-        background: var(--bg-secondary, white);
-        border-radius: 16px;
-        box-shadow: var(--shadow-medium, 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08));
-        border: 1px solid var(--border-color, #e8e9ff);
-        padding: 2rem;
-        margin-top: 2rem;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    .log-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-    }
-    
-    .log-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .log-icon {
-        width: 32px;
-        height: 32px;
-        background: var(--accent-bg, #f3e8ff);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent-color, #667eea);
-    }
-    
-    .log-output {
-        background: var(--console-bg, #1e293b);
-        color: var(--console-text, #10b981);
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.875rem;
-        padding: 1.5rem;
-        border-radius: 8px;
-        height: 400px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-    
-    .btn-back {
-        background: var(--info-color, #6366f1);
-        color: var(--text-primary, white);
-    }
-    
-    .btn-back:hover {
-        background: var(--info-hover, #4f46e5);
-        transform: translateY(-2px);
-        box-shadow: var(--info-shadow, 0 4px 12px rgba(99, 102, 241, 0.3));
-    }
-    
-    .alert {
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        animation: fadeInUp 0.3s ease-out;
-    }
-    
-    .alert-danger {
-        background: var(--danger-bg, #fee2e2);
-        color: var(--danger-color, #991b1b);
-        border: 1px solid var(--danger-border, #fecaca);
-    }
-    
-    .alert-icon {
-        font-size: 1.25rem;
-    }
-    
-    .loading-spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--border-light, #f3f3f3);
-        border-top: 2px solid var(--accent-color, #667eea);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-        margin-left: 0.5rem;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .modern-container {
-            padding: 1rem;
-        }
-        
-        .page-title {
-            font-size: 2rem;
-        }
-        
-        .extensions-table {
-            font-size: 1rem;
-        }
-        
-        .extensions-table th,
-        .extensions-table td {
-            padding: 0.5rem;
-        }
-        
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-        }
+    .status-dot {
+        animation: pulse 2s infinite;
     }
 </style>
 {% endblock %}
@@ -492,168 +35,215 @@
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="modern-container" ng-controller="installExtensions">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="page-title">
-                <div class="php-icon">
-                    <i class="fas fa-puzzle-piece fa-2x"></i>
-                </div>
-                {% trans "Install PHP Extensions" %}
+<div class="w-full p-4 md:p-12 space-y-12" ng-controller="installExtensions">
+
+    <!-- Page Header - Full width -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="puzzle" class="h-8 w-8"></i>
             </div>
-            <p class="page-subtitle">
-                {% trans "Install or uninstall PHP extensions to enhance your PHP functionality" %}
-            </p>
-            {% if apache %}
-            <a href="{% url 'installExtensions' %}?apache=apache" class="apache-link">
-                <i class="fas fa-feather"></i>
-                {% trans "Manage Apache Extensions" %}
-            </a>
-            {% endif %}
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Install PHP Extensions" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Install or uninstall PHP extensions to enhance your PHP functionality" %}
+                </p>
+                {% if apache %}
+                <a href="{% url 'installExtensions' %}?apache=apache" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
+                    <i data-lucide="feather" class="h-4 w-4"></i>
+                    {% trans "Manage Apache Extensions" %}
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-    
-    <!-- PHP Version Selector -->
-    <div class="selector-panel">
-        <div class="selector-header">
-            <div class="selector-icon">
-                <i class="fas fa-code"></i>
+
+    <!-- PHP Version Selector - Flat design -->
+    <div class="bg-card rounded-2xl border border-border p-8">
+        <div class="flex flex-col md:flex-row md:items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <i data-lucide="code" class="h-6 w-6"></i>
+                </div>
+                <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
             </div>
-            <h3 class="selector-title">
-                {% trans "Select PHP Version" %}
-                <span ng-show="loadingExtensions" class="loading-spinner"></span>
-            </h3>
-        </div>
-        
-        <div class="selector-form">
-            <div class="form-group">
-                <label class="form-label">{% trans "PHP Version" %}</label>
-                <select ng-disabled="phpSelectionDisabled" 
+
+            <div class="flex-1 relative max-w-md">
+                <select ng-disabled="phpSelectionDisabled"
                         ng-change="fetchPHPDetails()"
-                        ng-model="phpSelection" 
-                        class="form-control select-control">
+                        ng-model="phpSelection"
+                        class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
                     {% for php in phps %}
                         <option>{{ php }}</option>
                     {% endfor %}
                 </select>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+                </div>
             </div>
-            <button type="button" 
-                    ng-click="fetchPHPDetails()" 
+
+            <button type="button"
+                    ng-click="fetchPHPDetails()"
                     ng-disabled="loadingExtensions"
-                    class="btn btn-primary">
-                <i class="fas fa-sync-alt"></i>
+                    class="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-xl text-lg font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i data-lucide="refresh-cw" class="h-5 w-5 mr-2" ng-class="{'animate-spin': loadingExtensions}"></i>
                 {% trans "Load Extensions" %}
             </button>
         </div>
     </div>
-    
-    <!-- Extensions Table -->
-    <div ng-hide="availableExtensions" class="extensions-panel">
-        <div class="controls-bar">
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" 
-                       ng-model="extSearch" 
+
+    <!-- Extensions Table - Flat design -->
+    <div ng-hide="availableExtensions" class="bg-card rounded-2xl border border-border overflow-hidden">
+        <!-- Search Bar -->
+        <div class="p-6 border-b border-border bg-muted/30">
+            <div class="relative max-w-md">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                </div>
+                <input type="text"
+                       ng-model="extSearch"
                        placeholder="{% trans 'Search extensions...' %}"
-                       class="search-input">
+                       class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
             </div>
         </div>
-        
-        <table class="extensions-table">
-            <thead>
-                <tr>
-                    <th>{% trans "ID" %}</th>
-                    <th>{% trans "PHP Version" %}</th>
-                    <th>{% trans "Extension Name" %}</th>
-                    <th>{% trans "Description" %}</th>
-                    <th>{% trans "Status" %}</th>
-                    <th>{% trans "Actions" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="record in records | filter:extSearch">
-                    <td>#{$ record.id $}</td>
-                    <td>
-                        <span class="php-version-badge">{$ record.phpVers $}</span>
-                    </td>
-                    <td class="extension-name">{$ record.extensionName $}</td>
-                    <td>{$ record.description $}</td>
-                    <td>
-                        <span class="status-badge" 
-                              ng-class="{'status-installed': record.status=='Installed', 
-                                         'status-not-installed': record.status=='Not-Installed'}">
-                            <i class="fas fa-circle" style="font-size: 0.5rem; color: inherit;"></i>
-                            {$ record.status $}
-                        </span>
-                    </td>
-                    <td>
-                        <button ng-disabled="record.status=='Installed'" 
-                                type="button"
-                                ng-click="installExt(record.extensionName)"
-                                class="btn btn-sm btn-install">
-                            <i class="fas fa-download"></i>
-                            {% trans "Install" %}
-                        </button>
-                        <button ng-disabled="record.status=='Not-Installed'" 
-                                type="button"
-                                ng-click="uninstallExt(record.extensionName)"
-                                class="btn btn-sm btn-uninstall">
-                            <i class="fas fa-trash"></i>
-                            {% trans "Uninstall" %}
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Log Output -->
-    <div ng-hide="request" class="log-panel">
-        <div class="log-header">
-            <div class="log-title">
-                <div class="log-icon">
-                    <i class="fas fa-terminal"></i>
-                </div>
-                {% trans "Installation Log" %}
+
+        <!-- Table Content -->
+        <div class="overflow-x-auto table-sticky-header">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-muted/50 border-b border-border">
+                    <tr>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "ID" %}</th>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "PHP Version" %}</th>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Extension Name" %}</th>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Description" %}</th>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</th>
+                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    <tr ng-repeat="record in records | filter:extSearch" class="transition-colors hover:bg-muted/30">
+                        <!-- ID -->
+                        <td class="px-4 py-3 font-mono text-foreground">#{$ record.id $}</td>
+
+                        <!-- PHP Version -->
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-primary text-sm font-bold">
+                                {$ record.phpVers $}
+                            </span>
+                        </td>
+
+                        <!-- Extension Name -->
+                        <td class="px-4 py-3 font-bold text-foreground">{$ record.extensionName $}</td>
+
+                        <!-- Description -->
+                        <td class="px-4 py-3 text-muted-foreground">{$ record.description $}</td>
+
+                        <!-- Status -->
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold"
+                                  ng-class="{'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': record.status=='Installed',
+                                             'bg-destructive/10 text-destructive border border-destructive/20': record.status=='Not-Installed'}">
+                                <span class="h-2 w-2 rounded-full" ng-class="{'bg-emerald-500 status-dot': record.status=='Installed', 'bg-destructive': record.status=='Not-Installed'}"></span>
+                                {$ record.status $}
+                            </span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button ng-disabled="record.status=='Installed'"
+                                        type="button"
+                                        ng-click="installExt(record.extensionName)"
+                                        class="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i data-lucide="download" class="h-4 w-4 mr-2"></i>
+                                    {% trans "Install" %}
+                                </button>
+                                <button ng-disabled="record.status=='Not-Installed'"
+                                        type="button"
+                                        ng-click="uninstallExt(record.extensionName)"
+                                        class="inline-flex items-center justify-center px-4 py-2 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-destructive/20">
+                                    <i data-lucide="trash-2" class="h-4 w-4 mr-2"></i>
+                                    {% trans "Uninstall" %}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div ng-if="(records | filter:extSearch).length === 0" class="p-16 text-center">
+            <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
+                <i data-lucide="package-search" class="h-8 w-8"></i>
             </div>
-            <button ng-disabled="goback" 
+            <h3 class="text-xl font-bold text-foreground">{% trans "No extensions found" %}</h3>
+            <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or load extensions for a different PHP version" %}</p>
+        </div>
+    </div>
+
+    <!-- Log Output Panel - Flat design -->
+    <div ng-hide="request" class="bg-card rounded-2xl border border-border p-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <i data-lucide="terminal" class="h-5 w-5"></i>
+                </div>
+                <h3 class="text-xl font-bold text-foreground">{% trans "Installation Log" %}</h3>
+            </div>
+            <button ng-disabled="goback"
                     type="button"
                     ng-click="fetchPHPDetails()"
-                    class="btn btn-back">
-                <i class="fas fa-arrow-left"></i>
+                    class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
+                <i data-lucide="arrow-left" class="h-4 w-4 mr-2"></i>
                 {% trans "Go Back" %}
             </button>
         </div>
-        <div class="log-output">{$ requestData $}</div>
+        <div class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
+            {$ requestData $}
+        </div>
     </div>
-    
+
     <!-- Error Messages -->
-    <div ng-hide="canNotFetch" class="alert alert-danger">
-        <i class="fas fa-exclamation-circle alert-icon"></i>
-        <div>
-            <strong>{% trans "Error" %}:</strong> 
-            {% trans "Cannot fetch details. Error message:" %} {$ errorMessage $}
+    <div class="space-y-4">
+        <div ng-hide="canNotFetch" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
+                    <p class="text-destructive/80">{% trans "Cannot fetch details. Error message:" %} {$ errorMessage $}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="canNotPerform" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
+                    <p class="text-destructive/80">{% trans "Cannot perform operation. Error message:" %} {$ errorMessage $}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
+                    <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <div ng-hide="canNotPerform" class="alert alert-danger">
-        <i class="fas fa-exclamation-circle alert-icon"></i>
-        <div>
-            <strong>{% trans "Error" %}:</strong> 
-            {% trans "Cannot perform operation. Error message:" %} {$ errorMessage $}
-        </div>
-    </div>
-    
-    <div ng-hide="couldNotConnect" class="alert alert-danger">
-        <i class="fas fa-exclamation-circle alert-icon"></i>
-        <div>
-            <strong>{% trans "Connection Error" %}:</strong> 
-            {% trans "Could not connect. Please refresh this page." %}
-        </div>
-    </div>
+
 </div>
 
+{% endblock %}
+
+{% block footer_scripts %}
+<script src="{% static 'managePHP/managePHP.js' %}"></script>
 {% endblock %}

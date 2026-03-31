@@ -1,394 +1,58 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "ModSecurity Rules Packs - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "ModSecurity Rules Packs" %}{% endblock %}
 
 {% block header_scripts %}
 <style>
-    .modern-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
+    /* Custom styles for ModSecurity Rules Packs - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
     }
-    
-    .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-        padding: 3rem 0;
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        border-radius: 20px;
-        animation: fadeInDown 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-        color: white;
-    }
-    
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-        animation: rotate 30s linear infinite;
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .header-content {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .modsec-icon {
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .page-subtitle {
-        font-size: 1.125rem;
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 700px;
-        margin: 0 auto 1rem;
-        line-height: 1.6;
-    }
-    
-    .docs-link {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 0.5rem 1.5rem;
-        border-radius: 10px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-    
-    .docs-link:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
-        color: white;
-        text-decoration: none;
-    }
-    
-    /* Install Panel */
-    .install-panel {
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-light, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-        text-align: center;
-        padding: 3rem;
-    }
-    
-    .install-icon {
-        font-size: 4rem;
-        color: #5b5fcf;
-        margin-bottom: 1.5rem;
-    }
-    
-    .install-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-        margin-bottom: 1rem;
-    }
-    
-    .btn-install {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        color: white;
-        padding: 1rem 3rem;
-        border-radius: 10px;
-        font-weight: 500;
-        font-size: 1.125rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .btn-install:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-    }
-    
-    /* Rules Panel */
-    .rules-panel {
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-light, #e8e9ff);
-        overflow: hidden;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    /* Custom Table */
-    .custom-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .custom-table thead th {
-        background: var(--bg-secondary, #f8f9ff);
-        padding: 1rem 1.5rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-secondary, #334155);
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid var(--border-light, #e8e9ff);
-    }
-    
-    .custom-table tbody td {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--border-light, #e8e9ff);
-        vertical-align: middle;
-    }
-    
-    .custom-table tbody tr:hover {
-        background: var(--bg-secondary, #f8f9ff);
-    }
-    
-    .custom-table tbody tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .package-name {
-        font-weight: 600;
-        color: var(--text-primary, #1e293b);
-        font-size: 1rem;
-    }
-    
-    /* Custom Switch */
-    .switch {
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Toggle Switch Styling - Base Aligned */
+    .toggle-switch {
         position: relative;
         display: inline-block;
         width: 50px;
         height: 26px;
     }
-    
-    .switch input {
+    .toggle-switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
-    
-    .slider {
+    .toggle-slider {
         position: absolute;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--bg-tertiary, #cbd5e1);
-        transition: .4s;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: hsl(var(--muted));
+        transition: .3s;
         border-radius: 26px;
+        border: 1px solid hsl(var(--border));
     }
-    
-    .slider:before {
+    .toggle-slider:before {
         position: absolute;
         content: "";
         height: 18px;
         width: 18px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: .4s;
+        left: 3px;
+        bottom: 3px;
+        background-color: hsl(var(--background));
+        transition: .3s;
         border-radius: 50%;
+        border: 1px solid hsl(var(--border));
     }
-    
-    input:checked + .slider {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
+    input:checked + .toggle-slider {
+        background-color: hsl(var(--primary));
+        border-color: hsl(var(--primary));
     }
-    
-    input:checked + .slider:before {
+    input:checked + .toggle-slider:before {
         transform: translateX(24px);
-    }
-    
-    /* Buttons */
-    .btn-configure {
-        background: var(--bg-secondary, #f8f9ff);
-        border: 2px solid var(--border-light, #e8e9ff);
-        color: #5b5fcf;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-configure:hover:not(:disabled) {
-        background: linear-gradient(135deg, #5b5fcf 0%, #5856d6 100%);
-        color: white;
-        border-color: transparent;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(91, 95, 207, 0.4);
-    }
-    
-    .btn-configure:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    /* Alerts */
-    .alert {
-        padding: 1rem 1.5rem;
-        border-radius: 10px;
-        margin: 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        animation: fadeInUp 0.3s ease-out;
-    }
-    
-    .alert-success {
-        background: var(--alert-success-bg, #e8e6ff);
-        color: var(--alert-success-text, #5856d6);
-        border: 1px solid var(--alert-success-border, #d4d4ff);
-    }
-    
-    .alert-danger {
-        background: var(--alert-danger-bg, #fee2e2);
-        color: var(--alert-danger-text, #991b1b);
-        border: 1px solid var(--alert-danger-border, #fecaca);
-    }
-    
-    .alert-icon {
-        font-size: 1.25rem;
-    }
-    
-    /* Rule Files Table */
-    .rule-files-section {
-        margin-top: 2rem;
-        background: var(--bg-primary, white);
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid var(--border-light, #e8e9ff);
-        overflow: hidden;
-        padding: 2rem;
-    }
-    
-    .rule-files-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .rule-files-table thead th {
-        background: var(--bg-secondary, #f8f9ff);
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-secondary, #334155);
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid var(--border-light, #e8e9ff);
-    }
-    
-    .rule-files-table tbody td {
-        padding: 1rem;
-        border-bottom: 1px solid var(--border-light, #e8e9ff);
-        vertical-align: middle;
-    }
-    
-    .rule-files-table tbody tr:hover {
-        background: var(--bg-secondary, #f8f9ff);
-    }
-    
-    .rule-files-table tbody tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .file-status {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--bg-tertiary, #f3f3f3);
-        border-top: 2px solid #5b5fcf;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .modern-container {
-            padding: 1rem;
-        }
-        
-        .page-title {
-            font-size: 2rem;
-        }
-        
-        .custom-table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
     }
 </style>
 {% endblock %}
@@ -396,67 +60,87 @@
 {% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div ng-controller="modSecRulesPack" class="modern-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="page-title">
-                <div class="modsec-icon">
-                    <i class="fas fa-shield-alt fa-2x"></i>
-                </div>
-                {% trans "ModSecurity Rules Packages" %}
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12 space-y-12" ng-controller="modSecRulesPack">
+
+    <!-- Page Header - Full width -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="shield" class="h-8 w-8"></i>
             </div>
-            <p class="page-subtitle">
-                {% trans "Install and manage ModSecurity rule packages for enhanced web application security." %}
-            </p>
-            <a href="https://community.cyberpanel.net/t/4-mod-security-rules-packages/133" target="_blank" class="docs-link">
-                <i class="fas fa-book"></i>
-                {% trans "ModSec Docs" %}
-            </a>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "ModSecurity Rules Packages" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Install and manage ModSecurity rule packages for enhanced web application security." %}
+                </p>
+                <a href="https://community.cyberpanel.net/t/4-mod-security-rules-packages/133" target="_blank"
+                   class="mt-3 inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-lg font-bold transition-all border border-border hover:bg-muted !no-underline">
+                    <i data-lucide="book-open" class="h-5 w-5"></i>
+                    {% trans "ModSec Docs" %}
+                </a>
+            </div>
         </div>
     </div>
 
     {% if modSecInstalled == 0 %}
-        <!-- Install Panel -->
-        <div class="install-panel">
-            <i class="fas fa-shield-alt install-icon"></i>
-            <h2 class="install-title">{% trans "ModSecurity Not Installed" %}</h2>
-            <a href="{% url 'modSecurity' %}" class="btn-install">
-                <i class="fas fa-download"></i>
+    <!-- Installation Panel - Flat design, Full width -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <div class="p-12 text-center space-y-6">
+            <div class="inline-flex items-center justify-center h-20 w-20 rounded-2xl bg-primary/10 text-primary border border-primary/20 mb-4">
+                <i data-lucide="shield-off" class="h-10 w-10"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-foreground mb-2">{% trans "ModSecurity Not Installed" %}</h2>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    {% trans "Install ModSecurity first to manage rule packages." %}
+                </p>
+            </div>
+            <a href="{% url 'modSecurity' %}"
+               class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90">
+                <i data-lucide="download" class="h-6 w-6 mr-3"></i>
                 {% trans "Install Now" %}
             </a>
         </div>
+    </div>
+
     {% else %}
-        <!-- Rules Panel -->
-        <div class="rules-panel">
-            <div ng-show="modsecLoading" style="text-align: center; padding: 2rem;">
-                <div class="loading-spinner"></div>
-            </div>
-            
-            <table class="custom-table">
-                <thead>
+    <!-- Rules Panel - Flat design, Full width -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <!-- Loading State -->
+        <div ng-show="modsecLoading" class="p-12 text-center">
+            <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="text-muted-foreground mt-4">{% trans "Loading rules packages..." %}</p>
+        </div>
+
+        <!-- Rules Table -->
+        <div ng-hide="modsecLoading" class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-muted/50 border-b border-border">
                     <tr>
-                        <th style="width: 40%">{% trans "Package" %}</th>
-                        <th style="width: 30%; text-align: center;">{% trans "Status" %}</th>
-                        <th style="width: 30%; text-align: right;">{% trans "Actions" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider w-2/5">{% trans "Package" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider w-1/5 text-center">{% trans "Status" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider w-2/5 text-right">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <span class="package-name">OWASP ModSecurity Core Rules</span>
+                <tbody class="divide-y divide-border">
+                    <tr class="transition-colors hover:bg-muted/30">
+                        <td class="px-6 py-4">
+                            <span class="text-lg font-bold text-foreground">OWASP ModSecurity Core Rules</span>
                         </td>
-                        <td style="text-align: center;">
-                            <label class="switch">
+                        <td class="px-6 py-4 text-center">
+                            <label class="toggle-switch">
                                 <input type="checkbox" id="owaspInstalled">
-                                <span class="slider"></span>
+                                <span class="toggle-slider"></span>
                             </label>
                         </td>
-                        <td style="text-align: right;">
-                            <button ng-disabled="owaspDisable" ng-click="fetchRulesFile('owasp')" class="btn-configure">
-                                <i class="fas fa-cog"></i>
+                        <td class="px-6 py-4 text-right">
+                            <button ng-disabled="owaspDisable" ng-click="fetchRulesFile('owasp')"
+                                    class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i data-lucide="settings" class="h-4 w-4 mr-2"></i>
                                 {% trans "Configure" %}
                             </button>
                         </td>
@@ -464,65 +148,90 @@
                 </tbody>
             </table>
         </div>
-        
-        <!-- Status Messages -->
-        <div style="max-width: 600px; margin: 2rem auto;">
-            <div ng-hide="installationQuote" class="alert alert-success">
-                <i class="fas fa-check-circle alert-icon"></i>
-                <span>{% trans "Operation successful." %}</span>
-            </div>
-            
-            <div ng-hide="couldNotConnect" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle alert-icon"></i>
-                <span>{% trans "Could not connect. Please refresh this page." %}</span>
-            </div>
-            
-            <div ng-hide="installationFailed" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle alert-icon"></i>
-                <span>{% trans "Operation failed, Error message:" %} {$ errorMessage $}</span>
-            </div>
-            
-            <div ng-hide="installationSuccess" class="alert alert-success">
-                <i class="fas fa-check-circle alert-icon"></i>
-                <span>{% trans "Operation successful." %}</span>
+    </div>
+
+    <!-- Status Messages -->
+    <div class="space-y-4">
+        <div ng-hide="installationQuote" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="check-circle" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary">{% trans "Success" %}</h4>
+                    <p class="text-primary/80">{% trans "Operation successful." %}</p>
+                </div>
             </div>
         </div>
-        
-        <!-- Rule Files Section -->
-        <div ng-hide="ruleFiles" class="rule-files-section">
-            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-primary, #1e293b); margin-bottom: 1.5rem;">
-                <i class="fas fa-file-code" style="color: #5b5fcf; margin-right: 0.5rem;"></i>
+
+        <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
+                    <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="installationFailed" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-destructive">{% trans "Operation Failed" %}</h4>
+                    <p class="text-destructive/80">{% trans "Operation failed, Error message:" %} {$ errorMessage $}</p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-hide="installationSuccess" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="check-circle" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary">{% trans "Success" %}</h4>
+                    <p class="text-primary/80">{% trans "Operation successful." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rule Files Section -->
+    <div ng-hide="ruleFiles" class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <div class="px-8 py-6 border-b border-border bg-muted/30">
+            <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
+                <i data-lucide="file-code" class="h-6 w-6 text-primary"></i>
                 {% trans "Rule Files" %}
             </h3>
-            
-            <table class="rule-files-table">
-                <thead>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-muted/50 border-b border-border">
                     <tr>
-                        <th>{% trans "ID" %}</th>
-                        <th>{% trans "Supplier" %}</th>
-                        <th>{% trans "Filename" %}</th>
-                        <th style="text-align: center;">{% trans "Status" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "ID" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Supplier" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Filename" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-center">{% trans "Status" %}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr ng-repeat="record in records track by $index">
-                        <td ng-bind="record.id"></td>
-                        <td ng-bind="record.packName"></td>
-                        <td ng-bind="record.fileName"></td>
-                        <td class="file-status">
-                            <label class="switch">
-                                <input type="checkbox" 
-                                       ng-click="removeRuleFile(record.fileName,record.packName,record.status)" 
+                <tbody class="divide-y divide-border">
+                    <tr ng-repeat="record in records track by $index" class="transition-colors hover:bg-muted/30">
+                        <td class="px-6 py-4 font-mono text-foreground">#{$ record.id $}</td>
+                        <td class="px-6 py-4 font-bold text-foreground">{$ record.packName $}</td>
+                        <td class="px-6 py-4 font-mono text-muted-foreground">{$ record.fileName $}</td>
+                        <td class="px-6 py-4 text-center">
+                            <label class="toggle-switch">
+                                <input type="checkbox"
+                                       ng-click="removeRuleFile(record.fileName, record.packName, record.status)"
                                        ng-checked="record.status">
-                                <span class="slider"></span>
+                                <span class="toggle-slider"></span>
                             </label>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
     {% endif %}
-</div>
 
+</div>
 
 {% endblock %}

@@ -4,13 +4,15 @@
 
 {% block header_scripts %}
 <style>
-    /* Custom styles for Create Package */
+    /* Custom styles for Create Package - aligned to base design system */
     .premium-alert {
         background: hsl(var(--primary) / 0.05);
         border: 1px solid hsl(var(--primary) / 0.1);
         border-radius: var(--radius);
         padding: 24px;
     }
+    /* Remove any shadow overrides */
+    .bg-card { box-shadow: none !important; }
 </style>
 {% endblock %}
 
@@ -20,7 +22,7 @@
 
 <div class="w-full p-4 md:p-12 space-y-8" ng-controller="createPackage">
     <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
         <div class="flex items-center gap-6">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
                 <i data-lucide="package-plus" class="h-8 w-8"></i>
@@ -31,8 +33,9 @@
             </div>
         </div>
         <div>
-            <a href="{% url 'listPackages' %}" class="flex items-center gap-3 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl text-xl font-bold transition-all border border-border hover:bg-muted !no-underline">
-                <i data-lucide="list" class="h-6 w-6"></i>
+            <!-- ✅ Secondary button aligned to base -->
+            <a href="{% url 'listPackages' %}" class="flex items-center gap-3 px-6 py-3 bg-secondary text-secondary-foreground rounded-xl font-bold transition-all border border-border hover:bg-muted !no-underline">
+                <i data-lucide="list" class="h-5 w-5"></i>
                 {% trans "List Packages" %}
             </a>
         </div>
@@ -62,12 +65,12 @@
 
     <div class="space-y-8">
         <!-- Package Info Card -->
-        <div class="bg-card rounded-2xl shadow-sm border border-border p-8 space-y-8">
+        <div class="bg-card rounded-2xl border border-border p-8 space-y-8">
             <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
                 <i data-lucide="tag" class="h-6 w-6 text-primary"></i>
                 {% trans "Package Information" %}
             </h2>
-            
+
             <form name="createPackageFrm" class="space-y-6">
                 <div class="space-y-3">
                     <label class="text-lg font-bold text-foreground uppercase tracking-wider">{% trans "Package Name" %}</label>
@@ -75,7 +78,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i data-lucide="type" class="h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
                         </div>
-                        <input name="pname" type="text" class="w-full pl-14 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                        <input name="pname" type="text" class="w-full pl-14 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                ng-model="packageName" placeholder="{% trans 'Enter package name' %}" required>
                     </div>
                     <div ng-show="packageName" class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-primary text-sm font-bold animate-in fade-in zoom-in">
@@ -87,12 +90,12 @@
         </div>
 
         <!-- Resource Limits Card -->
-        <div class="bg-card rounded-2xl shadow-sm border border-border p-8 space-y-8">
+        <div class="bg-card rounded-2xl border border-border p-8 space-y-8">
             <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
                 <i data-lucide="gauge" class="h-6 w-6 text-primary"></i>
                 {% trans "Resource Limits" %}
             </h2>
-            
+
             <div class="space-y-10">
                 <!-- Web Resources -->
                 <div class="space-y-6">
@@ -100,14 +103,14 @@
                         <i data-lucide="globe" class="h-5 w-5 text-primary"></i>
                         {% trans "Web Resources" %}
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-3">
                             <label class="text-lg font-bold text-foreground">{% trans "Domains" %}</label>
                             <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="allowedDomains" placeholder="0" required>
                             <p class="text-sm text-muted-foreground">{% trans "Number of domains (0 = Unlimited)" %}</p>
                         </div>
-                        
+
                         <div class="space-y-3">
                             <label class="text-lg font-bold text-foreground">{% trans "Disk Space" %}</label>
                             <div class="relative">
@@ -116,7 +119,7 @@
                             </div>
                             <p class="text-sm text-muted-foreground">{% trans "Disk space in MB (0 = Unlimited)" %}</p>
                         </div>
-                        
+
                         <div class="space-y-3 md:col-span-2">
                             <label class="text-lg font-bold text-foreground">{% trans "Bandwidth" %}</label>
                             <div class="relative">
@@ -127,25 +130,25 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Services -->
                 <div class="space-y-6">
                     <div class="flex items-center gap-3 text-lg font-bold text-foreground pb-4 border-b border-border/50">
                         <i data-lucide="server" class="h-5 w-5 text-primary"></i>
                         {% trans "Services & Features" %}
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="space-y-3">
                             <label class="text-lg font-bold text-foreground">{% trans "FTP Accounts" %}</label>
                             <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="ftpAccounts" placeholder="0" required>
                         </div>
-                        
+
                         <div class="space-y-3">
                             <label class="text-lg font-bold text-foreground">{% trans "Databases" %}</label>
                             <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="dataBases" placeholder="0" required>
                         </div>
-                        
+
                         <div class="space-y-3">
                             <label class="text-lg font-bold text-foreground">{% trans "Email Accounts" %}</label>
                             <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="emails" placeholder="0" required>
@@ -157,12 +160,12 @@
 
 
         <!-- Additional Features Card -->
-        <div class="bg-card rounded-2xl shadow-sm border border-border p-8 space-y-8" ng-hide="installationDetailsForm">
+        <div class="bg-card rounded-2xl border border-border p-8 space-y-8" ng-hide="installationDetailsForm">
             <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
                 <i data-lucide="settings" class="h-6 w-6 text-primary"></i>
                 {% trans "Additional Options" %}
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <label class="flex items-start gap-4 p-6 bg-secondary/10 border border-border rounded-2xl cursor-pointer hover:bg-muted/50 transition-all">
                     <input ng-model="allowFullDomain" type="checkbox" class="mt-1 h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
@@ -171,7 +174,7 @@
                         <div class="text-sm text-muted-foreground leading-relaxed">{% trans "Allow creation of fully qualified domain names as child-domains" %}</div>
                     </div>
                 </label>
-                
+
                 <label class="flex items-start gap-4 p-6 bg-secondary/10 border border-border rounded-2xl cursor-pointer hover:bg-muted/50 transition-all">
                     <input ng-model="enforceDiskLimits" type="checkbox" class="mt-1 h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
                     <div class="space-y-2">
@@ -180,10 +183,11 @@
                     </div>
                 </label>
             </div>
-            
+
             <div class="pt-8 border-t border-border">
-                <button type="button" ng-click="insertPackInDB()" class="w-full md:w-auto px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-primary/20 flex items-center justify-center gap-3">
-                    <i data-lucide="plus" class="h-6 w-6"></i>
+                <!-- ✅ Primary button aligned to base -->
+                <button type="button" ng-click="insertPackInDB()" class="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90 flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="h-5 w-5"></i>
                     {% trans "Create Package" %}
                 </button>
             </div>
@@ -197,7 +201,7 @@
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-        
+
         // Watch for dynamic content changes
         const observer = new MutationObserver((mutations) => {
             let shouldRefresh = false;
@@ -206,7 +210,7 @@
                     shouldRefresh = true;
                 }
             });
-            
+
             if (shouldRefresh && typeof lucide !== 'undefined') {
                 if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
                 window.lucideTimeout = setTimeout(() => {
@@ -214,7 +218,7 @@
                 }, 100);
             }
         });
-        
+
         const config = { childList: true, subtree: true };
         const targetNode = document.querySelector('[ng-controller="createPackage"]');
         if (targetNode) {

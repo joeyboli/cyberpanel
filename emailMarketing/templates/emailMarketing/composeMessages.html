@@ -1,90 +1,137 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Compose Email Message - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block header_scripts %}
+<style>
+    /* Custom styles for Compose Email - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Email Textarea */
+    .email-textarea {
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        font-family: 'DM Sans', system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        resize: vertical;
+        min-height: 300px;
+        border: 1px solid hsl(var(--border));
+    }
+    .email-textarea:focus {
+        outline: none;
+        border-color: hsl(var(--primary));
+        box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12" ng-controller="composeMessageCTRL">
+    <div class="max-w-4xl mx-auto space-y-12">
 
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Compose Email Message" %}</h2>
-   <p>{% trans "On this page you can compose email message to be sent out later." %}</p>
-</div>
-<div ng-controller="composeMessageCTRL" class="panel" style="background: var(--bg-primary, white); border-color: var(--border-color, #ddd);">
-    <div class="panel-body" style="background: var(--bg-primary, white); color: var(--text-primary, #333);">
-        <h3 class="title-hero">
-            {% trans "Compose Email Message" %} <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}">
-        </h3>
-        <div  class="example-box-wrapper">
-
-
-            <form action="/" class="form-horizontal bordered-row">
-
-            <!---- Create Email Template --->
-
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Template Name" %}</label>
-                    <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="name" required>
-                    </div>
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="mail" class="h-8 w-8"></i>
                 </div>
-
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Email Subject" %}</label>
-                    <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="subject" required>
-                    </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Compose Email Message" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "On this page you can compose email message to be sent out later." %}
+                    </p>
                 </div>
-
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "From Name" %}</label>
-                    <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="fromName" required>
-                    </div>
-                </div>
-
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "From Email" %}</label>
-                    <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="fromEmail" required>
-                    </div>
-                </div>
-
-                <div ng-hide="installationDetailsForm" class="form-group">
-                    <label class="col-sm-3 control-label">{% trans "Reply Email" %}</label>
-                    <div class="col-sm-6">
-                        <input  type="text" class="form-control" ng-model="replyTo" required>
-                    </div>
-                </div>
-
-
-                <div ng-hide="request" class="form-group">
-                    <div class="col-sm-12">
-                        <textarea placeholder="Paste your email message, any format is accepted. (HTML or Plain)" ng-model="emailMessage" rows="15" class="form-control"></textarea>
-                    </div>
-                </div>
-
-                <div ng-hide="installationProgress" class="form-group">
-                    <label class="col-sm-3 control-label"></label>
-                    <div class="col-sm-4">
-                        <button type="button"  ng-click="saveTemplate()" class="btn btn-primary btn-lg btn-block">{% trans "Save Template" %}</button>
-                    </div>
-                </div>
-
-            <!---- Create Email Template --->
-
-            </form>
-
-
-
-
+            </div>
         </div>
+
+        <!-- Compose Form Panel - Flat design -->
+        <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+            <!-- Panel Header -->
+            <div class="flex items-center justify-between px-8 py-6 bg-muted/30 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <i data-lucide="edit" class="h-5 w-5"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-foreground">{% trans "Compose Email Message" %}</h2>
+                </div>
+                <div ng-hide="cyberPanelLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+
+            <div class="p-8 space-y-6">
+                <form class="space-y-6">
+
+                    <!-- Template Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="installationDetailsForm">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Template Name" %}</label>
+                        <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="name" required>
+                    </div>
+
+                    <!-- Email Subject -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="installationDetailsForm">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Email Subject" %}</label>
+                        <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="subject" required>
+                    </div>
+
+                    <!-- From Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="installationDetailsForm">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "From Name" %}</label>
+                        <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="fromName" required>
+                    </div>
+
+                    <!-- From Email -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="installationDetailsForm">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "From Email" %}</label>
+                        <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="fromEmail" required>
+                    </div>
+
+                    <!-- Reply Email -->
+                    <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-center" ng-hide="installationDetailsForm">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Reply Email" %}</label>
+                        <input type="text" class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               ng-model="replyTo" required>
+                    </div>
+
+                    <!-- Email Message Textarea -->
+                    <div class="space-y-3" ng-hide="request">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Email Message" %}</label>
+                        <textarea placeholder="{% trans 'Paste your email message, any format is accepted. (HTML or Plain)' %}"
+                                  ng-model="emailMessage"
+                                  rows="15"
+                                  class="email-textarea w-full p-4 bg-card rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"></textarea>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="pt-6 border-t border-border" ng-hide="installationProgress">
+                        <button type="button" ng-click="saveTemplate()"
+                                class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto">
+                            <i data-lucide="save" class="h-6 w-6 mr-3"></i>
+                            {% trans "Save Template" %}
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
-</div>
-
 
 {% endblock %}

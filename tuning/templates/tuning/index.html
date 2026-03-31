@@ -1,56 +1,90 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Server Tuning - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block header_scripts %}
+<style>
+    /* Custom styles for Server Tuning - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Server Tuning" %}</h2>
-   <p>{% trans "On this page you can set runing parameters for your webserver depending on your hardware." %}</p>
-</div>
-    <div class="panel">
-        <div class="panel-body">
-            <h3 class="title-hero">
-            {% trans "Available Functions" %}
-            </h3>
+<div class="w-full p-4 md:p-12 space-y-12">
 
-             <div class="example-box-wrapper">
-                <div class="row">
-                    <div class="col-md-4">
-                                    <a href="{% url 'liteSpeedTuning' %}" title="{% trans 'LiteSpeed Tuning' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "LiteSpeed Tuning" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="glyph-icon icon-dashboard"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-                    <div class="col-md-4">
-                                    <a href="{% url 'phpTuning' %}" title="{% trans 'PHP Tuning' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "PHP Tuning" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="glyph-icon icon-dashboard"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
-
-                </div>
-             </div>
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="sliders-horizontal" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Server Tuning" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "On this page you can set running parameters for your webserver depending on your hardware." %}
+                </p>
+            </div>
         </div>
     </div>
 
-</div>
+    <!-- Available Functions Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
+        <!-- LiteSpeed Tuning Card -->
+        <a href="{% url 'liteSpeedTuning' %}" class="group block p-8 bg-card rounded-2xl border border-border transition-all hover:border-primary/50 hover:bg-muted/30">
+            <div class="flex items-start gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <i data-lucide="zap" class="h-8 w-8"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                        {% trans "LiteSpeed Tuning" %}
+                    </h3>
+                    <p class="text-lg text-muted-foreground">
+                        {% trans "Optimize your LiteSpeed web server performance by adjusting key parameters to match your website requirements." %}
+                    </p>
+                    <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                        {% trans "Configure LiteSpeed" %}
+                        <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <!-- PHP Tuning Card -->
+        <a href="{% url 'phpTuning' %}" class="group block p-8 bg-card rounded-2xl border border-border transition-all hover:border-primary/50 hover:bg-muted/30">
+            <div class="flex items-start gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <i data-lucide="code" class="h-8 w-8"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                        {% trans "PHP Tuning" %}
+                    </h3>
+                    <p class="text-lg text-muted-foreground">
+                        {% trans "Optimize PHP performance by configuring memory limits, process limits, and connection settings for each PHP version." %}
+                    </p>
+                    <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                        {% trans "Configure PHP" %}
+                        <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</div>
 
 {% endblock %}

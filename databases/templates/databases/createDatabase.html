@@ -81,7 +81,7 @@
                                 {% trans "Select Website" %}
                             </label>
                             <div class="relative">
-                                <select id="create-database-select" ng-model="databaseWebsite" ng-change="websiteChanged()" 
+                                <select id="create-database-select" ng-model="databaseWebsite" ng-change="websiteChanged()"
                                         class="w-full p-5 bg-muted/20 border border-border rounded-xl appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer text-xl font-medium">
                                     <option value="">-- {% trans "Select a website" %} --</option>
                                     {% for items in websitesList %}
@@ -105,7 +105,7 @@
                                         <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
                                             <i data-lucide="database" class="w-6 h-6"></i>
                                         </div>
-                                        <input name="dbName" type="text" ng-model="dbName" 
+                                        <input name="dbName" type="text" ng-model="dbName"
                                                class="w-full pl-14 pr-5 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
                                                placeholder="{% trans 'Enter database name' %}" required>
                                     </div>
@@ -124,7 +124,7 @@
                                         <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
                                             <i data-lucide="user" class="w-6 h-6"></i>
                                         </div>
-                                        <input type="text" name="dbUsername" ng-model="dbUsername" 
+                                        <input type="text" name="dbUsername" ng-model="dbUsername"
                                                class="w-full pl-14 pr-5 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
                                                placeholder="{% trans 'Enter username' %}" required>
                                     </div>
@@ -145,14 +145,14 @@
                                         <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground pointer-events-none">
                                             <i data-lucide="key-round" class="w-6 h-6"></i>
                                         </div>
-                                        <input type="password" id="dbPassword" name="dbPassword" ng-model="dbPassword" 
+                                        <input type="password" id="dbPassword" name="dbPassword" ng-model="dbPassword"
                                                class="w-full pl-14 pr-14 py-5 bg-muted/20 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-xl"
                                                placeholder="{% trans 'Enter password' %}" required>
                                         <button type="button" onclick="togglePasswordVisibility()" class="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                                             <i data-lucide="eye" id="passwordToggleIcon" class="w-6 h-6"></i>
                                         </button>
                                     </div>
-                                    <button type="button" ng-click="generatePassword()" 
+                                    <button type="button" ng-click="generatePassword()"
                                             class="inline-flex items-center justify-center gap-3 px-8 py-5 bg-secondary text-foreground font-bold rounded-xl border border-border hover:bg-muted transition-all text-xl">
                                         <i data-lucide="refresh-cw" class="w-6 h-6"></i>
                                         {% trans "Generate" %}
@@ -169,7 +169,7 @@
                                 <div class="p-5 bg-background border border-emerald-500/10 rounded-xl font-mono text-2xl text-emerald-700 dark:text-emerald-300 break-all select-all">
                                     {$ generatedPassword $}
                                 </div>
-                                <button type="button" ng-click="usePassword()" 
+                                <button type="button" ng-click="usePassword()"
                                         class="inline-flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all text-lg">
                                     <i data-lucide="check" class="w-5 h-5"></i>
                                     {% trans "Use This Password" %}
@@ -178,7 +178,7 @@
 
                             <!-- Action Buttons -->
                             <div class="pt-10 border-t border-border flex justify-end">
-                                <button type="button" ng-click="createDatabase()" 
+                                <button type="button" ng-click="createDatabase()"
                                         class="inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground font-extrabold rounded-2xl hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none text-xl w-full md:w-auto justify-center"
                                         ng-disabled="!databaseWebsite || !dbName || !dbUsername || !dbPassword">
                                     <i data-lucide="database" class="w-6 h-6"></i>
@@ -201,7 +201,7 @@
 function togglePasswordVisibility() {
     var passwordInput = document.getElementById('dbPassword');
     var toggleIcon = document.getElementById('passwordToggleIcon');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         if (typeof lucide !== 'undefined') {
@@ -226,7 +226,7 @@ $(document).ready(function() {
         scope.websiteChanged = function() {
             if (scope.databaseWebsite) {
                 $('.dbDetails').addClass('active').fadeIn();
-                
+
                 // Use the controller's built-in truncation logic if available
                 var prefix = '';
                 if (typeof scope.getTruncatedWebName === 'function') {
@@ -235,14 +235,14 @@ $(document).ready(function() {
                     var domainParts = scope.databaseWebsite.split('.');
                     prefix = domainParts[0];
                 }
-                
+
                 $('#domainDatabase').text(prefix);
                 $('#domainUsername').text(prefix);
             } else {
                 $('.dbDetails').removeClass('active').fadeOut();
             }
         };
-        
+
         // Store generated password
         scope.generatePasswordOriginal = scope.generatePassword;
         scope.generatePassword = function() {
@@ -260,7 +260,7 @@ $(document).ready(function() {
             scope.generatedPassword = password;
             scope.$apply();
         };
-        
+
         // Use generated password
         scope.usePassword = function() {
             scope.dbPassword = scope.generatedPassword;

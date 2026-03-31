@@ -1,87 +1,225 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Email Marketing - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block header_scripts %}
+<style>
+    /* Custom styles for Email Marketing - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* CyberMail Banner Styling - Base Aligned */
+    .cybermail-banner {
+        background: linear-gradient(135deg, hsl(239 84% 67%) 0%, hsl(262 83% 58%) 50%, hsl(271 76% 53%) 100%);
+        border-radius: var(--radius);
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        border: 1px solid hsl(239 84% 67% / 0.3);
+    }
+    .cybermail-banner h3 {
+        font-weight: 800;
+        font-size: 18px;
+        color: white;
+        margin-bottom: 4px;
+        letter-spacing: -0.3px;
+    }
+    .cybermail-banner p {
+        font-size: 13.5px;
+        color: rgba(255,255,255,0.85);
+        line-height: 1.5;
+        margin: 0;
+    }
+    .cybermail-banner a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: underline;
+        font-weight: 500;
+    }
+    .cybermail-btn {
+        background: white;
+        color: hsl(239 84% 67%);
+        padding: 10px 24px;
+        border-radius: 7px;
+        font-weight: 700;
+        font-size: 13px;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: transform 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .cybermail-btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    .cybermail-dismiss {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.6);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 4px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .cybermail-dismiss:hover {
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div id="cybermailBanner" style="display:none; margin-bottom:20px;">
-  <div style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#9333ea 100%);border-radius:10px;padding:20px 24px;display:flex;align-items:center;gap:18px;box-shadow:0 4px 15px rgba(79,70,229,0.3);">
-    <div style="flex-shrink:0;font-size:32px;">&#9993;</div>
-    <div style="flex:1;min-width:0;">
-      <div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:4px;letter-spacing:-0.3px;">Stop Landing in Spam</div>
-      <div style="font-size:13.5px;color:rgba(255,255,255,0.85);line-height:1.5;">Route your emails through CyberMail's optimized servers. <strong style="color:#fff;">15,000 emails/month free</strong> with automatic DNS configuration, real-time analytics, and dedicated IPs. <a href="https://cyberpanel.net/KnowledgeBase/cybermail-user-guide/" target="_blank" style="color:rgba(255,255,255,0.9);text-decoration:underline;font-weight:500;">Learn more</a></div>
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12 space-y-12" ng-controller="emailMarketing">
+
+    <!-- CyberMail Banner -->
+    <div id="cybermailBanner" style="display:none;" class="cybermail-banner">
+        <div class="flex-shrink-0 text-3xl">✉️</div>
+        <div class="flex-1 min-w-0">
+            <h3>{% trans "Stop Landing in Spam" %}</h3>
+            <p>
+                {% trans "Route your emails through CyberMail's optimized servers." %}
+                <strong style="color:#fff;">{% trans "15,000 emails/month free" %}</strong>
+                {% trans "with automatic DNS configuration, real-time analytics, and dedicated IPs." %}
+                <a href="https://cyberpanel.net/KnowledgeBase/cybermail-user-guide/" target="_blank">{% trans "Learn more" %}</a>
+            </p>
+        </div>
+        <a href="/emailDelivery/" class="cybermail-btn">
+            {% trans "Get Started Free" %} &rarr;
+        </a>
+        <button onclick="dismissCyberMailBanner()" class="cybermail-dismiss" title="{% trans 'Dismiss' %}">&times;</button>
     </div>
-    <a href="/emailDelivery/" style="background:#fff;color:#4f46e5;padding:10px 24px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.15s;">Get Started Free &rarr;</a>
-    <button onclick="dismissCyberMailBanner()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;" title="Dismiss">&times;</button>
-  </div>
-</div>
-<script>
-(function(){if(!document.cookie.includes('cybermail_dismiss=1')){document.getElementById('cybermailBanner').style.display='';}})();
-function dismissCyberMailBanner(){document.getElementById('cybermailBanner').style.display='none';document.cookie='cybermail_dismiss=1; path=/; max-age='+7*86400;}
-</script>
+    <script>
+    (function(){
+        if(!document.cookie.includes('cybermail_dismiss=1')){
+            document.getElementById('cybermailBanner').style.display='flex';
+        }
+    })();
+    function dismissCyberMailBanner(){
+        document.getElementById('cybermailBanner').style.display='none';
+        document.cookie='cybermail_dismiss=1; path=/; max-age='+7*86400;
+    }
+    </script>
 
-<div class="container">
-
-    <div id="page-title">
-       <h2 id="domainNamePage">{% trans "Email Marketing" %}</h2>
-       <p>{% trans "Select users to Enable/Disable Email Marketing feature!" %}</p>
-    </div>
-
-<div ng-controller="emailMarketing" class="panel" style="background: var(--bg-primary, white); border-color: var(--border-color, #ddd);">
-    <div class="panel-body" style="background: var(--bg-primary, white); color: var(--text-primary, #333);">
-
-    <h3 class="content-box-header">
-            {% trans "Email Marketing" %} <img ng-hide="cyberPanelLoading" src="{% static 'images/loading.gif' %}">
-        </h3>
-
-    {% if installCheck == 0 %}
-
-        <div class="row">
-            <div class="col-md-12 text-center" style="margin-bottom: 2%;">
-                <h3>{% trans "Email Policy Server is not enabled " %}
-                    <a href="{% url 'emailPolicyServer' %}">
-                    <button class="btn btn-alt btn-hover btn-blue-alt">
-                        <span>{% trans "Enable Now." %}</span>
-                        <i class="glyph-icon icon-arrow-right"></i>
-                    </button></a></h3>
+    <!-- Page Header - Full width -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                <i data-lucide="mail" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground" id="domainNamePage">
+                    {% trans "Email Marketing" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Select users to Enable/Disable Email Marketing feature!" %}
+                </p>
             </div>
         </div>
+    </div>
+
+    {% if installCheck == 0 %}
+    <!-- Email Policy Server Not Enabled Alert - Full width -->
+    <div class="p-6 bg-primary/10 border border-primary/20 rounded-2xl w-full">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+                <i data-lucide="alert-circle" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary text-lg">{% trans "Email Policy Server is not enabled" %}</h4>
+                    <p class="text-primary/80 mt-1">{% trans "You need to enable the Email Policy Server before using Email Marketing features." %}</p>
+                </div>
+            </div>
+            <a href="{% url 'emailPolicyServer' %}"
+               class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90 whitespace-nowrap">
+                {% trans "Enable Now" %}
+                <i data-lucide="arrow-right" class="h-4 w-4 ml-2"></i>
+            </a>
+        </div>
+    </div>
+
     {% else %}
-        <div class="example-box-wrapper">
-
-                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped" id="datatable-example" style="background: var(--bg-primary, white); color: var(--text-primary, #333); border-color: var(--border-color, #ddd);">
-                <thead>
-                <tr>
-                    <th>{% trans 'ID' %}</th>
-                    <th>{% trans 'Username' %}</th>
-                    <th>{% trans 'Status' %}</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <tr ng-repeat="user in users track by $index">
-                    <td ><code ng-bind="user.id"></code></td>
-                    <td><code ng-bind="user.userName"></code></td>
-                    <td>
-                       <img style="margin-right: 4%;" ng-show="user.status==1"  title="{% trans 'Email Marketing Enabled.' %}"  src="{% static 'mailServer/vpsON.png' %}">
-                       <button ng-click="enableDisableMarketing(0, user.userName)" ng-show="user.status==1" class="btn ra-100 btn-danger">{% trans 'Disable' %}</button>
-                       <img style="margin-right: 4%;" ng-show="user.status==0"  title="{% trans 'Email Marketing Disabled.' %}"  src="{% static 'mailServer/vpsOff.png' %}">
-                       <button ng-click="enableDisableMarketing(1, user.userName)" ng-show="user.status==0" class="btn ra-100 btn-success">{% trans 'Enable' %}</button>
-                    </td>
-                </tr>
-
-                </tbody>
-                </table>
-
+    <!-- Users Table Panel - Flat design, Full width -->
+    <div class="bg-card rounded-2xl border border-border overflow-hidden w-full">
+        <!-- Panel Header -->
+        <div class="flex items-center justify-between px-8 py-6 bg-muted/30 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <i data-lucide="users" class="h-5 w-5"></i>
+                </div>
+                <h2 class="text-xl font-bold text-foreground">{% trans "Email Marketing" %}</h2>
+            </div>
+            <div ng-hide="cyberPanelLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
 
-    {% endif %}
+        <!-- Table Content -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-muted/50 border-b border-border">
+                    <tr>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "ID" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Username" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</th>
+                        <th class="px-6 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    <tr ng-repeat="user in users track by $index" class="transition-colors hover:bg-muted/30">
+                        <td class="px-6 py-4">
+                            <code class="px-2 py-1 bg-muted rounded text-sm font-mono text-foreground" ng-bind="user.id"></code>
+                        </td>
+                        <td class="px-6 py-4">
+                            <code class="px-2 py-1 bg-muted rounded text-sm font-mono text-foreground" ng-bind="user.userName"></code>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <span ng-show="user.status==1" class="inline-flex items-center gap-2 text-emerald-600 font-medium">
+                                    <i data-lucide="check-circle" class="h-5 w-5"></i>
+                                    {% trans "Enabled" %}
+                                </span>
+                                <span ng-show="user.status==0" class="inline-flex items-center gap-2 text-muted-foreground font-medium">
+                                    <i data-lucide="x-circle" class="h-5 w-5"></i>
+                                    {% trans "Disabled" %}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button ng-click="enableDisableMarketing(0, user.userName)" ng-show="user.status==1"
+                                    class="inline-flex items-center justify-center px-4 py-2 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
+                                {% trans "Disable" %}
+                            </button>
+                            <button ng-click="enableDisableMarketing(1, user.userName)" ng-show="user.status==0"
+                                    class="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all hover:opacity-90">
+                                {% trans "Enable" %}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State (if no users) -->
+        <div ng-if="users.length === 0" class="p-16 text-center">
+            <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
+                <i data-lucide="users" class="h-8 w-8"></i>
+            </div>
+            <h3 class="text-xl font-bold text-foreground">{% trans "No users found" %}</h3>
+            <p class="text-sm text-muted-foreground mt-1">{% trans "Create users to manage their email marketing settings." %}</p>
+        </div>
     </div>
+    {% endif %}
+
 </div>
-
-
 
 {% endblock %}

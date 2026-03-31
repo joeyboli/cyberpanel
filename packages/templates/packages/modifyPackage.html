@@ -77,7 +77,7 @@
                 {% trans "Package Selection" %}
                 <div id="packageLoading" class="h-5 w-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin hidden"></div>
             </h2>
-            
+
             <div class="space-y-3">
                 <label class="text-lg font-bold text-foreground uppercase tracking-wider">{% trans "Select Package to Modify" %}</label>
                 <div class="relative group">
@@ -104,7 +104,7 @@
                     <i data-lucide="gauge" class="h-6 w-6 text-primary"></i>
                     {% trans "Resource Limits" %}
                 </h2>
-                
+
                 <form name="modifyPackageForm" class="space-y-10">
                     <!-- Web Resources -->
                     <div class="space-y-6">
@@ -112,14 +112,14 @@
                             <i data-lucide="globe" class="h-5 w-5 text-primary"></i>
                             {% trans "Web Resources" %}
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-3 md:col-span-2">
                                 <label class="text-lg font-bold text-foreground">{% trans "Domains" %}</label>
                                 <input type="number" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono" ng-model="allowedDomains" required>
                                 <p class="text-sm text-muted-foreground">{% trans "Number of domains (0 = Unlimited)" %}</p>
                             </div>
-                            
+
                             <div class="space-y-3">
                                 <label class="text-lg font-bold text-foreground">{% trans "Disk Space" %}</label>
                                 <div class="relative">
@@ -128,7 +128,7 @@
                                 </div>
                                 <p class="text-sm text-muted-foreground">{% trans "Disk space (0 = Unlimited)" %}</p>
                             </div>
-                            
+
                             <div class="space-y-3">
                                 <label class="text-lg font-bold text-foreground">{% trans "Bandwidth" %}</label>
                                 <div class="relative">
@@ -139,14 +139,14 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Services -->
                     <div class="space-y-6">
                         <div class="flex items-center gap-3 text-lg font-bold text-foreground pb-4 border-b border-border/50">
                             <i data-lucide="server" class="h-5 w-5 text-primary"></i>
                             {% trans "Services & Features" %}
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div class="space-y-3">
                                 <label class="text-lg font-bold text-foreground">{% trans "FTP Accounts" %}</label>
@@ -172,7 +172,7 @@
                     <i data-lucide="settings" class="h-6 w-6 text-primary"></i>
                     {% trans "Additional Options" %}
                 </h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <label class="flex items-start gap-4 p-6 bg-secondary/10 border border-border rounded-2xl cursor-pointer hover:bg-muted/50 transition-all">
                         <input ng-model="allowFullDomain" type="checkbox" class="mt-1 h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
@@ -181,7 +181,7 @@
                             <div class="text-sm text-muted-foreground leading-relaxed">{% trans "Allow creation of fully qualified domain names as child-domains" %}</div>
                         </div>
                     </label>
-                    
+
                     <label class="flex items-start gap-4 p-6 bg-secondary/10 border border-border rounded-2xl cursor-pointer hover:bg-muted/50 transition-all">
                         <input ng-model="enforceDiskLimits" type="checkbox" class="mt-1 h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
                         <div class="space-y-2">
@@ -190,8 +190,8 @@
                         </div>
                     </label>
                 </div>
-                
-                <div id="modifyButton" class="pt-8 border-t border-border hidden">
+
+                <div id="modifyButton" class="pt-8 border-t border-border">
                     <button type="button" ng-click="modifyPackageFunc()" class="w-full md:w-auto px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-primary/20 flex items-center justify-center gap-3">
                         <i data-lucide="save" class="h-6 w-6"></i>
                         {$ modifyButton $}
@@ -208,7 +208,7 @@
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-        
+
         // Watch for dynamic content changes
         const observer = new MutationObserver((mutations) => {
             let shouldRefresh = false;
@@ -217,7 +217,7 @@
                     shouldRefresh = true;
                 }
             });
-            
+
             if (shouldRefresh && typeof lucide !== 'undefined') {
                 if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
                 window.lucideTimeout = setTimeout(() => {
@@ -225,7 +225,7 @@
                 }, 100);
             }
         });
-        
+
         const config = { childList: true, subtree: true };
         const targetNode = document.querySelector('[ng-controller="modifyPackages"]');
         if (targetNode) {

@@ -34,6 +34,23 @@ def viewProfile(request):
     userID = request.session['userID']
     admin = Administrator.objects.get(pk=userID)
 
+    try:
+        if 'user' in request.GET:
+            userName = request.GET['user']
+            adminToView = Administrator.objects.get(userName=userName)
+            currentACL = ACLManager.loadedACL(userID)
+
+            if currentACL['admin'] == 1:
+                admin = adminToView
+            elif adminToView.owner == admin.pk:
+                admin = adminToView
+            elif adminToView.pk == admin.pk:
+                admin = adminToView
+            else:
+                return ACLManager.loadError()
+    except:
+        pass
+
     AdminData = {}
 
     AdminData['userName'] = admin.userName

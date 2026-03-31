@@ -1,104 +1,194 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Server Logs - CyberPanel" %}{% endblock %}
+
+{% block header_scripts %}
+<style>
+    /* Custom styles for Server Logs - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Function card hover effect */
+    .function-card {
+        transition: all 0.2s ease;
+    }
+    .function-card:hover {
+        border-color: hsl(var(--primary) / 0.5);
+        background: hsl(var(--muted) / 0.3);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+<!-- Full width container - NO max-width constraint -->
+<div class="w-full p-4 md:p-12">
+    <div class="w-full space-y-12">
 
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Server Logs" %}</h2>
-            <p>{% trans "These are the logs from main server, to see logs for your website navigate to: Websites -> List Websites -> Select Website -> View Logs." %}</p>
-        </div>
-        <div class="panel col-md-12">
-            <div class="panel-body">
-                <h3 class="content-box-header">
-                    {% trans "Available Functions" %}
-                </h3>
-                <div class="example-box-wrapper">
-
-                    <div class="row">
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'serverMail' %}" title="{% trans 'Server Mail' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Server Mail" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-key"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'accessLogs' %}" title="{% trans 'Access Logs' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Access Logs" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-key"></i>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'errorLogs' %}" title="{% trans 'Error Logs' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Error Logs" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-exclamation"></i>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'emaillogs' %}" title="{% trans 'Email Logs' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "Email Logs" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-envelope"></i>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'ftplogs' %}" title="{% trans 'FTP Logs' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "FTP Logs" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-upload"></i>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="col-md-3 btn-min-width">
-                            <a href="{% url 'modSecAuditLogs' %}" title="{% trans 'ModSecurity Audit Logs' %}"
-                               class="tile-box tile-box-shortcut btn-primary">
-                                <div class="tile-header">
-                                    {% trans "ModSecurity Audit Logs" %}
-                                </div>
-                                <div class="tile-content-wrapper">
-                                    <i class="fa fa-upload"></i>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border w-full">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="file-text" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Server Logs" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "These are the logs from main server, to see logs for your website navigate to: Websites -> List Websites -> Select Website -> View Logs." %}
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
-    </div>
+        <!-- Available Functions Grid - Full width, Flat design -->
+        <div class="bg-card rounded-2xl border border-border p-8 w-full">
+            <h2 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-3">
+                <i data-lucide="list" class="h-6 w-6 text-primary"></i>
+                {% trans "Available Functions" %}
+            </h2>
 
+            <!-- Responsive grid: 1 col mobile, 2 md, 3 lg, 4 xl for true full-width utilization -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
+
+                <!-- Server Mail Card -->
+                <a href="{% url 'serverMail' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="mail" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Server Mail" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Configure how CyberPanel sends notifications and error emails using SMTP or the default mail system." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "Configure Mail" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Access Logs Card -->
+                <a href="{% url 'accessLogs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="file-text" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Access Logs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Monitor and analyze web server access logs to track visitor activity, page requests, and response codes." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "View Access Logs" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Error Logs Card -->
+                <a href="{% url 'errorLogs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="alert-triangle" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Error Logs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Monitor and analyze web server error logs to identify issues, debug problems, and track application errors." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "View Error Logs" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Email Logs Card -->
+                <a href="{% url 'emaillogs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="mail" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Email Logs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Track email server activity including sent, received, and rejected messages to ensure proper mail delivery." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "View Email Logs" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- FTP Logs Card -->
+                <a href="{% url 'ftplogs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="server" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "FTP Logs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Track FTP server activity including file transfers, login attempts, and user sessions for security monitoring." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "View FTP Logs" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- ModSecurity Audit Logs Card -->
+                <a href="{% url 'modSecAuditLogs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="shield" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "ModSecurity Audit Logs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Review ModSecurity audit logs to monitor web application firewall activity, blocked attacks, and security rule triggers." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "View Audit Logs" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

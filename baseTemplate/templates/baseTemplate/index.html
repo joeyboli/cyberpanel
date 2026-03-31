@@ -19,8 +19,9 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Geist', 'Inter', 'system-ui', 'sans-serif'],
-              mono: ['Geist Mono', 'JetBrains Mono', 'monospace'],
+              sans: ['DM Sans', 'system-ui', 'sans-serif'],
+              mono: ['DM Mono', 'JetBrains Mono', 'monospace'],
+              display: ['Syne', 'system-ui', 'sans-serif'],
             },
             colors: {
               border: 'hsl(var(--border))',
@@ -55,7 +56,6 @@
               sidebar: {
                 DEFAULT: 'hsl(var(--sidebar-bg))',
                 border: 'hsl(var(--sidebar-border))',
-                item: 'hsl(var(--sidebar-item))',
               }
             },
             borderRadius: {
@@ -63,24 +63,18 @@
               md: 'calc(var(--radius) - 2px)',
               sm: 'calc(var(--radius) - 4px)',
             },
-            keyframes: {
-              'fade-in': { from: { opacity: '0', transform: 'translateY(-4px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-              'slide-in-left': { from: { opacity: '0', transform: 'translateX(-8px)' }, to: { opacity: '1', transform: 'translateX(0)' } },
-              'collapsible-down': { from: { height: '0' }, to: { height: 'var(--radix-collapsible-content-height)' } },
-              'collapsible-up': { from: { height: 'var(--radix-collapsible-content-height)' }, to: { height: '0' } },
+            spacing: {
+              '4.5': '1.125rem',
             },
-            animation: {
-              'fade-in': 'fade-in 0.2s ease-out',
-              'slide-in-left': 'slide-in-left 0.15s ease-out',
-            }
           }
         }
       }
     </script>
 
-    <!-- Geist Font -->
+    <!-- Fonts: Syne (display) + DM Sans (body) + DM Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS (legacy support) -->
     <link rel="stylesheet" type="text/css" href="{% static 'baseTemplate/assets/bootstrap/css/bootstrap.min.css' %}?v={{ CP_VERSION }}">
@@ -111,85 +105,129 @@
     <script src="{% static 'baseTemplate/custom-js/pnotify.custom.min.js' %}?v={{ CP_VERSION }}"></script>
 
     <style>
-      /* ---------- shadcn CSS Variables ---------- */
+      /* ============================================================
+         CYBERPANEL — DESIGN SYSTEM
+         Aesthetic: Deep Navy Control Center
+         Palette: Navy base · Cyan-teal accent · Amber highlights
+      ============================================================ */
+
       :root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 3.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 3.9%;
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
-        --accent: 240 4.8% 95.9%;
-        --accent-foreground: 240 5.9% 10%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 5.9% 90%;
-        --input: 240 5.9% 90%;
-        --ring: 240 5.9% 10%;
-        --radius: 0.5rem;
-        --sidebar-bg: 0 0% 98%;
-        --sidebar-border: 240 5.9% 90%;
-        --sidebar-item: 0 0% 100%;
+        /* Light Mode — clean slate with LIGHT sidebar */
+        --background:        220 20% 97%;
+        --foreground:        222 30% 12%;
+        --card:              0 0% 100%;
+        --card-foreground:   222 30% 12%;
+        --popover:           0 0% 100%;
+        --popover-foreground:222 30% 12%;
+        --primary:           222 47% 18%;
+        --primary-foreground:0 0% 98%;
+        --secondary:         220 16% 92%;
+        --secondary-foreground:222 30% 20%;
+        --muted:             220 14% 94%;
+        --muted-foreground:  220 12% 50%;
+        --accent:            195 80% 92%;
+        --accent-foreground: 195 80% 20%;
+        --destructive:       4 86% 58%;
+        --destructive-foreground:0 0% 98%;
+        --border:            220 16% 88%;
+        --input:             220 16% 88%;
+        --ring:              195 80% 42%;
+        --radius:            0.45rem;
+
+        /* Sidebar — LIGHT in light mode */
+        --sidebar-bg:        222 47% 98%;
+        --sidebar-border:    220 16% 88%;
+        --sidebar-text:      222 30% 35%;
+        --sidebar-text-active: 222 47% 18%;
+        --sidebar-hover-bg:  220 16% 94%;
+        --sidebar-active-bg: 220 16% 90%;
+
+        /* Brand accent: cyan-teal */
+        --accent-cyan:       189 80% 42%;
+        --accent-cyan-dim:   189 60% 28%;
+        --accent-amber:      38 95% 52%;
 
         /* Layout */
-        --sidebar-width: 256px;
-        --header-height: 57px;
+        --sidebar-width: 252px;
+        --header-height: 56px;
+
+        /* Sidebar-specific theme-aware variables */
+        --sidebar-grid-overlay: hsl(222 47% 18% / 0.03);
+        --sidebar-card-bg: hsl(220 16% 96%);
+        --sidebar-card-glow: hsl(var(--accent-cyan) / 0.3);
+        --sidebar-destructive: hsl(4 86% 58%);
+        --sidebar-destructive-dim: hsl(4 86% 58% / 0.7);
+        --sidebar-destructive-bg-hover: hsl(4 86% 58% / 0.1);
+        --sidebar-icon-default: hsl(var(--sidebar-text) / 0.7);
+        --sidebar-icon-hover: hsl(var(--accent-cyan));
+        --sidebar-dot-default: hsl(var(--sidebar-text) / 0.3);
+        --sidebar-dot-active: hsl(var(--accent-cyan));
       }
 
       .dark {
-        --background: 240 10% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 240 10% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 240 10% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 240 5.9% 10%;
-        --secondary: 240 3.7% 15.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 240 3.7% 15.9%;
-        --muted-foreground: 240 5% 64.9%;
-        --accent: 240 3.7% 15.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 3.7% 15.9%;
-        --input: 240 3.7% 15.9%;
-        --ring: 240 4.9% 83.9%;
-        --sidebar-bg: 240 5.9% 6%;
-        --sidebar-border: 240 3.7% 12%;
-        --sidebar-item: 240 5.9% 6%;
+        --background:        222 22% 9%;
+        --foreground:        215 20% 92%;
+        --card:              222 22% 11%;
+        --card-foreground:   215 20% 92%;
+        --popover:           222 22% 11%;
+        --popover-foreground:215 20% 92%;
+        --primary:           0 0% 96%;
+        --primary-foreground:222 30% 10%;
+        --secondary:         222 20% 16%;
+        --secondary-foreground:215 20% 85%;
+        --muted:             222 20% 15%;
+        --muted-foreground:  215 14% 52%;
+        --accent:            189 60% 20%;
+        --accent-foreground: 189 80% 72%;
+        --destructive:       4 72% 45%;
+        --destructive-foreground:0 0% 98%;
+        --border:            222 22% 18%;
+        --input:             222 22% 18%;
+        --ring:              189 80% 42%;
+
+        /* Sidebar — DARK in dark mode */
+        --sidebar-bg:        222 47% 8%;
+        --sidebar-border:    222 40% 13%;
+        --sidebar-text:      215 20% 55%;
+        --sidebar-text-active: 0 0% 95%;
+        --sidebar-hover-bg:  222 40% 13%;
+        --sidebar-active-bg: 222 38% 16%;
+
+        /* Sidebar-specific variables for dark mode */
+        --sidebar-grid-overlay: hsl(215 20% 92% / 0.008);
+        --sidebar-card-bg: hsl(222 47% 10%);
+        --sidebar-card-glow: hsl(var(--accent-cyan) / 0.4);
+        --sidebar-destructive: hsl(4 72% 52%);
+        --sidebar-destructive-dim: hsl(4 72% 52% / 0.7);
+        --sidebar-destructive-bg-hover: hsl(4 72% 52% / 0.12);
+        --sidebar-icon-default: hsl(var(--sidebar-text) / 0.5);
+        --sidebar-icon-hover: hsl(var(--accent-cyan));
+        --sidebar-dot-default: hsl(var(--sidebar-text) / 0.2);
+        --sidebar-dot-active: hsl(var(--accent-cyan));
       }
 
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      /* ---- Reset ---- */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
       body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'DM Sans', system-ui, sans-serif;
         background-color: hsl(var(--background));
         color: hsl(var(--foreground));
-        font-size: 14px;
+        font-size: 13.5px;
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      /* ---------- Scrollbar ---------- */
-      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      /* ---- Scrollbar ---- */
+      ::-webkit-scrollbar { width: 5px; height: 5px; }
       ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
-      ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+      ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
 
-      /* Lucide Icon Fill */
-      .lucide-fill {
-        fill: currentColor;
-      }
-
-      /* ---------- Sidebar ---------- */
+      /* ============================================================
+         SIDEBAR
+      ============================================================ */
       #sidebar {
         position: fixed;
         top: 0; left: 0;
@@ -201,15 +239,38 @@
         flex-direction: column;
         z-index: 50;
         overflow: hidden;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      /* Subtle diagonal grid texture on sidebar — theme-aware */
+      #sidebar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 20px,
+          var(--sidebar-grid-overlay) 20px,
+          var(--sidebar-grid-overlay) 21px
+        );
+        pointer-events: none;
+        transition: background-image 0.2s ease;
       }
 
       #sidebar-scroll {
         flex: 1;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 12px 0 24px;
+        padding: 10px 0 32px;
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--sidebar-border)) transparent;
+        position: relative;
+        z-index: 1;
+        transition: scrollbar-color 0.2s ease;
       }
 
+      /* ---- Logo ---- */
       .sidebar-logo {
         height: var(--header-height);
         display: flex;
@@ -218,230 +279,323 @@
         border-bottom: 1px solid hsl(var(--sidebar-border));
         gap: 10px;
         flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+        transition: border-color 0.2s ease;
       }
 
-      .sidebar-logo img {
-        width: 24px;
-        height: 24px;
-        border-radius: 5px;
-      }
-
-      .sidebar-logo .brand {
-        font-size: 15.5px;
-        font-weight: 600;
-        color: hsl(var(--foreground));
-        letter-spacing: -0.01em;
-      }
-
-      .sidebar-logo .version {
-        font-size: 10.5px;
-        color: hsl(var(--muted-foreground));
-        background: hsl(var(--muted));
-        padding: 2px 7px;
-        border-radius: 4px;
-        margin-left: auto;
-        font-weight: 500;
-        border: 1px solid hsl(var(--border));
-      }
-
-      /* Section label */
-      .nav-section {
-        padding: 18px 16px 8px;
-        font-size: 11.5px;
-        font-weight: 600;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        color: hsl(var(--muted-foreground));
-      }
-
-      /* Server info card */
-      .server-card {
-        margin: 6px 10px;
-        padding: 10px 12px;
-        background: hsl(var(--background));
-        border: 1px solid hsl(var(--border));
-        border-radius: var(--radius);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .server-card .server-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: calc(var(--radius) - 1px);
-        background: hsl(var(--muted));
+      .sidebar-logo-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: linear-gradient(135deg, hsl(var(--accent-cyan)) 0%, hsl(189 60% 30%) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        border: 1px solid hsl(var(--border));
-        color: hsl(var(--muted-foreground));
+        box-shadow: 0 0 0 1px hsl(189 80% 60% / 0.25), 0 2px 8px hsl(189 80% 30% / 0.4);
+        transition: box-shadow 0.2s ease;
       }
 
-      .server-card .server-icon svg { width: 18px; height: 18px; }
+      .sidebar-logo-icon svg { width: 15px; height: 15px; color: white; }
 
-      .server-card .server-info-text { flex: 1; min-width: 0; }
+      .sidebar-logo .brand {
+        font-family: 'Syne', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: hsl(var(--sidebar-text-active));
+        letter-spacing: -0.02em;
+        transition: color 0.2s ease;
+      }
 
-      .server-card .label {
-        font-size: 10.5px;
+      .sidebar-logo .version {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
         font-weight: 500;
-        color: hsl(var(--muted-foreground));
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        color: hsl(var(--accent-cyan));
+        background: hsl(189 80% 42% / 0.12);
+        border: 1px solid hsl(189 80% 42% / 0.25);
+        padding: 2px 7px;
+        border-radius: 4px;
+        margin-left: auto;
+        letter-spacing: 0.04em;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       }
 
-      .server-card .ip-value {
-        font-size: 13.5px;
-        font-weight: 600;
-        color: hsl(var(--foreground));
-        font-family: 'Geist Mono', 'Courier New', monospace;
-        cursor: pointer;
+      /* ---- Section Labels ---- */
+      .nav-section {
+        padding: 18px 16px 6px;
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: hsl(var(--sidebar-text) / 0.5);
         display: flex;
         align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        gap: 8px;
+        transition: color 0.2s ease;
       }
 
-      .copy-icon {
-        width: 12px;
-        height: 12px;
-        color: hsl(var(--muted-foreground));
-        transition: color 0.12s;
+      .nav-section::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: hsl(var(--sidebar-border));
+        opacity: 0.5;
+        transition: background 0.2s ease;
       }
 
-      .server-card .ip-value:hover .copy-icon { color: hsl(var(--foreground)); }
-
-      .copy-tooltip {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: hsl(var(--foreground));
-        color: hsl(var(--background));
-        padding: 6px 12px;
-        border-radius: var(--radius);
-        font-size: 12px;
-        font-weight: 500;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.15s;
-        z-index: 9999;
-      }
-
-      .copy-tooltip.show { opacity: 1; }
-
-      /* Nav items */
-      .nav-item {
+      /* ---- Server Info Card ---- */
+      .server-card {
+        margin: 6px 10px;
+        padding: 10px 12px;
+        background: var(--sidebar-card-bg);
+        border: 1px solid hsl(var(--sidebar-border));
+        border-radius: calc(var(--radius) + 1px);
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 7px 12px;
-        margin: 1px 10px;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .server-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--sidebar-card-glow), transparent);
+        transition: background 0.2s ease;
+      }
+
+      .server-card .server-icon {
+        width: 30px;
+        height: 30px;
         border-radius: calc(var(--radius) - 1px);
-        color: hsl(var(--muted-foreground));
+        background: hsl(var(--accent-cyan) / 0.1);
+        border: 1px solid hsl(var(--accent-cyan) / 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: hsl(var(--accent-cyan));
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      }
+
+      .server-card .server-icon svg { width: 15px; height: 15px; }
+      .server-card .server-info-text { flex: 1; min-width: 0; }
+
+      .server-card .label {
+        font-family: 'DM Mono', monospace;
+        font-size: 9.5px;
+        font-weight: 500;
+        color: hsl(var(--sidebar-text) / 0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        transition: color 0.2s ease;
+      }
+
+      .server-card .ip-value {
+        font-family: 'DM Mono', monospace;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: hsl(var(--sidebar-text-active));
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.12s;
+      }
+
+      .server-card .ip-value:hover { color: hsl(var(--accent-cyan)); }
+      .copy-icon { width: 11px; height: 11px; opacity: 0.4; transition: opacity 0.12s; }
+      .server-card .ip-value:hover .copy-icon { opacity: 0.8; }
+
+      .copy-tooltip {
+        position: fixed;
+        bottom: 24px;
+        left: calc(var(--sidebar-width) / 2);
+        transform: translateX(-50%);
+        background: hsl(var(--foreground));
+        color: hsl(var(--background));
+        padding: 5px 12px;
+        border-radius: var(--radius);
+        font-family: 'DM Mono', monospace;
+        font-size: 11.5px;
+        font-weight: 500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s, transform 0.15s;
+        z-index: 9999;
+        transform: translateX(-50%) translateY(4px);
+      }
+
+      .copy-tooltip.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ---- Nav Items ---- */
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 6.5px 12px;
+        margin: 1px 8px;
+        border-radius: var(--radius);
+        color: hsl(var(--sidebar-text));
         text-decoration: none;
-        font-size: 13.5px;
-        font-weight: 450;
+        font-size: 13px;
+        font-weight: 400;
         cursor: pointer;
         transition: background 0.12s, color 0.12s;
         user-select: none;
         border: none;
         background: transparent;
-        width: calc(100% - 20px);
+        width: calc(100% - 16px);
         text-align: left;
         position: relative;
+        letter-spacing: -0.01em;
       }
 
       .nav-item:hover {
-        background: hsl(var(--accent));
-        color: hsl(var(--accent-foreground));
+        background: hsl(var(--sidebar-hover-bg));
+        color: hsl(var(--sidebar-text-active));
         text-decoration: none;
       }
 
       .nav-item.active {
-        background: hsl(var(--accent));
-        color: hsl(var(--foreground));
+        background: hsl(var(--sidebar-active-bg));
+        color: hsl(var(--sidebar-text-active));
         font-weight: 500;
       }
 
+      .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        bottom: 20%;
+        width: 2px;
+        background: hsl(var(--accent-cyan));
+        border-radius: 0 2px 2px 0;
+        margin-left: -8px;
+      }
+
       .nav-item .nav-icon {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         flex-shrink: 0;
-        color: hsl(var(--muted-foreground));
+        color: var(--sidebar-icon-default);
         transition: color 0.12s;
       }
 
       .nav-item:hover .nav-icon,
-      .nav-item.active .nav-icon { color: hsl(var(--foreground)); }
+      .nav-item.active .nav-icon { color: var(--sidebar-icon-hover); }
 
       .nav-item .nav-label { flex: 1; }
 
       .nav-item .nav-badge {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
+        font-family: 'DM Mono', monospace;
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        background: hsl(var(--foreground));
-        color: hsl(var(--background));
-        padding: 2px 6px;
-        border-radius: 4px;
+        background: hsl(var(--accent-amber) / 0.15);
+        color: hsl(var(--accent-amber));
+        border: 1px solid hsl(var(--accent-amber) / 0.3);
+        padding: 1px 5px;
+        border-radius: 3px;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       }
 
       .nav-item .nav-chevron {
-        width: 16px;
-        height: 16px;
-        color: hsl(var(--muted-foreground));
-        transition: transform 0.2s ease;
+        width: 14px;
+        height: 14px;
+        color: hsl(var(--sidebar-text) / 0.3);
+        transition: transform 0.2s ease, color 0.12s;
         flex-shrink: 0;
       }
 
-      .nav-item.expanded .nav-chevron { transform: rotate(90deg); }
+      .nav-item.expanded .nav-chevron {
+        transform: rotate(90deg);
+        color: hsl(var(--sidebar-text) / 0.6);
+      }
 
-      /* Submenu */
+      /* ---- Submenu ---- */
       .submenu {
         overflow: hidden;
         max-height: 0;
-        transition: max-height 0.2s ease;
+        transition: max-height 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .submenu.show { max-height: 2000px; }
 
       .submenu .nav-item {
-        padding: 5px 12px 5px 36px;
-        font-size: 13px;
-        color: hsl(var(--muted-foreground));
-        margin: 1px 10px;
+        padding: 5px 12px 5px 33px;
+        font-size: 12.5px;
+        color: hsl(var(--sidebar-text) / 0.75);
+        margin: 0px 8px;
       }
 
-      .submenu .nav-item::before {
+      .submenu .nav-item::after {
         content: '';
         position: absolute;
-        left: 20px;
+        left: 18px;
         top: 50%;
         transform: translateY(-50%);
-        width: 4px;
-        height: 4px;
+        width: 3px;
+        height: 3px;
         border-radius: 50%;
-        background: hsl(var(--border));
+        background: var(--sidebar-dot-default);
+        transition: background 0.12s;
       }
 
-      .submenu .nav-item:hover::before,
-      .submenu .nav-item.active::before { background: hsl(var(--foreground)); }
-
-      .submenu .nav-item.delete-item {
-        color: hsl(var(--destructive));
+      .submenu .nav-item:hover::after,
+      .submenu .nav-item.active::after {
+        background: var(--sidebar-dot-active);
       }
+
+      .submenu .nav-item.active::before { display: none; }
+
+      .submenu .nav-item.delete-item { color: var(--sidebar-destructive-dim); }
       .submenu .nav-item.delete-item:hover {
-        background: hsl(0 84.2% 60.2% / 0.08);
-        color: hsl(var(--destructive));
+        background: var(--sidebar-destructive-bg-hover);
+        color: var(--sidebar-destructive);
       }
-      .submenu .nav-item.delete-item::before { background: hsl(var(--destructive) / 0.5); }
+      .submenu .nav-item.delete-item:hover::after { background: var(--sidebar-destructive); }
 
-      /* ---------- Header ---------- */
+      /* ---- Smooth transitions for all sidebar elements ---- */
+      #sidebar,
+      #sidebar *,
+      .sidebar-logo,
+      .server-card,
+      .nav-item,
+      .nav-item .nav-icon,
+      .nav-item .nav-badge,
+      .nav-section,
+      .nav-section::after,
+      .server-card .label,
+      .server-card .ip-value,
+      .copy-icon {
+        transition: background-color 0.2s ease,
+                    border-color 0.2s ease,
+                    color 0.2s ease,
+                    box-shadow 0.2s ease;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #sidebar, #sidebar * { transition: none !important; }
+      }
+
+      /* ============================================================
+         HEADER
+      ============================================================ */
       #header {
         position: fixed;
         top: 0;
@@ -457,6 +611,15 @@
         gap: 12px;
       }
 
+      #header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, hsl(var(--accent-cyan) / 0.4), transparent 40%);
+        pointer-events: none;
+      }
+
       #header-right {
         margin-left: auto;
         display: flex;
@@ -467,54 +630,58 @@
       .header-btn {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 12px;
-        border-radius: calc(var(--radius) - 1px);
-        font-size: 14px;
+        gap: 7px;
+        padding: 5px 12px;
+        border-radius: var(--radius);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13.5px;
         font-weight: 500;
         border: 1px solid hsl(var(--border));
-        background: hsl(var(--background));
+        background: hsl(var(--card));
         color: hsl(var(--foreground));
         cursor: pointer;
-        transition: background 0.12s, color 0.12s;
+        transition: background 0.12s, color 0.12s, border-color 0.12s, box-shadow 0.12s;
         text-decoration: none;
-        height: 38px;
+        height: 36px;
       }
 
-      .header-btn svg { width: 16px; height: 16px; }
+      .header-btn svg { width: 15px; height: 15px; }
 
       .header-btn:hover {
-        background: hsl(var(--accent));
-        color: hsl(var(--accent-foreground));
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
         text-decoration: none;
+        border-color: hsl(var(--border));
       }
 
       .header-btn.icon-only {
-        padding: 6px 10px;
-        width: 38px;
+        padding: 5px 9px;
+        width: 36px;
         justify-content: center;
       }
 
       .header-btn.danger:hover {
-        background: hsl(0 84.2% 60.2% / 0.08);
-        color: hsl(var(--destructive));
-        border-color: hsl(0 84.2% 60.2% / 0.3);
+        background: hsl(4 86% 58% / 0.07);
+        color: hsl(4 86% 52%);
+        border-color: hsl(4 86% 58% / 0.25);
       }
 
-      /* Breadcrumb / page context */
       .header-separator {
         width: 1px;
-        height: 20px;
+        height: 18px;
         background: hsl(var(--border));
       }
 
       .header-page-label {
-        font-size: 14.5px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
         font-weight: 500;
         color: hsl(var(--foreground));
       }
 
-      /* ---------- Banners ---------- */
+      /* ============================================================
+         BANNERS
+      ============================================================ */
       .banner-wrap {
         position: fixed;
         left: var(--sidebar-width);
@@ -525,41 +692,54 @@
 
       .banner {
         display: none;
-        padding: 12px 24px;
-        border-bottom: 1px solid hsl(var(--border));
-        animation: fade-in 0.2s ease-out;
+        padding: 10px 20px;
+        border-bottom: 1px solid transparent;
+        animation: banner-slide 0.2s ease-out;
+      }
+
+      @keyframes banner-slide {
+        from { opacity: 0; transform: translateY(-4px); }
+        to   { opacity: 1; transform: translateY(0); }
       }
 
       .banner.show { display: flex; align-items: center; gap: 10px; }
 
-      .banner-icon { width: 18px; height: 18px; flex-shrink: 0; }
-      .banner-icon-lg { width: 20px; height: 20px; flex-shrink: 0; }
-      .banner-close-icon { width: 14px; height: 14px; }
-      .btn-icon-sm { width: 14px; height: 14px; }
+      .banner-icon { width: 16px; height: 16px; flex-shrink: 0; }
+      .banner-icon-lg { width: 18px; height: 18px; flex-shrink: 0; }
+      .banner-close-icon { width: 13px; height: 13px; }
+      .btn-icon-sm { width: 13px; height: 13px; }
 
       .banner-warning {
-        background: hsl(47 96% 89%);
-        border-color: hsl(43 96% 56% / 0.4);
-        color: hsl(35 92% 33%);
+        background: hsl(38 95% 52% / 0.1);
+        border-color: hsl(38 95% 52% / 0.25);
+        color: hsl(30 80% 40%);
+      }
+
+      .dark .banner-warning {
+        background: hsl(38 95% 52% / 0.08);
+        color: hsl(38 95% 65%);
+        border-color: hsl(38 95% 52% / 0.2);
       }
 
       .banner-ai {
-        background: hsl(var(--foreground));
-        color: hsl(var(--background));
+        background: hsl(var(--sidebar-bg));
+        border-color: hsl(var(--accent-cyan) / 0.3);
+        color: hsl(var(--sidebar-text-active));
       }
 
       .banner-htaccess {
-        background: hsl(142 76% 36%);
+        background: hsl(145 60% 38%);
         color: white;
+        border-color: hsl(145 60% 30%);
       }
 
-      .banner-text { flex: 1; font-size: 14px; font-weight: 500; }
+      .banner-text { flex: 1; font-size: 13.5px; font-weight: 500; }
 
       .banner-link {
         font-size: 12px;
         font-weight: 600;
         text-decoration: underline;
-        opacity: 0.8;
+        opacity: 0.75;
         transition: opacity 0.12s;
       }
 
@@ -569,9 +749,9 @@
         background: transparent;
         border: none;
         cursor: pointer;
-        opacity: 0.6;
+        opacity: 0.5;
         padding: 4px;
-        transition: opacity 0.12s;
+        transition: opacity 0.12s, background 0.12s;
         color: inherit;
         border-radius: 3px;
         display: flex;
@@ -584,14 +764,14 @@
       .banner-action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 14px;
-        border-radius: calc(var(--radius) - 1px);
-        font-size: 13px;
+        gap: 6px;
+        padding: 5px 13px;
+        border-radius: var(--radius);
+        font-size: 12.5px;
         font-weight: 600;
-        border: 1px solid rgba(255,255,255,0.3);
-        background: rgba(255,255,255,0.15);
-        color: inherit;
+        border: 1px solid hsl(var(--accent-cyan) / 0.4);
+        background: hsl(var(--accent-cyan) / 0.15);
+        color: hsl(var(--accent-cyan));
         text-decoration: none;
         cursor: pointer;
         transition: background 0.12s;
@@ -599,12 +779,22 @@
       }
 
       .banner-action-btn:hover {
-        background: rgba(255,255,255,0.25);
+        background: hsl(var(--accent-cyan) / 0.25);
         text-decoration: none;
-        color: inherit;
+        color: hsl(var(--accent-cyan));
       }
 
-      /* ---------- Main Content ---------- */
+      .banner-htaccess .banner-action-btn {
+        border-color: rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.15);
+        color: white;
+      }
+
+      .banner-htaccess .banner-action-btn:hover { background: rgba(255,255,255,0.25); color: white; }
+
+      /* ============================================================
+         MAIN CONTENT
+      ============================================================ */
       #main-content {
         margin-left: var(--sidebar-width);
         padding-top: var(--header-height);
@@ -612,68 +802,53 @@
         background: hsl(var(--background));
       }
 
-      .content-inner {
-        padding: 24px;
-      }
+      .content-inner { padding: 24px; }
 
-      /* Dynamic padding for banners */
-      body.banner-1 #main-content { padding-top: calc(var(--header-height) + 41px); }
-      body.banner-2 #main-content { padding-top: calc(var(--header-height) + 82px); }
-      body.banner-3 #main-content { padding-top: calc(var(--header-height) + 123px); }
+      body.banner-1 #main-content { padding-top: calc(var(--header-height) + 40px); }
+      body.banner-2 #main-content { padding-top: calc(var(--header-height) + 80px); }
+      body.banner-3 #main-content { padding-top: calc(var(--header-height) + 120px); }
 
-      /* ---------- Mobile ---------- */
+      /* ============================================================
+         MOBILE
+      ============================================================ */
       #mobile-menu-toggle {
         display: none;
         align-items: center;
         justify-content: center;
         width: 32px;
         height: 32px;
-        border-radius: calc(var(--radius) - 1px);
+        border-radius: var(--radius);
         border: 1px solid hsl(var(--border));
         background: transparent;
         cursor: pointer;
         color: hsl(var(--foreground));
       }
 
-      #mobile-menu-toggle svg { width: 18px; height: 18px; }
+      #mobile-menu-toggle svg { width: 17px; height: 17px; }
 
       #sidebar-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.4);
+        background: hsl(222 47% 5% / 0.6);
+        backdrop-filter: blur(2px);
         z-index: 49;
       }
 
       @media (max-width: 768px) {
         #mobile-menu-toggle { display: flex; }
-
-        #sidebar {
-          transform: translateX(-100%);
-          transition: transform 0.2s ease;
-        }
-
+        #sidebar { transform: translateX(-100%); transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidebar.show { transform: translateX(0); }
         #sidebar-overlay.show { display: block; }
-
         #header { left: 0; }
         .banner-wrap { left: 0; }
-
-        #main-content {
-          margin-left: 0;
-        }
+        #main-content { margin-left: 0; }
       }
 
-      /* Global Link Hover Overrides (fix blue/underlined links) */
-      a:hover {
-        text-decoration: none !important;
-      }
-      
-      .dark a:hover {
-        color: inherit;
-      }
+      /* ---- Global link fix ---- */
+      a:hover { text-decoration: none !important; }
 
-      /* ---------- Legacy / Custom CSS from CyberPanel ---------- */
+      /* ---- Legacy CyberPanel CSS ---- */
       {{ cosmetic.MainDashboardCSS | safe }}
     </style>
 
@@ -688,7 +863,9 @@
 <aside id="sidebar">
   <!-- Logo -->
   <div class="sidebar-logo">
-    <img src="https://cyberpanel.net/wp-content/uploads/2025/04/cyberpanel-logo-icon_only.png" alt="CyberPanel">
+    <div class="sidebar-logo-icon">
+      <i data-lucide="zap"></i>
+    </div>
     <span class="brand">CyberPanel</span>
     <span class="version">v2.4.5</span>
   </div>
@@ -705,9 +882,9 @@
         <div class="ip-value" onclick="copyIP('{{ ipAddress }}')" title="Click to copy">
           {{ ipAddress }}<i data-lucide="copy" class="copy-icon"></i>
         </div>
-        <div class="label" style="margin-top:4px;">
-          <span ng-show="!uptimeLoaded" style="font-size:11px;">Loading uptime…</span>
-          <span ng-show="uptimeLoaded" style="font-size:11px;">{$ uptime $}</span>
+        <div class="label" style="margin-top:3px;">
+          <span ng-show="!uptimeLoaded" style="opacity:0.5;">Loading…</span>
+          <span ng-show="uptimeLoaded">{$ uptime $}</span>
         </div>
       </div>
     </div>
@@ -715,7 +892,7 @@
     <!-- Dashboard -->
     <div class="nav-section">Overview</div>
     <a href="{% url 'index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-      <i data-lucide="home" class="nav-icon"></i>
+      <i data-lucide="layout-dashboard" class="nav-icon"></i>
       <span class="nav-label">Dashboard</span>
     </a>
     {% if admin %}
@@ -747,36 +924,6 @@
       <a href="{% url 'apiAccess' %}" class="nav-item">API Access</a>
       {% endif %}
     </div>
-
-{#    <!-- WordPress -->#}
-{#    <button class="nav-item" onclick="toggleSubmenu('wordpress-submenu', this)">#}
-{#      <i data-lucide="layout-template" class="nav-icon"></i>#}
-{#      <span class="nav-label">WordPress</span>#}
-{#      <span class="nav-badge">New</span>#}
-{#      <i data-lucide="chevron-right" class="nav-chevron"></i>#}
-{#    </button>#}
-{#    <div id="wordpress-submenu" class="submenu">#}
-{#      <a href="{% url 'createWordpress' %}" class="nav-item">Deploy WordPress</a>#}
-{#      <a href="{% url 'ListWPSites' %}" class="nav-item">List WordPress</a>#}
-{#      <a href="{% url 'ConfigurePlugins' %}" class="nav-item">Configure Plugins</a>#}
-{#      <a href="{% url 'RestoreBackups' %}" class="nav-item">Restore Backups</a>#}
-{#      <a href="{% url 'RemoteBackupConfig' %}" class="nav-item">Remote Backup</a>#}
-{#    </div>#}
-
-{#    <!-- Docker Apps -->#}
-{#    {% if admin %}#}
-{#    <button class="nav-item" onclick="toggleSubmenu('docker-submenu', this)">#}
-{#      <i data-lucide="container" class="nav-icon"></i>#}
-{#      <span class="nav-label">Docker Apps</span>#}
-{#      <i data-lucide="chevron-right" class="nav-chevron"></i>#}
-{#    </button>#}
-{#    <div id="docker-submenu" class="submenu">#}
-{#      <a href="{% url 'CreateDockersite' %}" class="nav-item">Create Docker Apps</a>#}
-{#      <a href="{% url 'ListDockerSites' %}" class="nav-item">List Docker Apps</a>#}
-{#      <a href="{% url 'CreateDockerPackage' %}" class="nav-item">Docker Packages</a>#}
-{#      <a href="{% url 'AssignPackage' %}" class="nav-item">Assign Package</a>#}
-{#    </div>#}
-{#    {% endif %}#}
 
     <!-- Websites -->
     <button class="nav-item" onclick="toggleSubmenu('websites-submenu', this)">
@@ -817,7 +964,7 @@
       {% if admin or createDatabase %}<a href="{% url 'createDatabase' %}" class="nav-item">Create Database</a>{% endif %}
       {% if admin or deleteDatabase %}<a href="{% url 'deleteDatabase' %}" class="nav-item delete-item">Delete Database</a>{% endif %}
       {% if admin or listDatabases %}<a href="{% url 'listDBs' %}" class="nav-item">List Databases</a>{% endif %}
-      {% if admin or createDatabase %}<a href="{% url 'phpMyAdmin' %}" class="nav-item" target="_blank" rel="noopener">PHPMyAdmin</a>{% endif %}
+      {% if admin or createDatabase %}<a href="{% url 'phpMyAdmin' %}" class="nav-item" target="_blank" rel="noopener">PHPMyAdmin ↗</a>{% endif %}
     </div>
 
     <!-- DNS -->
@@ -853,7 +1000,7 @@
       {% if admin %}<a href="{% url 'plusAddressingSettings' %}" class="nav-item">Plus-Addressing</a>{% endif %}
       {% if admin or changeEmailPassword %}<a href="{% url 'changeEmailAccountPassword' %}" class="nav-item">Change Password</a>{% endif %}
       {% if admin or dkimManager %}<a href="{% url 'dkimManager' %}" class="nav-item">DKIM Manager</a>{% endif %}
-      {% if admin or createEmail %}<a href="/webmail/" class="nav-item">Access Webmail</a>{% endif %}
+      {% if admin or createEmail %}<a href="/webmail/" class="nav-item">Access Webmail ↗</a>{% endif %}
     </div>
 
     <!-- FTP -->
@@ -876,7 +1023,6 @@
       <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
     <div id="backup-submenu" class="submenu">
-      {% if admin or createBackup %}<a href="{% url 'OneClickBackups' %}" class="nav-item">One-Click Backups</a>{% endif %}
       {% if admin or createBackup %}<a href="{% url 'backupSite' %}" class="nav-item">Create Backup</a>{% endif %}
       {% if admin or restoreBackup %}<a href="{% url 'restoreSite' %}" class="nav-item">Restore Backup</a>{% endif %}
       {% if admin or addDeleteDestinations %}<a href="{% url 'backupDestinations' %}" class="nav-item">Add / Delete Destination</a>{% endif %}
@@ -906,15 +1052,16 @@
     </button>
     <div id="ssl-submenu" class="submenu">
       {% if admin or manageSSL %}
-      <a href="{% url 'v2ManageSSL' %}" class="nav-item">Manage SSL v2</a>
       <a href="{% url 'manageSSL' %}" class="nav-item">Manage SSL</a>
       {% endif %}
       {% if admin or hostnameSSL %}<a href="{% url 'sslForHostName' %}" class="nav-item">Hostname SSL</a>{% endif %}
       {% if admin or mailServerSSL %}<a href="{% url 'sslForMailServer' %}" class="nav-item">Mail Server SSL</a>{% endif %}
     </div>
 
-    <!-- SERVER SECTION (admin only) -->
     {% if admin %}
+
+    <!-- SERVER SECTION -->
+    <div class="nav-section">Server</div>
 
     <!-- Tuning -->
     <button class="nav-item" onclick="toggleSubmenu('tuning-submenu', this)">
@@ -924,13 +1071,12 @@
     </button>
     <div id="tuning-submenu" class="submenu">
       <a href="{% url 'liteSpeedTuning' %}" class="nav-item">LiteSpeed Tuning</a>
-      {% if serverCheck == 1 %}<a href="{% url 'litespeed_ent_conf' %}" class="nav-item">LiteSpeed Ent Global Conf</a>{% endif %}
       <a href="{% url 'phpTuning' %}" class="nav-item">PHP Tuning</a>
     </div>
 
     <!-- Server Status -->
     <button class="nav-item" onclick="toggleSubmenu('server-status-submenu', this)">
-      <i data-lucide="line-chart" class="nav-icon"></i>
+      <i data-lucide="activity" class="nav-icon"></i>
       <span class="nav-label">Server Status</span>
       <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
@@ -954,7 +1100,7 @@
 
     <!-- Logs -->
     <button class="nav-item" onclick="toggleSubmenu('logs-submenu', this)">
-      <i data-lucide="file-text" class="nav-icon"></i>
+      <i data-lucide="scroll-text" class="nav-icon"></i>
       <span class="nav-label">Logs</span>
       <i data-lucide="chevron-right" class="nav-chevron"></i>
     </button>
@@ -980,27 +1126,19 @@
       <a href="{% url 'modSecurity' %}" class="nav-item">ModSecurity Conf</a>
       <a href="{% url 'modSecRules' %}" class="nav-item">ModSecurity Rules</a>
       <a href="{% url 'modSecRulesPacks' %}" class="nav-item">ModSecurity Rules Packs</a>
-      <a href="{% url 'imunify' %}" class="nav-item">Imunify 360</a>
       <a href="{% url 'imunifyAV' %}" class="nav-item">ImunifyAV</a>
-      <a href="{% url 'aiScannerHome' %}" class="nav-item">AI Scanner</a>
     </div>
 
-    <!-- Mail Settings -->
-    <button class="nav-item" onclick="toggleSubmenu('mail-settings-submenu', this)">
-      <i data-lucide="mail-open" class="nav-icon"></i>
-      <span class="nav-label">Mail Settings</span>
-      <span class="nav-badge">New</span>
-      <i data-lucide="chevron-right" class="nav-chevron"></i>
-    </button>
-    <div id="mail-settings-submenu" class="submenu">
-      <a href="{% url 'EmailDebugger' %}" class="nav-item">Email Debugger</a>
-      <a href="{% url 'mailQueue' %}" class="nav-item">Mail Queue</a>
-      <a href="{% url 'SpamAssassin' %}" class="nav-item">SpamAssassin</a>
-      <a href="{% url 'emailMarketing' %}" class="nav-item">Email Marketing</a>
-      <a href="{% url 'MailScanner' %}" class="nav-item">MailScanner</a>
-      <a href="{% url 'Rspamd' %}" class="nav-item">RSPAMD</a>
-      <a href="{% url 'emailDeliveryHome' %}" class="nav-item">Email Delivery <span class="nav-badge" style="margin-left:4px;">New</span></a>
-    </div>
+{#    <!-- Mail Settings -->#}
+{#    <button class="nav-item" onclick="toggleSubmenu('mail-settings-submenu', this)">#}
+{#      <i data-lucide="mail-open" class="nav-icon"></i>#}
+{#      <span class="nav-label">Mail Settings</span>#}
+{#      <span class="nav-badge">New</span>#}
+{#      <i data-lucide="chevron-right" class="nav-chevron"></i>#}
+{#    </button>#}
+{#    <div id="mail-settings-submenu" class="submenu">#}
+{#      <a href="{% url 'emailMarketing' %}" class="nav-item">Email Marketing</a>#}
+{#    </div>#}
 
     <!-- Manage Services -->
     <button class="nav-item" onclick="toggleSubmenu('manage-services-submenu', this)">
@@ -1015,6 +1153,7 @@
       <a href="{% url 'managePostfix' %}" class="nav-item">Manage Postfix</a>
       <a href="{% url 'managePureFtpd' %}" class="nav-item">Manage FTP</a>
     </div>
+
     {% endif %}
 
   </div><!-- end sidebar-scroll -->
@@ -1026,18 +1165,15 @@
     <i data-lucide="menu"></i>
   </button>
 
-  <!-- Optional breadcrumb slot -->
   {% block header_breadcrumb %}
   <div class="header-separator" style="display:none;"></div>
   {% endblock %}
 
   <div id="header-right">
-    <!-- Theme toggle -->
     <button id="theme-toggle" class="header-btn icon-only" title="Toggle theme">
       <span id="theme-icon-wrap"><i data-lucide="moon"></i></span>
     </button>
 
-    <!-- Logout -->
     <a href="{% url 'logout' %}" class="header-btn danger">
       <i data-lucide="log-out"></i>
       Logout
@@ -1045,55 +1181,8 @@
   </div>
 </header>
 
-<!-- Notification Banners -->
-<div class="banner-wrap" id="banners">
-  <!-- Warning Banner -->
-  <div id="notification-banner" class="banner banner-warning">
-    <i data-lucide="triangle-alert" class="banner-icon"></i>
-    <span class="banner-text" id="notification-text">
-      Configuration required.
-      <a href="#" class="banner-link" id="notification-link">Configure now</a>
-    </span>
-    <button class="banner-close" onclick="closeBanner('notification-banner')">
-      <i data-lucide="x" class="banner-close-icon"></i>
-    </button>
-  </div>
-
-  <!-- AI Scanner Banner -->
-  <div id="ai-scanner-banner" class="banner banner-ai">
-    <i data-lucide="shield-alert" class="banner-icon-lg"></i>
-    <div class="banner-text">
-      <div id="ai-scanner-main-text" style="font-weight:600;font-size:14.5px;">AI Security Scanner</div>
-      <div id="ai-scanner-sub-text" style="opacity:0.7;font-size:12.5px;">Protect your server with AI-powered threat detection</div>
-    </div>
-    <a href="{% url 'aiScannerHome' %}" class="banner-action-btn">
-      <i data-lucide="zap" class="btn-icon-sm"></i>
-      Enable Scanner
-    </a>
-    <button class="banner-close" onclick="closeBanner('ai-scanner-banner')">
-      <i data-lucide="x" class="banner-close-icon"></i>
-    </button>
-  </div>
-
-  <!-- .htaccess Banner -->
-  <div id="htaccess-banner" class="banner banner-htaccess">
-    <i data-lucide="file-check-2" class="banner-icon-lg"></i>
-    <div class="banner-text">
-      <div style="font-weight:600;font-size:14.5px;">.htaccess Manager Available</div>
-      <div style="opacity:0.85;font-size:12.5px;">Manage rewrite rules and access control directly from the panel</div>
-    </div>
-    <a href="#" class="banner-action-btn">
-      <i data-lucide="arrow-right" class="btn-icon-sm"></i>
-      Open Manager
-    </a>
-    <button class="banner-close" onclick="closeBanner('htaccess-banner')">
-      <i data-lucide="x" class="banner-close-icon"></i>
-    </button>
-  </div>
-</div>
-
-<!-- Copy Tooltip (global) -->
-<div class="copy-tooltip" id="copy-tooltip">Copied to clipboard</div>
+<!-- Copy Tooltip -->
+<div class="copy-tooltip" id="copy-tooltip">Copied</div>
 
 <!-- Main Content -->
 <main id="main-content">
@@ -1131,9 +1220,11 @@
       const wrap = document.getElementById('theme-icon-wrap');
       if (wrap) {
         wrap.innerHTML = `<i data-lucide="${t === 'dark' ? 'sun' : 'moon'}"></i>`;
-        if (typeof lucide !== 'undefined') lucide.createIcons({
-          root: wrap
-        });
+        if (typeof lucide !== 'undefined') lucide.createIcons({ root: wrap });
+      }
+      // Re-render sidebar icons on theme change
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons({ root: document.getElementById('sidebar') });
       }
     }
 
@@ -1152,9 +1243,8 @@
     const overlay = document.getElementById('sidebar-overlay');
     sidebar.classList.toggle('show');
     overlay.classList.toggle('show');
-    
-    if (sidebar.classList.contains('show')) {
-        if (typeof lucide !== 'undefined') lucide.createIcons({ root: sidebar });
+    if (sidebar.classList.contains('show') && typeof lucide !== 'undefined') {
+      lucide.createIcons({ root: sidebar });
     }
   }
 
@@ -1167,15 +1257,11 @@
   function toggleSubmenu(id, el) {
     const target = document.getElementById(id);
     const isOpen = target.classList.contains('show');
-
-    // Close all
     document.querySelectorAll('.submenu.show').forEach(m => m.classList.remove('show'));
     document.querySelectorAll('.nav-item.expanded').forEach(i => i.classList.remove('expanded'));
-
     if (!isOpen) {
       target.classList.add('show');
       el.classList.add('expanded');
-      // Ensure icons in the newly opened submenu are rendered
       if (typeof lucide !== 'undefined') lucide.createIcons({ root: target });
     }
   }
@@ -1185,7 +1271,7 @@
     navigator.clipboard.writeText(ip).then(() => {
       const tip = document.getElementById('copy-tooltip');
       tip.classList.add('show');
-      setTimeout(() => tip.classList.remove('show'), 2000);
+      setTimeout(() => tip.classList.remove('show'), 1800);
     });
   }
 
@@ -1229,9 +1315,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Lucide Icons
     lucide.createIcons();
-
     setActiveMenuState();
   });
 </script>

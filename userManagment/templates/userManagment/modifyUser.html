@@ -216,3 +216,11 @@
  </div>
 
 {% endblock %}
+
+{% block footer_scripts %}
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+{% endblock %}

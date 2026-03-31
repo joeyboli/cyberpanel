@@ -1,55 +1,125 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
 {% block title %}{% trans "Manage PHP Installations - CyberPanel" %}{% endblock %}
-{% block content %}
 
+{% block header_scripts %}
+<style>
+    /* Custom styles for PHP Management - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Function card hover effect */
+    .function-card {
+        transition: all 0.2s ease;
+    }
+    .function-card:hover {
+        border-color: hsl(var(--primary) / 0.5);
+        background: hsl(var(--muted) / 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
 
-<div class="container">
-<div id="page-title">
-   <h2>{% trans "Manage PHP Installations" %}</h2>
-   <p>{% trans "Edit your PHP Configurations to suit your needs." %}</p>
-</div>
-    <div class="panel col-lg-10 col-md-10" style="width: auto;">
-        <div class="panel-body">
-            <h3 class="content-box-header">
-            {% trans "Available Functions" %}
-            </h3>
+<div class="w-full p-4 md:p-12">
+    <div class="max-w-5xl mx-auto space-y-12">
 
-             <div class="example-box-wrapper">
-                <div class="row">
-                    <div class="col-lg-3 col-md-5 btn-min-width">
-                                    <a href="{% url 'installExtensions' %}" title="{% trans 'Install Extensions' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Install Extensions" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-download"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-                    <div class="col-lg-3 col-md-5 btn-min-width">
-                                    <a href="{% url 'editPHPConfigs' %}" title="{% trans 'Edit PHP Configs' %}" class="tile-box tile-box-shortcut btn-primary">
-                                        <div class="tile-header">
-                                            {% trans "Edit PHP Configs" %}
-                                        </div>
-                                        <div class="tile-content-wrapper">
-                                            <i class="fa fa-edit"></i>
-                                        </div>
-                                    </a>
-                    </div>
-
-
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="code" class="h-8 w-8"></i>
                 </div>
-
-             </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Manage PHP Installations" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Edit your PHP Configurations to suit your needs." %}
+                    </p>
+                </div>
+            </div>
         </div>
+
+        <!-- Available Functions Grid - Full width, Flat design -->
+        <div class="bg-card rounded-2xl border border-border p-8">
+            <h2 class="text-2xl font-bold text-foreground mb-8 flex items-center gap-3">
+                <i data-lucide="list" class="h-6 w-6 text-primary"></i>
+                {% trans "Available Functions" %}
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Install Extensions Card -->
+                <a href="{% url 'installExtensions' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="download" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Install Extensions" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Install or uninstall PHP extensions to enhance your PHP functionality. Choose from a wide range of available extensions for your PHP version." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "Manage Extensions" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Edit PHP Configs Card -->
+                <a href="{% url 'editPHPConfigs' %}" class="function-card block p-8 bg-secondary/10 border border-border rounded-2xl transition-all hover:border-primary/50">
+                    <div class="flex items-start gap-6">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <i data-lucide="settings" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                {% trans "Edit PHP Configs" %}
+                            </h3>
+                            <p class="text-lg text-muted-foreground">
+                                {% trans "Configure PHP settings including memory limits, execution time, file uploads, and more. Optimize PHP performance for your applications." %}
+                            </p>
+                            <div class="mt-6 inline-flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
+                                {% trans "Edit Configurations" %}
+                                <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Info Alert -->
+        <div class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary">{% trans "PHP Management Tips" %}</h4>
+                    <ul class="text-primary/80 space-y-2 mt-2 list-disc list-inside">
+                        <li>{% trans "Always test configuration changes in a staging environment first" %}</li>
+                        <li>{% trans "Restart PHP after making configuration changes for them to take effect" %}</li>
+                        <li>{% trans "Monitor your application logs after installing new extensions" %}</li>
+                        <li>{% trans "Keep PHP versions updated for security and performance improvements" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
-
 </div>
-
 
 {% endblock %}

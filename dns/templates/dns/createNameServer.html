@@ -3,227 +3,250 @@
 {% block title %}{% trans "Create Nameserver - CyberPanel" %}{% endblock %}
 
 {% block content %}
-{% load static %}
-{% get_current_language as LANGUAGE_CODE %}
+    {% load static %}
+    {% get_current_language as LANGUAGE_CODE %}
 
-<div class="w-full p-4 md:p-12" ng-controller="createNameserver">
-    <div class="mb-12 text-center">
-        <h1 class="text-5xl font-extrabold text-foreground tracking-tight sm:text-6xl flex items-center justify-center gap-4">
-            <i data-lucide="server" class="w-12 h-12 text-primary"></i>
-            {% trans "Create Nameserver" %}
-        </h1>
-        <p class="mt-6 mx-auto text-2xl text-muted-foreground">
-            {% trans "Set up custom nameservers to allow people on the internet to resolve websites hosted on this server" %}
-        </p>
-        <div class="mt-8">
-            <a href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-accent/50 text-accent-foreground border border-border rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                <i data-lucide="book-open" class="w-5 h-5"></i>
-                {% trans "DNS Documentation" %}
-            </a>
-        </div>
-    </div>
-
-    <div class="space-y-12">
-        {% if not status %}
-            <div class="bg-warning/10 border border-warning/20 rounded-2xl p-8 mb-8 flex items-center gap-6">
-                <div class="w-16 h-16 bg-warning/20 rounded-2xl flex items-center justify-center text-warning shrink-0">
-                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-foreground mb-2">{% trans "PowerDNS is disabled" %}</h3>
-                    <p class="text-muted-foreground">
-                        {% trans "You need to enable PowerDNS to create custom nameservers. Some features may be unavailable." %}
-                        <a href="{% url 'managePowerDNS' %}" class="text-primary font-bold hover:underline ml-2">{% trans "Enable PowerDNS →" %}</a>
-                    </p>
-                </div>
-            </div>
-        {% endif %}
-
-        <!-- Info Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
-                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
-                    <i data-lucide="info" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "What are Nameservers?" %}</h3>
-                <p class="text-muted-foreground">{% trans "Nameservers translate domain names into IP addresses, allowing browsers to connect to websites." %}</p>
-            </div>
-            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
-                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
-                    <i data-lucide="shield-check" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "Redundancy" %}</h3>
-                <p class="text-muted-foreground">{% trans "Two nameservers provide redundancy - if one fails, the other can still resolve your domains." %}</p>
-            </div>
-            <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
-                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
-                    <i data-lucide="globe" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-foreground mb-3">{% trans "Domain Registrar" %}</h3>
-                <p class="text-muted-foreground">{% trans "After creation, update your domain registrar to use these custom nameservers." %}</p>
+    <div class="w-full p-4 md:p-12" ng-controller="createNameserver">
+        <div class="mb-12 text-center">
+            <h1 class="text-5xl font-extrabold text-foreground tracking-tight sm:text-6xl flex items-center justify-center gap-4">
+                <i data-lucide="server" class="w-12 h-12 text-primary"></i>
+                {% trans "Create Nameserver" %}
+            </h1>
+            <p class="mt-6 mx-auto text-2xl text-muted-foreground">
+                {% trans "Set up custom nameservers to allow people on the internet to resolve websites hosted on this server" %}
+            </p>
+            <div class="mt-8">
+                <a href="https://cyberpanel.net/KnowledgeBase/home/manage-dns-in-cyberpanel/" target="_blank"
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-accent/50 text-accent-foreground border border-border rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    {% trans "DNS Documentation" %}
+                </a>
             </div>
         </div>
 
-        <!-- Main Form Card -->
-        <div class="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
-            <div class="bg-muted/30 p-8 border-bottom border-border">
-                <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
-                    <span class="w-2 h-8 bg-primary rounded-full"></span>
-                    {% trans "Nameserver Configuration" %}
-                    <span ng-show="createNameserverLoading" class="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full ml-auto"></span>
-                </h2>
-            </div>
-
-            <form class="divide-y divide-border">
-                <!-- Domain Section -->
-                <div class="p-8 md:p-12">
-                    <div class="flex items-center gap-3 mb-8">
-                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                            <i data-lucide="globe" class="w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-foreground">{% trans "Domain Information" %}</h3>
+        <div class="space-y-12">
+            {% if not status %}
+                <div class="bg-warning/10 border border-warning/20 rounded-2xl p-8 mb-8 flex items-center gap-6">
+                    <div class="w-16 h-16 bg-warning/20 rounded-2xl flex items-center justify-center text-warning shrink-0">
+                        <i data-lucide="alert-circle" class="w-8 h-8"></i>
                     </div>
-                    <div class="space-y-4">
-                        <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Domain Name" %}</label>
-                        <input type="text" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300" ng-model="domainForNS" placeholder="example.com" required>
-                        <p class="text-sm text-muted-foreground italic flex items-center gap-2">
-                            <i data-lucide="info" class="w-4 h-4 text-primary"></i>
-                            {% trans "Enter the main domain for which you're creating nameservers" %}
+                    <div>
+                        <h3 class="text-xl font-bold text-foreground mb-2">{% trans "PowerDNS is disabled" %}</h3>
+                        <p class="text-muted-foreground">
+                            {% trans "You need to enable PowerDNS to create custom nameservers. Some features may be unavailable." %}
+                            <a href="{% url 'managePowerDNS' %}"
+                               class="text-primary font-bold hover:underline ml-2">{% trans "Enable PowerDNS →" %}</a>
                         </p>
                     </div>
                 </div>
+            {% endif %}
 
-                <!-- Primary Nameserver Section -->
-                <div class="p-8 md:p-12">
-                    <div class="flex items-center gap-3 mb-8">
-                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                            <i data-lucide="server" class="w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-foreground">{% trans "Primary Nameserver (NS1)" %}</h3>
+            <!-- Info Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                        <i data-lucide="info" class="w-8 h-8"></i>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Nameserver Hostname" %}</label>
-                            <input type="text" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300" ng-model="firstNS" placeholder="ns1.example.com" required>
-                        </div>
-                        <div class="space-y-4">
-                            <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "IP Address" %}</label>
-                            <input type="text" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300" ng-model="firstNSIP" placeholder="192.168.1.1" required>
-                        </div>
+                    <h3 class="text-xl font-bold text-foreground mb-3">{% trans "What are Nameservers?" %}</h3>
+                    <p class="text-muted-foreground">{% trans "Nameservers translate domain names into IP addresses, allowing browsers to connect to websites." %}</p>
+                </div>
+                <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
                     </div>
+                    <h3 class="text-xl font-bold text-foreground mb-3">{% trans "Redundancy" %}</h3>
+                    <p class="text-muted-foreground">{% trans "Two nameservers provide redundancy - if one fails, the other can still resolve your domains." %}</p>
+                </div>
+                <div class="bg-card p-8 rounded-2xl border border-border shadow-sm text-center">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 text-primary">
+                        <i data-lucide="globe" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-foreground mb-3">{% trans "Domain Registrar" %}</h3>
+                    <p class="text-muted-foreground">{% trans "After creation, update your domain registrar to use these custom nameservers." %}</p>
+                </div>
+            </div>
+
+            <!-- Main Form Card -->
+            <div class="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
+                <div class="bg-muted/30 p-8 border-bottom border-border">
+                    <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                        <span class="w-2 h-8 bg-primary rounded-full"></span>
+                        {% trans "Nameserver Configuration" %}
+                        <span ng-show="createNameserverLoading"
+                              class="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full ml-auto"></span>
+                    </h2>
                 </div>
 
-                <!-- Secondary Nameserver Section -->
-                <div class="p-8 md:p-12">
-                    <div class="flex items-center gap-3 mb-8">
-                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                            <i data-lucide="server" class="w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-foreground">{% trans "Secondary Nameserver (NS2)" %}</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Nameserver Hostname" %}</label>
-                            <input type="text" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300" ng-model="secondNS" placeholder="ns2.example.com" required>
+                <form class="divide-y divide-border">
+                    <!-- Domain Section -->
+                    <div class="p-8 md:p-12">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                                <i data-lucide="globe" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-foreground">{% trans "Domain Information" %}</h3>
                         </div>
                         <div class="space-y-4">
-                            <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "IP Address" %}</label>
-                            <input type="text" class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300" ng-model="secondNSIP" placeholder="192.168.1.2" required>
+                            <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Domain Name" %}</label>
+                            <input type="text"
+                                   class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300"
+                                   ng-model="domainForNS" placeholder="example.com" required>
+                            <p class="text-sm text-muted-foreground italic flex items-center gap-2">
+                                <i data-lucide="info" class="w-4 h-4 text-primary"></i>
+                                {% trans "Enter the main domain for which you're creating nameservers" %}
+                            </p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Preview Section -->
-                <div class="p-8 md:p-12 bg-muted/10" ng-show="domainForNS && firstNS && secondNS">
-                    <h4 class="text-center text-sm font-bold text-muted-foreground uppercase tracking-wider mb-8">{% trans "Preview" %}</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-background border border-border rounded-2xl p-6 text-center shadow-sm">
-                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                    <!-- Primary Nameserver Section -->
+                    <div class="p-8 md:p-12">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
                                 <i data-lucide="server" class="w-6 h-6"></i>
                             </div>
-                            <div class="font-mono font-bold text-foreground text-lg">{$ firstNS || 'ns1.example.com' $}</div>
-                            <div class="font-mono text-muted-foreground mt-1">{$ firstNSIP || '0.0.0.0' $}</div>
+                            <h3 class="text-xl font-bold text-foreground">{% trans "Primary Nameserver (NS1)" %}</h3>
                         </div>
-                        <div class="bg-background border border-border rounded-2xl p-6 text-center shadow-sm">
-                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Nameserver Hostname" %}</label>
+                                <input type="text"
+                                       class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300"
+                                       ng-model="firstNS" placeholder="ns1.example.com" required>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "IP Address" %}</label>
+                                <input type="text"
+                                       class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300"
+                                       ng-model="firstNSIP" placeholder="192.168.1.1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Nameserver Section -->
+                    <div class="p-8 md:p-12">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
                                 <i data-lucide="server" class="w-6 h-6"></i>
                             </div>
-                            <div class="font-mono font-bold text-foreground text-lg">{$ secondNS || 'ns2.example.com' $}</div>
-                            <div class="font-mono text-muted-foreground mt-1">{$ secondNSIP || '0.0.0.0' $}</div>
+                            <h3 class="text-xl font-bold text-foreground">{% trans "Secondary Nameserver (NS2)" %}</h3>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="p-12 text-center bg-muted/5">
-                    <button type="button" ng-click="createNameserverFunc()" class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-primary-foreground rounded-2xl font-bold text-lg hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20" 
-                            ng-disabled="!domainForNS || !firstNS || !firstNSIP || !secondNS || !secondNSIP">
-                        <i data-lucide="plus-circle" class="w-6 h-6"></i>
-                        {% trans "Create Nameservers" %}
-                        <span ng-show="createNameserverLoading" class="animate-spin inline-block w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full ml-2"></span>
-                    </button>
-                </div>
-
-                <!-- Alert Messages -->
-                <div class="p-8 space-y-4">
-                    <div ng-hide="nameserverCreationFailed" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                        <i data-lucide="alert-octagon" class="w-8 h-8 shrink-0"></i>
-                        <div>
-                            <strong class="text-lg">{% trans "Nameserver creation failed" %}</strong>
-                            <p class="mt-1">{$ errorMessage $}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Nameserver Hostname" %}</label>
+                                <input type="text"
+                                       class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300"
+                                       ng-model="secondNS" placeholder="ns2.example.com" required>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "IP Address" %}</label>
+                                <input type="text"
+                                       class="w-full bg-background border-2 border-border rounded-xl p-4 text-lg focus:outline-none focus:border-primary transition-all duration-300"
+                                       ng-model="secondNSIP" placeholder="192.168.1.2" required>
+                            </div>
                         </div>
                     </div>
 
-                    <div ng-hide="nameserverCreated" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                        <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
-                        <div>
-                            <strong class="text-lg">{% trans "Nameservers successfully created!" %}</strong>
-                            <ul class="mt-2 space-y-1 font-mono font-bold">
-                                <li>{$ nameServerOne $}</li>
-                                <li>{$ nameServerTwo $}</li>
-                            </ul>
+                    <!-- Preview Section -->
+                    <div class="p-8 md:p-12 bg-muted/10" ng-show="domainForNS && firstNS && secondNS">
+                        <h4 class="text-center text-sm font-bold text-muted-foreground uppercase tracking-wider mb-8">{% trans "Preview" %}</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-background border border-border rounded-2xl p-6 text-center shadow-sm">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                                    <i data-lucide="server" class="w-6 h-6"></i>
+                                </div>
+                                <div class="font-mono font-bold text-foreground text-lg">{$ firstNS || 'ns1.example.com'
+                                    $}
+                                </div>
+                                <div class="font-mono text-muted-foreground mt-1">{$ firstNSIP || '0.0.0.0' $}</div>
+                            </div>
+                            <div class="bg-background border border-border rounded-2xl p-6 text-center shadow-sm">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                                    <i data-lucide="server" class="w-6 h-6"></i>
+                                </div>
+                                <div class="font-mono font-bold text-foreground text-lg">{$ secondNS ||
+                                    'ns2.example.com' $}
+                                </div>
+                                <div class="font-mono text-muted-foreground mt-1">{$ secondNSIP || '0.0.0.0' $}</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div ng-hide="couldNotConnect" class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4">
-                        <i data-lucide="wifi-off" class="w-8 h-8 shrink-0"></i>
-                        <div>{% trans "Could not connect to server. Please refresh this page." %}</div>
+                    <!-- Form Actions -->
+                    <div class="p-8 md:p-12 flex justify-center bg-muted/5 border-t border-border">
+                        <button type="button"
+                                ng-click="createNameserverFunc()"
+                                class="w-full md:w-auto px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:shadow-primary/20 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                ng-disabled="!domainForNS || !firstNS || !firstNSIP || !secondNS || !secondNSIP">
+                            <i data-lucide="plus-circle" class="h-6 w-6" ng-hide="createNameserverLoading"></i>
+                            <span ng-show="createNameserverLoading"
+                                  class="animate-spin inline-block w-6 h-6 border-2 border-primary-foreground border-t-transparent rounded-full"></span>
+                            {% trans "Create Nameservers" %}
+                        </button>
                     </div>
-                </div>
-            </form>
+
+                    <!-- Alert Messages -->
+                    <div class="p-8 space-y-4">
+                        <div ng-hide="nameserverCreationFailed"
+                             class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <i data-lucide="alert-octagon" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <strong class="text-lg">{% trans "Nameserver creation failed" %}</strong>
+                                <p class="mt-1">{$ errorMessage $}</p>
+                            </div>
+                        </div>
+
+                        <div ng-hide="nameserverCreated"
+                             class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 p-6 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <strong class="text-lg">{% trans "Nameservers successfully created!" %}</strong>
+                                <ul class="mt-2 space-y-1 font-mono font-bold">
+                                    <li>{$ nameServerOne $}</li>
+                                    <li>{$ nameServerTwo $}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div ng-hide="couldNotConnect"
+                             class="bg-destructive/10 border border-destructive/20 text-destructive p-6 rounded-2xl flex items-center gap-4">
+                            <i data-lucide="wifi-off" class="w-8 h-8 shrink-0"></i>
+                            <div>{% trans "Could not connect to server. Please refresh this page." %}</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
 
-        const observer = new MutationObserver((mutations) => {
-            let shouldRefresh = false;
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length > 0) {
-                    shouldRefresh = true;
+            const observer = new MutationObserver((mutations) => {
+                let shouldRefresh = false;
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes.length > 0) {
+                        shouldRefresh = true;
+                    }
+                });
+
+                if (shouldRefresh && typeof lucide !== 'undefined') {
+                    // Debounce refresh
+                    if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
+                    window.lucideTimeout = setTimeout(() => {
+                        lucide.createIcons({
+                            root: document.querySelector('[ng-controller="createNameserver"]')
+                        });
+                    }, 100);
                 }
             });
 
-            if (shouldRefresh && typeof lucide !== 'undefined') {
-                // Debounce refresh
-                if (window.lucideTimeout) clearTimeout(window.lucideTimeout);
-                window.lucideTimeout = setTimeout(() => {
-                    lucide.createIcons({
-                        root: document.querySelector('[ng-controller="createNameserver"]')
-                    });
-                }, 100);
-            }
+            observer.observe(document.querySelector('[ng-controller="createNameserver"]'), {
+                childList: true,
+                subtree: true
+            });
         });
-
-        observer.observe(document.querySelector('[ng-controller="createNameserver"]'), {
-            childList: true,
-            subtree: true
-        });
-    });
-</script>
+    </script>
 {% endblock %}

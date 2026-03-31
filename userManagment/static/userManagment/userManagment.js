@@ -146,6 +146,16 @@ app.controller('modifyUser', function ($scope, $http) {
     $scope.websitesLimit = true;
     $scope.qrHidden = true;
 
+    $scope.init = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var user = urlParams.get('user');
+        if (user) {
+            $scope.accountUsername = user;
+            $scope.fetchUserDetails();
+        }
+    };
+    $scope.init();
+
     $scope.decideQRShow = function(){
         if($scope.twofa === true){
             $scope.qrHidden = false;
@@ -223,6 +233,12 @@ app.controller('modifyUser', function ($scope, $http) {
                     $scope.secretKey = userDetails.secretKey;
                     $scope.formattedSecretKey = userDetails.secretKey.match(/.{1,4}/g).join(' ');
                 }
+
+                setTimeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 100);
 
                 qrCode.set({
                     value: userDetails.otpauth
@@ -1553,9 +1569,12 @@ app.controller('listTableUsers', function ($scope, $http) {
             $scope.cyberpanelLoading = true;
 
             if (response.data.status === 1) {
-
                 $scope.records = JSON.parse(response.data.data);
-
+                setTimeout(function() {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 100);
                 new PNotify({
                     title: 'Success!',
                     text: 'Users successfully fetched!',

@@ -1,192 +1,197 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Switch off security - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "Switch Off Security Rules - CyberPanel" %}{% endblock %}
+
+{% block header_scripts %}
+<style>
+    /* Custom styles for Security Rules - aligned to base design system */
+    .premium-alert {
+        background: hsl(var(--primary) / 0.05);
+        border: 1px solid hsl(var(--primary) / 0.1);
+        border-radius: var(--radius);
+        padding: 24px;
+    }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+
+    /* Tag list scrolling */
+    .tag-list-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    /* Tag item hover effect */
+    .tag-item {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .tag-item:hover {
+        background: hsl(var(--muted) / 0.3);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 
-    {% load static %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
+<div class="w-full p-4 md:p-12" ng-controller="securityrule">
+    <div class="max-w-5xl mx-auto space-y-12">
 
-
-    <style>
-        /* CSS Variables for Dark Mode Support */
-        :root {
-            /* Text colors */
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            
-            /* Background colors */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-hover: #e9ecef;
-            --bg-light: lightblue;
-            
-            /* Border colors */
-            --border-color: #ccc;
-            --border-light: #dee2e6;
-            
-            /* Accent colors */
-            --accent-color: #007bff;
-            --accent-hover: #0056b3;
-        }
-        
-        .tagcontainer {
-            display: flex;
-            justify-content: space-evenly;
-        }
-
-        .tags-container {
-            width: 200px;
-            height: 300px;
-            overflow-y: auto;
-            margin-right: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .tags-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .tags {
-            width: calc(100% - 20px); /* Adjusted width to accommodate the icon */
-            justify-content: space-between;
-            margin: 5px 0; /* Added margin top and bottom */
-            display: flex; /* Added to ensure icon and text are aligned */
-            align-items: center; /* Added to vertically center the icon */
-            padding: 5px;
-        }
-
-        .tags:hover {
-            background-color: var(--bg-secondary);
-        }
-
-        .tag-icon {
-            display: none; /* Initially hide the SVG icon */
-        }
-
-        .tags:hover .tag-icon {
-            display: inline-block; /* Show the SVG icon on hover */
-        }
-
-        /* Adjusted SVG styling */
-        svg {
-            flex-shrink: 0; /* Prevent SVG from shrinking */
-            margin-left: 5px; /* Added space between text and icon */
-        }
-
-        .search-input {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="none" stroke="currentColor"><circle cx="11" cy="11" r="5.5"/><path stroke-linecap="round" stroke-linejoin="round" d="m15 15l4 4"/></g></svg>');
-            background-repeat: no-repeat;
-            background-position: calc(100% - 10px) center;
-            padding-right: 30px; /* Adjust based on the size of your SVG icon */
-        }
-
-        .search-input:focus {
-            outline: none; /* Optional: Remove outline on focus */
-        }
-
-
-    </style>
-
-
-    <div class="container">
-        <div id="page-title">
-            <h2>{% trans "Switch off security rules" %} <img src="{% static 'images/lsON.png' %}"
-                                                             style="margin-bottom: 5px;"></h2>
-            <p>{% trans "Here you can switch off security rules. It is handy if you find out that a security rule is too restrictive for some websites. To deactivate security rules, specify their IDs (for example, 340003 or 340005-340007), tags (for example, CVE-2011-4898), or regular expressions used in rule messages (for example, XSS)." %}</p>
-        </div>
-
-
-        <div ng-controller="securityrule" class="panel">
-            <div class="panel-body">
-                <h3 class="content-box-header">
-                    {% trans "Security Rules" %} <img ng-hide="securityruleLoading"
-                                                      src="{% static 'images/loading.gif' %}">
-                </h3>
-                <div class="example-box-wrapper">
-
-                    <form action="/" id="createPackages"
-                          class="form-horizontal bordered-row panel-body">
-
-                        <div ng-hide="installationDetailsForm" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Security Rule IDs" %}</label>
-                            <div class="col-sm-6">
-                                <input name="dom" type="text" class="form-control" ng-model="ruleID"
-                                       required>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group tagcontainer">
-                            <div>
-                                <div class="tags-label">Activate Tags</div>
-                                <div class="tags-container">
-                                    <input type="text" ng-model="tagFilter" placeholder="Search tags"
-                                           class="search-input">
-                                    <div ng-repeat="tag in ActivateTags | filter:tagFilter"
-                                         ng-click="toggleActivation(tag)">
-                                        <span class="tags">{$ tag $}
-                                            <svg class="tag-icon" xmlns="http://www.w3.org/2000/svg" width="1em"
-                                                 height="1em"
-                                                 viewBox="0 0 24 24">
-                                                <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                                      stroke-linejoin="round"
-                                                      stroke-width="2" d="m10 17l5-5-5-5"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="tags-label">Deactivated Tags</div>
-                                <div class="tags-container">
-                                    <input type="text" ng-model="deactivatedTagFilter" placeholder="Search tags"
-                                           class="search-input">
-                                    <div ng-repeat="tag in DeactivatedTags | filter:deactivatedTagFilter"
-                                         ng-click="toggleActivation(tag)">
-                                            <span class="tags">{$ tag $}
-                                                <svg class="tag-icon" xmlns="http://www.w3.org/2000/svg" width="1em"
-                                                     height="1em"
-                                                     viewBox="0 0 24 24">
-                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                                          stroke-linejoin="round"
-                                                          stroke-width="2" d="m14 7l-5 5 5 5"/>
-                                                </svg>
-                                            </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div ng-hide="installationDetailsForm" class="form-group">
-                            <label class="col-sm-3 control-label">{% trans "Regular expressions in rule messages " %}</label>
-                            <div class="col-sm-6">
-                                <textarea name="dom" type="text" class="form-control" ng-model="Regular_expressions"
-                                          rows="5"
-                                          required> </textarea>
-                            </div>
-                        </div>
-
-
-                        <div ng-hide="installationDetailsForm" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-4">
-                                <button
-                                        type="button" ng-click="applychanges()"
-                                        class="btn btn-primary btn-lg">{% trans "Save Changes" %}</button>
-
-                            </div>
-                        </div>
-
-
-                    </form>
-
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="shield-off" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Switch Off Security Rules" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Here you can switch off security rules. It is handy if you find out that a security rule is too restrictive for some websites. To deactivate security rules, specify their IDs (for example, 340003 or 340005-340007), tags (for example, CVE-2011-4898), or regular expressions used in rule messages (for example, XSS)." %}
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Security Rules Form Card - Flat design -->
+        <div class="bg-card rounded-2xl border border-border p-8 space-y-8">
+            <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+                <i data-lucide="shield-alert" class="h-6 w-6 text-primary"></i>
+                {% trans "Security Rules" %}
+                <span ng-hide="securityruleLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+            </h2>
+
+            <form class="space-y-8">
+
+                <!-- Security Rule IDs -->
+                <div class="space-y-3">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">
+                        {% trans "Security Rule IDs" %}
+                    </label>
+                    <div class="relative max-w-2xl">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="hash" class="h-5 w-5 text-muted-foreground"></i>
+                        </div>
+                        <input type="text" ng-model="ruleID"
+                               class="w-full pl-12 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               placeholder="{% trans 'Enter rule IDs (e.g., 340003 or 340005-340007)' %}" required>
+                    </div>
+                    <p class="text-sm text-muted-foreground flex items-center gap-2">
+                        <i data-lucide="info" class="h-4 w-4"></i>
+                        {% trans "Separate multiple IDs with commas or use ranges with hyphens" %}
+                    </p>
+                </div>
+
+                <!-- Tags Management - Two Column Layout -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- Activate Tags -->
+                    <div class="space-y-4">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="shield-check" class="h-4 w-4 text-emerald-600"></i>
+                            {% trans "Activate Tags" %}
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                            <input type="text" ng-model="tagFilter" placeholder="{% trans 'Search tags...' %}"
+                                   class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        </div>
+                        <div class="tag-list-container p-3 bg-secondary/10 border border-border rounded-xl space-y-2">
+                            <div ng-repeat="tag in ActivateTags | filter:tagFilter"
+                                 ng-click="toggleActivation(tag)"
+                                 class="tag-item flex items-center justify-between p-3 bg-card border border-border rounded-xl">
+                                <span class="font-medium text-foreground">{$ tag $}</span>
+                                <i data-lucide="circle-check" class="h-5 w-5 text-emerald-600"></i>
+                            </div>
+                            <div ng-if="(ActivateTags | filter:tagFilter).length === 0" class="text-center py-4 text-muted-foreground">
+                                {% trans "No tags found" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deactivated Tags -->
+                    <div class="space-y-4">
+                        <label class="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="shield-x" class="h-4 w-4 text-amber-600"></i>
+                            {% trans "Deactivated Tags" %}
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                            </div>
+                            <input type="text" ng-model="deactivatedTagFilter" placeholder="{% trans 'Search tags...' %}"
+                                   class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        </div>
+                        <div class="tag-list-container p-3 bg-secondary/10 border border-border rounded-xl space-y-2">
+                            <div ng-repeat="tag in DeactivatedTags | filter:deactivatedTagFilter"
+                                 ng-click="toggleActivation(tag)"
+                                 class="tag-item flex items-center justify-between p-3 bg-card border border-border rounded-xl">
+                                <span class="font-medium text-foreground">{$ tag $}</span>
+                                <i data-lucide="circle-x" class="h-5 w-5 text-amber-600"></i>
+                            </div>
+                            <div ng-if="(DeactivatedTags | filter:deactivatedTagFilter).length === 0" class="text-center py-4 text-muted-foreground">
+                                {% trans "No tags found" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular Expressions -->
+                <div class="space-y-3">
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">
+                        {% trans "Regular Expressions in Rule Messages" %}
+                    </label>
+                    <div class="relative max-w-2xl">
+                        <div class="absolute top-4 left-4 flex items-center pointer-events-none">
+                            <i data-lucide="regex" class="h-5 w-5 text-muted-foreground"></i>
+                        </div>
+                        <textarea ng-model="Regular_expressions" rows="5"
+                                  class="w-full pl-12 pr-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono"
+                                  placeholder="{% trans 'Enter regex patterns (e.g., XSS, SQL injection)' %}" required></textarea>
+                    </div>
+                    <p class="text-sm text-muted-foreground flex items-center gap-2">
+                        <i data-lucide="info" class="h-4 w-4"></i>
+                        {% trans "Use regular expressions to match rule messages and deactivate matching rules" %}
+                    </p>
+                </div>
+
+                <!-- Action Button - Large, substantial -->
+                <div class="pt-6 border-t border-border">
+                    <button type="button" ng-click="applychanges()"
+                            class="inline-flex items-center justify-center px-12 py-5 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            ng-disabled="!ruleID && !Regular_expressions">
+                        <i data-lucide="save" class="h-6 w-6 mr-3"></i>
+                        {% trans "Save Changes" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Info Alert -->
+        <div class="p-6 bg-primary/10 border border-primary/20 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
+                <div>
+                    <h4 class="font-bold text-primary">{% trans "Best Practices" %}</h4>
+                    <ul class="text-primary/80 space-y-2 mt-2 list-disc list-inside">
+                        <li>{% trans "Always test changes in a staging environment first" %}</li>
+                        <li>{% trans "Document which rules you disable and why" %}</li>
+                        <li>{% trans "Re-enable rules after resolving the underlying issue" %}</li>
+                        <li>{% trans "Monitor logs for suspicious activity after disabling rules" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer_scripts %}
+<script src="{% static 'security/security.js' %}"></script>
 {% endblock %}

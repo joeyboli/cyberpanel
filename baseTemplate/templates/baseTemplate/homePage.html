@@ -8,6 +8,15 @@
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
         display: none !important;
     }
+    /* Ensure flat design - no shadows on cards */
+    .bg-card { box-shadow: none !important; }
+    /* Activity tab active state - flat highlight */
+    .activity-tab[data-state="active"] {
+        background: hsl(var(--secondary)) !important;
+        color: hsl(var(--secondary-foreground)) !important;
+        border: 1px solid hsl(var(--border)) !important;
+        box-shadow: none !important;
+    }
 </style>
 {% endblock %}
 
@@ -17,7 +26,8 @@
     <div class="space-y-6">
         <h2 class="text-base font-semibold tracking-wider text-muted-foreground uppercase">Overview</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8" ng-controller="systemStatusInfo">
-            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+            <!-- CPU Card - Flat design -->
+            <div class="rounded-2xl border border-border bg-card p-8">
                 <div class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <h3 class="text-lg font-semibold tracking-tight">CPU Usage</h3>
                     <span class="text-lg font-bold text-muted-foreground">{$ cpuUsage $}%</span>
@@ -28,7 +38,8 @@
                 <p class="mt-4 text-base text-muted-foreground">{$ cpuCores $} CPU Core(s)</p>
             </div>
 
-            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+            <!-- Memory Card - Flat design -->
+            <div class="rounded-2xl border border-border bg-card p-8">
                 <div class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <h3 class="text-lg font-semibold tracking-tight">Memory Usage</h3>
                     <span class="text-lg font-bold text-muted-foreground">{$ ramUsage $}%</span>
@@ -39,7 +50,8 @@
                 <p class="mt-4 text-base text-muted-foreground">{$ ramTotalGB $} GB Ram</p>
             </div>
 
-            <div class="rounded-lg border border-border/50 bg-card p-8 shadow-sm">
+            <!-- Disk Card - Flat design -->
+            <div class="rounded-2xl border border-border bg-card p-8">
                 <div class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <h3 class="text-lg font-semibold tracking-tight">Disk Usage</h3>
                     <span class="text-lg font-bold text-muted-foreground">{$ diskUsage $}%</span>
@@ -56,16 +68,18 @@
     <div class="space-y-6">
         <h2 class="text-base font-semibold tracking-wider text-muted-foreground uppercase">Insights</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
-                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <!-- Users Card -->
+            <div class="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 transition-colors hover:bg-muted/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <i data-lucide="users" class="h-8 w-8"></i>
                 </div>
                 <div class="text-4xl font-bold">{$ totalUsers || 0 $}</div>
                 <div class="text-base font-medium text-muted-foreground">Users</div>
             </div>
 
-            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
-                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <!-- Websites Card -->
+            <div class="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 transition-colors hover:bg-muted/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <i data-lucide="globe" class="h-8 w-8"></i>
                 </div>
                 <div class="text-4xl font-bold">{$ totalSites || 0 $}</div>
@@ -80,24 +94,27 @@
 {#                <div class="text-base font-medium text-muted-foreground">WordPress</div>#}
 {#            </div>#}
 
-            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
-                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <!-- Databases Card -->
+            <div class="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 transition-colors hover:bg-muted/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <i data-lucide="database" class="h-8 w-8"></i>
                 </div>
                 <div class="text-4xl font-bold">{$ totalDBs || 0 $}</div>
                 <div class="text-base font-medium text-muted-foreground">Databases</div>
             </div>
 
-            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
-                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <!-- Emails Card -->
+            <div class="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 transition-colors hover:bg-muted/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <i data-lucide="mail" class="h-8 w-8"></i>
                 </div>
                 <div class="text-4xl font-bold">{$ totalEmails || 0 $}</div>
                 <div class="text-base font-medium text-muted-foreground">Emails</div>
             </div>
 
-            <div class="flex flex-col items-center justify-center rounded-lg border border-border/50 bg-card p-8 shadow-sm transition-colors hover:bg-accent/50 cursor-pointer">
-                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <!-- FTP Card -->
+            <div class="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 transition-colors hover:bg-muted/50 cursor-pointer">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <i data-lucide="folder" class="h-8 w-8"></i>
                 </div>
                 <div class="text-4xl font-bold">{$ totalFTPUsers || 0 $}</div>
@@ -106,37 +123,38 @@
         </div>
     </div>
 
-    <!-- Activity Board -->
-    <div class="rounded-lg border border-border/50 bg-card shadow-sm overflow-hidden">
+    <!-- Activity Board - Flat design -->
+    <div class="rounded-2xl border border-border bg-card overflow-hidden">
         <div class="flex flex-col space-y-1.5 p-8">
             <h2 class="text-xl font-semibold leading-none tracking-tight">Activity Board</h2>
         </div>
         <div class="px-8 pb-8">
-            <div class="inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full md:w-auto mb-8 flex-wrap md:flex-nowrap gap-1 h-auto border border-border/40">
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('ssh-logins', this)">
+            <!-- Tab Navigation - Flat style -->
+            <div class="inline-flex items-center justify-center rounded-xl bg-muted p-1 text-muted-foreground w-full md:w-auto mb-8 flex-wrap md:flex-nowrap gap-1 h-auto border border-border">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('ssh-logins', this)">
                     <i data-lucide="terminal" class="mr-2 h-5 w-5"></i>
                     Recent SSH Logins
                 </button>
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('ssh-logs', this)">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('ssh-logs', this)">
                     <i data-lucide="file-text" class="mr-2 h-5 w-5"></i>
                     Recent SSH Logs
-                    <span ng-if="securityAlerts.length > 0" class="ml-2 rounded-full bg-destructive px-2 py-0.5 text-xs text-destructive-foreground">
+                    <span ng-if="securityAlerts.length > 0" class="ml-2 rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-xs font-bold border border-destructive/20">
                         {$ securityAlerts.length $}
                     </span>
                 </button>
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('top-process', this)" ng-hide="hideSystemCharts">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('top-process', this)" ng-hide="hideSystemCharts">
                     <i data-lucide="cpu" class="mr-2 h-5 w-5"></i>
                     Top Process
                 </button>
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('traffic', this)" ng-hide="hideSystemCharts">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('traffic', this)" ng-hide="hideSystemCharts">
                     <i data-lucide="line-chart" class="mr-2 h-5 w-5"></i>
                     Traffic
                 </button>
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('diskio', this)" ng-hide="hideSystemCharts">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('diskio', this)" ng-hide="hideSystemCharts">
                     <i data-lucide="hard-drive" class="mr-2 h-5 w-5"></i>
                     Disk IO
                 </button>
-                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('cpu-usage', this)" ng-hide="hideSystemCharts">
+                <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-3 text-base font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-secondary data-[state=active]:text-foreground data-[state=active]:border-border" onclick="switchTab('cpu-usage', this)" ng-hide="hideSystemCharts">
                     <i data-lucide="gauge" class="mr-2 h-5 w-5"></i>
                     CPU Usage
                 </button>
@@ -152,8 +170,8 @@
                 </div>
                 <div class="relative w-full overflow-auto" ng-if="!loadingSSHLogins && sshLogins.length > 0">
                     <table class="w-full caption-bottom text-lg">
-                        <thead class="[&_tr]:border-b border-border/40">
-                            <tr class="border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                        <thead class="[&_tr]:border-b border-border">
+                            <tr class="border-b border-border transition-colors hover:bg-muted/50">
                                 <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">USER</th>
                                 <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">IP</th>
                                 <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">COUNTRY</th>
@@ -163,7 +181,7 @@
                             </tr>
                         </thead>
                         <tbody class="[&_tr:last-child]:border-0">
-                            <tr ng-repeat="login in sshLogins" class="border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                            <tr ng-repeat="login in sshLogins" class="border-b border-border transition-colors hover:bg-muted/50">
                                 <td class="p-4 align-middle font-semibold">{$ login.user $}</td>
                                 <td class="p-4 align-middle"><code class="rounded bg-muted px-[0.5rem] py-[0.3rem] font-mono text-base">{$ login.ip $}</code></td>
                                 <td class="p-4 align-middle">
@@ -175,7 +193,8 @@
                                 <td class="p-4 align-middle text-muted-foreground">{$ login.date $}</td>
                                 <td class="p-4 align-middle text-base text-muted-foreground">{$ login.session $}</td>
                                 <td class="p-4 align-middle text-right">
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-border/40 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-11 px-6" ng-click="viewSSHActivity(login)">View Activity</button>
+                                    <!-- View Activity Button - Base pattern -->
+                                    <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-border bg-secondary text-secondary-foreground hover:bg-muted h-11 px-6" ng-click="viewSSHActivity(login)">View Activity</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -187,23 +206,24 @@
             <div id="ssh-logs" class="tab-content hidden">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold tracking-tight">SSH Security Analysis</h3>
-                    <button ng-click="analyzeSSHSecurity()" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-11 px-6">
+                    <!-- Refresh Button - Base pattern -->
+                    <button ng-click="analyzeSSHSecurity()" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-11 px-6">
                         <i data-lucide="refresh-cw" class="mr-2 h-5 w-5" ng-class="{'animate-spin': loadingSecurityAnalysis}"></i>
                         Refresh Analysis
                     </button>
                 </div>
 
-                <!-- Addon Required Section -->
+                <!-- Addon Required Section - Flat design -->
                 <div ng-if="showAddonRequired" class="mb-8">
-                    <div class="rounded-xl border border-border/50 bg-accent/30 p-10 text-center shadow-sm">
+                    <div class="rounded-2xl border border-border bg-accent/10 p-10 text-center">
                         <div class="max-w-3xl mx-auto space-y-6">
-                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground border border-primary/20">
                                 <i data-lucide="shield-check" class="h-10 w-10"></i>
                             </div>
                             <h3 class="text-3xl font-bold tracking-tight">{$ addonInfo.feature_title $}</h3>
                             <p class="text-lg text-muted-foreground">{$ addonInfo.feature_description $}</p>
 
-                            <div class="bg-card rounded-lg border border-border/50 p-8 text-left shadow-sm">
+                            <div class="bg-card rounded-2xl border border-border p-8 text-left">
                                 <h4 class="mb-6 text-base font-semibold flex items-center gap-3">
                                     <i data-lucide="star" class="text-amber-500 h-5 w-5"></i>
                                     Premium Features Include:
@@ -217,7 +237,8 @@
                             </div>
 
                             <div class="pt-6">
-                                <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-12 px-10">
+                                <!-- Unlock Button - Base pattern -->
+                                <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-12 px-10">
                                     <i data-lucide="unlock" class="mr-2 h-5 w-5"></i>
                                     Unlock SSH Security Analysis
                                 </a>
@@ -229,9 +250,9 @@
                     </div>
                 </div>
 
-                <!-- Security Alerts Section -->
+                <!-- Security Alerts Section - Flat design -->
                 <div ng-if="!showAddonRequired && !loadingSecurityAnalysis && securityAlerts.length === 0" class="mb-8">
-                    <div class="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-6">
+                    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-6">
                         <i data-lucide="check-circle" class="text-emerald-500 h-8 w-8"></i>
                         <div>
                             <h4 class="text-base font-semibold text-emerald-700 dark:text-emerald-400">No Security Threats Detected</h4>
@@ -241,13 +262,13 @@
                 </div>
 
                 <div ng-if="securityAlerts.length > 0" class="mb-8 space-y-6">
-                    <div class="rounded-lg border border-amber-500/20 bg-amber-500/5 p-6">
+                    <div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
                         <h3 class="text-base font-bold text-amber-700 dark:text-amber-400 flex items-center gap-3 mb-6">
                             <i data-lucide="triangle-alert" class="h-6 w-6"></i>
                             Security Alerts Detected ({$ securityAlerts.length $})
                         </h3>
                         <div class="space-y-6">
-                            <div ng-repeat="alert in securityAlerts" class="rounded-lg border border-border/50 bg-card p-6 shadow-sm">
+                            <div ng-repeat="alert in securityAlerts" class="rounded-2xl border border-border bg-card p-6">
                                 <div class="flex items-start gap-6">
                                     <div class="mt-1" ng-class="{'text-destructive': alert.severity === 'high', 'text-amber-500': alert.severity === 'medium', 'text-blue-500': alert.severity === 'low'}">
                                         <i data-lucide="shield-check" class="h-8 w-8"></i>
@@ -255,8 +276,8 @@
                                     <div class="flex-1 space-y-3">
                                         <div class="flex items-center justify-between">
                                             <h4 class="text-base font-semibold leading-none">{$ alert.title $}</h4>
-                                            <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider"
-                                                  ng-class="{'bg-destructive/10 text-destructive': alert.severity === 'high', 'bg-amber-500/10 text-amber-600': alert.severity === 'medium', 'bg-blue-500/10 text-blue-600': alert.severity === 'low'}">
+                                            <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider border"
+                                                  ng-class="{'bg-destructive/10 text-destructive border-destructive/20': alert.severity === 'high', 'bg-amber-500/10 text-amber-600 border-amber-500/20': alert.severity === 'medium', 'bg-blue-500/10 text-blue-600 border-blue-500/20': alert.severity === 'low'}">
                                                 {$ alert.severity $}
                                             </span>
                                         </div>
@@ -266,7 +287,7 @@
                                                 <span class="font-semibold text-foreground">{$ key $}:</span> {$ value $}
                                             </div>
                                         </div>
-                                        <div ng-if="alert.recommendation" class="mt-4 rounded-md bg-muted p-4">
+                                        <div ng-if="alert.recommendation" class="mt-4 rounded-xl bg-muted p-4">
                                             <p class="text-xs font-bold mb-1.5">Recommendation:</p>
                                             <p class="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">{$ alert.recommendation $}</p>
                                         </div>
@@ -283,18 +304,18 @@
                 <div ng-if="!loadingSSHLogs && sshLogs.length === 0" class="py-12 text-center text-base text-muted-foreground">
                     No recent SSH logs found.
                 </div>
-                <div class="relative w-full overflow-auto rounded-md border border-border/50" ng-if="!loadingSSHLogs && sshLogs.length > 0">
+                <div class="relative w-full overflow-auto rounded-2xl border border-border" ng-if="!loadingSSHLogs && sshLogs.length > 0">
                     <table class="w-full text-sm">
-                        <thead class="bg-muted/50 border-b border-border/40">
+                        <thead class="bg-muted/50 border-b border-border">
                             <tr>
                                 <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground w-48">TIMESTAMP</th>
                                 <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground">MESSAGE</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-border/40">
+                        <tbody class="divide-y divide-border">
                             <tr ng-repeat="log in sshLogs" class="hover:bg-muted/30">
-                                <td class="p-3 align-top font-semibold text-muted-foreground border-border/40">{$ log.timestamp $}</td>
-                                <td class="p-3 align-top border-border/40"><code class="block whitespace-pre-wrap break-all text-xs leading-relaxed">{$ log.message $}</code></td>
+                                <td class="p-3 align-top font-semibold text-muted-foreground border-border">{$ log.timestamp $}</td>
+                                <td class="p-3 align-top border-border"><code class="block whitespace-pre-wrap break-all text-xs leading-relaxed">{$ log.message $}</code></td>
                             </tr>
                         </tbody>
                     </table>
@@ -314,7 +335,7 @@
                 </div>
                 <div class="relative w-full overflow-auto" ng-if="!loadingTopProcesses && !errorTopProcesses && topProcesses.length > 0">
                     <table class="w-full text-lg">
-                        <thead class="border-b border-border/40">
+                        <thead class="border-b border-border">
                             <tr>
                                 <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">PID</th>
                                 <th class="h-16 px-4 text-left align-middle font-bold text-muted-foreground">USER</th>
@@ -324,7 +345,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="process in topProcesses" class="border-b border-border/40 transition-colors hover:bg-muted/50">
+                            <tr ng-repeat="process in topProcesses" class="border-b border-border transition-colors hover:bg-muted/50">
                                 <td class="p-4 align-middle">{$ process.pid $}</td>
                                 <td class="p-4 align-middle font-semibold">{$ process.user $}</td>
                                 <td class="p-4 align-middle">{$ process.cpu $}%</td>
@@ -338,7 +359,7 @@
 
             <!-- Traffic Tab -->
             <div id="traffic" class="tab-content hidden" ng-hide="hideSystemCharts">
-                <div class="rounded-lg border border-border/50 bg-card p-8">
+                <div class="rounded-2xl border border-border bg-card p-8">
                     <div class="h-[400px] w-full">
                         <canvas id="trafficChart"></canvas>
                     </div>
@@ -347,7 +368,7 @@
 
             <!-- Disk IO Tab -->
             <div id="diskio" class="tab-content hidden" ng-hide="hideSystemCharts">
-                <div class="rounded-lg border border-border/50 bg-card p-8">
+                <div class="rounded-2xl border border-border bg-card p-8">
                     <div class="h-[400px] w-full">
                         <canvas id="diskIOChart"></canvas>
                     </div>
@@ -356,7 +377,7 @@
 
             <!-- CPU Usage Tab -->
             <div id="cpu-usage" class="tab-content hidden" ng-hide="hideSystemCharts">
-                <div class="rounded-lg border border-border/50 bg-card p-8">
+                <div class="rounded-2xl border border-border bg-card p-8">
                     <div class="h-[400px] w-full">
                         <canvas id="cpuChart"></canvas>
                     </div>
@@ -365,10 +386,10 @@
         </div>
     </div>
 
-    <!-- SSH Activity Modal -->
+    <!-- SSH Activity Modal - Flat design -->
     <div ng-show="showSSHActivityModal" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm ng-cloak flex items-center justify-center p-6 md:p-12" ng-click="closeModalOnBackdrop($event)">
-        <div class="bg-card w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-xl border border-border/50 shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200" ng-click="$event.stopPropagation()">
-            <div class="flex items-center justify-between p-10 border-b border-border/40">
+        <div class="bg-card w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-2xl border border-border flex flex-col animate-in fade-in zoom-in duration-200" ng-click="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-10 border-b border-border">
                 <div class="space-y-2">
                     <h3 class="text-3xl font-bold leading-none tracking-tight">User Activity: <span class="text-primary">{$ sshActivityUser $}</span></h3>
                     <p class="text-lg text-muted-foreground">Detailed activity report for the selected user session.</p>
@@ -384,7 +405,7 @@
                     <p class="text-lg">Loading activity data...</p>
                 </div>
 
-                <div ng-if="errorSSHActivity" class="rounded-lg border border-destructive/20 bg-destructive/10 p-8 text-center">
+                <div ng-if="errorSSHActivity" class="rounded-2xl border border-destructive/20 bg-destructive/10 p-8 text-center">
                     <i data-lucide="circle-alert" class="text-destructive text-4xl mb-4 h-12 w-12 mx-auto"></i>
                     <p class="text-base font-bold">{$ errorSSHActivity $}</p>
                 </div>
@@ -396,10 +417,10 @@
                             <i data-lucide="cpu" class="text-primary text-xl h-6 w-6"></i>
                             <h4 class="text-base font-bold uppercase tracking-wider">Running Processes ({$ sshActivity.processes.length $})</h4>
                         </div>
-                        <div class="rounded-md border border-border/50 overflow-hidden">
+                        <div class="rounded-2xl border border-border overflow-hidden">
                             <div class="overflow-x-auto max-h-[500px]">
                                 <table class="w-full text-base">
-                                    <thead class="bg-muted/50 border-b border-border/40 sticky top-0">
+                                    <thead class="bg-muted/50 border-b border-border sticky top-0">
                                         <tr>
                                             <th class="h-12 px-5 text-left font-bold text-muted-foreground">PID</th>
                                             <th class="h-12 px-5 text-left font-bold text-muted-foreground">TTY</th>
@@ -409,7 +430,7 @@
                                             <th class="h-12 px-5 text-right font-bold text-muted-foreground">ACTION</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y">
+                                    <tbody class="divide-y divide-border">
                                         <tr ng-repeat="proc in sshActivity.processes" class="hover:bg-muted/30 transition-colors">
                                             <td class="p-5 font-bold text-lg">{$ proc.pid $}</td>
                                             <td class="p-5 font-mono">{$ proc.tty $}</td>
@@ -417,7 +438,8 @@
                                             <td class="p-5 font-mono break-all max-w-xs">{$ proc.cmd $}</td>
                                             <td class="p-5 font-mono break-all max-w-xs">{$ proc.cwd || 'N/A' $}</td>
                                             <td class="p-5 text-right">
-                                                <button ng-click="killProcess(proc.pid, sshActivityUser)" class="inline-flex items-center justify-center rounded-md text-sm font-bold h-10 px-6 bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-sm">
+                                                <!-- Kill Process Button - Danger pattern -->
+                                                <button ng-click="killProcess(proc.pid, sshActivityUser)" class="inline-flex items-center justify-center rounded-xl text-sm font-bold h-10 px-6 bg-destructive text-destructive-foreground hover:opacity-90 transition-all border border-destructive/20">
                                                     KILL
                                                 </button>
                                             </td>
@@ -434,7 +456,7 @@
                             <i data-lucide="history" class="text-primary text-xl h-6 w-6"></i>
                             <h4 class="text-base font-bold uppercase tracking-wider">Recent Shell History</h4>
                         </div>
-                        <div class="rounded-lg border border-border/50 bg-muted/30 p-6 font-mono text-sm space-y-3 max-h-64 overflow-y-auto">
+                        <div class="rounded-2xl border border-border bg-muted/30 p-6 font-mono text-sm space-y-3 max-h-64 overflow-y-auto">
                             <div ng-repeat="cmd in sshActivity.shell_history" class="flex items-start gap-5">
                                 <span class="text-muted-foreground select-none w-8 text-right font-bold">{$ $index + 1 $}.</span>
                                 <span class="text-foreground break-all">{$ cmd $}</span>
@@ -449,7 +471,7 @@
                                 <i data-lucide="hard-drive" class="text-primary text-xl h-6 w-6"></i>
                                 <h4 class="text-base font-bold uppercase tracking-wider">Disk Usage</h4>
                             </div>
-                            <div class="rounded-lg border border-border/50 p-6 bg-muted/20 text-sm font-mono leading-relaxed">
+                            <div class="rounded-2xl border border-border p-6 bg-muted/20 text-sm font-mono leading-relaxed">
                                 {$ sshActivity.disk_usage $}
                             </div>
                         </div>
@@ -460,7 +482,7 @@
                                 <i data-lucide="globe" class="text-primary text-xl h-6 w-6"></i>
                                 <h4 class="text-base font-bold uppercase tracking-wider">Location Information</h4>
                             </div>
-                            <div class="rounded-lg border border-border/50 p-6 grid grid-cols-2 gap-6">
+                            <div class="rounded-2xl border border-border p-6 grid grid-cols-2 gap-6">
                                 <div ng-if="sshActivity.geoip.country">
                                     <p class="text-xs font-bold text-muted-foreground uppercase mb-1">Country</p>
                                     <p class="text-lg font-semibold">{$ sshActivity.geoip.country $}</p>
@@ -488,11 +510,12 @@
                                 <i data-lucide="terminal" class="text-primary text-xl h-6 w-6"></i>
                                 <h4 class="text-base font-bold uppercase tracking-wider">Session Info</h4>
                             </div>
-                            <button ng-click="killSession(sshActivityUser, sshActivity.w && sshActivity.w.length > 0 ? (sshActivity.w[0].split(/\s+/)[1] || '') : '')" class="inline-flex items-center justify-center rounded-md text-sm font-bold h-11 px-6 bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-sm">
+                            <!-- Force Close Button - Danger pattern -->
+                            <button ng-click="killSession(sshActivityUser, sshActivity.w && sshActivity.w.length > 0 ? (sshActivity.w[0].split(/\s+/)[1] || '') : '')" class="inline-flex items-center justify-center rounded-xl text-sm font-bold h-11 px-6 bg-destructive text-destructive-foreground hover:opacity-90 transition-all border border-destructive/20">
                                 <i data-lucide="power" class="mr-2 h-4 w-4"></i> FORCE CLOSE SESSION
                             </button>
                         </div>
-                        <div class="rounded-lg border border-border/50 bg-zinc-950 p-6 font-mono text-sm text-zinc-300 overflow-x-auto shadow-inner">
+                        <div class="rounded-2xl border border-border bg-zinc-950 p-6 font-mono text-sm text-zinc-300 overflow-x-auto">
                             <div ng-repeat="line in sshActivity.w" class="whitespace-nowrap border-b border-zinc-800 py-2 last:border-0">
                                 {$ line $}
                             </div>
@@ -507,8 +530,9 @@
                 </div>
             </div>
 
-            <div class="p-8 border-t border-border/40 flex justify-end">
-                <button class="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-12 px-8" ng-click="closeSSHActivityModal()">
+            <div class="p-8 border-t border-border flex justify-end">
+                <!-- Close Button - Secondary pattern -->
+                <button class="inline-flex items-center justify-center rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-secondary text-secondary-foreground hover:bg-muted h-12 px-8 border border-border" ng-click="closeSSHActivityModal()">
                     Close Report
                 </button>
             </div>
