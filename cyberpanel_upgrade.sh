@@ -1212,7 +1212,7 @@ if [[ -f /etc/cyberpanel/watchdog.sh ]] ; then
 	wget -O /etc/cyberpanel/watchdog.sh "${Git_Content_URL}/${Branch_Name}/CPScripts/watchdog.sh"
 	chmod 700 /etc/cyberpanel/watchdog.sh
 	ln -s /etc/cyberpanel/watchdog.sh /usr/local/bin/watchdog
-	watchdog status
+	watchdog status &
 fi
 
 
@@ -1383,8 +1383,16 @@ usermod -a -G lscpd nobody 2>/dev/null || true
 chown -R lscpd:lscpd /usr/local/CyberCP/public/snappymail/data 2>/dev/null || true
 echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Added web server users to lscpd group and fixed SnappyMail ownership" | tee -a /var/log/cyberpanel_upgrade_debug.log
 
-systemctl restart lscpd
-
+  # Wait for lscpd to start before final verification
+  echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Waiting for lscpd to fully start (10 seconds)..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+  sleep 10
+  
+  systemctl stop lscpd
+  pkill -9 lscpd
+  systemctl start lscpd
+  
+  # Wait for restart to complete
+  sleep 5
 }
 
 Post_Install_Display_Final_Info() {
@@ -1394,7 +1402,22 @@ if [[ $Panel_Port = "" ]] ; then
   Panel_Port="8090"
 fi
 
-if curl -I -XGET -k "https://127.0.0.1:${Panel_Port#*:}" | grep -q "200 OK" ; then
+  # Check for 200 OK or 302 Found (it might redirect)
+  SUCCESS=0
+  for i in {1..5}; do
+    echo -ne "Checking CyberPanel access attempt $i... "
+    # Try both IPv4 and IPv6 loopback
+    if curl -I -L -k "https://127.0.0.1:${Panel_Port#*:}" 2>/dev/null | grep -E -q "200 OK|302 Found|301 Moved" || \
+       curl -I -L -k "https://[::1]:${Panel_Port#*:}" 2>/dev/null | grep -E -q "200 OK|302 Found|301 Moved" ; then
+      echo "Success!"
+      SUCCESS=1
+      break
+    fi
+    echo "Failed."
+    sleep 5
+  done
+
+  if [[ $SUCCESS -eq 1 ]] ; then
   echo "###################################################################"
   echo "                CyberPanel Upgraded                                "
   echo "###################################################################"
