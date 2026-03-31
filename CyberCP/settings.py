@@ -14,10 +14,12 @@ import os
 from django.utils.translation import gettext_lazy as _
 
 # Load environment variables from .env file
+# Important: under systemd/lswsgi the working directory is not guaranteed,
+# so we must load `.env` from the project root explicitly.
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 except ImportError:
     # dotenv not available, continue without it
     pass
