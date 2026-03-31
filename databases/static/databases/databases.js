@@ -173,10 +173,17 @@ app.controller('createDatabase', function ($scope, $http) {
 
     $scope.generatePassword = function () {
         $(".generatedPasswordDetails").show();
-        $scope.dbPassword = randomPassword(16);
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        var password = '';
+        for (var i = 0; i < 16; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        $scope.dbPassword = password;
+        $scope.generatedPassword = password;
     };
 
     $scope.usePassword = function () {
+        $scope.generatedPassword = '';
         $(".generatedPasswordDetails").hide();
     };
 

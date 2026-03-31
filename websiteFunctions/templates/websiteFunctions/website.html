@@ -601,17 +601,21 @@ canvas { display: block; }
         <div style="flex:1;min-width:0;">
             <div class="stat-label" style="margin-bottom:4px;">{% trans "SSL Certificate" %} — {{ authority }}</div>
             <div style="font-size:15px;font-weight:600;color:hsl(var(--foreground));">
-                {% if days >= 30 %}{% trans "Valid" %}{% elif days >= 7 %}{% trans "Expiring Soon" %}{% else %}{% trans "Critical" %}{% endif %}
+                {% with d=days|add:"0" %}
+                {% if d >= 30 %}{% trans "Valid" %}{% elif d >= 7 %}{% trans "Expiring Soon" %}{% else %}{% trans "Critical" %}{% endif %}
                 &nbsp;·&nbsp; <span style="font-weight:400;color:hsl(var(--muted-foreground));">{{ days }} {% trans "days remaining" %}</span>
+                {% endwith %}
             </div>
         </div>
-        {% if days >= 30 %}
+        {% with d=days|add:"0" %}
+        {% if d >= 30 %}
         <span class="pill pill-green"><i data-lucide="lock" style="width:11px;height:11px;"></i> {% trans "Secure" %}</span>
-        {% elif days >= 7 %}
+        {% elif d >= 7 %}
         <span class="pill pill-yellow"><i data-lucide="clock" style="width:11px;height:11px;"></i> {% trans "Expiring Soon" %}</span>
         {% else %}
         <span class="pill pill-red"><i data-lucide="alert-circle" style="width:11px;height:11px;"></i> {% trans "Critical" %}</span>
         {% endif %}
+        {% endwith %}
         {% endif %}
     </div>
     {% endif %}

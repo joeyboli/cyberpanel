@@ -1184,18 +1184,44 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
 
     function getChartColors() {
         const isDark = document.documentElement.classList.contains('dark');
+        
+        // Helper to convert "H S L" to "H, S, L" for better compatibility
+        const formatHSL = (variable) => {
+            const raw = getThemeColor(variable);
+            if (raw.includes(',')) return raw;
+            return raw.split(' ').join(', ');
+        };
+
         return {
-            primary: `hsl(${getThemeColor('--primary')})`,
-            muted: `hsl(${getThemeColor('--muted-foreground')})`,
-            border: `hsl(${getThemeColor('--border')})`,
-            card: `hsl(${getThemeColor('--card')})`,
-            foreground: `hsl(${getThemeColor('--foreground')})`,
-            grid: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+            primary: `hsl(${formatHSL('--primary')})`,
+            muted: `hsl(${formatHSL('--muted-foreground')})`,
+            border: `hsl(${formatHSL('--border')})`,
+            card: `hsl(${formatHSL('--card')})`,
+            foreground: `hsl(${formatHSL('--foreground')})`,
+            grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
             blue: '#3b82f6',
             emerald: '#10b981',
             rose: '#f43f5e'
         };
     }
+
+    // Theme change listener
+    let themeChangeTimeout;
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                if (themeChangeTimeout) clearTimeout(themeChangeTimeout);
+                themeChangeTimeout = setTimeout(() => {
+                    console.log('Theme changed, re-initializing charts...');
+                    if (trafficChart) { trafficChart.destroy(); trafficChart = null; }
+                    if (diskIOChart) { diskIOChart.destroy(); diskIOChart = null; }
+                    if (cpuChart) { cpuChart.destroy(); cpuChart = null; }
+                    setupCharts();
+                }, 100);
+            }
+        });
+    });
+    observer.observe(document.documentElement, { attributes: true });
     // Data arrays for live graphs
     var trafficLabels = [], rxData = [], txData = [];
     var diskLabels = [], readData = [], writeData = [];

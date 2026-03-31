@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- Database Details (Conditional) -->
-                        <div class="dbDetails space-y-10 pt-4">
+                        <div class="dbDetails space-y-10 pt-4" ng-show="databaseWebsite">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div class="space-y-4">
                                     <label class="text-2xl font-bold text-foreground">
@@ -161,7 +161,7 @@
                             </div>
 
                             <!-- Generated Password Preview -->
-                            <div class="generated-password-box generatedPasswordDetails bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-8 space-y-6">
+                            <div class="generated-password-box generatedPasswordDetails bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-8 space-y-6" ng-show="generatedPassword">
                                 <div class="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 font-bold text-lg uppercase tracking-wider">
                                     <i data-lucide="check-circle-2" class="w-6 h-6"></i>
                                     {% trans "Generated Password" %}

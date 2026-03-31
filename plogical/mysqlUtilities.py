@@ -117,7 +117,7 @@ class mysqlUtilities:
             except BaseException as msg:
 
                 if os.path.exists(ProcessUtilities.debugPath):
-                    logging.CyberCPLogFileWriter.writeToFile('%s. [setupConnection:75]' % (str(msg)))
+                    logging.CyberCPLogFileWriter.writeToFile('Error connecting to MySQL using JSON config: %s' % (str(msg)))
 
                 f = open(passFile)
                 data = f.read()
@@ -130,7 +130,7 @@ class mysqlUtilities:
                 return conn, cursor
 
         except BaseException as msg:
-            logging.CyberCPLogFileWriter.writeToFile(str(msg))
+            logging.CyberCPLogFileWriter.writeToFile('MySQL Connection failure in setupConnection: %s' % (str(msg)))
             return 0, 0
 
     @staticmethod
@@ -148,8 +148,7 @@ class mysqlUtilities:
             ## Create db
 
             if dbcreate:
-
-                query = "CREATE DATABASE %s" % (dbname)
+                query = "CREATE DATABASE `%s`" % (dbname)
 
                 if os.path.exists(ProcessUtilities.debugPath):
                     logging.CyberCPLogFileWriter.writeToFile(query)
@@ -159,26 +158,25 @@ class mysqlUtilities:
             ## create user
 
             if mysqlUtilities.REMOTEHOST.find('ondigitalocean') > -1:
-                query = "CREATE USER '%s'@'%s' IDENTIFIED WITH mysql_native_password BY '%s'" % (
-                dbuser, HostToUse, dbpassword)
+                query = "CREATE USER '%s'@'%s' IDENTIFIED WITH mysql_native_password BY %%s" % (
+                dbuser, HostToUse)
+                cursor.execute(query, (dbpassword,))
             else:
-                query = "CREATE USER '" + dbuser + "'@'%s' IDENTIFIED BY '" % (
-                    HostToUse) + dbpassword + "'"
+                query = "CREATE USER '%s'@'%s' IDENTIFIED BY %%s" % (dbuser, HostToUse)
+                cursor.execute(query, (dbpassword,))
 
             if os.path.exists(ProcessUtilities.debugPath):
-                logging.CyberCPLogFileWriter.writeToFile(query)
-
-            cursor.execute(query)
+                logging.CyberCPLogFileWriter.writeToFile(query % ("PASSWORD_HIDDEN"))
 
             if mysqlUtilities.RDS == 0:
-                cursor.execute("GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (HostToUse))
+                cursor.execute("GRANT ALL PRIVILEGES ON `%s`.* TO '%s'@'%s'" % (dbname, dbuser, HostToUse))
                 if os.path.exists(ProcessUtilities.debugPath):
-                    logging.CyberCPLogFileWriter.writeToFile("GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (HostToUse))
+                    logging.CyberCPLogFileWriter.writeToFile("GRANT ALL PRIVILEGES ON `%s`.* TO '%s'@'%s'" % (dbname, dbuser, HostToUse))
             else:
                 cursor.execute(
-                    "GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (HostToUse))
+                    "GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON `%s`.* TO '%s'@'%s'" % (dbname, dbuser, HostToUse))
                 if os.path.exists(ProcessUtilities.debugPath):
-                    logging.CyberCPLogFileWriter.writeToFile("GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (HostToUse))
+                    logging.CyberCPLogFileWriter.writeToFile("GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON `%s`.* TO '%s'@'%s'" % (dbname, dbuser, HostToUse))
 
             connection.close()
 
@@ -552,6 +550,8 @@ password=%s
 
             if result == 1:
                 pass
+            elif result == 0:
+                raise BaseException("MySQL Connection Error")
             else:
                 raise BaseException(result)
 

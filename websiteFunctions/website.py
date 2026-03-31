@@ -3549,7 +3549,7 @@ context /cyberpanel_suspension_page.html {
                 now = datetime.now()
                 diff = finalDate - now
                 Data['viewSSL'] = 1
-                Data['days'] = str(diff.days)
+                Data['days'] = diff.days
                 Data['authority'] = x509.get_issuer().get_components()[1][1].decode('utf-8')
 
                 if Data['authority'] == 'Denial':
@@ -3814,7 +3814,7 @@ context /cyberpanel_suspension_page.html {
                 now = datetime.now()
                 diff = finalDate - now
                 Data['viewSSL'] = 1
-                Data['days'] = str(diff.days)
+                Data['days'] = diff.days
                 Data['authority'] = x509.get_issuer().get_components()[1][1].decode('utf-8')
 
                 if Data['authority'] == 'Denial':
