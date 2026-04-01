@@ -81,6 +81,22 @@ class InstallCyberPanel:
             command = f'systemctl {action} {actual_service}'
             return install_utils.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
+    def _systemd_unit_exists(self, unit_name: str) -> bool:
+        """
+        Best-effort check for a systemd unit file without invoking systemctl.
+        The installer frequently runs in environments where systemctl output parsing
+        may be inconsistent; checking common unit paths is reliable.
+        """
+        try:
+            candidate_paths = (
+                f"/etc/systemd/system/{unit_name}",
+                f"/lib/systemd/system/{unit_name}",
+                f"/usr/lib/systemd/system/{unit_name}",
+            )
+            return any(os.path.exists(p) for p in candidate_paths)
+        except Exception:
+            return False
+
     def modify_file_content(self, file_path, replacements):
         """Generic file content modification"""
         try:
@@ -1330,8 +1346,24 @@ setuid=pdns
     def startPowerDNS(self):
 
         ############## Start PowerDNS ######################
+        # PowerDNS is optional for many installs. On some systems the package may
+        # not be available or may fail to install, which means `pdns.service`
+        # won't exist. Previously we hard-failed here and aborted the entire
+        # installation. Instead, only enable if the unit exists; otherwise skip.
+        if not self._systemd_unit_exists("pdns.service"):
+            InstallCyberPanel.stdOut(
+                "WARNING: PowerDNS systemd unit (pdns.service) not found; skipping enable. "
+                "DNS service will not be managed by CyberPanel until PowerDNS is installed.",
+                1
+            )
+            logging.InstallLog.writeToFile(
+                "WARNING: pdns.service not found; skipping PowerDNS enable/start. [powerDNS]"
+            )
+            return 1
 
-        self.manage_service('pdns', 'enable')
+        # Enable PowerDNS at startup (do not start until after migrations)
+        command = "systemctl enable pdns"
+        install_utils.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
         
         # During fresh installation, don't start PowerDNS yet
         # It will be started after Django migrations create the required tables
