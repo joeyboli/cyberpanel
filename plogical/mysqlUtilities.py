@@ -92,10 +92,12 @@ class mysqlUtilities:
                     return None, None, e
 
             # First priority: check environment variables (secure method)
-            db_host = os.getenv('DB_HOST', os.getenv('ROOT_DB_HOST'))
-            db_user = os.getenv('DB_USER', os.getenv('ROOT_DB_USER', 'root'))
-            db_pass = os.getenv('DB_PASSWORD', os.getenv('ROOT_DB_PASSWORD'))
-            db_port = os.getenv('DB_PORT', os.getenv('ROOT_DB_PORT', '3306'))
+            # Use ROOT_DB_* credentials first since setupConnection is used for
+            # admin operations (CREATE DATABASE, CREATE USER, GRANT, etc.)
+            db_host = os.getenv('ROOT_DB_HOST', os.getenv('DB_HOST'))
+            db_user = os.getenv('ROOT_DB_USER', os.getenv('DB_USER', 'root'))
+            db_pass = os.getenv('ROOT_DB_PASSWORD', os.getenv('DB_PASSWORD'))
+            db_port = os.getenv('ROOT_DB_PORT', os.getenv('DB_PORT', '3306'))
 
             if db_pass is not None:
                 env_host = db_host or 'localhost'
