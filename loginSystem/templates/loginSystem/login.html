@@ -77,26 +77,26 @@
 
       :root {
         /* Light Mode */
-        --background:        220 20% 97%;
-        --foreground:        222 30% 12%;
+        --background:        0 0% 100%;
+        --foreground:        222 47% 11%;
         --card:              0 0% 100%;
-        --card-foreground:   222 30% 12%;
+        --card-foreground:   222 47% 11%;
         --popover:           0 0% 100%;
-        --popover-foreground:222 30% 12%;
-        --primary:           222 47% 18%;
-        --primary-foreground:0 0% 98%;
-        --secondary:         220 16% 92%;
-        --secondary-foreground:222 30% 20%;
-        --muted:             220 14% 94%;
-        --muted-foreground:  220 12% 50%;
-        --accent:            195 80% 92%;
-        --accent-foreground: 195 80% 20%;
-        --destructive:       4 86% 58%;
-        --destructive-foreground:0 0% 98%;
-        --border:            220 16% 88%;
-        --input:             220 16% 88%;
-        --ring:              195 80% 42%;
-        --radius:            0.45rem;
+        --popover-foreground:222 47% 11%;
+        --primary:           222 47% 11%;
+        --primary-foreground:210 40% 98%;
+        --secondary:         210 40% 96.1%;
+        --secondary-foreground:222 47% 11.2%;
+        --muted:             210 40% 96.1%;
+        --muted-foreground:  215.4 16.3% 46.9%;
+        --accent:            210 40% 96.1%;
+        --accent-foreground: 222 47% 11.2%;
+        --destructive:       0 84.2% 60.2%;
+        --destructive-foreground:210 40% 98%;
+        --border:            214.3 31.8% 91.4%;
+        --input:             214.3 31.8% 91.4%;
+        --ring:              222.2 84% 4.9%;
+        --radius:            0.5rem;
 
         /* Brand accent: cyan-teal */
         --accent-cyan:       189 80% 42%;
@@ -174,11 +174,9 @@
         padding-right: 2.5rem;
       }
 
-      /* Loading spinner */
+      /* Loading spinner (legacy - kept for JS compatibility if needed, but hidden) */
       #verifyingLogin {
-        display: none;
-        margin: 10px auto;
-        width: 32px;
+        display: none !important;
       }
 
       /* Smooth fade-in animation */
@@ -219,84 +217,85 @@
 <div ng-controller="loginSystem" class="w-full max-w-[420px] animate-fade-in relative z-10">
 
     <!-- Logo & Header -->
-    <div class="flex flex-col items-center mb-8">
-        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20">
-             <img src="{% static 'baseTemplate/cyber-panel-logo.svg' %}" class="w-7 h-7 invert brightness-0" alt="CyberPanel">
+    <div class="flex flex-col items-center mb-10">
+        <div class="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-5 border border-primary/10 relative">
+             <div class="absolute inset-0 bg-primary/5 blur-xl rounded-full"></div>
+             <img src="{% static 'baseTemplate/cyber-panel-logo.svg' %}" class="w-8 h-8 relative z-10 brightness-0 dark:invert" alt="CyberPanel">
         </div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-foreground font-display">CyberPanel</h1>
-        <p class="text-base text-muted-foreground mt-1">{% trans "Web Hosting Control Panel" %}</p>
+        <h1 class="text-4xl font-black tracking-tight text-foreground font-display">CyberPanel</h1>
+        <p class="text-sm font-medium text-muted-foreground mt-2 uppercase tracking-[0.2em]">{% trans "Cloud Control Panel" %}</p>
     </div>
 
-    <!-- Login Card - Flat design, no shadows -->
-    <div class="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
-        <div class="p-8 space-y-6">
+    <!-- Login Card - Modern Shadcn-like design -->
+    <div class="bg-card text-card-foreground rounded-[2rem] border border-border/50 shadow-2xl shadow-primary/5 overflow-hidden">
+        <div class="p-10 space-y-8">
 
             <!-- Card Header -->
-            <div class="space-y-2 text-center">
-                <h2 class="text-xl font-bold tracking-tight text-foreground">{% trans "Login" %}</h2>
-                <p class="text-sm text-muted-foreground">{% trans "Enter your credentials to access your account" %}</p>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold tracking-tight text-foreground">{% trans "Welcome back" %}</h2>
+                <p class="text-sm text-muted-foreground">{% trans "Enter your credentials to manage your servers" %}</p>
             </div>
 
             <form id="loginForm" action="/" class="space-y-5">
 
                 <!-- Username Field -->
-                <div class="space-y-2">
-                    <label class="text-sm font-bold text-foreground uppercase tracking-wider" for="username">
+                <div class="space-y-2.5">
+                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1" for="username">
                         {% trans "Username" %}
                     </label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="user" class="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                            <i data-lucide="user" class="h-4.5 w-4.5 text-muted-foreground/60 group-focus-within:text-primary transition-colors"></i>
                         </div>
                         <input ng-model="username" type="text" id="username" name="username"
-                               class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-muted-foreground"
+                               class="w-full pl-11 pr-4 py-3.5 bg-secondary/30 border border-border rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 focus:border-primary/30 outline-none transition-all placeholder:text-muted-foreground/50"
                                placeholder="{% trans 'Enter username' %}" required>
                     </div>
                 </div>
 
                 <!-- Password Field -->
-                <div class="space-y-2">
-                    <label class="text-sm font-bold text-foreground uppercase tracking-wider" for="password">
+                <div class="space-y-2.5">
+                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1" for="password">
                         {% trans "Password" %}
                     </label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="lock" class="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                            <i data-lucide="lock" class="h-4.5 w-4.5 text-muted-foreground/60 group-focus-within:text-primary transition-colors"></i>
                         </div>
                         <input ng-keypress="initiateLogin($event)" ng-model="password" type="password"
                                id="password" name="password" autocomplete="current-password"
-                               class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-muted-foreground"
+                               class="w-full pl-11 pr-4 py-3.5 bg-secondary/30 border border-border rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 focus:border-primary/30 outline-none transition-all placeholder:text-muted-foreground/50"
                                placeholder="{% trans 'Enter password' %}" required>
                     </div>
                 </div>
 
                 <!-- 2FA Field (conditional) -->
-                <div ng-hide="verifyCode" class="space-y-2">
-                    <label class="text-sm font-bold text-foreground uppercase tracking-wider" for="twofa">
+                <div ng-hide="verifyCode" class="space-y-2.5 animate-fade-in">
+                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1" for="twofa">
                         {% trans "2FA Code" %}
                     </label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="shield-check" class="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                            <i data-lucide="shield-check" class="h-4.5 w-4.5 text-muted-foreground/60 group-focus-within:text-primary transition-colors"></i>
                         </div>
                         <input ng-model="twofa" type="text" id="twofa" name="twofa"
-                               class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-muted-foreground"
-                               placeholder="{% trans 'Google Authenticator code' %}" required>
+                               class="w-full pl-11 pr-4 py-3.5 bg-secondary/30 border border-border rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 focus:border-primary/30 outline-none transition-all placeholder:text-muted-foreground/50"
+                               placeholder="{% trans '6-digit code' %}" required>
                     </div>
                 </div>
 
                 <!-- Language Selector -->
-                <div class="space-y-2">
-                    <label class="text-sm font-bold text-foreground uppercase tracking-wider" for="language">
+                <div class="space-y-2.5">
+                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1" for="language">
                         {% trans "Language" %}
                     </label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="languages" class="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                            <i data-lucide="languages" class="h-4.5 w-4.5 text-muted-foreground/60 group-focus-within:text-primary transition-colors"></i>
                         </div>
                         <select ng-model="languageSelection" ng-init="languageSelection='english'"
                                 id="language"
-                                class="shadcn-input w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none cursor-pointer">
+                                class="shadcn-input w-full pl-11 pr-4 py-3.5 bg-secondary/30 border border-border rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 focus:border-primary/30 outline-none transition-all appearance-none cursor-pointer">
                             <option value="english">English</option>
                             <option>Bangla</option>
                             <option>Bosnian</option>
@@ -321,28 +320,25 @@
                     </div>
                 </div>
 
-                <!-- Login Button - Base template pattern -->
-                <div class="pt-2">
-                    <button type="button" ng-click="verifyLoginCredentials()"
-                            class="w-full px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i data-lucide="log-in" class="h-5 w-5"></i>
+                <!-- Login Button - Refined with integrated loading -->
+                <div class="pt-4">
+                    <button type="button" ng-click="verifyLoginCredentials()" ng-disabled="isLoading"
+                            class="group relative w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold text-base transition-all hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden shadow-xl shadow-primary/20">
+                        <div ng-if="isLoading" class="absolute inset-0 bg-primary flex items-center justify-center z-10">
+                             <i data-lucide="loader-2" class="h-6 w-6 animate-spin"></i>
+                        </div>
+                        <i data-lucide="log-in" class="h-5 w-5 transition-transform group-hover:translate-x-1"></i>
                         {% trans "Sign In" %}
                     </button>
-                </div>
-
-                <!-- Loading Indicator -->
-                <div id="verifyingLogin" class="flex justify-center py-2">
-                    <div class="flex space-x-1">
-                        <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: -0.3s"></div>
-                        <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: -0.15s"></div>
-                        <div class="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                    </div>
                 </div>
             </form>
 
             <!-- Error Message -->
-            <div id="loginFailed" class="hidden p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center font-medium">
-                <p>{% trans "Could Not Login:" %} <span ng-bind="errorMessage" class="font-bold"></span></p>
+            <div id="loginFailed" class="hidden p-4 rounded-2xl bg-destructive/5 border border-destructive/10 text-destructive text-sm text-center font-semibold animate-fade-in">
+                <p class="flex items-center justify-center gap-2">
+                    <i data-lucide="alert-circle" class="h-4 w-4"></i>
+                    {% trans "Authentication Failed:" %} <span ng-bind="errorMessage"></span>
+                </p>
             </div>
         </div>
     </div>

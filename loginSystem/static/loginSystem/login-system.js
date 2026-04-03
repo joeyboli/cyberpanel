@@ -44,8 +44,9 @@ application.controller('loginSystem', function ($scope, $http, $window) {
     $scope.verifyCode = true;
 
     $scope.verifyLoginCredentials = function () {
-
-        $("#verifyingLogin").show();
+        if ($scope.isLoading) return;
+        $scope.isLoading = true;
+        $("#loginFailed").hide();
 
 
         var username = $scope.username;
@@ -68,7 +69,13 @@ application.controller('loginSystem', function ($scope, $http, $window) {
             }
         };
 
-        $http.post(url, data, config).then(ListInitialData, cantLoadInitialData);
+        $http.post(url, data, config).then(function(response) {
+            $scope.isLoading = false;
+            ListInitialData(response);
+        }, function(response) {
+            $scope.isLoading = false;
+            cantLoadInitialData(response);
+        });
 
 
         function ListInitialData(response) {
@@ -83,9 +90,6 @@ application.controller('loginSystem', function ($scope, $http, $window) {
                 $("#loginFailed").hide();
                 $window.location.href = '/base/';
             }
-
-
-            $("#verifyingLogin").hide();
         }
 
         function cantLoadInitialData(response) {
