@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CyberPanel{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
 
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'baseTemplate/assets/finalBase/favicon.png' %}?v={{ CP_VERSION }}">
@@ -850,6 +850,68 @@
 
       /* ---- Legacy CyberPanel CSS ---- */
       {{ cosmetic.MainDashboardCSS | safe }}
+
+
+        /* Select2 theme fix */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    background: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+}
+
+.select2-dropdown {
+    background: hsl(var(--card)) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: hsl(var(--foreground)) !important;
+    background: transparent !important;
+}
+
+/* REPLACED: use cyan accent for hover — works in both light and dark */
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background: hsl(189 80% 42% / 0.15) !important;
+    color: hsl(189 80% 42%) !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background: hsl(var(--muted)) !important;
+    color: hsl(var(--foreground)) !important;
+}
+
+/* Main select trigger */
+.select2-container--default .select2-selection--single {
+    background: hsl(var(--muted) / 0.20) !important;
+    border-color: hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+    height: auto !important;
+    padding: 1.25rem 1rem !important;
+    border-radius: 0.75rem !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: hsl(var(--foreground)) !important;
+    line-height: normal !important;
+    padding-left: 0 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    top: 0 !important;
+    right: 1rem !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: hsl(var(--muted-foreground)) transparent transparent transparent !important;
+}
+
     </style>
 
     {% block header_scripts %}{% endblock %}
