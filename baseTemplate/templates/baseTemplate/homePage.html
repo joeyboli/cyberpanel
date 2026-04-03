@@ -204,121 +204,137 @@
 
             <!-- SSH Security Analysis section -->
             <div id="ssh-logs" class="tab-content hidden">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold tracking-tight">SSH Security Analysis</h3>
-                    <!-- Refresh Button - Base pattern -->
-                    <button ng-click="analyzeSSHSecurity()" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-11 px-6">
-                        <i data-lucide="refresh-cw" class="mr-2 h-5 w-5" ng-class="{'animate-spin': loadingSecurityAnalysis}"></i>
-                        Refresh Analysis
-                    </button>
-                </div>
+                <div class="space-y-8">
+                    <!-- Logs Table Section - Always visible -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold tracking-tight">Recent SSH Logs</h3>
+                            <!-- Refresh Button - Base pattern -->
+                            <button ng-click="refreshSSHLogs()" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-border bg-secondary text-secondary-foreground hover:bg-muted h-11 px-6">
+                                <i data-lucide="refresh-cw" class="mr-2 h-5 w-5" ng-class="{'animate-spin': loadingSSHLogs}"></i>
+                                Refresh Logs
+                            </button>
+                        </div>
 
-                <!-- Addon Required Section - Flat design -->
-                <div ng-if="showAddonRequired" class="mb-8">
-                    <div class="rounded-2xl border border-border bg-accent/10 p-10 text-center">
-                        <div class="max-w-3xl mx-auto space-y-6">
-                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground border border-primary/20">
-                                <i data-lucide="shield-check" class="h-10 w-10"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold tracking-tight">{$ addonInfo.feature_title $}</h3>
-                            <p class="text-lg text-muted-foreground">{$ addonInfo.feature_description $}</p>
-
-                            <div class="bg-card rounded-2xl border border-border p-8 text-left">
-                                <h4 class="mb-6 text-base font-semibold flex items-center gap-3">
-                                    <i data-lucide="star" class="text-amber-500 h-5 w-5"></i>
-                                    Premium Features Include:
-                                </h4>
-                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <li ng-repeat="feature in addonInfo.features" class="flex items-start text-base text-muted-foreground">
-                                        <i data-lucide="check-circle" class="text-emerald-500 mt-1 mr-4 flex-shrink-0 h-5 w-5"></i>
-                                        <span>{$ feature $}</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="pt-6">
-                                <!-- Unlock Button - Base pattern -->
-                                <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-12 px-10">
-                                    <i data-lucide="unlock" class="mr-2 h-5 w-5"></i>
-                                    Unlock SSH Security Analysis
-                                </a>
-                                <p class="mt-6 text-sm text-muted-foreground">
-                                    Upgrade to CyberPanel Addons to access advanced security features
-                                </p>
-                            </div>
+                        <div ng-if="loadingSSHLogs" class="py-12 text-center text-base text-muted-foreground">
+                            <i data-lucide="loader-2" class="animate-spin mr-2 h-5 w-5"></i> Loading SSH logs...
+                        </div>
+                        <div ng-if="!loadingSSHLogs && sshLogs.length === 0" class="py-12 text-center text-base text-muted-foreground">
+                            No recent SSH logs found.
+                        </div>
+                        <div class="relative w-full overflow-auto rounded-2xl border border-border" ng-if="!loadingSSHLogs && sshLogs.length > 0">
+                            <table class="w-full text-sm">
+                                <thead class="bg-muted/50 border-b border-border">
+                                    <tr>
+                                        <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground w-48">TIMESTAMP</th>
+                                        <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground">MESSAGE</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border">
+                                    <tr ng-repeat="log in sshLogs" class="hover:bg-muted/30">
+                                        <td class="p-3 align-top font-semibold text-muted-foreground border-border">{$ log.timestamp $}</td>
+                                        <td class="p-3 align-top border-border"><code class="block whitespace-pre-wrap break-all text-xs leading-relaxed">{$ log.message $}</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
 
-                <!-- Security Alerts Section - Flat design -->
-                <div ng-if="!showAddonRequired && !loadingSecurityAnalysis && securityAlerts.length === 0" class="mb-8">
-                    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-6">
-                        <i data-lucide="check-circle" class="text-emerald-500 h-8 w-8"></i>
-                        <div>
-                            <h4 class="text-base font-semibold text-emerald-700 dark:text-emerald-400">No Security Threats Detected</h4>
-                            <p class="text-sm text-emerald-600/80 dark:text-emerald-400/80">Your SSH logs show no signs of malicious activity.</p>
+                    <div class="border-t border-border pt-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="space-y-1">
+                                <h3 class="text-lg font-semibold tracking-tight">Security Analysis</h3>
+                                <p class="text-sm text-muted-foreground">Advanced threat detection and security auditing for your SSH service.</p>
+                            </div>
+                            <!-- Security Refresh Button - Base pattern -->
+                            <button ng-click="analyzeSSHSecurity()" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-11 px-6">
+                                <i data-lucide="shield-check" class="mr-2 h-5 w-5" ng-class="{'animate-spin': loadingSecurityAnalysis}"></i>
+                                Run Analysis
+                            </button>
                         </div>
-                    </div>
-                </div>
 
-                <div ng-if="securityAlerts.length > 0" class="mb-8 space-y-6">
-                    <div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
-                        <h3 class="text-base font-bold text-amber-700 dark:text-amber-400 flex items-center gap-3 mb-6">
-                            <i data-lucide="triangle-alert" class="h-6 w-6"></i>
-                            Security Alerts Detected ({$ securityAlerts.length $})
-                        </h3>
-                        <div class="space-y-6">
-                            <div ng-repeat="alert in securityAlerts" class="rounded-2xl border border-border bg-card p-6">
-                                <div class="flex items-start gap-6">
-                                    <div class="mt-1" ng-class="{'text-destructive': alert.severity === 'high', 'text-amber-500': alert.severity === 'medium', 'text-blue-500': alert.severity === 'low'}">
+                        <!-- Addon Required Section - Flat design -->
+                        <div ng-if="showAddonRequired" class="mb-8">
+                            <div class="rounded-2xl border border-border bg-accent/5 p-8 text-center">
+                                <div class="max-w-3xl mx-auto space-y-6">
+                                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
                                         <i data-lucide="shield-check" class="h-8 w-8"></i>
                                     </div>
-                                    <div class="flex-1 space-y-3">
-                                        <div class="flex items-center justify-between">
-                                            <h4 class="text-base font-semibold leading-none">{$ alert.title $}</h4>
-                                            <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider border"
-                                                  ng-class="{'bg-destructive/10 text-destructive border-destructive/20': alert.severity === 'high', 'bg-amber-500/10 text-amber-600 border-amber-500/20': alert.severity === 'medium', 'bg-blue-500/10 text-blue-600 border-blue-500/20': alert.severity === 'low'}">
-                                                {$ alert.severity $}
-                                            </span>
-                                        </div>
-                                        <p class="text-sm text-muted-foreground leading-relaxed">{$ alert.description $}</p>
-                                        <div ng-if="alert.details" class="pt-3">
-                                            <div ng-repeat="(key, value) in alert.details" class="text-xs text-muted-foreground mb-1.5">
-                                                <span class="font-semibold text-foreground">{$ key $}:</span> {$ value $}
+                                    <h3 class="text-2xl font-bold tracking-tight">{$ addonInfo.feature_title $}</h3>
+                                    <p class="text-base text-muted-foreground">{$ addonInfo.feature_description $}</p>
+
+                                    <div class="bg-card rounded-xl border border-border p-6 text-left">
+                                        <h4 class="mb-4 text-sm font-semibold flex items-center gap-2">
+                                            <i data-lucide="star" class="text-amber-500 h-4 w-4"></i>
+                                            Premium Features Include:
+                                        </h4>
+                                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <li ng-repeat="feature in addonInfo.features" class="flex items-start text-sm text-muted-foreground">
+                                                <i data-lucide="check-circle" class="text-emerald-500 mt-0.5 mr-3 flex-shrink-0 h-4 w-4"></i>
+                                                <span>{$ feature $}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="pt-4">
+                                        <!-- Unlock Button - Base pattern -->
+                                        <a href="{$ addonInfo.addon_url $}" target="_blank" rel="noopener" class="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:opacity-90 h-11 px-8">
+                                            <i data-lucide="unlock" class="mr-2 h-5 w-5"></i>
+                                            Unlock Security Analysis
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Alerts Section - Flat design -->
+                        <div ng-if="!showAddonRequired && !loadingSecurityAnalysis && securityAlerts.length === 0 && !loadingSSHLogs" class="mb-8">
+                            <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-6">
+                                <i data-lucide="check-circle" class="text-emerald-500 h-8 w-8"></i>
+                                <div>
+                                    <h4 class="text-base font-semibold text-emerald-700 dark:text-emerald-400">No Security Threats Detected</h4>
+                                    <p class="text-sm text-emerald-600/80 dark:text-emerald-400/80">Your SSH logs show no signs of malicious activity.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-if="securityAlerts.length > 0" class="mb-8 space-y-6">
+                            <div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
+                                <h3 class="text-base font-bold text-amber-700 dark:text-amber-400 flex items-center gap-3 mb-6">
+                                    <i data-lucide="triangle-alert" class="h-6 w-6"></i>
+                                    Security Alerts Detected ({$ securityAlerts.length $})
+                                </h3>
+                                <div class="space-y-6">
+                                    <div ng-repeat="alert in securityAlerts" class="rounded-2xl border border-border bg-card p-6">
+                                        <div class="flex items-start gap-6">
+                                            <div class="mt-1" ng-class="{'text-destructive': alert.severity === 'high', 'text-amber-500': alert.severity === 'medium', 'text-blue-500': alert.severity === 'low'}">
+                                                <i data-lucide="shield-check" class="h-8 w-8"></i>
                                             </div>
-                                        </div>
-                                        <div ng-if="alert.recommendation" class="mt-4 rounded-xl bg-muted p-4">
-                                            <p class="text-xs font-bold mb-1.5">Recommendation:</p>
-                                            <p class="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">{$ alert.recommendation $}</p>
+                                            <div class="flex-1 space-y-3">
+                                                <div class="flex items-center justify-between">
+                                                    <h4 class="text-base font-semibold leading-none">{$ alert.title $}</h4>
+                                                    <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider border"
+                                                          ng-class="{'bg-destructive/10 text-destructive border-destructive/20': alert.severity === 'high', 'bg-amber-500/10 text-amber-600 border-amber-500/20': alert.severity === 'medium', 'bg-blue-500/10 text-blue-600 border-blue-500/20': alert.severity === 'low'}">
+                                                        {$ alert.severity $}
+                                                    </span>
+                                                </div>
+                                                <p class="text-sm text-muted-foreground leading-relaxed">{$ alert.description $}</p>
+                                                <div ng-if="alert.details" class="pt-3">
+                                                    <div ng-repeat="(key, value) in alert.details" class="text-xs text-muted-foreground mb-1.5">
+                                                        <span class="font-semibold text-foreground">{$ key $}:</span> {$ value $}
+                                                    </div>
+                                                </div>
+                                                <div ng-if="alert.recommendation" class="mt-4 rounded-xl bg-muted p-4">
+                                                    <p class="text-xs font-bold mb-1.5">Recommendation:</p>
+                                                    <p class="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">{$ alert.recommendation $}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div ng-if="loadingSSHLogs" class="py-12 text-center text-base text-muted-foreground">
-                    <i data-lucide="loader-2" class="animate-spin mr-2 h-5 w-5"></i> Loading SSH logs...
-                </div>
-                <div ng-if="!loadingSSHLogs && sshLogs.length === 0" class="py-12 text-center text-base text-muted-foreground">
-                    No recent SSH logs found.
-                </div>
-                <div class="relative w-full overflow-auto rounded-2xl border border-border" ng-if="!loadingSSHLogs && sshLogs.length > 0">
-                    <table class="w-full text-sm">
-                        <thead class="bg-muted/50 border-b border-border">
-                            <tr>
-                                <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground w-48">TIMESTAMP</th>
-                                <th class="h-10 px-4 text-left align-middle font-bold text-muted-foreground">MESSAGE</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-border">
-                            <tr ng-repeat="log in sshLogs" class="hover:bg-muted/30">
-                                <td class="p-3 align-top font-semibold text-muted-foreground border-border">{$ log.timestamp $}</td>
-                                <td class="p-3 align-top border-border"><code class="block whitespace-pre-wrap break-all text-xs leading-relaxed">{$ log.message $}</code></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 

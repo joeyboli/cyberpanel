@@ -795,7 +795,7 @@ def analyzeSSHSecurity(request):
             return HttpResponse(json.dumps({'error': 'Admin only'}), content_type='application/json', status=403)
         
         # Check if user has CyberPanel addons
-        if not ACLManager.CheckForPremFeature('all'):
+        if not ACLManager.CheckForPremFeature('ssh-security-analysis'):
             return HttpResponse(json.dumps({
                 'status': 0,
                 'addon_required': True,

@@ -1121,8 +1121,6 @@ app.controller('dashboardStatsController', function ($scope, $http, $timeout) {
                 console.log('SSH Logs loaded:', $scope.sshLogs.length, 'items');
                 $scope.updateSSHLogsPaginated();
                 console.log('SSH Logs paginated:', $scope.sshLogsPaginated.length, 'items');
-                // Analyze logs for security issues
-                $scope.analyzeSSHSecurity();
             } else {
                 console.warn('SSH Logs: No data or invalid format', response.data);
                 $scope.sshLogs = [];
