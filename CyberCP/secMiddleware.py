@@ -22,19 +22,12 @@ class secMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
-        ######
-
         from plogical.processUtilities import ProcessUtilities
-        FinalURL = request.build_absolute_uri().split('?')[0]
-
         from urllib.parse import urlparse
-        pathActual = urlparse(FinalURL).path
-
-        # Debug logging removed for performance
-
-        # Define webhook pattern for secure matching
         import re
+
+        FinalURL = request.build_absolute_uri().split('?')[0]
+        pathActual = urlparse(FinalURL).path
         webhook_pattern = re.compile(r'^/websites/[^/]+/(webhook|gitNotify)/?$')
         
         if pathActual == "/backup/localInitiate" or  pathActual == '/' or pathActual == '/verifyLogin' or pathActual == '/logout' or pathActual.startswith('/api')\
@@ -65,32 +58,39 @@ class secMiddleware:
 
         try:
             uID = request.session['userID']
-            admin = Administrator.objects.get(pk=uID)
             ipAddr = secMiddleware.get_client_ip(request)
 
             if ipAddr.find('.') > -1:
-                if request.session['ipAddr'] == ipAddr or admin.securityLevel == secMiddleware.LOW:
+                if request.session['ipAddr'] == ipAddr:
                     pass
                 else:
-                    del request.session['userID']
-                    del request.session['ipAddr']
-                    logging.writeToFile(secMiddleware.get_client_ip(request))
-                    final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
-                                 "errorMessage": "Session reuse detected, IPAddress logged."}
-                    final_json = json.dumps(final_dic)
-                    return HttpResponse(final_json)
+                    admin = Administrator.objects.get(pk=uID)
+                    if admin.securityLevel == secMiddleware.LOW:
+                        pass
+                    else:
+                        del request.session['userID']
+                        del request.session['ipAddr']
+                        logging.writeToFile(secMiddleware.get_client_ip(request))
+                        final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
+                                     "errorMessage": "Session reuse detected, IPAddress logged."}
+                        final_json = json.dumps(final_dic)
+                        return HttpResponse(final_json)
             else:
                 ipAddr = ':'.join(secMiddleware.get_client_ip(request).split(':')[:3])
-                if request.session['ipAddr'] == ipAddr or admin.securityLevel == secMiddleware.LOW:
+                if request.session['ipAddr'] == ipAddr:
                     pass
                 else:
-                    del request.session['userID']
-                    del request.session['ipAddr']
-                    logging.writeToFile(secMiddleware.get_client_ip(request))
-                    final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
-                                 "errorMessage": "Session reuse detected, IPAddress logged."}
-                    final_json = json.dumps(final_dic)
-                    return HttpResponse(final_json)
+                    admin = Administrator.objects.get(pk=uID)
+                    if admin.securityLevel == secMiddleware.LOW:
+                        pass
+                    else:
+                        del request.session['userID']
+                        del request.session['ipAddr']
+                        logging.writeToFile(secMiddleware.get_client_ip(request))
+                        final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
+                                     "errorMessage": "Session reuse detected, IPAddress logged."}
+                        final_json = json.dumps(final_dic)
+                        return HttpResponse(final_json)
         except:
             pass
 

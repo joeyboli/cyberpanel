@@ -159,17 +159,33 @@ class ProcessUtilities(multi.Thread):
                 except:
                     pass
 
+    _decideServer_cache = None
     @staticmethod
     def decideServer():
+        if ProcessUtilities._decideServer_cache is not None:
+            return ProcessUtilities._decideServer_cache
         if os.path.exists('/usr/local/lsws/bin/openlitespeed'):
-            return ProcessUtilities.OLS
+            ProcessUtilities._decideServer_cache = ProcessUtilities.OLS
         else:
-            return ProcessUtilities.ent
+            ProcessUtilities._decideServer_cache = ProcessUtilities.ent
+        return ProcessUtilities._decideServer_cache
 
+    _decideDistro_cache = None
     @staticmethod
     def decideDistro():
-        distroPath = '/etc/lsb-release'
-        distroPathAlma = '/etc/redhat-release'
+        if ProcessUtilities._decideDistro_cache is not None:
+            return ProcessUtilities._decideDistro_cache
+        
+        res = ProcessUtilities._decideDistro_logic()
+        ProcessUtilities._decideDistro_cache = res
+        return res
+
+    _distro_flags_initialized = False
+
+    @staticmethod
+    def _initialize_distro_flags():
+        if ProcessUtilities._distro_flags_initialized:
+            return
 
         # First check if we're on Ubuntu
         if os.path.exists('/etc/os-release'):
@@ -181,39 +197,62 @@ class ProcessUtilities(multi.Thread):
                         ProcessUtilities.ubuntu24Check = 1  # Specific flag for Ubuntu 24.04
                         # Ubuntu 24.04 uses newer package versions, set flag for compatibility
                         ProcessUtilities.alma9check = 1  # Reuse flag to indicate Ubuntu 24.04
-                        return ProcessUtilities.ubuntu20
                     elif '22.04' in content:
                         ProcessUtilities.ubuntu22Check = 1
-                        return ProcessUtilities.ubuntu20
-                    elif '20.04' in content:
+
+        # Check for RedHat-based distributions
+        distroPathAlma = '/etc/redhat-release'
+        if os.path.exists(distroPathAlma):
+            with open(distroPathAlma, 'r') as f:
+                content = f.read()
+                if any(x in content for x in ['AlmaLinux release 9', 'Rocky Linux release 9', 'AlmaLinux release 10']):
+                    ProcessUtilities.alma9check = 1
+
+        ProcessUtilities._distro_flags_initialized = True
+
+    @staticmethod
+    def _decideDistro_logic():
+        ProcessUtilities._initialize_distro_flags()
+
+        # First check if we're on Ubuntu
+        if os.path.exists('/etc/os-release'):
+            with open('/etc/os-release', 'r') as f:
+                content = f.read()
+                if 'Ubuntu' in content:
+                    if '24.04' in content or '22.04' in content or '20.04' in content:
                         return ProcessUtilities.ubuntu20
                     return ProcessUtilities.ubuntu
 
         # Check for RedHat-based distributions
+        distroPathAlma = '/etc/redhat-release'
         if os.path.exists(distroPathAlma):
             with open(distroPathAlma, 'r') as f:
                 content = f.read()
-                if any(x in content for x in ['CentOS Linux release 8', 'AlmaLinux release 8', 'Rocky Linux release 8', 
-                                            'Rocky Linux release 9', 'AlmaLinux release 9', 'CloudLinux release 9', 
+                if any(x in content for x in ['CentOS Linux release 8', 'AlmaLinux release 8', 'Rocky Linux release 8',
+                                            'Rocky Linux release 9', 'AlmaLinux release 9', 'CloudLinux release 9',
                                             'CloudLinux release 8', 'AlmaLinux release 10']):
-                    if any(x in content for x in ['AlmaLinux release 9', 'Rocky Linux release 9', 'AlmaLinux release 10']):
-                        ProcessUtilities.alma9check = 1
                     return ProcessUtilities.cent8
 
         # Default to Ubuntu if no other distribution is detected
         return ProcessUtilities.ubuntu
 
+    _container_check_cache = None
     @staticmethod
     def containerCheck():
+        if ProcessUtilities._container_check_cache is not None:
+            return ProcessUtilities._container_check_cache
         try:
             command = 'cat /etc/cgrules.conf'
             output = ProcessUtilities.outputExecutioner(command)
             if output.find('No such') > -1:
-                return 0
+                res = 0
             else:
-                return 1
+                res = 1
         except BaseException:
-            return 0
+            res = 0
+        
+        ProcessUtilities._container_check_cache = res
+        return res
 
     @staticmethod
     def setupUDSConnection():
@@ -564,20 +603,27 @@ class ProcessUtilities(multi.Thread):
             print("An error occurred:", e)
         return None
 
+    _num_cores_cache = None
     @staticmethod
     def getNumberOfCores():
         """Get the number of CPU cores available on the system"""
+        if ProcessUtilities._num_cores_cache is not None:
+            return ProcessUtilities._num_cores_cache
+        
         try:
             import multiprocessing
-            return multiprocessing.cpu_count()
+            res = multiprocessing.cpu_count()
         except:
             try:
                 # Fallback method using /proc/cpuinfo
                 with open('/proc/cpuinfo', 'r') as f:
-                    return len([line for line in f if line.startswith('processor')])
+                    res = len([line for line in f if line.startswith('processor')])
             except:
                 # Default to 2 if we can't determine
-                return 2
+                res = 2
+        
+        ProcessUtilities._num_cores_cache = res
+        return res
 
     @staticmethod
     def fetch_latest_prestashop_version():
