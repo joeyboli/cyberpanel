@@ -1,5 +1,5 @@
 #!/usr/local/CyberCP/bin/python
-import os,sys
+import os, sys
 import random
 import string
 
@@ -9,6 +9,7 @@ from .processUtilities import ProcessUtilities
 
 sys.path.append('/usr/local/CyberCP')
 import django
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "CyberCP.settings")
 django.setup()
 from loginSystem.models import Administrator, ACL
@@ -22,9 +23,8 @@ from .CyberCPLogFileWriter import CyberCPLogFileWriter as logging
 from dockerManager.models import Containers
 from re import compile
 
+
 class ACLManager:
-
-
     AdminACL = '{"adminStatus":1, "versionManagement": 1, "createNewUser": 1, "listUsers": 1, "deleteUser":1 , "resellerCenter": 1, ' \
                '"changeUserACL": 1, "createWebsite": 1, "modifyWebsite": 1, "suspendWebsite": 1, "deleteWebsite": 1, ' \
                '"createPackage": 1, "listPackages": 1, "deletePackage": 1, "modifyPackage": 1, "createDatabase": 1, "deleteDatabase": 1, ' \
@@ -70,7 +70,6 @@ class ACLManager:
         else:
             return 0
 
-
     @staticmethod
     def AliasDomainCheck(currentACL, aliasDomain, master):
         aliasOBJ = aliasDomains.objects.get(aliasDomain=aliasDomain)
@@ -99,8 +98,6 @@ class ACLManager:
         else:
             return 0
 
-
-
     @staticmethod
     def FindIfChild():
         try:
@@ -117,7 +114,6 @@ class ACLManager:
         except:
             return 0
 
-
     @staticmethod
     def fetchIP():
         try:
@@ -129,7 +125,7 @@ class ACLManager:
             return "192.168.100.1"
 
     @staticmethod
-    def validateInput(value, regex = None):
+    def validateInput(value, regex=None):
         if regex == None:
             verifier = compile(r'[\sa-zA-Z0-9_-]+')
         else:
@@ -197,7 +193,6 @@ class ACLManager:
             finalResponse['deleteWebsite'] = config['deleteWebsite']
 
             ## Package Management
-
 
             finalResponse['createPackage'] = config['createPackage']
             finalResponse['listPackages'] = config['listPackages']
@@ -314,17 +309,17 @@ class ACLManager:
             pass
 
     @staticmethod
-    def loadErrorJson(additionalParameter = None, additionalParameterValue = None):
+    def loadErrorJson(additionalParameter=None, additionalParameterValue=None):
         try:
             if additionalParameter == None:
                 finalJson = {"status": 0, "errorMessage": 'You are not authorized to access this resource.',
-                        'error_message': 'You are not authorized to access this resource.',
-                        }
+                             'error_message': 'You are not authorized to access this resource.',
+                             }
             else:
                 finalJson = {"status": 0, "errorMessage": 'You are not authorized to access this resource.',
-                        'error_message': 'You are not authorized to access this resource.',
-                        additionalParameter: additionalParameterValue
-                        }
+                             'error_message': 'You are not authorized to access this resource.',
+                             additionalParameter: additionalParameterValue
+                             }
 
             json_data = json.dumps(finalJson)
             return HttpResponse(json_data)
@@ -460,7 +455,7 @@ class ACLManager:
         return adminNames
 
     @staticmethod
-    def websitesLimitCheck(currentAdmin, websitesLimit, userToBeModified = None):
+    def websitesLimitCheck(currentAdmin, websitesLimit, userToBeModified=None):
         if currentAdmin.acl.adminStatus != 1:
 
             if currentAdmin.initWebsitesLimit != 0:
@@ -509,7 +504,7 @@ class ACLManager:
             return admin.package_set.all()
 
     @staticmethod
-    def findAllSites(currentACL, userID, fetchChilds = 0):
+    def findAllSites(currentACL, userID, fetchChilds=0):
         websiteNames = []
 
         if currentACL['admin'] == 1:
@@ -542,7 +537,6 @@ class ACLManager:
                     if fetchChilds:
                         for child in web.childdomains_set.all().order_by('domain'):
                             websiteNames.append(child.domain)
-
 
         return websiteNames
 
@@ -614,7 +608,7 @@ class ACLManager:
                 for web in webs:
                     if web not in websiteList:
                         websiteList.append(web)
-                
+
                 # Get WordPress sites that match the search term
                 wp_sites = WPSites.objects.filter(title__icontains=searchTerm)
                 for wp in wp_sites:
@@ -728,7 +722,7 @@ class ACLManager:
     def findAllDNSZones(currentACL, userID):
         from dns.models import Domains
         zonesList = []
-        
+
         if currentACL['admin'] == 1:
             zones = Domains.objects.all().order_by('name')
             for zone in zones:
@@ -736,19 +730,19 @@ class ACLManager:
         else:
             admin = Administrator.objects.get(pk=userID)
             zones = Domains.objects.filter(admin=admin).order_by('name')
-            
+
             for zone in zones:
                 zonesList.append(zone.name)
-            
+
             # Include zones from owned admins
             admins = Administrator.objects.filter(owner=admin.pk)
             for item in admins:
                 owned_zones = Domains.objects.filter(admin=item).order_by('name')
                 for zone in owned_zones:
                     zonesList.append(zone.name)
-        
+
         return list(set(zonesList))  # Remove duplicates
-    
+
     @staticmethod
     def checkOwnership(domain, admin, currentACL):
         try:
@@ -769,7 +763,7 @@ class ACLManager:
 
             if currentACL['admin'] == 1:
                 return 1
-            elif  domainName.admin == admin:
+            elif domainName.admin == admin:
                 return 1
             else:
                 if domainName.admin.owner == admin.pk:
@@ -786,7 +780,7 @@ class ACLManager:
             elif gD.owner == admin:
                 return 1
             elif gD.owner.owner == admin.pk:
-                    return 1
+                return 1
 
             return 0
         except:
@@ -797,7 +791,7 @@ class ACLManager:
         # First check if user is admin
         if currentACL['admin'] == 1:
             return 1
-            
+
         # Try to find domain in Websites table
         try:
             websiteDomain = Websites.objects.get(domain=domain)
@@ -805,7 +799,7 @@ class ACLManager:
                 return 1
         except:
             pass
-            
+
         # Try to find domain in ChildDomains table
         try:
             childDomain = ChildDomains.objects.get(domain=domain)
@@ -813,7 +807,7 @@ class ACLManager:
                 return 1
         except:
             pass
-            
+
         # Try to find domain in DNS Domains table (for standalone DNS zones)
         try:
             from dns.models import Domains
@@ -825,7 +819,7 @@ class ACLManager:
                 return 1
         except:
             pass
-            
+
         return 0
 
     @staticmethod
@@ -878,7 +872,6 @@ class ACLManager:
                 for con in cons:
                     containerName.append(con.name)
 
-
         return containerName
 
     @staticmethod
@@ -910,7 +903,7 @@ class ACLManager:
         childDomains = []
 
         for items in websiteNames:
-            website = Websites.objects.get(domain = items)
+            website = Websites.objects.get(domain=items)
             for childDomain in website.childdomains_set.all().order_by('domain'):
                 childDomains.append(childDomain.domain)
 
@@ -931,10 +924,12 @@ class ACLManager:
     def CheckDomainBlackList(domain):
         import socket
 
-        BlackList = [ socket.gethostname(), 'hotmail.com', 'gmail.com', 'yandex.com', 'yahoo.com', 'localhost', 'aol.com', 'apple.com',
+        BlackList = [socket.gethostname(), 'hotmail.com', 'gmail.com', 'yandex.com', 'yahoo.com', 'localhost',
+                     'aol.com', 'apple.com',
                      'cloudlinux.com', 'email.com', 'facebook.com', 'gmx.de', 'gmx.com', 'google.com',
-                     'hushmail.com', 'icloud.com', 'inbox.com', 'imunify360.com', 'juno.com', 'live.com', 'localhost.localdomain',
-                     'localhost4.localdomain4', 'localhost6.localdomain6','mail.com', 'mail.ru', 'me.com',
+                     'hushmail.com', 'icloud.com', 'inbox.com', 'imunify360.com', 'juno.com', 'live.com',
+                     'localhost.localdomain',
+                     'localhost4.localdomain4', 'localhost6.localdomain6', 'mail.com', 'mail.ru', 'me.com',
                      'microsoft.com', 'mxlogic.net', 'outlook.com', 'protonmail.com', 'twitter.com', 'yandex.ru']
 
         DotsCounter = domain.count('.')
@@ -963,13 +958,14 @@ class ACLManager:
         except:
             if domain != None:
                 value = statusFile.split('cyberpanel/')[1]
-                #logging.writeToFile(f'value of log file {value}')
+                # logging.writeToFile(f'value of log file {value}')
                 if value == f'{domain}_rustic_backup_log':
                     return 1
             return 0
 
-        if (statusFile[:18] != "/home/cyberpanel/." or statusFile[:16] == "/home/cyberpanel" or statusFile[:4] == '/tmp' or statusFile[
-                                                                                                                 :18] == '/usr/local/CyberCP') \
+        if (statusFile[:18] != "/home/cyberpanel/." or statusFile[:16] == "/home/cyberpanel" or statusFile[
+            :4] == '/tmp' or statusFile[
+                :18] == '/usr/local/CyberCP') \
                 and statusFile != '/usr/local/CyberCP/CyberCP/settings.py' and statusFile.find(
             '..') == -1 and statusFile != '/home/cyberpanel/.my.cnf' and statusFile != '/home/cyberpanel/.bashrc' and statusFile != '/home/cyberpanel/.bash_logout' and statusFile != '/home/cyberpanel/.profile':
             return 1
@@ -1002,7 +998,6 @@ class ACLManager:
 
         command = 'chmod 711 %s' % (UploadPath)
         ProcessUtilities.executioner(command)
-
 
     @staticmethod
     def GetServiceStatus(dic):
@@ -1105,9 +1100,8 @@ class ACLManager:
         except BaseException as msg:
             return 0, str(msg), None
 
-
     @staticmethod
-    def FindDocRootOfSite(vhostConf,domainName):
+    def FindDocRootOfSite(vhostConf, domainName):
         try:
             if vhostConf == None:
                 vhostConf = f'/usr/local/lsws/conf/vhosts/{domainName}/vhost.conf'
@@ -1115,7 +1109,7 @@ class ACLManager:
             if ProcessUtilities.decideServer() == ProcessUtilities.OLS:
                 command = "awk '/docRoot/ {print $2}' " + vhostConf
                 docRoot = ProcessUtilities.outputExecutioner(command, 'root', True).rstrip('\n')
-                #docRoot = docRoot.replace('$VH_ROOT', f'/home/{domainName}')
+                # docRoot = docRoot.replace('$VH_ROOT', f'/home/{domainName}')
                 return docRoot
             else:
                 command = "awk '/DocumentRoot/ {print $2; exit}' " + vhostConf
@@ -1131,13 +1125,13 @@ class ACLManager:
                 vhostConf = f'/usr/local/lsws/conf/vhosts/{domainName}/vhost.conf'
 
             if ProcessUtilities.decideServer() == ProcessUtilities.OLS:
-                #command = f"sed -i 's/docRoot\s\s*.*/docRoot                   {NewDocRoot}/g " + vhostConf
+                # command = f"sed -i 's/docRoot\s\s*.*/docRoot                   {NewDocRoot}/g " + vhostConf
                 command = f"sed -i 's#docRoot\s\s*.*#docRoot                   {NewDocRoot}#g' " + vhostConf
                 ProcessUtilities.executioner(command, 'root', True)
             else:
                 command = f"sed -i 's#DocumentRoot\s\s*[^[:space:]]*#DocumentRoot {NewDocRoot}#g' " + vhostConf
                 ProcessUtilities.executioner(command, 'root', True)
-                
+
         except:
             pass
 
@@ -1170,7 +1164,6 @@ class ACLManager:
                 ProcessUtilities.executioner(command, 'root', True)
         except:
             pass
-
 
     @staticmethod
     def ISARM():
@@ -1213,7 +1206,6 @@ echo $oConfig->Save() ? 'Done' : 'Error';
 
             except:
                 pass
-
 
             command = "usermod -G lscpd,lsadm,nobody lscpd"
             ProcessUtilities.executioner(command, 'root', True)
@@ -1427,7 +1419,3 @@ echo $oConfig->Save() ? 'Done' : 'Error';
 
         except BaseException as msg:
             logging.writeToFile(str(msg) + " [fixPermissions]")
-
-
-
-
