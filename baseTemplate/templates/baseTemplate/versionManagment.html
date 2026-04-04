@@ -200,7 +200,17 @@ function populateBranches(branches) {
             sel.appendChild(opt);
         }
     }
-    if (sel.options.length > 1) sel.selectedIndex = 1;
+    if (sel.options.length > 1) {
+        var found = false;
+        for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value === "v2.4.5" || sel.options[i].value === "2.4.5") {
+                sel.selectedIndex = i;
+                found = true;
+                break;
+            }
+        }
+        if (!found) sel.selectedIndex = 1;
+    }
 }
 
 function getBranches(url, branches, page) {

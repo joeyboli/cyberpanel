@@ -18,170 +18,162 @@
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
 
-<div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12" ng-controller="OnboardingCP">
-    <div class="space-y-12">
-        <!-- Page Header -->
-        <div class="rounded-2xl border border-border/50 bg-card p-12 text-center shadow-sm transition-all hover:shadow-md">
-            <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <i data-lucide="settings" class="h-10 w-10"></i>
+<div class="w-full p-4 md:p-12" ng-controller="OnboardingCP">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                <i data-lucide="settings" class="h-8 w-8"></i>
             </div>
-            <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-foreground">
-                {% trans "Initial Configurations" %}
-            </h1>
-            <p class="mx-auto max-w-2xl text-xl text-muted-foreground">
-                {% trans "Configure Hostname and other default Settings for CyberPanel" %}
-            </p>
-        </div>
-        
-        <!-- Configuration Section -->
-        <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
-            <!-- Left Column: Form -->
-            <div class="rounded-2xl border border-border/50 bg-card p-10 shadow-sm lg:col-span-2">
-                <div class="mb-8 flex items-center justify-between border-b border-border/50 pb-6">
-                    <div class="flex items-center gap-4 text-2xl font-bold text-foreground">
-                        <div class="h-10 w-1.5 rounded-full bg-primary"></div>
-                        {% trans "Server Configuration" %}
-                    </div>
-                    <div ng-hide="cyberpanelLoading" class="flex items-center gap-3 text-sm text-muted-foreground">
-                        <i data-lucide="loader-2" class="h-4 w-4 animate-spin text-primary"></i>
-                        <span>{% trans "Loading..." %}</span>
-                    </div>
-                </div>
-                
-                <!-- Configuration Form -->
-                <form class="space-y-8">
-                    <div class="space-y-4">
-                        <label class="text-xs font-bold tracking-widest text-foreground uppercase">{% trans "Hostname" %}</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-5 text-muted-foreground group-focus-within:text-primary transition-colors">
-                                <i data-lucide="globe" class="h-6 w-6"></i>
-                            </div>
-                            <input type="text" 
-                                   class="flex h-16 w-full rounded-xl border border-input bg-background pl-14 pr-6 text-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all border-border/60 hover:border-primary/50" 
-                                   ng-model="hostname" 
-                                   placeholder="mail.example.com" 
-                                   required>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <label class="text-xs font-bold tracking-widest text-foreground uppercase">{% trans "Additional Features" %}</label>
-                        <label for="rdnsCheck" class="group flex cursor-pointer items-start gap-4 rounded-xl border border-border/50 bg-muted/30 p-6 transition-all hover:bg-muted/50 hover:border-primary/30">
-                            <div class="relative flex h-6 items-center">
-                                <input type="checkbox" 
-                                       id="rdnsCheck" 
-                                       ng-model="rDNSCheck"
-                                       class="peer h-5 w-5 rounded border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 accent-primary">
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-base font-bold text-foreground transition-colors group-hover:text-primary">
-                                    {% trans "Skip rDNS/PTR Check" %}
-                                </span>
-                                <span class="text-sm text-muted-foreground leading-relaxed">
-                                    {% trans "Check this if you don't want to use email service on this server" %}
-                                </span>
-                            </div>
-                        </label>
-                    </div>
-                    
-                    <div class="flex flex-col gap-4 pt-4 sm:flex-row">
-                        <button type="button" 
-                                ng-click="RunOnboarding()" 
-                                class="inline-flex h-16 items-center justify-center gap-3 rounded-xl bg-primary px-8 text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:flex-1">
-                            <i data-lucide="play" class="h-6 w-6"></i>
-                            {% trans "Start" %}
-                        </button>
-                        
-                        <button type="button" 
-                                ng-click="RestartCyberPanel()" 
-                                ng-hide="OnboardineDone" 
-                                class="inline-flex h-16 items-center justify-center gap-3 rounded-xl border-2 border-input bg-background px-8 text-lg font-bold shadow-sm transition-all hover:bg-accent hover:text-accent-foreground hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:flex-1">
-                            <i data-lucide="refresh-cw" class="h-6 w-6"></i>
-                            {% trans "Restart CyberPanel" %}
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Right Column: Sidebar Notes -->
-            <div class="space-y-6 lg:col-span-1">
-                <div ng-hide="success" class="rounded-2xl border border-primary/10 bg-primary/5 p-8 shadow-sm">
-                    <div class="mb-6 flex items-center gap-3 text-primary">
-                        <i data-lucide="info" class="h-5 w-5 lucide-fill"></i>
-                        <h4 class="text-lg font-bold tracking-tight text-foreground">{% trans "Important Notes" %}</h4>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="flex items-start gap-4">
-                            <div class="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">1</div>
-                            <p class="text-sm leading-relaxed text-muted-foreground">
-                                <strong class="font-semibold text-foreground">{% trans "Email Service" %}:</strong> {% trans "If you are not going to use email service on this server, skip rDNS checks." %}
-                            </p>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">2</div>
-                            <p class="text-sm leading-relaxed text-muted-foreground">
-                                {% trans "Ensure the hostname provided is set as rDNS (PTR record) against your IP address." %}
-                            </p>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">3</div>
-                            <p class="text-sm leading-relaxed text-muted-foreground">
-                                {% trans "Hostname must have an A record pointing to your server's IP address." %}
-                            </p>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">4</div>
-                            <p class="text-sm leading-relaxed text-muted-foreground">
-                                {% trans "Failure to meet these conditions may cause issues with email services." %}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rounded-2xl border border-border/50 bg-card p-6 shadow-sm">
-                    <div class="flex items-center gap-3 text-foreground">
-                        <i data-lucide="help-circle" class="h-5 w-5 text-muted-foreground"></i>
-                        <span class="text-sm font-medium">{% trans "Need assistance?" %}</span>
-                    </div>
-                    <p class="mt-2 text-xs text-muted-foreground">
-                        {% trans "Refer to our documentation for a detailed guide on initial configurations." %}
-                    </p>
-                    <a href="https://cyberpanel.net/KnowledgeBase/home/onboarding-and-initial-cyberpanel-configurations/" 
-                       target="_blank" rel="noopener" 
-                       class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-secondary py-2 text-xs font-semibold text-secondary-foreground transition-all hover:bg-secondary/80">
-                        {% trans "View Docs" %}
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Progress Section -->
-        <div ng-hide="ExecutionStatus" class="rounded-2xl border border-border/50 bg-card p-12 shadow-sm animate-fade-in">
-            <div class="mb-8 flex items-start gap-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
-                <i data-lucide="alert-triangle" class="h-6 w-6 flex-shrink-0 text-amber-500"></i>
-                <p class="text-base font-medium leading-relaxed text-amber-700/80 dark:text-amber-400/80">
-                    {% trans "Note: Once configurations are completed, click Restart CyberPanel above. After clicking Restart CyberPanel, refresh the page to fetch new SSL from the browser." %}
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {% trans "Initial Configurations" %}
+                </h1>
+                <p class="text-xl text-muted-foreground">
+                    {% trans "Configure Hostname and other default Settings for CyberPanel" %}
                 </p>
             </div>
-            
-            <div class="mb-6 flex items-center justify-between">
-                <div class="flex items-center gap-4 text-xl font-bold text-foreground">
-                    <i data-lucide="activity" class="h-6 w-6 text-primary"></i>
-                    <span>{$ functionStatus $}</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Configuration Section -->
+        <div class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Server Configuration" %}
+                <span ng-hide="cyberpanelLoading" class="animate-spin ml-4">
+                    <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
+                </span>
+            </h2>
+
+            <form class="space-y-8">
+                <div class="space-y-3">
+                    <label class="text-xl font-semibold text-foreground">{% trans "Hostname" %}</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-5 text-muted-foreground group-focus-within:text-primary transition-colors">
+                            <i data-lucide="globe" class="h-6 w-6"></i>
+                        </div>
+                        <input type="text"
+                               class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 pl-14 outline-none transition-all"
+                               ng-model="hostname"
+                               placeholder="mail.example.com"
+                               required>
+                    </div>
                 </div>
-                <div ng-hide="cyberpanelLoading" class="flex h-10 w-10 items-center justify-center">
-                    <i data-lucide="loader-2" class="h-6 w-6 animate-spin text-primary"></i>
+
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold text-foreground">{% trans "Additional Features" %}</label>
+                    <div class="flex items-center p-6 bg-secondary/30 rounded-2xl border border-border/40 transition-all gap-4">
+                        <input type="checkbox"
+                               id="rdnsCheck"
+                               ng-model="rDNSCheck"
+                               class="h-6 w-6 rounded border-border text-primary focus:ring-primary/20">
+                        <label for="rdnsCheck" class="text-lg font-medium text-foreground cursor-pointer flex-1">
+                            {% trans "Skip rDNS/PTR Check" %}
+                            <span class="block text-base text-muted-foreground font-normal mt-1">
+                                {% trans "Check this if you don't want to use email service on this server" %}
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 pt-4 sm:flex-row">
+                    <button type="button"
+                            ng-click="RunOnboarding()"
+                            class="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto">
+                        <i data-lucide="arrow-right" class="h-6 w-6"></i>
+                        {% trans "Start" %}
+                    </button>
+
+                    <button type="button"
+                            ng-click="RestartCyberPanel()"
+                            ng-hide="OnboardineDone"
+                            class="flex items-center justify-center gap-3 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all disabled:opacity-50 w-full md:w-auto">
+                        <i data-lucide="refresh-cw" class="h-6 w-6"></i>
+                        {% trans "Restart CyberPanel" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar Notes as a Card -->
+        <div ng-hide="success" class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Important Notes" %}
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex items-start gap-4 p-6 bg-secondary/20 rounded-2xl border border-border/40">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">1</div>
+                    <p class="text-lg leading-relaxed text-muted-foreground">
+                        <strong class="font-semibold text-foreground">{% trans "Email Service" %}:</strong> {% trans "If you are not going to use email service on this server, skip rDNS checks." %}
+                    </p>
+                </div>
+                <div class="flex items-start gap-4 p-6 bg-secondary/20 rounded-2xl border border-border/40">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">2</div>
+                    <p class="text-lg leading-relaxed text-muted-foreground">
+                        {% trans "Ensure the hostname provided is set as rDNS (PTR record) against your IP address." %}
+                    </p>
+                </div>
+                <div class="flex items-start gap-4 p-6 bg-secondary/20 rounded-2xl border border-border/40">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">3</div>
+                    <p class="text-lg leading-relaxed text-muted-foreground">
+                        {% trans "Hostname must have an A record pointing to your server's IP address." %}
+                    </p>
+                </div>
+                <div class="flex items-start gap-4 p-6 bg-secondary/20 rounded-2xl border border-border/40">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">4</div>
+                    <p class="text-lg leading-relaxed text-muted-foreground">
+                        {% trans "Failure to meet these conditions may cause issues with email services." %}
+                    </p>
                 </div>
             </div>
-            
-            <div class="h-4 w-full overflow-hidden rounded-full bg-muted border border-border/20 shadow-inner">
-                <div class="h-full bg-primary transition-all duration-700 ease-in-out relative" 
-                     ng-style="functionProgress">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" style="background-size: 200% 100%;"></div>
+
+            <div class="mt-8 p-6 bg-primary/5 rounded-2xl border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="help-circle" class="h-8 w-8 text-primary"></i>
+                    <div>
+                        <span class="text-lg font-bold text-foreground">{% trans "Need assistance?" %}</span>
+                        <p class="text-muted-foreground">{% trans "Refer to our documentation for a detailed guide on initial configurations." %}</p>
+                    </div>
                 </div>
+                <a href="https://cyberpanel.net/KnowledgeBase/home/onboarding-and-initial-cyberpanel-configurations/"
+                   target="_blank" rel="noopener"
+                   class="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border hover:bg-secondary/80 transition-all">
+                    {% trans "View Docs" %}
+                    <i data-lucide="external-link" class="h-4 w-4"></i>
+                </a>
             </div>
-            <div class="mt-4 text-right">
-                <span class="text-lg font-mono font-bold text-primary">{$ functionProgress.width $}</span>
+        </div>
+
+        <!-- Progress Section -->
+        <div ng-hide="ExecutionStatus" class="bg-card rounded-2xl shadow-sm border border-border/50 p-10">
+            <h2 class="text-3xl font-bold text-foreground mb-8 flex items-center gap-4">
+                <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+                {% trans "Execution Status" %}
+            </h2>
+
+            <div class="bg-secondary/20 rounded-2xl p-8 space-y-6">
+                <div class="mb-6 flex items-start gap-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
+                    <i data-lucide="alert-triangle" class="h-6 w-6 flex-shrink-0 text-amber-500"></i>
+                    <p class="text-lg font-medium leading-relaxed text-amber-700/80 dark:text-amber-400/80">
+                        {% trans "Note: Once configurations are completed, click Restart CyberPanel above. After clicking Restart CyberPanel, refresh the page to fetch new SSL from the browser." %}
+                    </p>
+                </div>
+
+                <div class="text-2xl font-bold text-foreground text-center">{$ functionStatus $}</div>
+
+                <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
+                    <div class="bg-primary h-full transition-all duration-700 ease-in-out relative"
+                         ng-style="functionProgress">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" style="background-size: 200% 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <span class="text-xl font-mono font-bold text-primary">{$ functionProgress.width $}</span>
+                </div>
             </div>
         </div>
     </div>
