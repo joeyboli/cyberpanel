@@ -66,7 +66,7 @@ _DB_PASS = os.getenv('DB_PASSWORD', '') or ''
 if not _DB_PASS and _FILE_PW:
     _DB_PASS = _FILE_PW
 
-_DB_HOST = os.getenv('DB_HOST', 'localhost')
+_DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
 if 'DB_HOST' not in os.environ and _FILE_HOST:
     _DB_HOST = _FILE_HOST
 
@@ -80,7 +80,7 @@ _ROOT_DB_PASS = os.getenv('ROOT_DB_PASSWORD', '') or ''
 if not _ROOT_DB_PASS and _FILE_PW:
     _ROOT_DB_PASS = _FILE_PW
 
-_ROOT_DB_HOST = os.getenv('ROOT_DB_HOST', 'localhost')
+_ROOT_DB_HOST = os.getenv('ROOT_DB_HOST', '127.0.0.1')
 if 'ROOT_DB_HOST' not in os.environ and _FILE_HOST:
     _ROOT_DB_HOST = _FILE_HOST
 
