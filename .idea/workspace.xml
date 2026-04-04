@@ -7,6 +7,8 @@
     <list default="true" id="5251c5c9-f2a1-41f2-bc76-10b517091df1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baseTemplate/templates/baseTemplate/onboarding.html" beforeDir="false" afterPath="$PROJECT_DIR$/baseTemplate/templates/baseTemplate/onboarding.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cyberpanel_upgrade.sh" beforeDir="false" afterPath="$PROJECT_DIR$/cyberpanel_upgrade.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upgrade.sh" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/userManagment/templates/userManagment/userProfile.html" beforeDir="false" afterPath="$PROJECT_DIR$/userManagment/templates/userManagment/userProfile.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websiteFunctions/templates/websiteFunctions/createWebsite.html" beforeDir="false" afterPath="$PROJECT_DIR$/websiteFunctions/templates/websiteFunctions/createWebsite.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websiteFunctions/templates/websiteFunctions/website.html" beforeDir="false" afterPath="$PROJECT_DIR$/websiteFunctions/templates/websiteFunctions/website.html" afterDir="false" />
@@ -160,7 +162,7 @@
       <workItem from="1775010311175" duration="2000" />
       <workItem from="1775015823202" duration="7000" />
       <workItem from="1775249571296" duration="5346000" />
-      <workItem from="1775264925416" duration="3072000" />
+      <workItem from="1775264925416" duration="3395000" />
     </task>
     <servers />
   </component>

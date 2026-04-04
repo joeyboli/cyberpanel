@@ -13,8 +13,9 @@ if [[ ! -f /usr/local/CyberCP/bin/python ]]; then
     exit 1
 fi
 
-cd /usr/local/CyberCP && /usr/local/CyberCP/bin/python manage.py collectstatic --no-input
+cd /usr/local/CyberCP && /usr/local/CyberCP/bin/python manage.py collectstatic --no-input || echo "Warning: collectstatic failed"
 rm -rf /usr/local/CyberCP/public/static/*
+mkdir -p /usr/local/CyberCP/public/static
 cp -R  /usr/local/CyberCP/static/* /usr/local/CyberCP/public/static/
 # CSF support removed - discontinued on August 31, 2025
 # mkdir /usr/local/CyberCP/public/static/csf/
@@ -22,5 +23,8 @@ find /usr/local/CyberCP -type d -exec chmod 0755 {} \;
 find /usr/local/CyberCP -type f -exec chmod 0644 {} \;
 chmod -R 755 /usr/local/CyberCP/bin
 chown -R root:root /usr/local/CyberCP
+# Ensure specific directories have correct ownership after global root chown
 chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+chown -R cyberpanel:cyberpanel /usr/local/CyberCP/static
+chown -R cyberpanel:cyberpanel /usr/local/CyberCP/public/static
 systemctl restart lscpd

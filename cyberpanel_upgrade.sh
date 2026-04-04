@@ -53,9 +53,24 @@ Server_OS=""
 Server_OS_Version=""
 Server_Provider='Undefined'
 
-Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt)
-Panel_Version=${Temp_Value:12:3}
-Panel_Build=${Temp_Value:25:1}
+Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt | tr -d '\r')
+if [[ -z "$Temp_Value" ]]; then
+    echo "Error: Could not fetch version information from CyberPanel server."
+    exit 1
+fi
+# Robustly extract version and build using regex or substring if format is known
+# version.txt format example: "Version: 2.3.6 Build: 1"
+if [[ $Temp_Value =~ Version:[[:space:]]*([0-9.]+) ]]; then
+    Panel_Version="${BASH_REMATCH[1]}"
+else
+    Panel_Version=${Temp_Value:12:3}
+fi
+
+if [[ $Temp_Value =~ Build:[[:space:]]*([0-9]+) ]]; then
+    Panel_Build="${BASH_REMATCH[1]}"
+else
+    Panel_Build=${Temp_Value:25:1}
+fi
 
 Branch_Name="v${Panel_Version}.${Panel_Build}"
 Base_Number="1.9.3"
@@ -978,9 +993,9 @@ if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
     if [[ "$Server_OS" = "CentOS" ]] && ([[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]]); then
       PYTHON_PATH=$(which python3 2>/dev/null || which python3.9 2>/dev/null || echo "/usr/bin/python3")
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Using Python path: $PYTHON_PATH" | tee -a /var/log/cyberpanel_upgrade_debug.log
-      virtualenv_output=$(virtualenv -p "$PYTHON_PATH" /usr/local/CyberCP 2>&1)
+      virtualenv_output=$(virtualenv -p "$PYTHON_PATH" --system-site-packages /usr/local/CyberCP 2>&1)
     else
-      virtualenv_output=$(virtualenv -p /usr/bin/python3 /usr/local/CyberCP 2>&1)
+      virtualenv_output=$(virtualenv -p /usr/bin/python3 --system-site-packages /usr/local/CyberCP 2>&1)
     fi
     VENV_CODE=$?
     echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
