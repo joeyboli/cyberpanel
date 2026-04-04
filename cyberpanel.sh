@@ -2040,7 +2040,55 @@ EOFSCRIPT
             --domainName "$HostName" --email root@localhost --php 7.4
         cyberpanel hostNameSSL --domainName "$HostName"
     }
+
+# =====================================================================
+# CRITICAL FIXES APPLIED DIRECTLY INTO MAIN_UPGRADE
+# =====================================================================
+
+# 5. Fix Systemd Service (Prevents SSH Kill)
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Applying systemd KillMode fix for lscpd..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+cat <<EOF > /etc/systemd/system/lscpd.service
+[Unit]
+Description=LSCPD Daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/lscp/bin/lscpdctrl start
+ExecStop=/usr/local/lscp/bin/lscpdctrl stop
+PIDFile=/usr/local/lscp/logs/lscpd.pid
+Restart=always
+KillMode=control-group
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+
+# 6. Fix Environment file (Prevents Django Error 500)
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Ensuring .env file is populated..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+DB_PASS=$(cat /etc/cyberpanel/cyberpaneldb 2>/dev/null || cat /etc/cyberpanel/mysqlPassword)
+MYSQL_PASS=$(cat /etc/cyberpanel/mysqlPassword)
+cat <<EOF > /usr/local/CyberCP/.env
+DB_PASSWORD=${DB_PASS}
+ROOT_DB_PASSWORD=${MYSQL_PASS}
+DB_HOST=127.0.0.1
+ROOT_DB_HOST=127.0.0.1
+SECRET_KEY=$(openssl rand -base64 32)
+ALLOWED_HOSTS=*
+EOF
+chmod 600 /usr/local/CyberCP/.env
+
+# 7. Force Binary Integrity (Crucial for Ubuntu 24/22)
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Restoring correct lscpd binary..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+if [[ -f /usr/local/CyberCP/lscpd.0.4.0 ]]; then
+    cp -f /usr/local/CyberCP/lscpd.0.4.0 /usr/local/lscp/bin/lscpd
+    chmod 755 /usr/local/lscp/bin/lscpd
+    chown root:root /usr/local/lscp/bin/lscpd
+fi
 }
+
 
 Post_Install_CN_Replacement() {
     sed -i 's|wp core download|wp core download https://cyberpanel.sh/wordpress.org/latest.tar.gz|g' \
