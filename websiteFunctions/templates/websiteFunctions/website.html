@@ -14,6 +14,7 @@
 /* ── Page-scoped overrides ── */
 .wp-page {
     font-family: 'Inter', system-ui, sans-serif;
+    background-color: transparent;
 }
 
 /* ── Section header ── */
@@ -32,10 +33,11 @@
 /* ── Cards ── */
 .card {
     background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 20px;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1rem; /* rounded-2xl */
+    padding: 2.5rem; /* p-10 */
     color: hsl(var(--card-foreground));
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 /* ── Resource stat cards ── */
@@ -44,17 +46,18 @@
 
 .stat-card {
     background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 20px;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1rem; /* rounded-2xl */
+    padding: 1.5rem; /* p-6 */
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: box-shadow 0.15s;
+    transition: box-shadow 0.15s, transform 0.15s;
 }
 
 .stat-card:hover {
-    box-shadow: 0 2px 12px hsl(var(--border) / 0.8);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
 }
 
 .stat-label {
@@ -68,7 +71,7 @@
 .stat-icon {
     width: 36px;
     height: 36px;
-    border-radius: calc(var(--radius) - 1px);
+    border-radius: 0.75rem; /* rounded-xl */
     background: hsl(var(--muted));
     border: 1px solid hsl(var(--border));
     display: flex;
@@ -92,17 +95,17 @@
 }
 
 .stat-progress {
-    height: 4px;
-    background: hsl(var(--border));
-    border-radius: 4px;
+    height: 0.5rem; /* h-2 */
+    background: hsl(var(--secondary) / 0.4);
+    border-radius: 9999px; /* rounded-full */
     overflow: hidden;
     margin-top: 4px;
 }
 
 .stat-progress-bar {
     height: 100%;
-    background: hsl(var(--foreground));
-    border-radius: 4px;
+    background: hsl(var(--primary));
+    border-radius: 9999px; /* rounded-full */
     transition: width 0.5s ease;
 }
 
@@ -127,12 +130,12 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 16px;
-    border-radius: calc(var(--radius) - 1px);
-    font-size: 13px;
-    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 0.75rem; /* rounded-xl */
+    font-size: 14px;
+    font-weight: 600;
     border: 1px solid hsl(var(--border));
-    background: hsl(var(--background));
+    background: hsl(var(--secondary) / 0.2);
     color: hsl(var(--foreground));
     cursor: pointer;
     text-decoration: none;
@@ -154,13 +157,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 14px;
-    border-radius: calc(var(--radius) - 1px);
-    border: 1px solid hsl(var(--border));
-    background: hsl(var(--background));
+    padding: 14px 18px;
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid hsl(var(--border) / 0.4);
+    background: hsl(var(--secondary) / 0.2);
     color: hsl(var(--foreground));
-    font-size: 13.5px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     transition: background 0.12s, border-color 0.12s;
@@ -179,8 +182,8 @@
 
 /* ── Expandable form panels ── */
 .expand-panel {
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1rem; /* rounded-2xl */
     overflow: hidden;
     margin-top: 16px;
 }
@@ -192,19 +195,17 @@
 }
 
 .form-label {
-    font-size: 12.5px;
+    font-size: 14px;
     font-weight: 600;
-    color: hsl(var(--muted-foreground));
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: hsl(var(--foreground));
 }
 
 .form-input {
-    padding: 8px 12px;
-    background: hsl(var(--background));
+    padding: 12px 16px;
+    background: hsl(var(--secondary) / 0.2);
     border: 1px solid hsl(var(--border));
-    border-radius: calc(var(--radius) - 1px);
-    font-size: 13.5px;
+    border-radius: 0.75rem; /* rounded-xl */
+    font-size: 15px;
     color: hsl(var(--foreground));
     width: 100%;
     transition: border-color 0.12s, box-shadow 0.12s;
@@ -237,10 +238,10 @@ textarea.form-input {
 
 /* ── Inline alert ── */
 .inline-alert {
-    padding: 10px 14px;
-    border-radius: calc(var(--radius) - 1px);
-    font-size: 13px;
-    font-weight: 500;
+    padding: 12px 16px;
+    border-radius: 0.75rem; /* rounded-xl */
+    font-size: 14px;
+    font-weight: 600;
     display: none;
 }
 
@@ -251,12 +252,12 @@ textarea.form-input {
 /* ── App installer cards ── */
 .app-card {
     background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 20px;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1rem; /* rounded-2xl */
+    padding: 1.5rem; /* p-6 */
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     text-decoration: none;
     color: hsl(var(--foreground));
     transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
@@ -264,19 +265,19 @@ textarea.form-input {
 }
 
 .app-card:hover {
-    border-color: hsl(var(--ring) / 0.4) !important;
-    box-shadow: 0 4px 20px hsl(var(--border)) !important;
-    transform: translateY(-2px) !important;
+    border-color: hsl(var(--primary) / 0.3) !important;
+    box-shadow: 0 4px 20px hsl(var(--border) / 0.3) !important;
+    transform: translateY(-4px) !important;
     text-decoration: none !important;
     color: hsl(var(--foreground)) !important;
 }
 
 .app-icon-box {
-    width: 44px;
-    height: 44px;
-    border-radius: calc(var(--radius) - 1px);
-    background: hsl(var(--muted));
-    border: 1px solid hsl(var(--border));
+    width: 56px;
+    height: 56px;
+    border-radius: 0.75rem; /* rounded-xl */
+    background: hsl(var(--primary) / 0.1);
+    border: 1px solid hsl(var(--primary) / 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -285,15 +286,15 @@ textarea.form-input {
 .app-icon-box img { width: 28px; height: 28px; object-fit: contain; }
 
 .app-name {
-    font-size: 14.5px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     color: hsl(var(--foreground));
 }
 
 .app-desc {
-    font-size: 12.5px;
+    font-size: 13px;
     color: hsl(var(--muted-foreground));
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .app-tags { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -360,18 +361,19 @@ textarea.form-input {
 
 /* ── Resource limit colored cards ── */
 .limit-card {
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem; /* rounded-xl */
+    padding: 1.25rem; /* p-5 */
+    border: 1px solid hsl(var(--border) / 0.5);
     display: flex;
     align-items: center;
     gap: 14px;
+    background: hsl(var(--secondary) / 0.1);
 }
 
 .limit-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: calc(var(--radius) - 1px);
+    width: 44px;
+    height: 44px;
+    border-radius: 0.75rem; /* rounded-xl */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -388,12 +390,12 @@ canvas { display: block; }
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 14px 16px;
-    background: hsl(43 96% 56% / 0.12);
-    border: 1px solid hsl(43 96% 56% / 0.35);
-    border-radius: var(--radius);
+    padding: 1.5rem; /* p-6 */
+    background: hsl(43 96% 56% / 0.1);
+    border: 1px solid hsl(43 96% 56% / 0.2);
+    border-radius: 1rem; /* rounded-2xl */
     color: hsl(35 92% 28%);
-    font-size: 13.5px;
+    font-size: 14px;
     margin-bottom: 24px;
 }
 
@@ -418,21 +420,22 @@ canvas { display: block; }
 .btn-primary {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 9px 18px;
-    background: hsl(var(--foreground));
-    color: hsl(var(--background));
-    border: 1px solid hsl(var(--foreground));
-    border-radius: calc(var(--radius) - 1px);
-    font-size: 13.5px;
-    font-weight: 600;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border: 1px solid hsl(var(--primary));
+    border-radius: 0.75rem; /* rounded-xl */
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
-    transition: opacity 0.12s;
+    transition: opacity 0.12s, transform 0.12s;
     text-decoration: none;
     font-family: inherit;
 }
 
-.btn-primary:hover { opacity: 0.85 !important; text-decoration: none !important; color: hsl(var(--background)) !important; }
+.btn-primary:hover { opacity: 0.9 !important; transform: scale(1.02); text-decoration: none !important; color: hsl(var(--primary-foreground)) !important; }
 .btn-primary svg { width: 15px; height: 15px; }
 
 /* Collapse toggle for inline forms */
@@ -441,16 +444,16 @@ canvas { display: block; }
 
 /* Progress install bar */
 .progress-track {
-    height: 6px;
-    background: hsl(var(--border));
-    border-radius: 6px;
+    height: 0.75rem; /* h-3 */
+    background: hsl(var(--secondary) / 0.4);
+    border-radius: 9999px; /* rounded-full */
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: hsl(var(--foreground));
-    border-radius: 6px;
+    background: hsl(var(--primary));
+    border-radius: 9999px; /* rounded-full */
     transition: width 0.3s ease;
     width: 0%;
 }
@@ -474,23 +477,25 @@ canvas { display: block; }
 <div class="wp-page" ng-controller="websitePages">
 
     <!-- ── Page Header ── -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:44px;height:44px;background:hsl(var(--muted));border:1px solid hsl(var(--border));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;">
-                <i data-lucide="globe" style="width:20px;height:20px;color:hsl(var(--muted-foreground));"></i>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
+                <i data-lucide="globe" class="h-8 w-8"></i>
             </div>
             <div>
-                <h1 id="domainNamePage" style="font-size:20px;font-weight:700;color:hsl(var(--foreground));line-height:1.2;">{{ domain }}</h1>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                <h1 id="domainNamePage" class="text-4xl font-extrabold tracking-tight text-foreground">
+                    {{ domain }}
+                </h1>
+                <div class="flex items-center gap-4 mt-2">
                     <span class="pill pill-green">
-                        <span style="width:6px;height:6px;border-radius:50%;background:hsl(142 76% 36%);"></span>
+                        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                         {% trans "Active" %}
                     </span>
-                    <span style="font-size:12.5px;color:hsl(var(--muted-foreground));">{% trans "Website Management" %}</span>
+                    <span class="text-lg font-medium text-muted-foreground">{% trans "Website Management" %}</span>
                 </div>
             </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div class="flex items-center gap-4">
             <a target="_blank" rel="noopener" href="{$ previewUrl $}" class="action-btn">
                 <i data-lucide="external-link"></i>
                 {% trans "Preview" %}
@@ -515,8 +520,7 @@ canvas { display: block; }
     </div>
     {% endif %}
 
-    <!-- ── Quick Actions ── -->
-    <div class="grid-5" style="margin-bottom:28px;">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <button type="button" class="action-btn" data-toggle="modal" data-target="#web-terminal-modal">
             <i data-lucide="terminal"></i>{% trans "Terminal" %}
         </button>
@@ -534,11 +538,11 @@ canvas { display: block; }
         </a>
     </div>
 
-    <!-- ── Resource Cards ── -->
-    <div style="margin-bottom:10px;" class="section-header">
-        <i data-lucide="bar-chart-2" style="width:14px;height:14px;"></i> {% trans "Resources" %}
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Resources" %}</span>
     </div>
-    <div class="grid-4" style="margin-bottom:28px;">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <!-- Disk -->
         <div class="stat-card">
             <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -547,7 +551,7 @@ canvas { display: block; }
             </div>
             <div class="stat-value">{{ diskInMB }} <span style="font-size:14px;font-weight:500;color:hsl(var(--muted-foreground));">MB</span></div>
             <div class="stat-sub">{% trans "of" %} {{ diskInMBTotal }} MB</div>
-            <div class="stat-progress"><div class="stat-progress-bar" style="width: {{ diskUsage|default:0 }}%;"></div></div>
+            <div class="stat-progress"><div class="stat-progress-bar" ng-style="{ 'width': (diskUsage || 0) + '%' }"></div></div>
         </div>
         <!-- Bandwidth -->
         <div class="stat-card">
@@ -557,7 +561,7 @@ canvas { display: block; }
             </div>
             <div class="stat-value">{{ bwInMB }} <span style="font-size:14px;font-weight:500;color:hsl(var(--muted-foreground));">MB</span></div>
             <div class="stat-sub">{% trans "of" %} {{ bwInMBTotal }} MB</div>
-            <div class="stat-progress"><div class="stat-progress-bar" style="width: {{ bwUsage|default:0 }}%;"></div></div>
+            <div class="stat-progress"><div class="stat-progress-bar" ng-style="{ 'width': (bwUsage || 0) + '%' }"></div></div>
         </div>
         <!-- Databases -->
         <div class="stat-card">
@@ -601,32 +605,27 @@ canvas { display: block; }
         <div style="flex:1;min-width:0;">
             <div class="stat-label" style="margin-bottom:4px;">{% trans "SSL Certificate" %} — {{ authority }}</div>
             <div style="font-size:15px;font-weight:600;color:hsl(var(--foreground));">
-                {% with d=days|add:"0" %}
-                {% if d >= 30 %}{% trans "Valid" %}{% elif d >= 7 %}{% trans "Expiring Soon" %}{% else %}{% trans "Critical" %}{% endif %}
+                {% if days >= 30 %}{% trans "Valid" %}{% elif days >= 7 %}{% trans "Expiring Soon" %}{% else %}{% trans "Critical" %}{% endif %}
                 &nbsp;·&nbsp; <span style="font-weight:400;color:hsl(var(--muted-foreground));">{{ days }} {% trans "days remaining" %}</span>
-                {% endwith %}
             </div>
         </div>
-        {% with d=days|add:"0" %}
-        {% if d >= 30 %}
+        {% if days >= 30 %}
         <span class="pill pill-green"><i data-lucide="lock" style="width:11px;height:11px;"></i> {% trans "Secure" %}</span>
-        {% elif d >= 7 %}
+        {% elif days >= 7 %}
         <span class="pill pill-yellow"><i data-lucide="clock" style="width:11px;height:11px;"></i> {% trans "Expiring Soon" %}</span>
         {% else %}
         <span class="pill pill-red"><i data-lucide="alert-circle" style="width:11px;height:11px;"></i> {% trans "Critical" %}</span>
         {% endif %}
-        {% endwith %}
         {% endif %}
     </div>
     {% endif %}
 
-    <!-- ── Resource Limits ── -->
-    {% if resource_limits %}
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Resource Limits" %}</span>
+    </div>
     <div class="card" style="margin-bottom:28px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="sliders-horizontal" style="width:14px;height:14px;"></i> {% trans "Resource Limits" %}
-        </div>
-        <div class="grid-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {% if resource_limits.cpu %}
             <div class="limit-card">
                 <div class="limit-icon" style="background:hsl(240 100% 60% / 0.1);border-color:hsl(240 100% 60% / 0.2);color:hsl(240 100% 60%);">
@@ -677,13 +676,12 @@ canvas { display: block; }
             {% trans "Limits are enforced at the system level using OpenLiteSpeed cgroups." %}
         </div>
     </div>
-    {% endif %}
 
-    <!-- ── Real-time Charts ── -->
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Real-time Resource Usage" %}</span>
+    </div>
     <div class="card" style="margin-bottom:28px;">
-        <div class="section-header" style="margin-bottom:20px;">
-            <i data-lucide="trending-up" style="width:14px;height:14px;"></i> {% trans "Real-time Resource Usage" %}
-        </div>
 
         <div class="inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full md:w-auto mb-6 flex-wrap md:flex-nowrap gap-1 h-auto border border-border/40">
             <button class="activity-tab inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" onclick="switchTab('cpu-usage-tab', this)" data-state="active">
@@ -701,30 +699,29 @@ canvas { display: block; }
         </div>
 
         <div id="cpu-usage-tab" class="tab-content active">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: var(--radius); padding: 10px;">
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
                 <div id="cpuChart"></div>
             </div>
         </div>
         <div id="memory-usage-tab" class="tab-content hidden">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: var(--radius); padding: 10px;">
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
                 <div id="memoryChart"></div>
             </div>
         </div>
         <div id="disk-usage-tab" class="tab-content hidden">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: var(--radius); padding: 10px;">
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
                 <div id="diskChart"></div>
             </div>
         </div>
     </div>
 
-    <!-- ── Logs ── -->
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Logs" %}</span>
+        <img ng-hide="logFileLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
+    </div>
     <div class="card" style="margin-bottom:20px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="file-text" style="width:14px;height:14px;"></i>
-            {% trans "Logs" %}
-            <img ng-hide="logFileLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
-        </div>
-        <div class="grid-2" style="margin-bottom:16px;">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="grid-link" ng-click="fetchLogs(1)" title="{% trans 'Load Access Logs' %}">
                 <i data-lucide="scroll-text"></i>{% trans "Access Logs" %}
             </div>
@@ -749,7 +746,7 @@ canvas { display: block; }
                         <i data-lucide="x" style="width:15px;height:15px;"></i>
                     </a>
                 </div>
-                <div style="overflow-x:auto;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 1px);">
+                <div style="overflow-x:auto;border:1px solid hsl(var(--border) / 0.5);border-radius:1rem;">
                     <table class="data-table">
                         <thead><tr><th>{% trans "Type" %}</th><th>{% trans "IP Address" %}</th><th>{% trans "Time" %}</th><th>{% trans "Resource" %}</th><th>{% trans "Size" %}</th></tr></thead>
                         <tbody>
@@ -779,24 +776,22 @@ canvas { display: block; }
         </div>
     </div>
 
-    <!-- ── Domains ── -->
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Domains" %}</span>
+        <img ng-hide="domainLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
+    </div>
     <div class="card" style="margin-bottom:20px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="layers" style="width:14px;height:14px;"></i>
-            {% trans "Domains" %}
-            <img ng-hide="domainLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
-        </div>
-        <div class="grid-auto" style="margin-bottom:12px;">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <a href="{% url 'CreateNewDomain' %}" class="grid-link"><i data-lucide="plus-circle"></i>{% trans "Add Domain" %}</a>
             <a href="#" ng-click="showListDomains(); $event.preventDefault()" class="grid-link"><i data-lucide="list"></i>{% trans "List Domains" %}</a>
             <a href="{$ domainAliasURL $}" class="grid-link"><i data-lucide="link"></i>{% trans "Domain Alias" %}</a>
             <a href="{% url 'listCron' %}?domain={{ domain }}" class="grid-link"><i data-lucide="clock"></i>{% trans "Cron Jobs" %}</a>
         </div>
 
-        <!-- Create Domain Form -->
         <div id="domainCreationForm" ng-hide="installationDetailsForm === false">
             <div class="divider" style="margin-bottom:16px;"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" class="form-domain-grid">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="form-row">
                     <label class="form-label">{% trans "Domain Name" %}</label>
                     <input name="dom" type="text" class="form-input" ng-model="domainNameCreate" required>
@@ -809,10 +804,10 @@ canvas { display: block; }
                     <label class="form-label">{% trans "PHP Version" %}</label>
                     <select ng-model="phpSelection" class="form-input">{% for php in phps %}<option>{{ php }}</option>{% endfor %}</select>
                 </div>
-                <div class="form-row" style="justify-content:flex-end;padding-top:22px;gap:10px;flex-direction:row;align-items:center;">
-                    <label class="check-label"><input ng-model="sslCheck" type="checkbox"> SSL</label>
-                    <label class="check-label"><input ng-model="dkimCheck" type="checkbox"> DKIM</label>
-                    <label class="check-label"><input ng-model="openBasedir" type="checkbox"> open_basedir</label>
+                <div class="form-row" style="justify-content:flex-end;padding-top:22px;gap:16px;flex-direction:row;align-items:center;">
+                    <label class="check-label"><input ng-model="sslCheck" type="checkbox" class="h-5 w-5 rounded border-border text-primary"> SSL</label>
+                    <label class="check-label"><input ng-model="dkimCheck" type="checkbox" class="h-5 w-5 rounded border-border text-primary"> DKIM</label>
+                    <label class="check-label"><input ng-model="openBasedir" type="checkbox" class="h-5 w-5 rounded border-border text-primary"> open_basedir</label>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
@@ -843,7 +838,7 @@ canvas { display: block; }
             <div ng-hide="phpChanged" class="inline-alert success" style="display:block;margin-bottom:10px;">{% trans "PHP changed to:" %} {$ changedPHPVersion $}</div>
             <div ng-hide="domainDeleted" class="inline-alert success" style="display:block;margin-bottom:10px;">{% trans "Deleted:" %} {$ deletedDomain $}</div>
             <div ng-hide="domainError" class="inline-alert danger" style="display:block;margin-bottom:10px;">{$ errorMessage $}</div>
-            <div style="overflow-x:auto;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 1px);">
+            <div style="overflow-x:auto;border:1px solid hsl(var(--border) / 0.5);border-radius:1rem;">
                 <table class="data-table">
                     <thead><tr><th>{% trans "Domain" %}</th><th>{% trans "Open" %}</th><th>{% trans "Path" %}</th><th>open_basedir</th><th>PHP</th><th>SSL</th><th>{% trans "Delete" %}</th></tr></thead>
                     <tbody>
@@ -862,14 +857,13 @@ canvas { display: block; }
         </div>
     </div>
 
-    <!-- ── Configurations ── -->
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Configurations" %}</span>
+        <img ng-hide="configFileLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
+    </div>
     <div class="card" style="margin-bottom:20px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="settings" style="width:14px;height:14px;"></i>
-            {% trans "Configurations" %}
-            <img ng-hide="configFileLoading" src="/static/images/loading.gif" style="width:16px;height:16px;margin-left:6px;">
-        </div>
-        <div class="grid-auto" style="margin-bottom:12px;">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
             <a href="{% url 'ApacheManager' domain=domain %}" class="grid-link"><i data-lucide="file-code"></i>{% trans "Apache Manager" %}</a>
             <a href="#" ng-click="fetchConfigurations(); $event.preventDefault()" class="grid-link"><i data-lucide="file-edit"></i>{% trans "vHost Conf" %}</a>
             <a href="#" ng-click="fetchRewriteFules(); $event.preventDefault()" class="grid-link"><i data-lucide="pencil"></i>{% trans "Rewrite Rules" %}</a>
@@ -955,12 +949,12 @@ canvas { display: block; }
         </div>
     </div>
 
-    <!-- ── Files ── -->
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Files" %}</span>
+    </div>
     <div class="card" style="margin-bottom:20px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="folder" style="width:14px;height:14px;"></i> {% trans "Files" %}
-        </div>
-        <div class="grid-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{$ fileManagerURL $}" class="grid-link"><i data-lucide="folder-open"></i>{% trans "File Manager" %}</a>
             <a href="#" ng-click="openBaseDirView(); $event.preventDefault()" class="grid-link"><i data-lucide="shield"></i>{% trans "open_basedir" %}</a>
             {% if ftp %}
@@ -989,13 +983,12 @@ canvas { display: block; }
         </div>
     </div>
 
-    <!-- ── Email Marketing ── -->
-    {% if email %}{% if marketingStatus %}
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Email Marketing" %}</span>
+    </div>
     <div class="card" style="margin-bottom:20px;">
-        <div class="section-header" style="margin-bottom:16px;">
-            <i data-lucide="send" style="width:14px;height:14px;"></i> {% trans "Email Marketing" %}
-        </div>
-        <div class="grid-auto">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <a id="emailLists" href="#" class="grid-link"><i data-lucide="list-plus"></i>{% trans "Create Lists" %}</a>
             <a id="manageLists" href="#" class="grid-link"><i data-lucide="list-checks"></i>{% trans "Manage Lists" %}</a>
             <a id="manageSMTPHosts" href="#" class="grid-link"><i data-lucide="server"></i>{% trans "SMTP Hosts" %}</a>
@@ -1003,13 +996,12 @@ canvas { display: block; }
             <a id="sendEmailsPage" href="#" class="grid-link"><i data-lucide="send"></i>{% trans "Send Emails" %}</a>
         </div>
     </div>
-    {% endif %}{% endif %}
 
-    <!-- ── App Installer ── -->
-    <div style="margin-bottom:10px;" class="section-header">
-        <i data-lucide="package-plus" style="width:14px;height:14px;"></i> {% trans "Quick Install" %}
+    <div class="mb-4 flex items-center gap-3">
+        <div class="h-5 w-1 rounded-full bg-primary"></div>
+        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Quick Install" %}</span>
     </div>
-    <div class="grid-4" style="margin-bottom:28px;">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <!-- WordPress -->
         <a href="{$ wordPressInstallURL $}" class="app-card">
             <span class="app-badge">1-Click</span>
@@ -1085,7 +1077,7 @@ canvas { display: block; }
     <!-- ── Web Terminal Modal ── -->
     <div class="modal fade" id="web-terminal-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" style="max-width:860px;width:calc(100% - 40px);margin:40px auto;">
-            <div style="background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.15);">
+            <div style="background:hsl(var(--card));border:1px solid hsl(var(--border) / 0.5);border-radius:1.5rem;overflow:hidden;box-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1);">
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid hsl(var(--border));">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <i data-lucide="terminal" style="width:18px;height:18px;color:hsl(var(--muted-foreground));"></i>
