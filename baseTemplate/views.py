@@ -52,7 +52,7 @@ def versionManagement(request):
     currentVersion = VERSION
     currentBuild = str(BUILD)
 
-    u = "https://api.github.com/repos/usmannasir/cyberpanel/commits?sha=v%s.%s" % (latestVersion, latestBuild)
+    u = "https://api.github.com/repos/joeyboli/cyberpanel/commits?sha=v%s.%s" % (latestVersion, latestBuild)
     logging.writeToFile(u)
     r = requests.get(u)
     latestcomit = r.json()[0]['sha']
@@ -263,7 +263,7 @@ def versionManagment(request):
     currentVersion = VERSION
     currentBuild = str(BUILD)
 
-    u = "https://api.github.com/repos/usmannasir/cyberpanel/commits?sha=v%s.%s" % (latestVersion, latestBuild)
+    u = "https://api.github.com/repos/joeyboli/cyberpanel/commits?sha=v%s.%s" % (latestVersion, latestBuild)
     logging.CyberCPLogFileWriter.writeToFile(u)
     r = requests.get(u)
     latestcomit = r.json()[0]['sha']

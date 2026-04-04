@@ -16,7 +16,7 @@ a= res.json()['version']
 print(a)
 print(res)
 
-u = "https://api.github.com/repos/usmannasir/cyberpanel/commits?sha=v%s"%a
+u = "https://api.github.com/repos/joeyboli/cyberpanel/commits?sha=v%s"%a
 r= requests.get(u)
 
 print(r.text)
