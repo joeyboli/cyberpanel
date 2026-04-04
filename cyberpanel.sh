@@ -85,7 +85,7 @@ log_info "Debug log file: $DEBUG_LOG_FILE"
 # All git operations point to joeyboli/cyberpanel on the stable branch.
 # ─────────────────────────────────────────────────────────────────────────────
 FORK_USER="joeyboli"
-FORK_BRANCH="2.4.5"
+FORK_BRANCH="v2.4.5"
 FORK_CLONE_URL="https://github.com/${FORK_USER}/cyberpanel.git"
 FORK_CONTENT_URL="https://raw.githubusercontent.com/${FORK_USER}/cyberpanel"
 

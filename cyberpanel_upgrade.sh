@@ -15,7 +15,7 @@ Sudo_Test=$(set)
 #for SUDO check
 
 FORK_USER="joeyboli"
-FORK_BRANCH="2.4.5"
+FORK_BRANCH="v2.4.5"
 
 Set_Default_Variables() {
 
@@ -76,6 +76,9 @@ else
 fi
 
 Branch_Name="v${Panel_Version}.${Panel_Build}"
+if [[ "$Branch_Name" == "v2.4.5" ]]; then
+    Branch_Name="v2.4.5" # Just ensuring it's exactly what it should be
+fi
 Base_Number="1.9.3"
 
 Git_User=""
