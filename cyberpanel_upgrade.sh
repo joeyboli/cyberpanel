@@ -878,7 +878,7 @@ Pre_Upgrade_Branch_Input() {
 
 Main_Upgrade() {
 echo -e "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting Main_Upgrade function..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Running: /usr/local/CyberPanel/bin/python upgrade.py $Branch_Name" | tee -a /var/log/cyberpanel_upgrade_debug.log
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Running: /usr/local/CyberPanel/bin/python upgrade.py" | tee -a /var/log/cyberpanel_upgrade_debug.log
 
 # Run upgrade.py and capture output
 upgrade_output=$(/usr/local/CyberPanel/bin/python upgrade.py "$Branch_Name" 2>&1)
