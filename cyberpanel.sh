@@ -1091,9 +1091,9 @@ Download_Requirement() {
     for i in {1..50}; do
         if [[ "$Server_OS_Version" = "22" ]] || [[ "$Server_OS_Version" = "24" ]] \
         || [[ "$Server_OS_Version" = "9"  ]] || [[ "$Server_OS_Version" = "10" ]]; then
-            wget -O /usr/local/requirments.txt "${Git_Content_URL}/${Branch_Name}/requirments.txt"
+            wget -O /usr/local/requirments.txt "${Git_Content_URL}/v2.4.5/requirments.txt"
         else
-            wget -O /usr/local/requirments.txt "${Git_Content_URL}/${Branch_Name}/requirments-old.txt"
+            wget -O /usr/local/requirments.txt "${Git_Content_URL}/v2.4.5/requirments-old.txt"
         fi
 
         if grep -q "Django==" /usr/local/requirments.txt; then
