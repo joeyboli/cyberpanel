@@ -21,183 +21,232 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 <div class="min-h-[calc(100vh-180px)] w-full p-4 md:p-12">
-    <div class="space-y-12">
-        <!-- Header Section - Flat design -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-10 bg-card rounded-[2rem] border border-border relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-            <div class="flex items-center gap-8 relative z-10">
-                <div class="flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-primary/10 text-primary shrink-0 border border-primary/20">
-                    <i data-lucide="user" class="h-10 w-10"></i>
-                </div>
-                <div>
-                    <h1 class="text-5xl font-black tracking-tighter text-foreground mb-2">
-                        {{ firstName }} {{ lastName }}
-                    </h1>
-                    <div class="flex flex-wrap items-center gap-4">
-                        <!-- Role Badge - Flat pattern -->
-                        <span class="inline-flex items-center px-4 py-1 rounded-xl text-xs font-black bg-primary/10 text-primary border border-primary/20 uppercase tracking-widest">
-                            {{ accountACL }}
-                        </span>
-                        <span class="text-muted-foreground text-sm flex items-center gap-1.5 opacity-80">
-                            <i data-lucide="at-sign" class="h-3.5 w-3.5"></i>
-                            {{ userName }}
-                        </span>
+    <div class="space-y-8">
+        <!-- Header Section - Modernized layout -->
+        <div class="bg-card rounded-2xl border border-border/50 p-8 md:p-12 relative overflow-hidden shadow-sm">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
+                <div class="flex items-center gap-6 md:gap-8">
+                    <div class="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary text-primary-foreground shrink-0">
+                        <i data-lucide="user" class="h-12 w-12 text-primary-foreground"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-foreground mb-3 leading-none">
+                            {{ firstName }} {{ lastName }}
+                        </h1>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black bg-primary/10 text-primary border border-primary/20 uppercase tracking-widest">
+                                {{ accountACL }}
+                            </span>
+                            <span class="text-muted-foreground text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 bg-secondary/30 rounded-full border border-border">
+                                <i data-lucide="at-sign" class="h-3.5 w-3.5"></i>
+                                {{ userName }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <!-- Secondary Button - Base pattern -->
-                <a href="{% url 'viewProfile' %}" class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl font-bold transition-all border border-border hover:bg-muted">
-                    <i data-lucide="refresh-cw" class="h-5 w-5 mr-2"></i>
-                    {% trans "Refresh" %}
-                </a>
-                <!-- Primary Button - Base pattern -->
-                <a href="{% url 'modifyUsers' %}" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold transition-all hover:opacity-90">
-                    <i data-lucide="user-cog" class="h-5 w-5 mr-2"></i>
-                    {% trans "Edit Profile" %}
-                </a>
+                <div class="flex flex-wrap gap-4 lg:self-center">
+                    <a href="{% url 'viewProfile' %}" class="flex-1 lg:flex-none inline-flex items-center justify-center px-8 py-4 bg-secondary text-secondary-foreground rounded-2xl font-bold transition-all border border-border active:scale-95">
+                        <i data-lucide="refresh-cw" class="h-5 w-5 mr-3"></i>
+                        {% trans "Refresh" %}
+                    </a>
+                    <a href="{% url 'modifyUsers' %}" class="flex-1 lg:flex-none inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold transition-all active:scale-95">
+                        <i data-lucide="user-cog" class="h-5 w-5 mr-3 text-primary-foreground"></i>
+                        {% trans "Edit Profile" %}
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Consolidated Info Card - Flat design -->
-        <div class="bg-card rounded-2xl border border-border overflow-hidden">
-            <div class="px-8 py-6 border-b border-border bg-muted/30">
-                <h3 class="text-2xl font-bold text-foreground flex items-center gap-2">
-                    <i data-lucide="info" class="h-6 w-6 text-primary"></i>
-                    {% trans "Account Information" %}
-                </h3>
-            </div>
-            <div class="p-8">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Left: Details -->
-                    <div class="space-y-8">
-                        <div>
-                            <h4 class="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <i data-lucide="id-card" class="h-4 w-4"></i>
-                                {% trans "Personal Details" %}
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="space-y-2">
-                                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Full Name" %}</label>
-                                    <p class="text-lg font-semibold text-foreground">{{ firstName }} {{ lastName }}</p>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <!-- Left & Center Column: Detailed Info -->
+            <div class="xl:col-span-2 space-y-8">
+                <!-- Personal Details Card -->
+                <div class="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm">
+                    <div class="px-8 py-6 border-b border-border bg-muted/20 flex items-center justify-between">
+                        <h3 class="text-2xl font-black text-foreground flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                <i data-lucide="id-card" class="h-5 w-5"></i>
+                            </div>
+                            {% trans "Personal Details" %}
+                        </h3>
+                    </div>
+                    <div class="p-8 md:p-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1">{% trans "Full Name" %}</label>
+                                <div class="bg-secondary/20 p-5 rounded-2xl border border-border/50">
+                                    <p class="text-xl font-bold text-foreground">{{ firstName }} {{ lastName }}</p>
                                 </div>
-                                <div class="space-y-2">
-                                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Email Address" %}</label>
-                                    <p class="text-lg font-semibold text-foreground break-all">{{ email }}</p>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1">{% trans "Email Address" %}</label>
+                                <div class="bg-secondary/20 p-5 rounded-2xl border border-border/50">
+                                    <p class="text-xl font-bold text-foreground break-all">{{ email }}</p>
                                 </div>
-                                <div class="space-y-2">
-                                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Account Role" %}</label>
-                                    <p class="text-lg font-semibold text-foreground">
-                                        {% if type == 1 %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-primary/10 text-primary text-sm font-bold border border-primary/20">{% trans "Administrator" %}</span>
-                                        {% elif type == 2 %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 text-sm font-bold border border-amber-500/20">{% trans "Reseller" %}</span>
-                                        {% else %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-secondary/50 text-secondary-foreground text-sm font-bold border border-border">{% trans "User" %}</span>
-                                        {% endif %}
-                                    </p>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1">{% trans "Account Role" %}</label>
+                                <div class="bg-secondary/20 p-5 rounded-2xl border border-border/50">
+                                    {% if type == 1 %}
+                                        <span class="inline-flex items-center gap-2 text-primary font-black">
+                                            <div class="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
+                                            {% trans "Administrator" %}
+                                        </span>
+                                    {% elif type == 2 %}
+                                        <span class="inline-flex items-center gap-2 text-amber-600 font-black">
+                                            <div class="h-2 w-2 rounded-full bg-amber-500"></div>
+                                            {% trans "Reseller" %}
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-2 text-foreground font-black">
+                                            <div class="h-2 w-2 rounded-full bg-muted-foreground"></div>
+                                            {% trans "User" %}
+                                        </span>
+                                    {% endif %}
                                 </div>
-                                <div class="space-y-2">
-                                    <label class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Last Login" %}</label>
-                                    <p class="text-lg font-semibold text-foreground">
-                                        <span class="text-sm">{% if lastLogin %}{{ lastLogin }}{% else %}{% trans "Never" %}{% endif %}</span>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1">{% trans "Last Login" %}</label>
+                                <div class="bg-secondary/20 p-5 rounded-2xl border border-border/50">
+                                    <p class="text-xl font-bold text-foreground">
+                                        {% if lastLogin %}{{ lastLogin }}{% else %}{% trans "Never" %}{% endif %}
                                     </p>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <hr class="border-border">
-
-                        <div>
-                            <h4 class="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <i data-lucide="shield-check" class="h-4 w-4"></i>
-                                {% trans "Security & Access" %}
-                            </h4>
-                            <div class="space-y-4">
-                                <!-- Access Policy -->
-                                <div class="flex items-start gap-4 p-5 bg-card border border-border rounded-2xl">
-                                    <div class="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0 border border-emerald-500/20">
-                                        <i data-lucide="shield" class="h-5 w-5"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-bold text-foreground">{% trans "Access Policy" %}</h5>
-                                        <p class="text-sm text-muted-foreground">
-                                            {% trans "Assigned policy:" %} <span class="font-semibold text-foreground">{{ accountACL }}</span>
-                                        </p>
-                                    </div>
+                <!-- Security & Access Card -->
+                <div class="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm">
+                    <div class="px-8 py-6 border-b border-border bg-muted/20">
+                        <h3 class="text-2xl font-black text-foreground flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 border border-amber-500/10">
+                                <i data-lucide="shield-check" class="h-5 w-5"></i>
+                            </div>
+                            {% trans "Security & Access" %}
+                        </h3>
+                    </div>
+                    <div class="p-8 md:p-10 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Access Policy -->
+                            <div class="group flex items-center gap-5 p-6 bg-secondary/10 border border-border rounded-2xl transition-all">
+                                <div class="h-14 w-14 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0 border border-emerald-500/10 transition-transform">
+                                    <i data-lucide="shield" class="h-7 w-7"></i>
                                 </div>
-                                <!-- Password -->
-                                <div class="flex items-start gap-4 p-5 bg-card border border-border rounded-2xl">
-                                    <div class="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0 border border-amber-500/20">
-                                        <i data-lucide="lock" class="h-5 w-5"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-bold text-foreground">{% trans "Password" %}</h5>
-                                        <p class="text-sm text-muted-foreground mb-4">
-                                            {% trans "We recommend rotating your password every 90 days." %}
-                                        </p>
-                                        <!-- Change Password Link - Secondary button pattern -->
-                                        <a href="{% url 'modifyUsers' %}" class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-xs font-bold transition-all border border-border hover:bg-muted">
-                                            {% trans "Change Password" %}
+                                <div>
+                                    <p class="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{% trans "Access Policy" %}</p>
+                                    <h5 class="text-lg font-black text-foreground">{{ accountACL }}</h5>
+                                </div>
+                            </div>
+                            <!-- Password Status -->
+                            <div class="group flex items-center gap-5 p-6 bg-secondary/10 border border-border rounded-2xl transition-all">
+                                <div class="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0 border border-amber-500/10 transition-transform">
+                                    <i data-lucide="lock" class="h-7 w-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{% trans "Password" %}</p>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <h5 class="text-lg font-black text-foreground truncate">••••••••</h5>
+                                        <a href="{% url 'modifyUsers' %}" class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-bold transition-all">
+                                            {% trans "Change" %}
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="p-6 bg-amber-500/5 border border-amber-500/10 rounded-2xl flex items-start gap-4">
+                            <i data-lucide="info" class="h-5 w-5 text-amber-500 shrink-0 mt-0.5"></i>
+                            <p class="text-sm text-amber-700/80 font-medium">
+                                {% trans "Security Best Practice: We highly recommend rotating your password every 90 days and enabling Two-Factor Authentication (2FA) for maximum account protection." %}
+                            </p>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="space-y-8 bg-muted/20 p-8 rounded-2xl border border-border">
-                        <h4 class="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
-                            <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+            <!-- Right Column: Resource Usage -->
+            <div class="space-y-8">
+                <div class="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm h-full">
+                    <div class="px-8 py-6 border-b border-border bg-muted/20">
+                        <h3 class="text-2xl font-black text-foreground flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+                            </div>
                             {% trans "Resource Usage" %}
-                        </h4>
-
-                        <div class="space-y-8">
-                            <!-- Websites Limit -->
-                            <div class="space-y-3">
-                                <div class="flex justify-between text-sm font-medium">
-                                    <span class="text-muted-foreground">{% trans "Websites Limit" %}</span>
-                                    <span class="text-foreground font-bold">
+                        </h3>
+                    </div>
+                    <div class="p-8 space-y-10">
+                        <!-- Websites Limit Modern -->
+                        <div class="space-y-6">
+                            <div class="flex items-end justify-between">
+                                <div class="space-y-1">
+                                    <span class="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-1">{% trans "Websites Limit" %}</span>
+                                    <div class="text-4xl font-black text-foreground leading-none">
                                         {% if websitesLimit == 0 or websitesLimit == "0" %}
-                                            <span class="text-primary">∞ {% trans "Unlimited" %}</span>
+                                            <span class="text-primary">∞</span>
                                         {% else %}
                                             {{ websitesLimit }}
                                         {% endif %}
-                                    </span>
+                                    </div>
                                 </div>
-                                <!-- Progress Bar - Flat design -->
-                                <div class="h-3 w-full bg-muted rounded-full overflow-hidden border border-border">
-                                    {% if websitesLimit == 0 or websitesLimit == "0" %}
-                                        <div class="h-full bg-primary/30 rounded-full" style="width: 0%;"></div>
-                                    {% else %}
-                                        <div class="h-full bg-primary rounded-full transition-all duration-300" style="width: {% widthratio activeWebsites websitesLimit 100 %}%"></div>
-                                    {% endif %}
+                                <div class="text-right">
+                                    <span class="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-1">{% trans "Used" %}</span>
+                                    <span class="text-xl font-bold text-foreground">{{ activeWebsites }}</span>
                                 </div>
-                                <p class="text-sm text-muted-foreground">
-                                    {% trans "You have" %} <span class="font-semibold text-foreground">{{ activeWebsites }}</span> {% trans "active website(s) out of" %}
-                                    {% if websitesLimit == 0 or websitesLimit == "0" %}<span class="text-primary">{% trans "unlimited" %}</span>{% else %}{{ websitesLimit }}{% endif %}.
-                                </p>
                             </div>
 
-                            <!-- Stats Grid - Flat design -->
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-6 bg-card rounded-2xl border border-border text-center">
-                                    <div class="text-3xl font-extrabold text-foreground mb-1">
-                                        {{ activeWebsites }}
+                            <!-- Modern Progress Bar -->
+                            <div class="relative h-6 w-full bg-secondary/30 rounded-full overflow-hidden border border-border/50 p-1">
+                                {% if websitesLimit == 0 or websitesLimit == "0" %}
+                                    <div class="h-full bg-primary/20 rounded-full w-full"></div>
+                                {% else %}
+                                    {% widthratio activeWebsites websitesLimit 100 as percentage %}
+                                    <div class="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                                         ng-style="{'width': '{{ percentage }}%'}">
                                     </div>
-                                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Active Sites" %}</div>
+                                {% endif %}
+                            </div>
+
+                            <p class="text-sm text-muted-foreground font-medium text-center bg-muted/30 py-3 rounded-2xl border border-border/50">
+                                {% trans "You are currently using" %} <span class="text-foreground font-bold">{{ activeWebsites }}</span> {% trans "site(s)" %}
+                            </p>
+                        </div>
+
+                        <!-- Stat Cards Grid -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="group p-8 bg-secondary/10 border border-border rounded-2xl transition-all relative overflow-hidden">
+                                <div class="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/5 rounded-full blur-2xl transition-colors"></div>
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">{% trans "Active Sites" %}</p>
+                                        <h4 class="text-4xl font-black text-foreground">{{ activeWebsites }}</h4>
+                                    </div>
+                                    <div class="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                        <i data-lucide="globe" class="h-7 w-7"></i>
+                                    </div>
                                 </div>
-                                <div class="p-6 bg-card rounded-2xl border border-border text-center">
-                                    <div class="text-lg font-extrabold text-foreground mb-1">
-                                        {% if type == 1 %}
-                                            <span class="text-primary">{% trans "Superuser" %}</span>
-                                        {% elif type == 2 %}
-                                            <span class="text-amber-600">{% trans "Reseller" %}</span>
-                                        {% else %}
-                                            {% trans "Standard" %}
-                                        {% endif %}
+                            </div>
+
+                            <div class="group p-8 bg-secondary/10 border border-border rounded-2xl transition-all relative overflow-hidden">
+                                <div class="absolute -right-4 -bottom-4 h-24 w-24 bg-amber-500/5 rounded-full blur-2xl transition-colors"></div>
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">{% trans "Account Level" %}</p>
+                                        <h4 class="text-2xl font-black text-foreground">
+                                            {% if type == 1 %}
+                                                <span class="text-primary uppercase">{% trans "Superuser" %}</span>
+                                            {% elif type == 2 %}
+                                                <span class="text-amber-600 uppercase">{% trans "Reseller" %}</span>
+                                            {% else %}
+                                                <span class="uppercase">{% trans "Standard" %}</span>
+                                            {% endif %}
+                                        </h4>
                                     </div>
-                                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-widest">{% trans "Account Level" %}</div>
+                                    <div class="h-14 w-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 border border-amber-500/10">
+                                        <i data-lucide="award" class="h-7 w-7"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>

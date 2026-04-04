@@ -56,8 +56,7 @@
 }
 
 .stat-card:hover {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    transform: translateY(-2px);
+    /* Hover effects removed */
 }
 
 .stat-label {
@@ -145,8 +144,6 @@
 .action-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 .action-btn:hover {
-    background: hsl(var(--accent)) !important;
-    color: hsl(var(--accent-foreground)) !important;
     text-decoration: none !important;
 }
 
@@ -172,13 +169,10 @@
 .grid-link svg { width: 17px; height: 17px; color: hsl(var(--muted-foreground)); flex-shrink: 0; }
 
 .grid-link:hover {
-    background: hsl(var(--accent)) !important;
-    border-color: hsl(var(--ring) / 0.3) !important;
     text-decoration: none !important;
-    color: hsl(var(--foreground)) !important;
 }
 
-.grid-link:hover svg { color: hsl(var(--foreground)); }
+.grid-link:hover svg { /* Hover effect removed */ }
 
 /* ── Expandable form panels ── */
 .expand-panel {
@@ -265,9 +259,6 @@ textarea.form-input {
 }
 
 .app-card:hover {
-    border-color: hsl(var(--primary) / 0.3) !important;
-    box-shadow: 0 4px 20px hsl(var(--border) / 0.3) !important;
-    transform: translateY(-4px) !important;
     text-decoration: none !important;
     color: hsl(var(--foreground)) !important;
 }
@@ -336,7 +327,7 @@ textarea.form-input {
 
 .install-row svg { width: 14px; height: 14px; }
 
-.app-card:hover .install-row { color: hsl(var(--foreground)); }
+.app-card:hover .install-row { /* Hover effect removed */ }
 
 /* ── Logs table ── */
 .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -357,7 +348,7 @@ textarea.form-input {
     border-bottom: 1px solid hsl(var(--border) / 0.6);
 }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table tbody tr:hover { background: hsl(var(--accent) / 0.5); }
+.data-table tbody tr:hover { /* Hover effect removed */ }
 
 /* ── Resource limit colored cards ── */
 .limit-card {
@@ -435,7 +426,7 @@ canvas { display: block; }
     font-family: inherit;
 }
 
-.btn-primary:hover { opacity: 0.9 !important; transform: scale(1.02); text-decoration: none !important; color: hsl(var(--primary-foreground)) !important; }
+.btn-primary:hover { text-decoration: none !important; color: hsl(var(--primary-foreground)) !important; }
 .btn-primary svg { width: 15px; height: 15px; }
 
 /* Collapse toggle for inline forms */
