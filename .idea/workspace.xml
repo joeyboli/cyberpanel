@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5251c5c9-f2a1-41f2-bc76-10b517091df1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cyberpanel.sh" beforeDir="false" afterPath="$PROJECT_DIR$/cyberpanel.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/install.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preUpgrade.sh" beforeDir="false" afterPath="$PROJECT_DIR$/preUpgrade.sh" afterDir="false" />
-    </list>
+    <list default="true" id="5251c5c9-f2a1-41f2-bc76-10b517091df1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -161,7 +156,7 @@
       <workItem from="1775249571296" duration="5346000" />
       <workItem from="1775264925416" duration="3395000" />
       <workItem from="1775269824798" duration="2469000" />
-      <workItem from="1775274636425" duration="1448000" />
+      <workItem from="1775274636425" duration="1503000" />
     </task>
     <servers />
   </component>

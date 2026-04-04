@@ -254,14 +254,19 @@ Debug_Log2() {
 }
 
 Branch_Check() {
-    if [[ "$1" = *.*.* ]]; then
-        Output=$(awk -v num1="$Base_Number" -v num2="${1//[[:space:]]/}" \
+    local branch_input="${1//[[:space:]]/}"
+    if [[ "$branch_input" = *.*.* ]]; then
+        Output=$(awk -v num1="$Base_Number" -v num2="$branch_input" \
             'BEGIN { print "num1", (num1 < num2 ? "<" : ">="), "num2" }')
         if [[ $Output = *">="* ]]; then
             echo -e "\nVersion must be higher than 1.9.4"
             exit
         else
-            Branch_Name="v${1//[[:space:]]/}"
+            if [[ "$branch_input" == v* ]]; then
+                Branch_Name="$branch_input"
+            else
+                Branch_Name="v$branch_input"
+            fi
             echo -e "\nBranch set to $Branch_Name..."
         fi
     else

@@ -228,24 +228,29 @@ fi
 }
 
 Branch_Check() {
-if [[ "$1" = *.*.* ]]; then
-  #check input if it's valid format as X.Y.Z
-  Output=$(awk -v num1="$Base_Number" -v num2="${1//[[:space:]]/}" '
-  BEGIN {
-    print "num1", (num1 < num2 ? "<" : ">="), "num2"
-  }
-  ')
-  if [[ $Output = *">="* ]]; then
-    echo -e "\nYou must use version number higher than 1.9.4"
-    exit
+  local branch_input="${1//[[:space:]]/}"
+  if [[ "$branch_input" = *.*.* ]]; then
+    #check input if it's valid format as X.Y.Z
+    Output=$(awk -v num1="$Base_Number" -v num2="$branch_input" '
+    BEGIN {
+      print "num1", (num1 < num2 ? "<" : ">="), "num2"
+    }
+    ')
+    if [[ $Output = *">="* ]]; then
+      echo -e "\nYou must use version number higher than 1.9.4"
+      exit
+    else
+      if [[ "$branch_input" == v* ]]; then
+        Branch_Name="$branch_input"
+      else
+        Branch_Name="v$branch_input"
+      fi
+      echo -e "\nSet branch name to $Branch_Name...\n"
+    fi
   else
-    Branch_Name="v${1//[[:space:]]/}"
-    echo -e "\nSet branch name to $Branch_Name...\n"
+    echo -e "\nPlease input a valid format version number."
+    exit
   fi
-else
-  echo -e "\nPlease input a valid format version number."
-  exit
-fi
 }
 
 Check_Return() {
