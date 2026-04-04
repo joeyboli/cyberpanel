@@ -1,8 +1,13 @@
 #!/bin/sh
+# SAVE AS: /usr/local/preUpgrade.sh
 
-BRANCH_NAME=v$(curl -s https://cyberpanel.net/version.txt | sed -e 's|{"version":"||g' -e 's|","build":|.|g'| sed 's:}*$::')
+# Force Fork branch instead of querying cyberpanel.net
+BRANCH_NAME="v2.4.5"
+FORK_USER="joeyboli"
+
+echo "Bootstrapping Upgrade from Fork: ${FORK_USER} ${BRANCH_NAME}..."
 
 rm -f /usr/local/cyberpanel_upgrade.sh
-wget -O /usr/local/cyberpanel_upgrade.sh https://raw.githubusercontent.com/joeyboli/cyberpanel/$BRANCH_NAME/cyberpanel_upgrade.sh 2>/dev/null
+wget -O /usr/local/cyberpanel_upgrade.sh https://raw.githubusercontent.com/${FORK_USER}/cyberpanel/v2.4.5/cyberpanel_upgrade.sh
 chmod 700 /usr/local/cyberpanel_upgrade.sh
 /usr/local/cyberpanel_upgrade.sh
