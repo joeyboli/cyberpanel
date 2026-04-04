@@ -819,9 +819,9 @@ fi
 wget "${Git_Content_URL}/${Branch_Name}/plogical/upgrade.py"
 
 if [[ "$Server_Country" = "CN" ]] ; then
-  sed -i 's|git clone https://github.com/joeyboli/cyberpanel|echo git cloned|g' upgrade.py
+  sed -i 's|git clone -b .* --single-branch https://github.com/joeyboli/cyberpanel|echo git cloned|g' upgrade.py
 
-  Retry_Command "git clone ${Git_Clone_URL}"
+  Retry_Command "git clone -b ${Branch_Name} --single-branch ${Git_Clone_URL}"
     Check_Return "git clone ${Git_Clone_URL}"
 
   # shellcheck disable=SC2086
@@ -1233,6 +1233,33 @@ fi
 
 rm -f /usr/local/composer.sh
 rm -f /usr/local/requirments.txt
+
+
+# Fix DB credentials lost during upgrade
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Restoring database credentials post-upgrade..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+
+# Read existing cyberpanel DB password or generate new one
+if [[ -f /etc/cyberpanel/cyberpaneldb ]]; then
+    CYBERPANEL_DB_PASS=$(cat /etc/cyberpanel/cyberpaneldb)
+else
+    # Generate new password and set it in MySQL
+    CYBERPANEL_DB_PASS=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 16)
+    mysql -uroot -p"$MySQL_Password" -e \
+        "ALTER USER 'cyberpanel'@'localhost' IDENTIFIED BY '$CYBERPANEL_DB_PASS'; FLUSH PRIVILEGES;" 2>/dev/null
+    echo "$CYBERPANEL_DB_PASS" > /etc/cyberpanel/cyberpaneldb
+    chmod 600 /etc/cyberpanel/cyberpaneldb
+fi
+
+# Write .env file that settings.py now requires
+cat > /usr/local/CyberCP/.env << ENVEOF
+DB_PASSWORD=${CYBERPANEL_DB_PASS}
+ROOT_DB_PASSWORD=${MySQL_Password}
+DB_HOST=127.0.0.1
+ROOT_DB_HOST=127.0.0.1
+ENVEOF
+chmod 600 /usr/local/CyberCP/.env
+
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Database credentials restored." | tee -a /var/log/cyberpanel_upgrade_debug.log
 
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib64
