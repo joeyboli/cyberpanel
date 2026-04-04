@@ -85,7 +85,7 @@ log_info "Debug log file: $DEBUG_LOG_FILE"
 # All git operations point to joeyboli/cyberpanel on the stable branch.
 # ─────────────────────────────────────────────────────────────────────────────
 FORK_USER="joeyboli"
-FORK_BRANCH="stable"
+FORK_BRANCH="2.4.5"
 FORK_CLONE_URL="https://github.com/${FORK_USER}/cyberpanel.git"
 FORK_CONTENT_URL="https://raw.githubusercontent.com/${FORK_USER}/cyberpanel"
 
@@ -1245,15 +1245,10 @@ Pre_Install_Required_Components() {
     echo -e "\nCloning from ${Git_Clone_URL} (branch: ${Branch_Name})...\n"
     Debug_Log2 "Getting CyberPanel code..,4"
 
-    Retry_Command "git clone ${Git_Clone_URL}"
+    Retry_Command "git clone -b ${Branch_Name} --single-branch ${Git_Clone_URL}"
     Check_Return "git clone ${Git_Clone_URL}"
 
     echo -e "\nSource code downloaded ✓\n"
-
-    cd cyberpanel || exit
-    git checkout "$Branch_Name"
-    Check_Return "git checkout"
-    cd - || exit
 
     cp -r cyberpanel /usr/local/cyberpanel
     cd cyberpanel/install || exit

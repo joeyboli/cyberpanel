@@ -14,6 +14,9 @@
 Sudo_Test=$(set)
 #for SUDO check
 
+FORK_USER="joeyboli"
+FORK_BRANCH="2.4.5"
+
 Set_Default_Variables() {
 
 # Clear old log files
@@ -818,6 +821,11 @@ fi
 
 wget "${Git_Content_URL}/${Branch_Name}/plogical/upgrade.py"
 
+if [[ ! -f "upgrade.py" ]] || grep -q "404: Not Found" "upgrade.py" || [[ ! -s "upgrade.py" ]]; then
+    echo -e "\nFailed to download upgrade.py from branch ${Branch_Name}. Please check if the branch exists."
+    exit 1
+fi
+
 if [[ "$Server_Country" = "CN" ]] ; then
   sed -i 's|git clone -b .* --single-branch https://github.com/joeyboli/cyberpanel|echo git cloned|g' upgrade.py
 
@@ -896,9 +904,9 @@ else
   fi
 
   rm -rf /usr/local/CyberPanelTemp
-  
+
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Creating temporary virtual environment for fallback upgrade..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-  
+
   # Try python3 -m venv first (more reliable on Ubuntu 22.04)
   if python3 -m venv --system-site-packages /usr/local/CyberPanelTemp 2>/dev/null; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Temporary virtualenv created with python3 -m venv" | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -960,26 +968,26 @@ echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Checking CyberCP virtual environment sta
 # After removing directories, we always need to recreate
 if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Creating/recreating CyberCP virtual environment with Python 3..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-  
+
   # First ensure the directory exists
   mkdir -p /usr/local/CyberCP
-  
+
   # For Ubuntu 22.04+, we need to handle virtualenv differently
   VENV_SUCCESS=0
-  
+
   # First try using python3 -m venv (more reliable on Ubuntu 22.04)
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Attempting to create virtual environment using python3 -m venv..." | tee -a /var/log/cyberpanel_upgrade_debug.log
   virtualenv_output=$(python3 -m venv --system-site-packages /usr/local/CyberCP 2>&1)
   VENV_CODE=$?
   echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
-  
+
   if [[ $VENV_CODE -eq 0 ]] && [[ -f /usr/local/CyberCP/bin/activate ]]; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtual environment created successfully using python3 -m venv" | tee -a /var/log/cyberpanel_upgrade_debug.log
     VENV_SUCCESS=1
   else
     # If that fails, try virtualenv command
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] python3 -m venv failed, trying virtualenv command..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-    
+
     # On Ubuntu 22.04, we need to ensure proper virtualenv installation
     if [[ "$Server_OS" = "Ubuntu" ]] && [[ "$Server_OS_Version" = "22" ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Ubuntu 22.04 detected, ensuring virtualenv is properly installed..." | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -988,7 +996,7 @@ if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] AlmaLinux/Rocky Linux 9/10 detected, ensuring virtualenv is properly installed..." | tee -a /var/log/cyberpanel_upgrade_debug.log
       pip3 install --upgrade virtualenv 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
     fi
-    
+
     # Find the correct python3 path
     if [[ "$Server_OS" = "CentOS" ]] && ([[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]]); then
       PYTHON_PATH=$(which python3 2>/dev/null || which python3.9 2>/dev/null || echo "/usr/bin/python3")
@@ -999,30 +1007,30 @@ if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
     fi
     VENV_CODE=$?
     echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
-    
+
     # Check if TypeError occurred (common on Ubuntu 22.04)
     if echo "$virtualenv_output" | grep -q "TypeError"; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: TypeError detected, attempting workaround..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-      
+
       # Try alternative method using explicit system-site-packages
       virtualenv_output=$(virtualenv --python=/usr/bin/python3 --system-site-packages /usr/local/CyberCP 2>&1)
       VENV_CODE=$?
       echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
     fi
-    
+
     if [[ -f /usr/local/CyberCP/bin/activate ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtual environment created successfully" | tee -a /var/log/cyberpanel_upgrade_debug.log
       VENV_SUCCESS=1
       VENV_CODE=0
     fi
   fi
-  
+
   if [[ $VENV_SUCCESS -eq 0 ]]; then
     VENV_CODE=1
   fi
-  
+
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtualenv creation returned code: $VENV_CODE" | tee -a /var/log/cyberpanel_upgrade_debug.log
-  
+
   if [[ $VENV_CODE -ne 0 ]]; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] FATAL: Virtualenv creation failed with code $VENV_CODE" | tee -a /var/log/cyberpanel_upgrade_debug.log
     echo -e "Virtualenv creation failed. Please check the logs at /var/log/cyberpanel_upgrade_debug.log"
@@ -1072,10 +1080,10 @@ echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Verifying Django installation..." | tee 
 # Test if Django is installed
 if ! /usr/local/CyberCP/bin/python -c "import django" 2>/dev/null; then
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: Django not found, installing requirements again..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-  
+
   # Re-activate virtual environment
   source /usr/local/CyberCP/bin/activate
-  
+
   # Re-install requirements
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Re-installing Python requirements..." | tee -a /var/log/cyberpanel_upgrade_debug.log
   pip install --upgrade pip setuptools wheel packaging 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -1256,6 +1264,8 @@ DB_PASSWORD=${CYBERPANEL_DB_PASS}
 ROOT_DB_PASSWORD=${MySQL_Password}
 DB_HOST=127.0.0.1
 ROOT_DB_HOST=127.0.0.1
+SECRET_KEY=$(openssl rand -base64 32)
+ALLOWED_HOSTS=*
 ENVEOF
 chmod 600 /usr/local/CyberCP/.env
 
@@ -1274,7 +1284,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
 
     # Find the latest available PHP version and use it
     PHP_RESTORED=0
-    
+
     # Try to find the latest lsphp version (check from newest to oldest)
     for PHP_VER in 83 82 81 80 74 73 72; do
         if [[ -f /usr/local/lsws/lsphp${PHP_VER}/bin/lsphp ]]; then
@@ -1312,7 +1322,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
             fi
         done
     fi
-    
+
     # If no lsphp version found, try admin_php5 as fallback
     if [[ $PHP_RESTORED -eq 0 ]]; then
         if [[ -f /usr/local/lscp/admin/fcgi-bin/admin_php5 ]]; then
@@ -1334,7 +1344,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
             echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ERROR: Could not find any PHP binary to restore lsphp" | tee -a /var/log/cyberpanel_upgrade_debug.log
         fi
     fi
-    
+
     # Create symlinks if they don't exist
     if [[ -f /usr/local/lscp/fcgi-bin/lsphp ]]; then
         if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp4 ]]; then
@@ -1387,6 +1397,19 @@ else
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] lscpd binary exists and is valid" | tee -a /var/log/cyberpanel_upgrade_debug.log
 fi
 
+# Ensure explicitly lscpd.0.4.0 is set for Ubuntu 22/24 to prevent hangs on newer kernels
+if [[ "$Server_OS" = "Ubuntu" ]] && [[ -f /etc/lsb-release ]]; then
+    ubuntu_version=$(grep 'DISTRIB_RELEASE' /etc/lsb-release | cut -d'=' -f2 | cut -d'.' -f1)
+    if [[ "$ubuntu_version" = "22" ]] || [[ "$ubuntu_version" = "24" ]]; then
+        if [[ -f /usr/local/CyberCP/lscpd.0.4.0 ]]; then
+            cp -f /usr/local/CyberCP/lscpd.0.4.0 /usr/local/lscp/bin/lscpd
+            chmod 755 /usr/local/lscp/bin/lscpd
+            chown root:root /usr/local/lscp/bin/lscpd
+            echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Enforced lscpd.0.4.0 binary for Ubuntu 22/24" | tee -a /var/log/cyberpanel_upgrade_debug.log
+        fi
+    fi
+fi
+
 if [[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]] || [[ "$Server_OS_Version" = "18" ]] || [[ "$Server_OS_Version" = "8" ]] || [[ "$Server_OS_Version" = "20" ]] || [[ "$Server_OS_Version" = "24" ]]; then
     echo "PYTHONHOME=/usr" > /usr/local/lscp/conf/pythonenv.conf
   else
@@ -1428,11 +1451,32 @@ echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Added web server users to lscpd group an
   # Wait for lscpd to start before final verification
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Waiting for lscpd to fully start (10 seconds)..." | tee -a /var/log/cyberpanel_upgrade_debug.log
   sleep 10
-  
+
+  # OVERWRITE SERVICE FILE TO PREVENT SSH KILL
+  echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Applying systemd KillMode fix for lscpd..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+  cat <<EOF > /etc/systemd/system/lscpd.service
+[Unit]
+Description=LSCPD Daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/lscp/bin/lscpdctrl start
+ExecStop=/usr/local/lscp/bin/lscpdctrl stop
+PIDFile=/usr/local/lscp/logs/lscpd.pid
+Restart=always
+KillMode=control-group
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl daemon-reload
+
   systemctl stop lscpd
   pkill -9 lscpd
   systemctl start lscpd
-  
+
   # Wait for restart to complete
   sleep 5
 }
