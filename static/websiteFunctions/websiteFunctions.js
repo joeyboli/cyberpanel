@@ -1243,15 +1243,15 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         $scope.hideLogs = true;
     };
 
-    $scope.fileManagerURL = "/filemanager/" + $("#domainNamePage").text();
-    $scope.wordPressInstallURL = $("#domainNamePage").text() + "/wordpressInstall";
-    $scope.joomlaInstallURL = $("#domainNamePage").text() + "/joomlaInstall";
-    $scope.setupGit = $("#domainNamePage").text() + "/setupGit";
-    $scope.installPrestaURL = $("#domainNamePage").text() + "/installPrestaShop";
-    $scope.installMagentoURL = $("#domainNamePage").text() + "/installMagento";
-    $scope.installMauticURL = $("#domainNamePage").text() + "/installMautic";
-    $scope.domainAliasURL = "/websites/" + $("#domainNamePage").text() + "/domainAlias";
-    $scope.previewUrl = "/preview/" + $("#domainNamePage").text() + "/";
+    $scope.fileManagerURL = "/filemanager/" + $("#domainNamePage").text().trim();
+    $scope.wordPressInstallURL = $("#domainNamePage").text().trim() + "/wordpressInstall";
+    $scope.joomlaInstallURL = $("#domainNamePage").text().trim() + "/joomlaInstall";
+    $scope.setupGit = $("#domainNamePage").text().trim() + "/setupGit";
+    $scope.installPrestaURL = $("#domainNamePage").text().trim() + "/installPrestaShop";
+    $scope.installMagentoURL = $("#domainNamePage").text().trim() + "/installMagento";
+    $scope.installMauticURL = $("#domainNamePage").text().trim() + "/installMautic";
+    $scope.domainAliasURL = "/websites/" + $("#domainNamePage").text().trim() + "/domainAlias";
+    $scope.previewUrl = "/preview/" + $("#domainNamePage").text().trim() + "/";
 
     var logType = 0;
     $scope.pageNumber = 1;
@@ -1282,7 +1282,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/getDataFromLogFile";
 
-        var domainNamePage = $("#domainNamePage").text();
+        var domainNamePage = $("#domainNamePage").text().trim();
 
 
         var data = {
@@ -1378,7 +1378,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/fetchErrorLogs";
 
-        var domainNamePage = $("#domainNamePage").text();
+        var domainNamePage = $("#domainNamePage").text().trim();
 
 
         var data = {
@@ -1490,7 +1490,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/getDataFromConfigFile";
 
-        var virtualHost = $("#domainNamePage").text();
+        var virtualHost = $("#domainNamePage").text().trim();
 
 
         var data = {
@@ -1598,7 +1598,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/saveConfigsToFile";
 
-        var virtualHost = $("#domainNamePage").text();
+        var virtualHost = $("#domainNamePage").text().trim();
         var configData = $scope.configData;
 
 
@@ -1703,7 +1703,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/getRewriteRules";
 
-        var virtualHost = $("#domainNamePage").text();
+        var virtualHost = $("#domainNamePage").text().trim();
 
 
         var data = {
@@ -1827,7 +1827,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/saveRewriteRules";
 
-        var virtualHost = $("#domainNamePage").text();
+        var virtualHost = $("#domainNamePage").text().trim();
         var rewriteRules = $scope.rewriteRules;
 
 
@@ -1931,7 +1931,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         $scope.installationSuccessfull = true;
         $scope.couldNotConnect = true;
 
-        var domain = $("#domainNamePage").text();
+        var domain = $("#domainNamePage").text().trim();
         var path = $scope.installPath;
 
         url = "/websites/installWordpress";
@@ -2009,7 +2009,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         $scope.installationSuccessfull = true;
         $scope.couldNotConnect = true;
 
-        var domain = $("#domainNamePage").text();
+        var domain = $("#domainNamePage").text().trim();
         var path = $scope.installPath;
         var username = 'admin';
         var password = $scope.password;
@@ -2112,7 +2112,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
 
         url = "/websites/saveSSL";
 
-        var virtualHost = $("#domainNamePage").text();
+        var virtualHost = $("#domainNamePage").text().trim();
         var cert = $scope.cert;
         var key = $scope.key;
 
@@ -2197,7 +2197,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         var url = "/websites/changePHP";
 
         var data = {
-            childDomain: $("#domainNamePage").text(),
+            childDomain: $("#domainNamePage").text().trim(),
             phpSelection: $scope.phpSelectionMaster,
         };
 
@@ -2216,7 +2216,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
             if (response.data.changePHP === 1) {
 
                 $scope.configFileLoading = true;
-                $scope.websiteDomain = $("#domainNamePage").text();
+                $scope.websiteDomain = $("#domainNamePage").text().trim();
 
 
                 // notifcations
@@ -2268,7 +2268,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         $("#domainCreationForm").fadeOut();
     };
 
-    $scope.masterDomain = $("#domainNamePage").text();
+    $scope.masterDomain = $("#domainNamePage").text().trim();
 
     // notifcations settings
     $scope.domainLoading = true;
@@ -2514,7 +2514,7 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
         var url = "/websites/fetchDomains";
 
         var data = {
-            masterDomain: $("#domainNamePage").text(),
+            masterDomain: $("#domainNamePage").text().trim(),
         };
 
         var config = {
@@ -3792,7 +3792,7 @@ app.controller('launchChild', function ($scope, $http) {
 
         url = "/websites/getDataFromLogFile";
 
-        var domainNamePage = $("#domainNamePage").text();
+        var domainNamePage = $("#domainNamePage").text().trim();
 
 
         var data = {
@@ -3888,7 +3888,7 @@ app.controller('launchChild', function ($scope, $http) {
 
         url = "/websites/fetchErrorLogs";
 
-        var domainNamePage = $("#domainNamePage").text();
+        var domainNamePage = $("#domainNamePage").text().trim();
 
 
         var data = {
