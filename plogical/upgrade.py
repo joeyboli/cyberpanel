@@ -189,7 +189,7 @@ except ImportError:
                     
                     # Test if this password actually works
                     try:
-                        test_conn = mysql.connect(host='localhost', user='cyberpanel', 
+                        test_conn = mysql.connect(host='127.0.0.1', user='cyberpanel', 
                                                 passwd=cyberpanel_password, db='cyberpanel')
                         test_conn.close()
                         print("Verified cyberpanel database credentials are valid")
@@ -217,7 +217,7 @@ except ImportError:
             
             try:
                 # Connect as root and reset cyberpanel user
-                conn = mysql.connect(host='localhost', user='root', passwd=root_password)
+                conn = mysql.connect(host='127.0.0.1', user='root', passwd=root_password)
                 cursor = conn.cursor()
                 
                 # Check if cyberpanel database exists
@@ -227,9 +227,10 @@ except ImportError:
                     cursor.execute("CREATE DATABASE IF NOT EXISTS cyberpanel")
                 
                 # Reset cyberpanel user - drop and recreate to ensure clean state
+                cursor.execute("DROP USER IF EXISTS 'cyberpanel'@'127.0.0.1'")
                 cursor.execute("DROP USER IF EXISTS 'cyberpanel'@'localhost'")
-                cursor.execute("CREATE USER 'cyberpanel'@'localhost' IDENTIFIED BY '%s'" % cyberpanel_password)
-                cursor.execute("GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'localhost'")
+                cursor.execute("CREATE USER 'cyberpanel'@'127.0.0.1' IDENTIFIED BY '%s'" % cyberpanel_password)
+                cursor.execute("GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1'")
                 cursor.execute("FLUSH PRIVILEGES")
                 
                 conn.close()
@@ -259,7 +260,7 @@ except ImportError:
                 print("Manual intervention required. Please run:")
                 print("  mysql -u root -p")
                 print("  CREATE DATABASE IF NOT EXISTS cyberpanel;")
-                print("  GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'localhost' IDENTIFIED BY 'your_password';")
+                print("  GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1' IDENTIFIED BY 'your_password';")
                 print("  FLUSH PRIVILEGES;")
                 sys.exit(1)
         

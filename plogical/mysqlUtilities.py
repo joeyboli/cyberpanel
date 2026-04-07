@@ -98,7 +98,7 @@ class mysqlUtilities:
             db_port = os.getenv('ROOT_DB_PORT', os.getenv('DB_PORT', '3306'))
 
             if db_pass is not None:
-                env_host = db_host or 'localhost'
+                env_host = db_host or '127.0.0.1'
                 conn, cursor, err = _try_connect(
                     host=env_host,
                     user=db_user,
@@ -111,11 +111,11 @@ class mysqlUtilities:
 
                 if env_host not in ('localhost', '127.0.0.1'):
                     conn, cursor, _ = _try_connect(
-                        host='localhost',
+                        host='127.0.0.1',
                         user=db_user,
                         passwd=db_pass,
                         port=db_port,
-                        label="[env->localhost]"
+                        label="[env->127.0.0.1]"
                     )
                     if conn is not None:
                         return conn, cursor
@@ -123,7 +123,7 @@ class mysqlUtilities:
                 for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
                     if os.path.exists(sock):
                         conn, cursor, _ = _try_connect(
-                            host='localhost',
+                            host='127.0.0.1',
                             user=db_user,
                             passwd=db_pass,
                             port=db_port,
@@ -169,11 +169,11 @@ class mysqlUtilities:
 
                 if mysqlhost not in ('localhost', '127.0.0.1'):
                     conn, cursor, _ = _try_connect(
-                        host='localhost',
+                        host='127.0.0.1',
                         user=mysqluser,
                         passwd=mysqlpassword,
                         port=mysqlport,
-                        label="[json->localhost]"
+                        label="[json->127.0.0.1]"
                     )
                     if conn is not None:
                         return conn, cursor
@@ -181,7 +181,7 @@ class mysqlUtilities:
                 for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
                     if os.path.exists(sock):
                         conn, cursor, _ = _try_connect(
-                            host='localhost',
+                            host='127.0.0.1',
                             user=mysqluser,
                             passwd=mysqlpassword,
                             port=mysqlport,
@@ -213,7 +213,7 @@ class mysqlUtilities:
                 for sock in ("/var/run/mysqld/mysqld.sock", "/var/lib/mysql/mysql.sock", "/tmp/mysql.sock"):
                     if os.path.exists(sock):
                         conn, cursor, _ = _try_connect(
-                            host='localhost',
+                            host='127.0.0.1',
                             user='root',
                             passwd=password,
                             unix_socket=sock,
