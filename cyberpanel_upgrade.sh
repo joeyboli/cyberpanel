@@ -619,7 +619,7 @@ if [ $CYBERCP_MISSING -eq 1 ]; then
     cd /usr/local
     rm -rf CyberCP_recovery_tmp
     
-    if git clone https://github.com/usmannasir/cyberpanel CyberCP_recovery_tmp; then
+    if git clone https://github.com/joeyboli/cyberpanel CyberCP_recovery_tmp; then
         echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Repository cloned successfully for recovery" | tee -a /var/log/cyberpanel_upgrade_debug.log
         
         # Checkout the appropriate branch
