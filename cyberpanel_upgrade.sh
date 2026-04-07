@@ -1279,6 +1279,11 @@ chmod 600 /usr/local/CyberCP/.env
 
 echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Database credentials restored." | tee -a /var/log/cyberpanel_upgrade_debug.log
 
+# Fix ownership for static and public directories (critical fix for post-upgrade/reboot)
+chown -R lscpd:lscpd /usr/local/CyberCP/static
+chown -R lscpd:lscpd /usr/local/CyberCP/public/static
+chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib64
 
@@ -1472,7 +1477,8 @@ Type=forking
 ExecStart=/usr/local/lscp/bin/lscpdctrl start
 ExecStop=/usr/local/lscp/bin/lscpdctrl stop
 PIDFile=/usr/local/lscp/logs/lscpd.pid
-Restart=always
+Restart=on-failure
+RestartSec=5
 KillMode=control-group
 TasksMax=infinity
 
@@ -1480,9 +1486,19 @@ TasksMax=infinity
 WantedBy=multi-user.target
 EOF
   systemctl daemon-reload
+  
+  # Ensure lscpd service is enabled for boot persistence
+  systemctl enable lscpd 2>/dev/null || true
 
   systemctl stop lscpd
   pkill -9 lscpd
+  
+  # Ensure proper ownership before starting (critical for reboot persistence)
+  chown -R lscpd:lscpd /usr/local/CyberCP/static
+  chown -R lscpd:lscpd /usr/local/CyberCP/public/static
+  chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+  chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/
+  
   systemctl start lscpd
 
   # Wait for restart to complete
