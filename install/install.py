@@ -2031,7 +2031,8 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             ##
 
-            command = 'systemctl start lscpd'
+            # Enable and start lscpd service with proper timeout handling
+            command = 'systemctl daemon-reload && systemctl enable lscpd && sleep 3 && systemctl start lscpd'
             # preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             preFlightsChecks.stdOut("LSCPD Daemon Set!")
