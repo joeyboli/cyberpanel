@@ -3573,9 +3573,12 @@ passdb {
                     Upgrade.restoreCriticalFiles(backup_dir, backed_up_files)
                     return 0, 'Failed to remove old CyberCP directory'
 
-            # Clone the new repository directly to CyberCP
+            # Clone the fresh repository directly to CyberCP
             Upgrade.stdOut("Cloning fresh CyberPanel repository...")
-            command = 'git clone https://github.com/joeyboli/cyberpanel CyberCP'
+            
+            # Get Git clone URL from environment variable if set, otherwise use default
+            git_clone_url = os.environ.get('CYBERPANEL_GIT_URL', 'https://github.com/joeyboli/cyberpanel')
+            command = 'git clone %s CyberCP' % (git_clone_url)
             if not Upgrade.executioner(command, command, 1):
                 # Try to restore backup if clone fails
                 Upgrade.stdOut("Clone failed, attempting to restore backup...")
