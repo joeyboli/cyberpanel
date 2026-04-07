@@ -22,7 +22,7 @@
                 <div class="flex items-center justify-between">
                     <h5 class="text-3xl font-bold text-foreground">{% trans "Password Protection" %}</h5>
                     <button type="button" class="p-2 hover:bg-secondary rounded-full transition-colors" onclick="$('#passwordProtectionModal').fadeOut()">
-                        <i data-lucide="x" class="h-6 w-6"></i>
+                        <i class="fa fa-times text-xl"></i>
                     </button>
                 </div>
                 <div class="space-y-6">
@@ -46,7 +46,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
             <div class="flex items-center gap-6">
                 <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
-                    <i data-lucide="globe" class="h-8 w-8"></i>
+                    <i class="fa fa-globe text-2xl"></i>
                 </div>
                 <div>
                     <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
@@ -59,7 +59,7 @@
             </div>
             <div>
                 <a class="flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg hover:!bg-primary/90 hover:!text-primary-foreground !no-underline" href="{% url 'createWebsite' %}">
-                    <i data-lucide="plus-circle" class="h-6 w-6"></i>
+                    <i class="fa fa-plus-circle text-xl"></i>
                     {% trans "Create Website" %}
                 </a>
             </div>
@@ -70,7 +70,7 @@
             <div class="flex flex-col md:flex-row gap-6">
                 <div class="relative flex-1 group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i data-lucide="search" class="h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                        <i class="fa fa-search text-xl text-muted-foreground group-focus-within:text-primary transition-colors"></i>
                     </div>
                     <input ng-keypress="$event.keyCode === 13 && searchWebsites()" 
                            placeholder="Search by domain... (Press Enter)" 
@@ -100,13 +100,13 @@
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between p-8 gap-6 cursor-pointer bg-card hover:bg-secondary/10 transition-colors" ng-click="toggleSite(web)">
                     <div class="flex items-center gap-6 min-w-0 flex-1">
                         <div class="p-3 rounded-xl bg-secondary/30 transition-transform duration-300" ng-class="{'rotate-90': isExpanded(web.domain)}">
-                            <i data-lucide="chevron-right" class="h-6 w-6 text-muted-foreground"></i>
+                            <i class="fa fa-chevron-right text-lg text-muted-foreground"></i>
                         </div>
                         <div class="flex flex-col gap-1 min-w-0">
                             <h3 class="text-2xl font-bold text-foreground truncate" title="{$ web.domain $}">{$ web.domain $}</h3>
                             <div class="flex items-center gap-3">
                                 <span ng-if="web.loading" class="animate-spin">
-                                    <i data-lucide="loader-2" class="h-4 w-4 text-primary"></i>
+                                    <i class="fa fa-circle-notch text-sm text-primary"></i>
                                 </span>
                                 <!-- SSL Status Badge -->
                                 <div ng-if="web.ssl" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold gap-2" 
@@ -117,8 +117,8 @@
                                          'bg-secondary text-muted-foreground': web.ssl.status === 'none'
                                      }"
                                      title="{$ getSslTooltip(web) $}">
-                                    <i data-lucide="lock" class="h-4 w-4" ng-if="web.ssl.status === 'valid'"></i>
-                                    <i data-lucide="unlock" class="h-4 w-4" ng-if="web.ssl.status !== 'valid'"></i>
+                                    <i class="fa fa-lock text-sm" ng-if="web.ssl.status === 'valid'"></i>
+                                    <i class="fa fa-unlock text-sm" ng-if="web.ssl.status !== 'valid'"></i>
                                     <span class="uppercase tracking-wider font-extrabold">
                                         <span ng-if="web.ssl.status === 'valid'">Secure</span>
                                         <span ng-if="web.ssl.status === 'warning'">SSL {$ web.ssl.days $}d</span>
@@ -134,11 +134,11 @@
                     </div>
                     <div class="flex items-center gap-3 shrink-0 w-full md:w-auto">
                         <a href="/websites/{$ web.domain $}" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-6 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all !no-underline">
-                            <i data-lucide="settings"></i>
+                            <i class="fa fa-cog text-lg"></i>
                             {% trans "Manage" %}
                         </a>
                         <a href="/filemanager/{$ web.domain $}" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-6 py-3 bg-secondary/30 text-foreground border border-border rounded-xl text-lg font-bold hover:!bg-secondary hover:!text-secondary-foreground transition-all !no-underline">
-                            <i data-lucide="folder"></i>
+                            <i class="fa fa-folder-open text-lg"></i>
                             {% trans "Files" %}
                         </a>
                     </div>
@@ -159,17 +159,17 @@
                                 </div>
                                 <div class="grid grid-cols-1 gap-3">
                                     <a href="http://{$ web.domain $}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-4 py-3 bg-secondary/30 border border-border rounded-xl font-bold hover:!bg-secondary hover:!text-secondary-foreground transition-all !no-underline text-foreground">
-                                        <i data-lucide="external-link" class="h-5 w-5"></i>
+                                        <i class="fa fa-external-link-alt text-base"></i>
                                         Visit Site
                                     </a>
                                     <button ng-click="issueSSL(web.domain)" class="flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all">
-                                        <i data-lucide="shield-check" class="h-5 w-5"></i>
+                                        <i class="fa fa-shield-halved text-base"></i>
                                         Issue SSL
                                     </button>
                                     <button ng-click="showWPSites(web.domain); $event.stopPropagation();" 
                                             class="flex items-center justify-center gap-2 px-4 py-3 bg-secondary/30 border border-border rounded-xl font-bold hover:bg-secondary transition-all" 
                                             ng-if="(web.wp_sites && web.wp_sites.length) > 0">
-                                        <i data-lucide="layout-template" class="h-5 w-5"></i>
+                                        <i class="fa fa-th-large text-base"></i>
                                         {$ (web.wp_sites && web.wp_sites.length) || 0 $} WP Site<span ng-if="(web.wp_sites && web.wp_sites.length) != 1">s</span>
                                     </button>
                                 </div>
@@ -224,11 +224,11 @@
                                                     </div>
                                                     <div class="grid grid-cols-1 gap-2">
                                                         <a href="javascript:void(0);" ng-click="visitSite(wp)" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-secondary/30 text-foreground rounded-lg font-bold border border-border hover:!bg-secondary hover:!text-secondary-foreground transition-all text-center !no-underline">
-                                                            <i data-lucide="external-link" class="h-4 w-4"></i>
+                                                            <i class="fa fa-external-link-alt text-sm"></i>
                                                             Visit Site
                                                         </a>
                                                         <a href="{% url 'AutoLogin' %}?id={$ wp.id $}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all text-center !no-underline">
-                                                            <i data-lucide="user-cog" class="h-4 w-4"></i>
+                                                            <i class="fa fa-user-cog text-sm"></i>
                                                             WP Admin
                                                         </a>
                                                     </div>
@@ -270,11 +270,11 @@
                                                     
                                                     <div class="flex flex-wrap gap-3 pt-2">
                                                         <a href="/websites/WPHome?ID={$ wp.id $}" class="flex items-center gap-2 px-6 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-lg font-bold hover:!bg-primary hover:!text-primary-foreground transition-all shadow-md !no-underline">
-                                                            <i data-lucide="settings-2" class="h-5 w-5"></i>
+                                                            <i class="fa fa-sliders-h text-base"></i>
                                                             Manage
                                                         </a>
                                                         <button class="flex items-center gap-2 px-6 py-3 bg-destructive/10 text-destructive rounded-xl text-lg font-bold hover:bg-destructive hover:text-destructive-foreground transition-all border border-destructive/20" ng-click="deleteWPSite(wp)">
-                                                            <i data-lucide="trash-2" class="h-5 w-5"></i>
+                                                            <i class="fa fa-trash-alt text-base"></i>
                                                             Delete
                                                         </button>
                                                     </div>
@@ -308,7 +308,7 @@
         <!-- Error Display -->
         <div id="listFail" class="p-8 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive hidden">
             <div class="flex items-center gap-4">
-                <i data-lucide="alert-octagon" class="h-8 w-8"></i>
+                <i class="fa fa-exclamation-triangle text-2xl"></i>
                 <p class="text-xl font-bold">{% trans "Cannot list websites. Error message:" %} {$ errorMessage $}</p>
             </div>
         </div>
