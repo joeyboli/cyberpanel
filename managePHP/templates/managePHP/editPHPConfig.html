@@ -95,6 +95,13 @@
         border-radius: 99px;
         display: none;
     }
+
+    .dark .bg-muted\/50 {
+        background-color: hsl(var(--secondary) / 0.4);
+    }
+    .dark .bg-background {
+        background-color: hsl(var(--card));
+    }
 </style>
 {% endblock %}
 
@@ -130,19 +137,19 @@
     <!-- Configuration Panel - Flat design -->
     <div class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <!-- Tabs Navigation -->
-        <div class="flex items-center gap-2 p-2 bg-muted/50 border-b border-border overflow-x-auto">
+        <div class="flex items-center gap-4 p-3 bg-muted/50 border-b border-border overflow-x-auto">
             <button type="button"
                     ng-click="fetchPHPDetails(); setActiveTab('basic')"
                     ng-class="{'bg-primary text-primary-foreground shadow-lg shadow-primary/20': activeTab === 'basic', 'text-muted-foreground hover:bg-muted': activeTab !== 'basic'}"
-                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="sliders-horizontal" class="h-4 w-4"></i>
+                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap">
+                <i data-lucide="sliders-horizontal" class="h-5 w-5"></i>
                 {% trans "Basic Settings" %}
             </button>
             <button type="button"
                     ng-click="fetchAdvancePHPDetails(); setActiveTab('advanced')"
                     ng-class="{'bg-primary text-primary-foreground shadow-lg shadow-primary/20': activeTab === 'advanced', 'text-muted-foreground hover:bg-muted': activeTab !== 'advanced'}"
-                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="file-code" class="h-4 w-4"></i>
+                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap">
+                <i data-lucide="file-code" class="h-5 w-5"></i>
                 {% trans "Advanced Editor" %}
             </button>
         </div>
@@ -178,59 +185,59 @@
                 </div>
 
                 <!-- Settings Grid -->
-                <div ng-hide="phpDetailsBox" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div ng-hide="phpDetailsBox" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
                     <!-- Boolean Settings -->
-                    <div class="p-6 bg-muted/50 border border-border rounded-2xl">
-                        <h3 class="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                            <i data-lucide="toggle-right" class="h-5 w-5 text-primary"></i>
+                    <div class="p-8 bg-muted/50 border border-border rounded-2xl">
+                        <h3 class="text-xl font-extrabold text-foreground mb-6 flex items-center gap-3">
+                            <i data-lucide="toggle-right" class="h-6 w-6 text-primary"></i>
                             {% trans "Boolean Settings" %}
                         </h3>
                         <div class="space-y-4">
 
                             <!-- display_errors -->
-                            <div class="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                            <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="font-bold text-foreground"><code>display_errors</code></div>
-                                    <div class="text-xs text-muted-foreground mt-0.5">{% trans "Show PHP errors to visitors" %}</div>
+                                    <div class="text-lg font-bold text-foreground"><code>display_errors</code></div>
+                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Show PHP errors to visitors" %}</div>
                                 </div>
-                                <label class="toggle-switch shrink-0">
+                                <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="display_errors" ng-model="display_errors">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
 
                             <!-- file_uploads -->
-                            <div class="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                            <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="font-bold text-foreground"><code>file_uploads</code></div>
-                                    <div class="text-xs text-muted-foreground mt-0.5">{% trans "Allow file uploads" %}</div>
+                                    <div class="text-lg font-bold text-foreground"><code>file_uploads</code></div>
+                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow file uploads" %}</div>
                                 </div>
-                                <label class="toggle-switch shrink-0">
+                                <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="file_uploads" ng-model="file_uploads">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
 
                             <!-- allow_url_fopen -->
-                            <div class="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                            <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="font-bold text-foreground"><code>allow_url_fopen</code></div>
-                                    <div class="text-xs text-muted-foreground mt-0.5">{% trans "Allow opening URLs as files" %}</div>
+                                    <div class="text-lg font-bold text-foreground"><code>allow_url_fopen</code></div>
+                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow opening URLs as files" %}</div>
                                 </div>
-                                <label class="toggle-switch shrink-0">
+                                <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="allow_url_fopen" ng-model="allow_url_fopen">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
 
                             <!-- allow_url_include -->
-                            <div class="flex items-center justify-between p-4 bg-background border border-border rounded-xl">
+                            <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="font-bold text-foreground"><code>allow_url_include</code></div>
-                                    <div class="text-xs text-muted-foreground mt-0.5">{% trans "Allow including URLs" %}</div>
+                                    <div class="text-lg font-bold text-foreground"><code>allow_url_include</code></div>
+                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow including URLs" %}</div>
                                 </div>
-                                <label class="toggle-switch shrink-0">
+                                <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="allow_url_include" ng-model="allow_url_include">
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -240,12 +247,12 @@
                     </div>
 
                     <!-- Value Settings -->
-                    <div class="p-6 bg-muted/50 border border-border rounded-2xl">
-                        <h3 class="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                            <i data-lucide="settings" class="h-5 w-5 text-primary"></i>
+                    <div class="p-8 bg-muted/50 border border-border rounded-2xl">
+                        <h3 class="text-xl font-extrabold text-foreground mb-6 flex items-center gap-3">
+                            <i data-lucide="settings" class="h-6 w-6 text-primary"></i>
                             {% trans "Value Settings" %}
                         </h3>
-                        <div class="space-y-4">
+                        <div class="space-y-6">
 
                             <!-- memory_limit -->
                             <div class="space-y-1">

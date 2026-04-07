@@ -53,6 +53,7 @@
     flex-direction: column;
     gap: 10px;
     transition: box-shadow 0.15s, transform 0.15s;
+    height: 100%;
 }
 
 .stat-card:hover {
@@ -119,9 +120,9 @@
     font-weight: 600;
 }
 
-.pill-green { background: hsl(142 76% 36% / 0.1); color: hsl(142 76% 36%); }
-.pill-yellow { background: hsl(43 96% 56% / 0.15); color: hsl(35 92% 33%); }
-.pill-red { background: hsl(var(--destructive) / 0.1); color: hsl(var(--destructive)); }
+.pill-green { background: hsl(142 76% 36% / 0.15); color: #10b981; }
+.pill-yellow { background: hsl(43 96% 56% / 0.2); color: #f59e0b; }
+.pill-red { background: hsl(var(--destructive) / 0.15); color: hsl(var(--destructive)); }
 
 /* ── Quick action buttons ── */
 .action-btn {
@@ -382,10 +383,10 @@ canvas { display: block; }
     align-items: flex-start;
     gap: 12px;
     padding: 1.5rem; /* p-6 */
-    background: hsl(43 96% 56% / 0.1);
-    border: 1px solid hsl(43 96% 56% / 0.2);
+    background: hsl(43 96% 56% / 0.15);
+    border: 1px solid hsl(43 96% 56% / 0.25);
     border-radius: 1rem; /* rounded-2xl */
-    color: hsl(35 92% 28%);
+    color: #f59e0b;
     font-size: 14px;
     margin-bottom: 24px;
 }
@@ -509,7 +510,7 @@ canvas { display: block; }
     </div>
     {% endif %}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <button type="button" class="action-btn" data-toggle="modal" data-target="#web-terminal-modal">
             <i data-lucide="terminal"></i>{% trans "Terminal" %}
         </button>
@@ -576,7 +577,7 @@ canvas { display: block; }
     {% if viewSSL == 1 %}
     <div class="card" style="margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         {% if "SELF-SIGNED" in authority %}
-        <div class="stat-icon" style="background:hsl(43 96% 56% / 0.12);border-color:hsl(43 96% 56% / 0.3);color:hsl(35 92% 33%);">
+        <div class="stat-icon" style="background:hsl(43 96% 56% / 0.15);border-color:hsl(43 96% 56% / 0.3);color:#f59e0b;">
             <i data-lucide="shield-off" style="width:18px;height:18px;"></i>
         </div>
         <div style="flex:1;min-width:0;">
@@ -588,7 +589,7 @@ canvas { display: block; }
             {% trans "Not Trusted" %}
         </span>
         {% else %}
-        <div class="stat-icon" style="background:hsl(142 76% 36% / 0.1);border-color:hsl(142 76% 36% / 0.25);color:hsl(142 76% 36%);">
+        <div class="stat-icon" style="background:hsl(142 76% 36% / 0.15);border-color:hsl(142 76% 36% / 0.3);color:#10b981;">
             <i data-lucide="shield-check" style="width:18px;height:18px;"></i>
         </div>
         <div style="flex:1;min-width:0;">
@@ -617,7 +618,7 @@ canvas { display: block; }
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {% if resource_limits.cpu %}
             <div class="limit-card">
-                <div class="limit-icon" style="background:hsl(240 100% 60% / 0.1);border-color:hsl(240 100% 60% / 0.2);color:hsl(240 100% 60%);">
+                <div class="limit-icon" style="background:hsl(240 100% 60% / 0.15);border-color:hsl(240 100% 60% / 0.3);color:hsl(240 100% 70%);">
                     <i data-lucide="cpu"></i>
                 </div>
                 <div>
@@ -628,7 +629,7 @@ canvas { display: block; }
             {% endif %}
             {% if resource_limits.memory %}
             <div class="limit-card">
-                <div class="limit-icon" style="background:hsl(300 70% 50% / 0.1);border-color:hsl(300 70% 50% / 0.2);color:hsl(300 70% 50%);">
+                <div class="limit-icon" style="background:hsl(300 70% 50% / 0.15);border-color:hsl(300 70% 50% / 0.3);color:hsl(300 70% 60%);">
                     <i data-lucide="memory-stick"></i>
                 </div>
                 <div>
@@ -639,7 +640,7 @@ canvas { display: block; }
             {% endif %}
             {% if resource_limits.io %}
             <div class="limit-card">
-                <div class="limit-icon" style="background:hsl(200 90% 50% / 0.1);border-color:hsl(200 90% 50% / 0.2);color:hsl(200 90% 50%);">
+                <div class="limit-icon" style="background:hsl(200 90% 50% / 0.15);border-color:hsl(200 90% 50% / 0.3);color:hsl(200 90% 60%);">
                     <i data-lucide="gauge"></i>
                 </div>
                 <div>
@@ -650,7 +651,7 @@ canvas { display: block; }
             {% endif %}
             {% if resource_limits.tasks %}
             <div class="limit-card">
-                <div class="limit-icon" style="background:hsl(142 76% 36% / 0.1);border-color:hsl(142 76% 36% / 0.2);color:hsl(142 76% 36%);">
+                <div class="limit-icon" style="background:hsl(142 76% 36% / 0.15);border-color:hsl(142 76% 36% / 0.3);color:hsl(142 76% 50%);">
                     <i data-lucide="list-checks"></i>
                 </div>
                 <div>
@@ -972,19 +973,19 @@ canvas { display: block; }
         </div>
     </div>
 
-    <div class="mb-4 flex items-center gap-3">
-        <div class="h-5 w-1 rounded-full bg-primary"></div>
-        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Email Marketing" %}</span>
-    </div>
-    <div class="card" style="margin-bottom:20px;">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <a id="emailLists" href="#" class="grid-link"><i data-lucide="list-plus"></i>{% trans "Create Lists" %}</a>
-            <a id="manageLists" href="#" class="grid-link"><i data-lucide="list-checks"></i>{% trans "Manage Lists" %}</a>
-            <a id="manageSMTPHosts" href="#" class="grid-link"><i data-lucide="server"></i>{% trans "SMTP Hosts" %}</a>
-            <a id="composeEmails" href="#" class="grid-link"><i data-lucide="pencil-line"></i>{% trans "Compose" %}</a>
-            <a id="sendEmailsPage" href="#" class="grid-link"><i data-lucide="send"></i>{% trans "Send Emails" %}</a>
-        </div>
-    </div>
+<!--    <div class="mb-4 flex items-center gap-3">-->
+<!--        <div class="h-5 w-1 rounded-full bg-primary"></div>-->
+<!--        <span class="text-sm font-bold uppercase tracking-widest text-muted-foreground">{% trans "Email Marketing" %}</span>-->
+<!--    </div>-->
+<!--    <div class="card" style="margin-bottom:20px;">-->
+<!--        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">-->
+<!--            <a id="emailLists" href="#" class="grid-link"><i data-lucide="list-plus"></i>{% trans "Create Lists" %}</a>-->
+<!--            <a id="manageLists" href="#" class="grid-link"><i data-lucide="list-checks"></i>{% trans "Manage Lists" %}</a>-->
+<!--            <a id="manageSMTPHosts" href="#" class="grid-link"><i data-lucide="server"></i>{% trans "SMTP Hosts" %}</a>-->
+<!--            <a id="composeEmails" href="#" class="grid-link"><i data-lucide="pencil-line"></i>{% trans "Compose" %}</a>-->
+<!--            <a id="sendEmailsPage" href="#" class="grid-link"><i data-lucide="send"></i>{% trans "Send Emails" %}</a>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div class="mb-4 flex items-center gap-3">
         <div class="h-5 w-1 rounded-full bg-primary"></div>
