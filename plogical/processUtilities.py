@@ -7,7 +7,6 @@ import threading as multi
 import time
 import getpass
 import codecs
-import platform
 
 class ProcessUtilities(multi.Thread):
     debugPath = '/usr/local/CyberCP/debug'
@@ -159,33 +158,17 @@ class ProcessUtilities(multi.Thread):
                 except:
                     pass
 
-    _decideServer_cache = None
     @staticmethod
     def decideServer():
-        if ProcessUtilities._decideServer_cache is not None:
-            return ProcessUtilities._decideServer_cache
         if os.path.exists('/usr/local/lsws/bin/openlitespeed'):
-            ProcessUtilities._decideServer_cache = ProcessUtilities.OLS
+            return ProcessUtilities.OLS
         else:
-            ProcessUtilities._decideServer_cache = ProcessUtilities.ent
-        return ProcessUtilities._decideServer_cache
+            return ProcessUtilities.ent
 
-    _decideDistro_cache = None
     @staticmethod
     def decideDistro():
-        if ProcessUtilities._decideDistro_cache is not None:
-            return ProcessUtilities._decideDistro_cache
-        
-        res = ProcessUtilities._decideDistro_logic()
-        ProcessUtilities._decideDistro_cache = res
-        return res
-
-    _distro_flags_initialized = False
-
-    @staticmethod
-    def _initialize_distro_flags():
-        if ProcessUtilities._distro_flags_initialized:
-            return
+        distroPath = '/etc/lsb-release'
+        distroPathAlma = '/etc/redhat-release'
 
         # First check if we're on Ubuntu
         if os.path.exists('/etc/os-release'):
@@ -197,69 +180,42 @@ class ProcessUtilities(multi.Thread):
                         ProcessUtilities.ubuntu24Check = 1  # Specific flag for Ubuntu 24.04
                         # Ubuntu 24.04 uses newer package versions, set flag for compatibility
                         ProcessUtilities.alma9check = 1  # Reuse flag to indicate Ubuntu 24.04
+                        return ProcessUtilities.ubuntu20
                     elif '22.04' in content:
                         ProcessUtilities.ubuntu22Check = 1
-
-        # Check for RedHat-based distributions
-        distroPathAlma = '/etc/redhat-release'
-        if os.path.exists(distroPathAlma):
-            with open(distroPathAlma, 'r') as f:
-                content = f.read()
-                if any(x in content for x in ['AlmaLinux release 9', 'Rocky Linux release 9', 'AlmaLinux release 10']):
-                    ProcessUtilities.alma9check = 1
-
-        ProcessUtilities._distro_flags_initialized = True
-
-    @staticmethod
-    def _decideDistro_logic():
-        ProcessUtilities._initialize_distro_flags()
-
-        # First check if we're on Ubuntu
-        if os.path.exists('/etc/os-release'):
-            with open('/etc/os-release', 'r') as f:
-                content = f.read()
-                if 'Ubuntu' in content:
-                    if '24.04' in content or '22.04' in content or '20.04' in content:
+                        return ProcessUtilities.ubuntu20
+                    elif '20.04' in content:
                         return ProcessUtilities.ubuntu20
                     return ProcessUtilities.ubuntu
 
         # Check for RedHat-based distributions
-        distroPathAlma = '/etc/redhat-release'
         if os.path.exists(distroPathAlma):
             with open(distroPathAlma, 'r') as f:
                 content = f.read()
-                if any(x in content for x in ['CentOS Linux release 8', 'AlmaLinux release 8', 'Rocky Linux release 8',
-                                            'Rocky Linux release 9', 'AlmaLinux release 9', 'CloudLinux release 9',
+                if any(x in content for x in ['CentOS Linux release 8', 'AlmaLinux release 8', 'Rocky Linux release 8', 
+                                            'Rocky Linux release 9', 'AlmaLinux release 9', 'CloudLinux release 9', 
                                             'CloudLinux release 8', 'AlmaLinux release 10']):
+                    if any(x in content for x in ['AlmaLinux release 9', 'Rocky Linux release 9', 'AlmaLinux release 10']):
+                        ProcessUtilities.alma9check = 1
                     return ProcessUtilities.cent8
 
         # Default to Ubuntu if no other distribution is detected
         return ProcessUtilities.ubuntu
 
-    _container_check_cache = None
     @staticmethod
     def containerCheck():
-        if ProcessUtilities._container_check_cache is not None:
-            return ProcessUtilities._container_check_cache
         try:
             command = 'cat /etc/cgrules.conf'
             output = ProcessUtilities.outputExecutioner(command)
             if output.find('No such') > -1:
-                res = 0
+                return 0
             else:
-                res = 1
+                return 1
         except BaseException:
-            res = 0
-        
-        ProcessUtilities._container_check_cache = res
-        return res
+            return 0
 
     @staticmethod
     def setupUDSConnection():
-        # Check if socket file exists first to avoid long timeouts on non-existent paths
-        if not os.path.exists(ProcessUtilities.server_address):
-            return [-1, f"Socket file {ProcessUtilities.server_address} not found"]
-
         count = 0
         while 1:
             try:
@@ -297,12 +253,6 @@ class ProcessUtilities(multi.Thread):
                 if ret[0] == -1:
                     attempt += 1
                     last_error = ret[1]
-                    
-                    # If socket file is explicitly missing or we are on Mac, don't retry
-                    if "not found" in last_error or platform.system() == 'Darwin':
-                        logging.writeToFile(f"[sendCommand] Failing fast: {last_error}")
-                        return f"-1Connection failed: {last_error}"
-
                     if attempt < retries:
                         logging.writeToFile(f"[sendCommand] Connection failed, attempt {attempt}/{retries}. Retrying in 2 seconds...")
                         time.sleep(2)
@@ -425,9 +375,9 @@ class ProcessUtilities(multi.Thread):
             if os.path.exists(ProcessUtilities.debugPath):
                 logging.writeToFile(f"[executioner] Called with command: {command}, user: {user}, shell: {shell}")
             
-            if getpass.getuser() == 'root' or platform.system() == 'Darwin':
+            if getpass.getuser() == 'root':
                 if os.path.exists(ProcessUtilities.debugPath):
-                    logging.writeToFile(f"[executioner] Running as root (or Mac), using normalExecutioner")
+                    logging.writeToFile(f"[executioner] Running as root, using normalExecutioner")
                 ProcessUtilities.normalExecutioner(command, shell, user)
                 return 1
 
@@ -471,7 +421,7 @@ class ProcessUtilities(multi.Thread):
     @staticmethod
     def outputExecutioner(command, user=None, shell = None, dir = None, retRequired = None):
         try:
-            if getpass.getuser() == 'root' or platform.system() == 'Darwin':
+            if getpass.getuser() == 'root':
                 if os.path.exists(ProcessUtilities.debugPath):
                     logging.writeToFile(command)
 
@@ -603,27 +553,20 @@ class ProcessUtilities(multi.Thread):
             print("An error occurred:", e)
         return None
 
-    _num_cores_cache = None
     @staticmethod
     def getNumberOfCores():
         """Get the number of CPU cores available on the system"""
-        if ProcessUtilities._num_cores_cache is not None:
-            return ProcessUtilities._num_cores_cache
-        
         try:
             import multiprocessing
-            res = multiprocessing.cpu_count()
+            return multiprocessing.cpu_count()
         except:
             try:
                 # Fallback method using /proc/cpuinfo
                 with open('/proc/cpuinfo', 'r') as f:
-                    res = len([line for line in f if line.startswith('processor')])
+                    return len([line for line in f if line.startswith('processor')])
             except:
                 # Default to 2 if we can't determine
-                res = 2
-        
-        ProcessUtilities._num_cores_cache = res
-        return res
+                return 2
 
     @staticmethod
     def fetch_latest_prestashop_version():

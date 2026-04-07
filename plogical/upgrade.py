@@ -189,7 +189,7 @@ except ImportError:
                     
                     # Test if this password actually works
                     try:
-                        test_conn = mysql.connect(host='127.0.0.1', user='cyberpanel', 
+                        test_conn = mysql.connect(host='localhost', user='cyberpanel', 
                                                 passwd=cyberpanel_password, db='cyberpanel')
                         test_conn.close()
                         print("Verified cyberpanel database credentials are valid")
@@ -217,7 +217,7 @@ except ImportError:
             
             try:
                 # Connect as root and reset cyberpanel user
-                conn = mysql.connect(host='127.0.0.1', user='root', passwd=root_password)
+                conn = mysql.connect(host='localhost', user='root', passwd=root_password)
                 cursor = conn.cursor()
                 
                 # Check if cyberpanel database exists
@@ -227,10 +227,9 @@ except ImportError:
                     cursor.execute("CREATE DATABASE IF NOT EXISTS cyberpanel")
                 
                 # Reset cyberpanel user - drop and recreate to ensure clean state
-                cursor.execute("DROP USER IF EXISTS 'cyberpanel'@'127.0.0.1'")
                 cursor.execute("DROP USER IF EXISTS 'cyberpanel'@'localhost'")
-                cursor.execute("CREATE USER 'cyberpanel'@'127.0.0.1' IDENTIFIED BY '%s'" % cyberpanel_password)
-                cursor.execute("GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1'")
+                cursor.execute("CREATE USER 'cyberpanel'@'localhost' IDENTIFIED BY '%s'" % cyberpanel_password)
+                cursor.execute("GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'localhost'")
                 cursor.execute("FLUSH PRIVILEGES")
                 
                 conn.close()
@@ -260,7 +259,7 @@ except ImportError:
                 print("Manual intervention required. Please run:")
                 print("  mysql -u root -p")
                 print("  CREATE DATABASE IF NOT EXISTS cyberpanel;")
-                print("  GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1' IDENTIFIED BY 'your_password';")
+                print("  GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'localhost' IDENTIFIED BY 'your_password';")
                 print("  FLUSH PRIVILEGES;")
                 sys.exit(1)
         
@@ -276,14 +275,14 @@ except ImportError:
                 'NAME': 'cyberpanel',
                 'USER': 'cyberpanel',
                 'PASSWORD': cyberpanel_password,
-                'HOST': '127.0.0.1',
+                'HOST': 'localhost',
                 'PORT': '3306'
             },
             'rootdb': {
                 'NAME': 'mysql',
                 'USER': 'root',
                 'PASSWORD': root_password,
-                'HOST': '127.0.0.1',
+                'HOST': 'localhost',
                 'PORT': '3306'
             }
         }
@@ -666,8 +665,8 @@ class Upgrade:
             return 'rhel9'
 
     @staticmethod
-    def downloadCustomBinary(url, destination):
-        """Download custom binary file"""
+    def downloadCustomBinary(url, destination, expected_sha256=None):
+        """Download custom binary file with optional checksum verification"""
         try:
             Upgrade.stdOut(f"Downloading {os.path.basename(destination)}...", 0)
 
@@ -685,7 +684,26 @@ class Upgrade:
                     else:
                         Upgrade.stdOut(f"Downloaded successfully ({file_size / 1024:.2f} KB)", 0)
 
-                    return True
+                    # Verify checksum if provided
+                    if expected_sha256:
+                        Upgrade.stdOut("Verifying checksum...", 0)
+                        import hashlib
+                        sha256_hash = hashlib.sha256()
+                        with open(destination, "rb") as f:
+                            for byte_block in iter(lambda: f.read(4096), b""):
+                                sha256_hash.update(byte_block)
+                        actual_sha256 = sha256_hash.hexdigest()
+
+                        if actual_sha256 == expected_sha256:
+                            Upgrade.stdOut("Checksum verified successfully", 0)
+                            return True
+                        else:
+                            Upgrade.stdOut(f"ERROR: Checksum mismatch!", 0)
+                            Upgrade.stdOut(f"Expected: {expected_sha256}", 0)
+                            Upgrade.stdOut(f"Got:      {actual_sha256}", 0)
+                            return False
+                    else:
+                        return True
                 else:
                     Upgrade.stdOut(f"ERROR: Downloaded file too small ({file_size} bytes)", 0)
                     return False
@@ -717,22 +735,31 @@ class Upgrade:
 
             # Platform-specific URLs and checksums (OpenLiteSpeed v2.4.4 — all features config-driven, static linking)
             # Includes: PHPConfig API, Origin Header Forwarding, ReadApacheConf (with Portmap), Auto-SSL (ACME v2), ModSecurity ABI Compatibility
-            # Module v2.7.0 (2026-03-15): AddDefaultCharset, SSLRequireSSL, <Files>, Satisfy, <Limit>/<LimitExcept>, AuthGroupFile/Require group
+            # Module rebuilt 2026-03-04: fix SIGSEGV crash in apply_headers() on error responses (4xx/5xx)
             BINARY_CONFIGS = {
                 'rhel8': {
                     'url': 'https://cyberpanel.net/openlitespeed-2.4.4-x86_64-rhel8',
-                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.7.0-x86_64-rhel8.so',
+                    'sha256': 'd08512da7a77468c09d6161de858db60bcc29aed7ce0abf76dca1c72104dc485',
+                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.4.4-x86_64-rhel8.so',
+                    'module_sha256': '3fd3bf6e2d50fe2e94e67fcf9f8ee24c4cc31b9edb641bee8c129cb316c3454a',
                     'modsec_url': 'https://cyberpanel.net/mod_security-2.4.4-x86_64-rhel8.so',
+                    'modsec_sha256': 'bbbf003bdc7979b98f09b640dffe2cbbe5f855427f41319e4c121403c05837b2'
                 },
                 'rhel9': {
                     'url': 'https://cyberpanel.net/openlitespeed-2.4.4-x86_64-rhel9',
-                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.7.0-x86_64-rhel9.so',
+                    'sha256': '418d2ea06e29c0f847a2e6cf01f7641d5fb72b65a04e27a8f6b3b54d673cc2df',
+                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.4.4-x86_64-rhel9.so',
+                    'module_sha256': '4863fc4c227e50e2d6ec5827aed3e1ad92e9be03a548b7aa1a8a4640853db399',
                     'modsec_url': 'https://cyberpanel.net/mod_security-2.4.4-x86_64-rhel9.so',
+                    'modsec_sha256': '19deb2ffbaf1334cf4ce4d46d53f747a75b29e835bf5a01f91ebcc0c78e98629'
                 },
                 'ubuntu': {
                     'url': 'https://cyberpanel.net/openlitespeed-2.4.4-x86_64-ubuntu',
-                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.7.0-x86_64-ubuntu.so',
+                    'sha256': '60edf815379c32705540ad4525ea6d07c0390cabca232b6be12376ee538f4b1b',
+                    'module_url': 'https://cyberpanel.net/cyberpanel_ols-2.4.4-x86_64-ubuntu.so',
+                    'module_sha256': '0d7dd17c6e64ac46d4abd5ccb67cc2da51809e24692774e4df76d8f3a6c67e9d',
                     'modsec_url': 'https://cyberpanel.net/mod_security-2.4.4-x86_64-ubuntu.so',
+                    'modsec_sha256': 'ed02c813136720bd4b9de5925f6e41bdc8392e494d7740d035479aaca6d1e0cd'
                 }
             }
 
@@ -743,8 +770,11 @@ class Upgrade:
                 return True  # Not fatal
 
             OLS_BINARY_URL = config['url']
+            OLS_BINARY_SHA256 = config['sha256']
             MODULE_URL = config['module_url']
+            MODULE_SHA256 = config['module_sha256']
             MODSEC_URL = config.get('modsec_url')
+            MODSEC_SHA256 = config.get('modsec_sha256')
             OLS_BINARY_PATH = "/usr/local/lsws/bin/openlitespeed"
             MODULE_PATH = "/usr/local/lsws/modules/cyberpanel_ols.so"
             MODSEC_PATH = "/usr/local/lsws/modules/mod_security.so"
@@ -772,16 +802,16 @@ class Upgrade:
 
             Upgrade.stdOut("Downloading custom binaries...", 0)
 
-            # Download OpenLiteSpeed binary
-            if not Upgrade.downloadCustomBinary(OLS_BINARY_URL, tmp_binary):
+            # Download OpenLiteSpeed binary with checksum verification
+            if not Upgrade.downloadCustomBinary(OLS_BINARY_URL, tmp_binary, OLS_BINARY_SHA256):
                 Upgrade.stdOut("ERROR: Failed to download or verify OLS binary", 0)
                 Upgrade.stdOut("Continuing with standard OLS", 0)
                 return True  # Not fatal, continue with standard OLS
 
-            # Download module (if available)
+            # Download module with checksum verification (if available)
             module_downloaded = False
-            if MODULE_URL:
-                if not Upgrade.downloadCustomBinary(MODULE_URL, tmp_module):
+            if MODULE_URL and MODULE_SHA256:
+                if not Upgrade.downloadCustomBinary(MODULE_URL, tmp_module, MODULE_SHA256):
                     Upgrade.stdOut("ERROR: Failed to download or verify module", 0)
                     Upgrade.stdOut("Continuing with standard OLS", 0)
                     return True  # Not fatal, continue with standard OLS
@@ -792,9 +822,9 @@ class Upgrade:
             # Download compatible ModSecurity if existing ModSecurity is installed
             # This prevents ABI incompatibility crashes (Signal 11/SIGSEGV)
             modsec_downloaded = False
-            if os.path.exists(MODSEC_PATH) and MODSEC_URL:
+            if os.path.exists(MODSEC_PATH) and MODSEC_URL and MODSEC_SHA256:
                 Upgrade.stdOut("Existing ModSecurity detected - downloading compatible version...", 0)
-                if Upgrade.downloadCustomBinary(MODSEC_URL, tmp_modsec):
+                if Upgrade.downloadCustomBinary(MODSEC_URL, tmp_modsec, MODSEC_SHA256):
                     modsec_downloaded = True
                 else:
                     Upgrade.stdOut("WARNING: Failed to download compatible ModSecurity", 0)
@@ -989,7 +1019,7 @@ module cyberpanel_ols {
 
             Upgrade.stdOut("Installing phpMyAdmin...", 0)
             
-            command = 'wget -q -O /usr/local/CyberCP/public/phpmyadmin.zip https://github.com/joeyboli/cyberpanel/raw/stable/phpmyadmin.zip'
+            command = 'wget -q -O /usr/local/CyberCP/public/phpmyadmin.zip https://github.com/usmannasir/cyberpanel/raw/stable/phpmyadmin.zip'
             Upgrade.executioner_silent(command, 'Download phpMyAdmin')
 
             command = 'unzip -q /usr/local/CyberCP/public/phpmyadmin.zip -d /usr/local/CyberCP/public/'
@@ -1204,26 +1234,19 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             for items in data:
                 if items.find("$sCustomDataPath = '';") > -1:
                     writeToFile.writelines(
-                        "			$sCustomDataPath = '/usr/local/lscp/cyberpanel/snappymail/data';\n")
+                        "			$sCustomDataPath = '/usr/local/lscp/cyberpanel/rainloop/data';\n")
                 else:
                     writeToFile.writelines(items)
 
             writeToFile.close()
 
-            command = "mkdir -p /usr/local/lscp/cyberpanel/snappymail/data/_data_/_default_/configs/"
+            command = "mkdir -p /usr/local/lscp/cyberpanel/rainloop/data/_data_/_default_/configs/"
             Upgrade.executioner_silent(command, 'mkdir snappymail configs', 0)
 
             command = f'wget -q -O /usr/local/CyberCP/snappymail_cyberpanel.php  https://raw.githubusercontent.com/the-djmaze/snappymail/master/integrations/cyberpanel/install.php'
             Upgrade.executioner_silent(command, 'verify certificate', 0)
 
-            if os.path.exists('/usr/local/lsws/lsphp80/bin/php'):
-                php_path = '/usr/local/lsws/lsphp80/bin/php'
-            elif os.path.exists('/usr/local/lsws/lsphp81/bin/php'):
-                php_path = '/usr/local/lsws/lsphp81/bin/php'
-            else:
-                php_path = '/usr/local/lsws/lsphp74/bin/php'
-
-            command = f'{php_path} /usr/local/CyberCP/snappymail_cyberpanel.php'
+            command = f'/usr/local/lsws/lsphp80/bin/php /usr/local/CyberCP/snappymail_cyberpanel.php'
             Upgrade.executioner_silent(command, 'verify certificate', 0)
 
             # labsPath = '/usr/local/lscp/cyberpanel/rainloop/data/_data_/_default_/configs/application.ini'
@@ -3502,21 +3525,21 @@ passdb {
             completDBString = """\nDATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'cyberpanel'),
-        'USER': os.getenv('DB_USER', 'cyberpanel'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': '%s',
+        'USER': '%s',
+        'PASSWORD': '%s',
+        'HOST': '%s',
+        'PORT':'%s'
     },
     'rootdb': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('ROOT_DB_NAME', 'mysql'),
-        'USER': os.getenv('ROOT_DB_USER', 'root'),
-        'PASSWORD': os.getenv('ROOT_DB_PASSWORD', ''),
-        'HOST': os.getenv('ROOT_DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('ROOT_DB_PORT', '3306'),
+        'NAME': '%s',
+        'USER': '%s',
+        'PASSWORD': '%s',
+        'HOST': '%s',
+        'PORT': '%s',
     },
-}\n"""
+}\n""" % (dbName, dbUser, password, host, port, rootdbName, rootdbdbUser, rootdbpassword, host, port)
 
             settingsFile = '/usr/local/CyberCP/CyberCP/settings.py'
 
@@ -3552,7 +3575,7 @@ passdb {
 
             # Clone the new repository directly to CyberCP
             Upgrade.stdOut("Cloning fresh CyberPanel repository...")
-            command = 'git clone https://github.com/joeyboli/cyberpanel CyberCP'
+            command = 'git clone https://github.com/usmannasir/cyberpanel CyberCP'
             if not Upgrade.executioner(command, command, 1):
                 # Try to restore backup if clone fails
                 Upgrade.stdOut("Clone failed, attempting to restore backup...")
@@ -4823,8 +4846,8 @@ pm.max_spare_servers = 3
                     Upgrade.stdOut('[ERROR] Failed to install PHP 8.3')
                     return 0
             
-            # Remove existing PHP symlink if it exists (os.path.lexists catches broken symlinks too)
-            if os.path.lexists('/usr/bin/php'):
+            # Remove existing PHP symlink if it exists
+            if os.path.exists('/usr/bin/php'):
                 os.remove('/usr/bin/php')
 
             # Create symlink to PHP 8.3
@@ -4874,7 +4897,7 @@ pm.max_spare_servers = 3
             if os.path.exists('httpd_config.xml'):
                 os.remove('httpd_config.xml')
 
-            command = 'wget https://raw.githubusercontent.com/joeyboli/cyberpanel/stable/install/litespeed/httpd_config.xml'
+            command = 'wget https://raw.githubusercontent.com/usmannasir/cyberpanel/stable/install/litespeed/httpd_config.xml'
             Upgrade.executioner(command, command, 0)
             # os.remove('/usr/local/lsws/conf/httpd_config.xml')
             # shutil.copy('httpd_config.xml', '/usr/local/lsws/conf/httpd_config.xml')

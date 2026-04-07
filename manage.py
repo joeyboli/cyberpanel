@@ -3,15 +3,6 @@ import os
 import sys
 
 if __name__ == "__main__":
-    # Load environment variables from .env file
-    try:
-        from dotenv import load_dotenv
-
-        load_dotenv()
-    except ImportError:
-        # dotenv not available, continue without it
-        pass
-
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "CyberCP.settings")
     try:
         from django.core.management import execute_from_command_line

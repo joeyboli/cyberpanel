@@ -41,7 +41,7 @@ class mysqlUtilities:
             if remote:
                 createUser = "CREATE USER '" + dbuser + "'@'%s' IDENTIFIED BY '" % (publicip) + dbpassword + "'"
             else:
-                createUser = "CREATE USER '" + dbuser + "'@'127.0.0.1' IDENTIFIED BY '" + dbpassword + "'"
+                createUser = "CREATE USER '" + dbuser + "'@'localhost' IDENTIFIED BY '" + dbpassword + "'"
 
             command = initCommand + createUser + '"'
 
@@ -80,7 +80,7 @@ class mysqlUtilities:
                     else:
                         dropDB = "GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (publicip)
                 else:
-                    dropDB = "GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'127.0.0.1'"
+                    dropDB = "GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'localhost'"
 
                 command = initCommand + dropDB + '"'
 

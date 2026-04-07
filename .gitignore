@@ -3,6 +3,7 @@
 *.log
 *.tmp
 *.swp
+.idea/
 
 # Environment files
 .env

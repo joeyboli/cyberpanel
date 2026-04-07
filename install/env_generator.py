@@ -153,14 +153,14 @@ ALLOWED_HOSTS={allowed_hosts_str}
 DB_NAME=cyberpanel
 DB_USER=cyberpanel
 DB_PASSWORD={cyberpanel_db_password}
-DB_HOST=127.0.0.1
+DB_HOST=localhost
 DB_PORT=3306
 
 # Root Database Configuration - MySQL Root Access
 ROOT_DB_NAME=mysql
 ROOT_DB_USER=root
 ROOT_DB_PASSWORD={mysql_root_password}
-ROOT_DB_HOST=127.0.0.1
+ROOT_DB_HOST=localhost
 ROOT_DB_PORT=3306
 
 # Security Settings
@@ -183,12 +183,8 @@ LOG_LEVEL=INFO
     with open(env_file_path, 'w') as f:
         f.write(env_content)
     
-    # Set secure permissions (owner read, group read - needed for lscpd user)
-    os.chmod(env_file_path, 0o640)
-    
-    # Set ownership to lscpd so the service can read it
-    import subprocess
-    subprocess.run(['chown', 'lscpd:lscpd', env_file_path], check=False)
+    # Set secure permissions (owner read/write only)
+    os.chmod(env_file_path, 0o600)
     
     print(f"✓ Generated secure .env file at: {env_file_path}")
     print(f"✓ MySQL Root Password: {mysql_root_password}")

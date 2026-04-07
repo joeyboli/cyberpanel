@@ -81,7 +81,7 @@ class Renew:
             commands = [
                 'postmap -F hash:/etc/postfix/vmail_ssl.map',
                 'systemctl restart postfix',
-                'doveadm reload',
+                'systemctl restart dovecot',
                 'systemctl restart lscpd'
             ]
             

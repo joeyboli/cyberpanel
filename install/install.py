@@ -1,9 +1,6 @@
 import sys
 import subprocess
 import shutil
-
-import path
-
 import installLog as logging
 import argparse
 import os
@@ -529,12 +526,8 @@ class preFlightsChecks:
             # Create backup for recovery
             create_env_backup(self.cyberPanelPath, credentials)
             
-            # Set proper ownership for .env file (critical for lscpd to read it)
-            subprocess.run(['chown', 'lscpd:lscpd', os.path.join(self.cyberPanelPath, '.env')], check=False)
-            
             logging.InstallLog.writeToFile("✓ Secure .env file generated successfully")
             logging.InstallLog.writeToFile("✓ Credentials backup created for recovery")
-            logging.InstallLog.writeToFile("✓ .env file ownership set to lscpd:lscpd")
             
             return credentials
             
@@ -567,7 +560,7 @@ class preFlightsChecks:
                 else:
                     writeDataToFile.writelines("        'PASSWORD': '" + password + "'," + "\n")
             elif items.find('127.0.0.1') > -1:
-                writeDataToFile.writelines("        'HOST': '127.0.0.1',\n")
+                writeDataToFile.writelines("        'HOST': 'localhost',\n")
             elif items.find("'PORT':'3307'") > -1:
                 writeDataToFile.writelines("        'PORT': '',\n")
             else:
@@ -577,23 +570,6 @@ class preFlightsChecks:
             os.fchmod(writeDataToFile.fileno(), stat.S_IRUSR | stat.S_IWUSR)
 
         writeDataToFile.close()
-        
-        # Create .env file for Django dotenv compatibility (fallback method)
-        try:
-            env_path = os.path.join(self.cyberPanelPath, '.env')
-            with open(env_path, 'w') as f:
-                f.write(f"DB_PASSWORD={password}\n")
-                f.write(f"ROOT_DB_PASSWORD={mysqlPassword}\n")
-                f.write("DB_HOST=127.0.0.1\n")
-                f.write("ROOT_DB_HOST=127.0.0.1\n")
-                f.write(f"SECRET_KEY='{generate_pass(50)}'\n")
-                f.write("ALLOWED_HOSTS=*\n")
-            os.chmod(env_path, 0o640)
-            # Set ownership to lscpd so the service can read it
-            subprocess.run(['chown', 'lscpd:lscpd', env_path], check=False)
-            logging.InstallLog.writeToFile("✓ Created .env file in fallback mode with lscpd ownership")
-        except Exception as e:
-            logging.InstallLog.writeToFile(f"[WARNING] Could not create .env file in fallback: {e}")
 
     def download_install_CyberPanel(self, mysqlPassword, mysql):
         ##
@@ -1649,14 +1625,7 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             command = f'wget -O /usr/local/CyberCP/snappymail_cyberpanel.php  https://raw.githubusercontent.com/the-djmaze/snappymail/master/integrations/cyberpanel/install.php'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-            if os.path.exists('/usr/local/lsws/lsphp80/bin/php'):
-                php_path = '/usr/local/lsws/lsphp80/bin/php'
-            elif os.path.exists('/usr/local/lsws/lsphp81/bin/php'):
-                php_path = '/usr/local/lsws/lsphp81/bin/php'
-            else:
-                php_path = '/usr/local/lsws/lsphp74/bin/php'
-
-            command = f'{php_path} /usr/local/CyberCP/snappymail_cyberpanel.php'
+            command = f'/usr/local/lsws/lsphp80/bin/php /usr/local/CyberCP/snappymail_cyberpanel.php'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
 
@@ -2052,8 +2021,7 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             ##
 
-            # Enable and start lscpd service with proper timeout handling
-            command = 'systemctl daemon-reload && systemctl enable lscpd && sleep 3 && systemctl start lscpd'
+            command = 'systemctl start lscpd'
             # preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             preFlightsChecks.stdOut("LSCPD Daemon Set!")
@@ -2314,7 +2282,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp82 lsphp82-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             # Check if PHP 8.3 exists
             if not os.path.exists('/usr/local/lsws/lsphp83/bin/php'):
@@ -2326,7 +2294,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp83 lsphp83-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
                 
                 # Verify installation
                 if not os.path.exists('/usr/local/lsws/lsphp83/bin/php'):
@@ -2342,7 +2310,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp84 lsphp84-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             # Install PHP 8.5
             if not os.path.exists('/usr/local/lsws/lsphp85/bin/php'):
@@ -2353,7 +2321,7 @@ milter_default_action = accept
                 else:
                     command = 'DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install lsphp85 lsphp85-*'
                 
-                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
             
             # Remove existing PHP symlink if it exists
             if os.path.exists('/usr/bin/php'):
@@ -2481,7 +2449,7 @@ milter_default_action = accept
 
     @staticmethod
     def installOne(package):
-        res = subprocess.call('DEBIAN_FRONTEND=noninteractive apt-get -y install ' + package, shell=True)
+        res = subprocess.call(shlex.split('DEBIAN_FRONTEND=noninteractive apt-get -y install ' + package))
         if res != 0:
             preFlightsChecks.stdOut("Error #" + str(res) + ' installing:' + package + '.  This may not be an issue ' \
                                                                                       'but may affect installation of something later',
@@ -3020,7 +2988,7 @@ echo $oConfig->Save() ? 'Done' : 'Error';
         writeToFile.write(content)
         writeToFile.close()
 
-        command = '/usr/local/lsws/lsphp72/bin/php /usr/local/CyberCP/public/snappymail.php'
+        command = '/usr/local/lsws/lsphp83/bin/php /usr/local/CyberCP/public/snappymail.php'
         subprocess.call(shlex.split(command))
 
         command = "chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/data"

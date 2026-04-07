@@ -14,9 +14,6 @@
 Sudo_Test=$(set)
 #for SUDO check
 
-FORK_USER="joeyboli"
-FORK_BRANCH="v2.4.5"
-
 Set_Default_Variables() {
 
 # Clear old log files
@@ -56,29 +53,11 @@ Server_OS=""
 Server_OS_Version=""
 Server_Provider='Undefined'
 
-Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt | tr -d '\r')
-if [[ -z "$Temp_Value" ]]; then
-    echo "Error: Could not fetch version information from CyberPanel server."
-    exit 1
-fi
-# Robustly extract version and build using regex or substring if format is known
-# version.txt format example: "Version: 2.3.6 Build: 1"
-if [[ $Temp_Value =~ Version:[[:space:]]*([0-9.]+) ]]; then
-    Panel_Version="${BASH_REMATCH[1]}"
-else
-    Panel_Version=${Temp_Value:12:3}
-fi
-
-if [[ $Temp_Value =~ Build:[[:space:]]*([0-9]+) ]]; then
-    Panel_Build="${BASH_REMATCH[1]}"
-else
-    Panel_Build=${Temp_Value:25:1}
-fi
+Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt)
+Panel_Version=${Temp_Value:12:3}
+Panel_Build=${Temp_Value:25:1}
 
 Branch_Name="v${Panel_Version}.${Panel_Build}"
-if [[ "$Branch_Name" == "v2.4.5" ]]; then
-    Branch_Name="v2.4.5" # Just ensuring it's exactly what it should be
-fi
 Base_Number="1.9.3"
 
 Git_User=""
@@ -231,29 +210,24 @@ fi
 }
 
 Branch_Check() {
-  local branch_input="${1//[[:space:]]/}"
-  if [[ "$branch_input" = *.*.* ]]; then
-    #check input if it's valid format as X.Y.Z
-    Output=$(awk -v num1="$Base_Number" -v num2="$branch_input" '
-    BEGIN {
-      print "num1", (num1 < num2 ? "<" : ">="), "num2"
-    }
-    ')
-    if [[ $Output = *">="* ]]; then
-      echo -e "\nYou must use version number higher than 1.9.4"
-      exit
-    else
-      if [[ "$branch_input" == v* ]]; then
-        Branch_Name="$branch_input"
-      else
-        Branch_Name="v$branch_input"
-      fi
-      echo -e "\nSet branch name to $Branch_Name...\n"
-    fi
-  else
-    echo -e "\nPlease input a valid format version number."
+if [[ "$1" = *.*.* ]]; then
+  #check input if it's valid format as X.Y.Z
+  Output=$(awk -v num1="$Base_Number" -v num2="${1//[[:space:]]/}" '
+  BEGIN {
+    print "num1", (num1 < num2 ? "<" : ">="), "num2"
+  }
+  ')
+  if [[ $Output = *">="* ]]; then
+    echo -e "\nYou must use version number higher than 1.9.4"
     exit
+  else
+    Branch_Name="v${1//[[:space:]]/}"
+    echo -e "\nSet branch name to $Branch_Name...\n"
   fi
+else
+  echo -e "\nPlease input a valid format version number."
+  exit
+fi
 }
 
 Check_Return() {
@@ -645,7 +619,7 @@ if [ $CYBERCP_MISSING -eq 1 ]; then
     cd /usr/local
     rm -rf CyberCP_recovery_tmp
     
-    if git clone https://github.com/joeyboli/cyberpanel CyberCP_recovery_tmp; then
+    if git clone https://github.com/usmannasir/cyberpanel CyberCP_recovery_tmp; then
         echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Repository cloned successfully for recovery" | tee -a /var/log/cyberpanel_upgrade_debug.log
         
         # Checkout the appropriate branch
@@ -829,19 +803,14 @@ fi
 
 wget "${Git_Content_URL}/${Branch_Name}/plogical/upgrade.py"
 
-if [[ ! -f "upgrade.py" ]] || grep -q "404: Not Found" "upgrade.py" || [[ ! -s "upgrade.py" ]]; then
-    echo -e "\nFailed to download upgrade.py from branch ${Branch_Name}. Please check if the branch exists."
-    exit 1
-fi
-
 if [[ "$Server_Country" = "CN" ]] ; then
-  sed -i 's|git clone -b .* --single-branch https://github.com/joeyboli/cyberpanel|echo git cloned|g' upgrade.py
+  sed -i 's|git clone https://github.com/joeyboli/cyberpanel|echo git cloned|g' upgrade.py
 
-  Retry_Command "git clone -b ${Branch_Name} --single-branch ${Git_Clone_URL}"
+  Retry_Command "git clone ${Git_Clone_URL}"
     Check_Return "git clone ${Git_Clone_URL}"
 
   # shellcheck disable=SC2086
-  sed -i 's|https://raw.githubusercontent.com/joeyboli/cyberpanel/stable/install/litespeed/httpd_config.xml|'${Git_Content_URL}/${Branch_Name}'//install/litespeed/httpd_config.xml|g' upgrade.py
+  sed -i 's|https://raw.githubusercontent.com/usmannasir/cyberpanel/stable/install/litespeed/httpd_config.xml|'${Git_Content_URL}/${Branch_Name}'//install/litespeed/httpd_config.xml|g' upgrade.py
   sed -i 's|https://cyberpanel.sh/composer.sh|https://gitee.com/qtwrk/cyberpanel/raw/stable/install/composer_cn.sh|g' upgrade.py
 fi
 
@@ -878,7 +847,7 @@ Pre_Upgrade_Branch_Input() {
 
 Main_Upgrade() {
 echo -e "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting Main_Upgrade function..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Running: /usr/local/CyberPanel/bin/python upgrade.py" | tee -a /var/log/cyberpanel_upgrade_debug.log
+echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Running: /usr/local/CyberPanel/bin/python upgrade.py $Branch_Name" | tee -a /var/log/cyberpanel_upgrade_debug.log
 
 # Run upgrade.py and capture output
 upgrade_output=$(/usr/local/CyberPanel/bin/python upgrade.py "$Branch_Name" 2>&1)
@@ -912,9 +881,9 @@ else
   fi
 
   rm -rf /usr/local/CyberPanelTemp
-
+  
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Creating temporary virtual environment for fallback upgrade..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+  
   # Try python3 -m venv first (more reliable on Ubuntu 22.04)
   if python3 -m venv --system-site-packages /usr/local/CyberPanelTemp 2>/dev/null; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Temporary virtualenv created with python3 -m venv" | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -976,26 +945,26 @@ echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Checking CyberCP virtual environment sta
 # After removing directories, we always need to recreate
 if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Creating/recreating CyberCP virtual environment with Python 3..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+  
   # First ensure the directory exists
   mkdir -p /usr/local/CyberCP
-
+  
   # For Ubuntu 22.04+, we need to handle virtualenv differently
   VENV_SUCCESS=0
-
+  
   # First try using python3 -m venv (more reliable on Ubuntu 22.04)
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Attempting to create virtual environment using python3 -m venv..." | tee -a /var/log/cyberpanel_upgrade_debug.log
   virtualenv_output=$(python3 -m venv --system-site-packages /usr/local/CyberCP 2>&1)
   VENV_CODE=$?
   echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+  
   if [[ $VENV_CODE -eq 0 ]] && [[ -f /usr/local/CyberCP/bin/activate ]]; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtual environment created successfully using python3 -m venv" | tee -a /var/log/cyberpanel_upgrade_debug.log
     VENV_SUCCESS=1
   else
     # If that fails, try virtualenv command
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] python3 -m venv failed, trying virtualenv command..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+    
     # On Ubuntu 22.04, we need to ensure proper virtualenv installation
     if [[ "$Server_OS" = "Ubuntu" ]] && [[ "$Server_OS_Version" = "22" ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Ubuntu 22.04 detected, ensuring virtualenv is properly installed..." | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -1004,41 +973,41 @@ if [[ $NEEDS_RECREATE -eq 1 ]] || [[ ! -d /usr/local/CyberCP/bin ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] AlmaLinux/Rocky Linux 9/10 detected, ensuring virtualenv is properly installed..." | tee -a /var/log/cyberpanel_upgrade_debug.log
       pip3 install --upgrade virtualenv 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
     fi
-
+    
     # Find the correct python3 path
     if [[ "$Server_OS" = "CentOS" ]] && ([[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]]); then
       PYTHON_PATH=$(which python3 2>/dev/null || which python3.9 2>/dev/null || echo "/usr/bin/python3")
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Using Python path: $PYTHON_PATH" | tee -a /var/log/cyberpanel_upgrade_debug.log
-      virtualenv_output=$(virtualenv -p "$PYTHON_PATH" --system-site-packages /usr/local/CyberCP 2>&1)
+      virtualenv_output=$(virtualenv -p "$PYTHON_PATH" /usr/local/CyberCP 2>&1)
     else
-      virtualenv_output=$(virtualenv -p /usr/bin/python3 --system-site-packages /usr/local/CyberCP 2>&1)
+      virtualenv_output=$(virtualenv -p /usr/bin/python3 /usr/local/CyberCP 2>&1)
     fi
     VENV_CODE=$?
     echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+    
     # Check if TypeError occurred (common on Ubuntu 22.04)
     if echo "$virtualenv_output" | grep -q "TypeError"; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: TypeError detected, attempting workaround..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+      
       # Try alternative method using explicit system-site-packages
       virtualenv_output=$(virtualenv --python=/usr/bin/python3 --system-site-packages /usr/local/CyberCP 2>&1)
       VENV_CODE=$?
       echo "$virtualenv_output" | tee -a /var/log/cyberpanel_upgrade_debug.log
     fi
-
+    
     if [[ -f /usr/local/CyberCP/bin/activate ]]; then
       echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtual environment created successfully" | tee -a /var/log/cyberpanel_upgrade_debug.log
       VENV_SUCCESS=1
       VENV_CODE=0
     fi
   fi
-
+  
   if [[ $VENV_SUCCESS -eq 0 ]]; then
     VENV_CODE=1
   fi
-
+  
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Virtualenv creation returned code: $VENV_CODE" | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+  
   if [[ $VENV_CODE -ne 0 ]]; then
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] FATAL: Virtualenv creation failed with code $VENV_CODE" | tee -a /var/log/cyberpanel_upgrade_debug.log
     echo -e "Virtualenv creation failed. Please check the logs at /var/log/cyberpanel_upgrade_debug.log"
@@ -1088,10 +1057,10 @@ echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Verifying Django installation..." | tee 
 # Test if Django is installed
 if ! /usr/local/CyberCP/bin/python -c "import django" 2>/dev/null; then
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: Django not found, installing requirements again..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
+  
   # Re-activate virtual environment
   source /usr/local/CyberCP/bin/activate
-
+  
   # Re-install requirements
   echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Re-installing Python requirements..." | tee -a /var/log/cyberpanel_upgrade_debug.log
   pip install --upgrade pip setuptools wheel packaging 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
@@ -1243,55 +1212,12 @@ if [[ -f /etc/cyberpanel/watchdog.sh ]] ; then
 	wget -O /etc/cyberpanel/watchdog.sh "${Git_Content_URL}/${Branch_Name}/CPScripts/watchdog.sh"
 	chmod 700 /etc/cyberpanel/watchdog.sh
 	ln -s /etc/cyberpanel/watchdog.sh /usr/local/bin/watchdog
-	watchdog status &
+	watchdog status
 fi
 
 
 rm -f /usr/local/composer.sh
 rm -f /usr/local/requirments.txt
-
-
-# Fix DB credentials lost during upgrade
-echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Restoring database credentials post-upgrade..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
-# Read existing cyberpanel DB password or generate new one
-if [[ -f /etc/cyberpanel/cyberpaneldb ]]; then
-    CYBERPANEL_DB_PASS=$(cat /etc/cyberpanel/cyberpaneldb)
-else
-    # Generate new password and set it in MySQL
-    CYBERPANEL_DB_PASS=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 16)
-    # Drop both localhost and 127.0.0.1 users to avoid conflicts, then create only 127.0.0.1
-    mysql -uroot -p"$MySQL_Password" -e \
-        "DROP USER IF EXISTS 'cyberpanel'@'localhost'; DROP USER IF EXISTS 'cyberpanel'@'127.0.0.1'; CREATE USER 'cyberpanel'@'127.0.0.1' IDENTIFIED BY '$CYBERPANEL_DB_PASS'; GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1'; FLUSH PRIVILEGES;" 2>/dev/null
-    echo "$CYBERPANEL_DB_PASS" > /etc/cyberpanel/cyberpaneldb
-    chmod 600 /etc/cyberpanel/cyberpaneldb
-fi
-
-# Write .env file that settings.py now requires
-cat > /usr/local/CyberCP/.env << ENVEOF
-DB_PASSWORD=${CYBERPANEL_DB_PASS}
-ROOT_DB_PASSWORD=${MySQL_Password}
-DB_HOST=127.0.0.1
-ROOT_DB_HOST=127.0.0.1
-SECRET_KEY=$(openssl rand -base64 32)
-ALLOWED_HOSTS=*
-ENVEOF
-chmod 640 /usr/local/CyberCP/.env
-chown lscpd:lscpd /usr/local/CyberCP/.env
-
-echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Database credentials restored." | tee -a /var/log/cyberpanel_upgrade_debug.log
-
-# Fix ownership for static and public directories (critical fix for post-upgrade/reboot)
-# Only fix ownership if directories exist to prevent errors
-if [[ -d "/usr/local/CyberCP/static" ]]; then
-  chown -R lscpd:lscpd /usr/local/CyberCP/static
-fi
-if [[ -d "/usr/local/CyberCP/public/static" ]]; then
-  chown -R lscpd:lscpd /usr/local/CyberCP/public/static
-fi
-if [[ -d "/usr/local/CyberCP/public/phpmyadmin/tmp" ]]; then
-  chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
-fi
 
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib64
@@ -1306,7 +1232,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
 
     # Find the latest available PHP version and use it
     PHP_RESTORED=0
-
+    
     # Try to find the latest lsphp version (check from newest to oldest)
     for PHP_VER in 83 82 81 80 74 73 72; do
         if [[ -f /usr/local/lsws/lsphp${PHP_VER}/bin/lsphp ]]; then
@@ -1344,7 +1270,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
             fi
         done
     fi
-
+    
     # If no lsphp version found, try admin_php5 as fallback
     if [[ $PHP_RESTORED -eq 0 ]]; then
         if [[ -f /usr/local/lscp/admin/fcgi-bin/admin_php5 ]]; then
@@ -1366,7 +1292,7 @@ if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp ]] || [[ ! -s /usr/local/lscp/fcgi-bin
             echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ERROR: Could not find any PHP binary to restore lsphp" | tee -a /var/log/cyberpanel_upgrade_debug.log
         fi
     fi
-
+    
     # Create symlinks if they don't exist
     if [[ -f /usr/local/lscp/fcgi-bin/lsphp ]]; then
         if [[ ! -f /usr/local/lscp/fcgi-bin/lsphp4 ]]; then
@@ -1419,19 +1345,6 @@ else
     echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] lscpd binary exists and is valid" | tee -a /var/log/cyberpanel_upgrade_debug.log
 fi
 
-# Ensure explicitly lscpd.0.4.0 is set for Ubuntu 22/24 to prevent hangs on newer kernels
-if [[ "$Server_OS" = "Ubuntu" ]] && [[ -f /etc/lsb-release ]]; then
-    ubuntu_version=$(grep 'DISTRIB_RELEASE' /etc/lsb-release | cut -d'=' -f2 | cut -d'.' -f1)
-    if [[ "$ubuntu_version" = "22" ]] || [[ "$ubuntu_version" = "24" ]]; then
-        if [[ -f /usr/local/CyberCP/lscpd.0.4.0 ]]; then
-            cp -f /usr/local/CyberCP/lscpd.0.4.0 /usr/local/lscp/bin/lscpd
-            chmod 755 /usr/local/lscp/bin/lscpd
-            chown root:root /usr/local/lscp/bin/lscpd
-            echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Enforced lscpd.0.4.0 binary for Ubuntu 22/24" | tee -a /var/log/cyberpanel_upgrade_debug.log
-        fi
-    fi
-fi
-
 if [[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]] || [[ "$Server_OS_Version" = "18" ]] || [[ "$Server_OS_Version" = "8" ]] || [[ "$Server_OS_Version" = "20" ]] || [[ "$Server_OS_Version" = "24" ]]; then
     echo "PYTHONHOME=/usr" > /usr/local/lscp/conf/pythonenv.conf
   else
@@ -1470,73 +1383,8 @@ usermod -a -G lscpd nobody 2>/dev/null || true
 chown -R lscpd:lscpd /usr/local/CyberCP/public/snappymail/data 2>/dev/null || true
 echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Added web server users to lscpd group and fixed SnappyMail ownership" | tee -a /var/log/cyberpanel_upgrade_debug.log
 
-  # Wait for lscpd to start before final verification
-  echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Waiting for lscpd to fully start (10 seconds)..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-  sleep 10
+systemctl restart lscpd
 
-  # OVERWRITE SERVICE FILE TO PREVENT SSH KILL
-  echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Applying systemd KillMode fix for lscpd..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-  cat <<EOF > /etc/systemd/system/lscpd.service
-[Unit]
-Description=LSCPD Daemon
-After=network.target
-
-[Service]
-Type=forking
-ExecStart=/usr/local/lscp/bin/lscpdctrl start
-ExecStop=/usr/local/lscp/bin/lscpdctrl stop
-PIDFile=/usr/local/lscp/logs/lscpd.pid
-Restart=on-failure
-RestartSec=10
-TimeoutStartSec=60
-TimeoutStopSec=30
-KillMode=mixed
-KillSignal=SIGTERM
-TasksMax=infinity
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  systemctl daemon-reload
-  
-  # Ensure lscpd service is enabled for boot persistence
-  systemctl enable lscpd 2>/dev/null || true
-
-  systemctl stop lscpd
-  pkill -9 lscpd
-  
-  # Give time for process to fully terminate
-  sleep 3
-  
-  # Ensure proper ownership before starting (critical for reboot persistence)
-  # Only fix ownership if directories exist to prevent errors
-  if [[ -d "/usr/local/CyberCP/static" ]]; then
-    chown -R lscpd:lscpd /usr/local/CyberCP/static
-  fi
-  if [[ -d "/usr/local/CyberCP/public/static" ]]; then
-    chown -R lscpd:lscpd /usr/local/CyberCP/public/static
-  fi
-  if [[ -d "/usr/local/CyberCP/public/phpmyadmin/tmp" ]]; then
-    chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
-  fi
-  if [[ -d "/usr/local/lscp/cyberpanel/snappymail/" ]]; then
-    chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/
-  fi
-  
-  # Clear any stale PID files
-  rm -f /usr/local/lscp/logs/lscpd.pid 2>/dev/null || true
-  
-  systemctl start lscpd
-
-  # Wait for restart to complete and verify service is running
-  sleep 10
-  
-  # Verify lscpd service is active
-  if ! systemctl is-active --quiet lscpd; then
-    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: lscpd service failed to start, checking status..." | tee -a /var/log/cyberpanel_upgrade_debug.log
-    systemctl status lscpd 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
-    journalctl -u lscpd --no-pager -n 20 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
-  fi
 }
 
 Post_Install_Display_Final_Info() {
@@ -1546,22 +1394,7 @@ if [[ $Panel_Port = "" ]] ; then
   Panel_Port="8090"
 fi
 
-  # Check for 200 OK or 302 Found (it might redirect)
-  SUCCESS=0
-  for i in {1..5}; do
-    echo -ne "Checking CyberPanel access attempt $i... "
-    # Try both IPv4 and IPv6 loopback
-    if curl -I -L -k "https://127.0.0.1:${Panel_Port#*:}" 2>/dev/null | grep -E -q "200 OK|302 Found|301 Moved" || \
-       curl -I -L -k "https://[::1]:${Panel_Port#*:}" 2>/dev/null | grep -E -q "200 OK|302 Found|301 Moved" ; then
-      echo "Success!"
-      SUCCESS=1
-      break
-    fi
-    echo "Failed."
-    sleep 5
-  done
-
-  if [[ $SUCCESS -eq 1 ]] ; then
+if curl -I -XGET -k "https://127.0.0.1:${Panel_Port#*:}" | grep -q "200 OK" ; then
   echo "###################################################################"
   echo "                CyberPanel Upgraded                                "
   echo "###################################################################"

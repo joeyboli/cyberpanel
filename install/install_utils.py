@@ -319,9 +319,6 @@ def call(command, distro, bracket, message, log=0, do_exit=0, code=os.EX_OK, she
     Returns:
         bool: True if successful, False if failed
     """
-    if "DEBIAN_FRONTEND" in command:
-        shell = True
-        
     finalMessage = 'Running: %s' % (message)
     stdOut(finalMessage, log)
     count = 0
