@@ -7,11 +7,12 @@ Type=forking
 ExecStart = /usr/local/lscp/bin/lscpdctrl start
 ExecStop = /usr/local/lscp/bin/lscpdctrl stop
 #ExecReload= /usr/local/lscp/bin/lscpdctrl restart
+PIDFile=/usr/local/lscp/logs/lscpd.pid
 
 Restart=on-failure
 RestartSec=10
-TimeoutStartSec=60
-TimeoutStopSec=30
+TimeoutStartSec=120
+TimeoutStopSec=60
 KillMode=mixed
 KillSignal=SIGTERM
 PrivateTmp=false

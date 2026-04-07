@@ -1432,6 +1432,14 @@ if [[ "$Server_OS" = "Ubuntu" ]] && [[ -f /etc/lsb-release ]]; then
     fi
 fi
 
+# CRITICAL FIX: Restore lscpd ownership for logs directory after binary updates
+# This prevents PID file write failures that cause service timeouts
+if [[ -d "/usr/local/lscp/logs" ]]; then
+    chown -R lscpd:lscpd /usr/local/lscp/logs
+    chmod 755 /usr/local/lscp/logs
+    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Restored lscpd ownership for /usr/local/lscp/logs" | tee -a /var/log/cyberpanel_upgrade_debug.log
+fi
+
 if [[ "$Server_OS_Version" = "9" ]] || [[ "$Server_OS_Version" = "10" ]] || [[ "$Server_OS_Version" = "18" ]] || [[ "$Server_OS_Version" = "8" ]] || [[ "$Server_OS_Version" = "20" ]] || [[ "$Server_OS_Version" = "24" ]]; then
     echo "PYTHONHOME=/usr" > /usr/local/lscp/conf/pythonenv.conf
   else
@@ -1488,8 +1496,8 @@ ExecStop=/usr/local/lscp/bin/lscpdctrl stop
 PIDFile=/usr/local/lscp/logs/lscpd.pid
 Restart=on-failure
 RestartSec=10
-TimeoutStartSec=60
-TimeoutStopSec=30
+TimeoutStartSec=120
+TimeoutStopSec=60
 KillMode=mixed
 KillSignal=SIGTERM
 TasksMax=infinity

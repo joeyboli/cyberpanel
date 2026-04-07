@@ -1,47 +1,70 @@
-```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
+
+# Dependencies
+.venv/
+venv/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
+
 # Logs and temp files
 *.log
 *.tmp
 *.swp
+*.swo
 
-# Environment files
+# Environment
 .env
 .env.local
 *.env.*
 
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-.venv-bak/
-.egg-info/
-.eggs/
-.coverage
-coverage/
-htmlcov/
-.mypy_cache/
-.pytest_cache/
-.tox/
+# Editors
+.vscode/
+.idea/
 
-# Build and distribution
+# System files
+.DS_Store
+Thumbs.db
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+# Build directories
 dist/
 build/
-*.egg
-*.whl
-pip-log.txt
-pip-delete-this-directory.txt
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-```
+target/
+.gradle/

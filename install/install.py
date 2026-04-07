@@ -742,6 +742,10 @@ password="%s"
         command = "chown -R root:root /usr/local/lscp"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
+        # Restore lscpd ownership for runtime directories (logs, pid files)
+        command = "chown -R lscpd:lscpd /usr/local/lscp/logs"
+        preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+        
         command = "chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/rainloop"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
