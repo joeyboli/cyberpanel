@@ -6,30 +6,38 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+session_name('SignonSession');
 session_start();
 
 define("PMA_SIGNON_INDEX", 1);
+define('PMA_SIGNON_SESSIONNAME', 'SignonSession');
+define('PMA_DISABLE_SSL_PEER_VALIDATION', TRUE);
+
+function log_debug($msg) {
+    file_put_contents('/home/cyberpanel/phpmyadmin_debug.log', date('[Y-m-d H:i:s] ') . $msg . "\n", FILE_APPEND);
+}
 
 try {
-    define('PMA_SIGNON_SESSIONNAME', 'SignonSession');
-    define('PMA_DISABLE_SSL_PEER_VALIDATION', TRUE);
+    log_debug("Request received: " . json_encode(array_merge($_GET, $_POST)));
 
     // Merge GET and POST to handle both ways of passing token/username
     $request = array_merge($_GET, $_POST);
 
     if (isset($request['password']) && isset($request['username'])) {
-
-        session_name(PMA_SIGNON_SESSIONNAME);
-        @session_start();
+        log_debug("Processing login for user: " . $request['username']);
 
         $username = htmlspecialchars($request['username'], ENT_QUOTES, 'UTF-8');
         $password = $request['password'];
 
+        log_debug("Finalizing login with session ID: " . session_id());
         $_SESSION['PMA_single_signon_user'] = $username;
         $_SESSION['PMA_single_signon_password'] = $password;
         $_SESSION['PMA_single_signon_host'] = 'localhost';
+        $_SESSION['PMA_single_signon_port'] = '3306'; 
+        $_SESSION['PMA_single_signon_cfgupdate'] = array('verbose' => 'CyberPanel');
 
-        @session_write_close();
+        session_write_close();
+        log_debug("Session closed. Redirecting to phpMyAdmin.");
 
         header('Location: /phpmyadmin/index.php?server=' . PMA_SIGNON_INDEX);
         exit;
@@ -39,8 +47,9 @@ try {
         ### Get credentials using the token
 
         $token = htmlspecialchars($request['token'], ENT_QUOTES, 'UTF-8');
-        $username = htmlspecialchars($request['username'], ENT_QUOTES, 'UTF-8');
+        $username = isset($request['username']) ? htmlspecialchars($request['username'], ENT_QUOTES, 'UTF-8') : 'root';
 
+        log_debug("Redirecting to fetchDetailsPHPMYAdmin with token for user: " . $username);
         $url = "/dataBases/fetchDetailsPHPMYAdmin";
 
         // Redirect with POST data
@@ -58,7 +67,8 @@ try {
         header('Location: /base/');
         return;
     }
-} catch (Exception $e) {
+} catch (Throwable $e) {
+    log_debug('phpmyadminsignin error: ' . $e->getMessage());
     error_log('phpmyadminsignin error: ' . $e->getMessage());
     echo 'Caught exception: ', $e->getMessage(), "\n";
     $params = session_get_cookie_params();
