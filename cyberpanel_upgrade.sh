@@ -1280,9 +1280,16 @@ chmod 600 /usr/local/CyberCP/.env
 echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Database credentials restored." | tee -a /var/log/cyberpanel_upgrade_debug.log
 
 # Fix ownership for static and public directories (critical fix for post-upgrade/reboot)
-chown -R lscpd:lscpd /usr/local/CyberCP/static
-chown -R lscpd:lscpd /usr/local/CyberCP/public/static
-chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+# Only fix ownership if directories exist to prevent errors
+if [[ -d "/usr/local/CyberCP/static" ]]; then
+  chown -R lscpd:lscpd /usr/local/CyberCP/static
+fi
+if [[ -d "/usr/local/CyberCP/public/static" ]]; then
+  chown -R lscpd:lscpd /usr/local/CyberCP/public/static
+fi
+if [[ -d "/usr/local/CyberCP/public/phpmyadmin/tmp" ]]; then
+  chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+fi
 
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib
 chown -R cyberpanel:cyberpanel /usr/local/CyberCP/lib64
@@ -1494,10 +1501,19 @@ EOF
   pkill -9 lscpd
   
   # Ensure proper ownership before starting (critical for reboot persistence)
-  chown -R lscpd:lscpd /usr/local/CyberCP/static
-  chown -R lscpd:lscpd /usr/local/CyberCP/public/static
-  chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
-  chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/
+  # Only fix ownership if directories exist to prevent errors
+  if [[ -d "/usr/local/CyberCP/static" ]]; then
+    chown -R lscpd:lscpd /usr/local/CyberCP/static
+  fi
+  if [[ -d "/usr/local/CyberCP/public/static" ]]; then
+    chown -R lscpd:lscpd /usr/local/CyberCP/public/static
+  fi
+  if [[ -d "/usr/local/CyberCP/public/phpmyadmin/tmp" ]]; then
+    chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
+  fi
+  if [[ -d "/usr/local/lscp/cyberpanel/snappymail/" ]]; then
+    chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/
+  fi
   
   systemctl start lscpd
 
