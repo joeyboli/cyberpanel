@@ -529,8 +529,12 @@ class preFlightsChecks:
             # Create backup for recovery
             create_env_backup(self.cyberPanelPath, credentials)
             
+            # Set proper ownership for .env file (critical for lscpd to read it)
+            subprocess.run(['chown', 'lscpd:lscpd', os.path.join(self.cyberPanelPath, '.env')], check=False)
+            
             logging.InstallLog.writeToFile("✓ Secure .env file generated successfully")
             logging.InstallLog.writeToFile("✓ Credentials backup created for recovery")
+            logging.InstallLog.writeToFile("✓ .env file ownership set to lscpd:lscpd")
             
             return credentials
             
@@ -573,6 +577,23 @@ class preFlightsChecks:
             os.fchmod(writeDataToFile.fileno(), stat.S_IRUSR | stat.S_IWUSR)
 
         writeDataToFile.close()
+        
+        # Create .env file for Django dotenv compatibility (fallback method)
+        try:
+            env_path = os.path.join(self.cyberPanelPath, '.env')
+            with open(env_path, 'w') as f:
+                f.write(f"DB_PASSWORD={password}\n")
+                f.write(f"ROOT_DB_PASSWORD={mysqlPassword}\n")
+                f.write("DB_HOST=127.0.0.1\n")
+                f.write("ROOT_DB_HOST=127.0.0.1\n")
+                f.write(f"SECRET_KEY='{generate_pass(50)}'\n")
+                f.write("ALLOWED_HOSTS=*\n")
+            os.chmod(env_path, 0o640)
+            # Set ownership to lscpd so the service can read it
+            subprocess.run(['chown', 'lscpd:lscpd', env_path], check=False)
+            logging.InstallLog.writeToFile("✓ Created .env file in fallback mode with lscpd ownership")
+        except Exception as e:
+            logging.InstallLog.writeToFile(f"[WARNING] Could not create .env file in fallback: {e}")
 
     def download_install_CyberPanel(self, mysqlPassword, mysql):
         ##

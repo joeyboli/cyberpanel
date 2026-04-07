@@ -1276,7 +1276,8 @@ ROOT_DB_HOST=127.0.0.1
 SECRET_KEY=$(openssl rand -base64 32)
 ALLOWED_HOSTS=*
 ENVEOF
-chmod 600 /usr/local/CyberCP/.env
+chmod 640 /usr/local/CyberCP/.env
+chown lscpd:lscpd /usr/local/CyberCP/.env
 
 echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] Database credentials restored." | tee -a /var/log/cyberpanel_upgrade_debug.log
 
