@@ -406,7 +406,7 @@ class mysqlUtilities:
                 f = open(passFile)
                 data = f.read()
                 password = data.split('\n', 1)[0]
-                mysqlhost = 'localhost'
+                mysqlhost = '127.0.0.1'
                 mysqlport = '3306'
                 mysqluser = 'root'
 
@@ -520,7 +520,7 @@ password=%s
                 f = open(passFile)
                 data = f.read()
                 password = data.split('\n', 1)[0]
-                mysqlhost = 'localhost'
+                mysqlhost = '127.0.0.1'
                 mysqlport = '3306'
                 mysqluser = 'root'
 
