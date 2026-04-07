@@ -275,14 +275,14 @@ except ImportError:
                 'NAME': 'cyberpanel',
                 'USER': 'cyberpanel',
                 'PASSWORD': cyberpanel_password,
-                'HOST': 'localhost',
+                'HOST': '127.0.0.1',
                 'PORT': '3306'
             },
             'rootdb': {
                 'NAME': 'mysql',
                 'USER': 'root',
                 'PASSWORD': root_password,
-                'HOST': 'localhost',
+                'HOST': '127.0.0.1',
                 'PORT': '3306'
             }
         }
@@ -3504,7 +3504,7 @@ passdb {
         'NAME': os.getenv('DB_NAME', 'cyberpanel'),
         'USER': os.getenv('DB_USER', 'cyberpanel'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
         'PORT': os.getenv('DB_PORT', '3306'),
     },
     'rootdb': {
@@ -3512,7 +3512,7 @@ passdb {
         'NAME': os.getenv('ROOT_DB_NAME', 'mysql'),
         'USER': os.getenv('ROOT_DB_USER', 'root'),
         'PASSWORD': os.getenv('ROOT_DB_PASSWORD', ''),
-        'HOST': os.getenv('ROOT_DB_HOST', 'localhost'),
+        'HOST': os.getenv('ROOT_DB_HOST', '127.0.0.1'),
         'PORT': os.getenv('ROOT_DB_PORT', '3306'),
     },
 }\n"""

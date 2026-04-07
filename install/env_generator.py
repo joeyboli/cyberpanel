@@ -153,14 +153,14 @@ ALLOWED_HOSTS={allowed_hosts_str}
 DB_NAME=cyberpanel
 DB_USER=cyberpanel
 DB_PASSWORD={cyberpanel_db_password}
-DB_HOST=localhost
+DB_HOST=127.0.0.1
 DB_PORT=3306
 
 # Root Database Configuration - MySQL Root Access
 ROOT_DB_NAME=mysql
 ROOT_DB_USER=root
 ROOT_DB_PASSWORD={mysql_root_password}
-ROOT_DB_HOST=localhost
+ROOT_DB_HOST=127.0.0.1
 ROOT_DB_PORT=3306
 
 # Security Settings

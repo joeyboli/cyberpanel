@@ -563,7 +563,7 @@ class preFlightsChecks:
                 else:
                     writeDataToFile.writelines("        'PASSWORD': '" + password + "'," + "\n")
             elif items.find('127.0.0.1') > -1:
-                writeDataToFile.writelines("        'HOST': 'localhost',\n")
+                writeDataToFile.writelines("        'HOST': '127.0.0.1',\n")
             elif items.find("'PORT':'3307'") > -1:
                 writeDataToFile.writelines("        'PORT': '',\n")
             else:
