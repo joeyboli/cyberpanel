@@ -25,8 +25,8 @@ chmod -R 755 /usr/local/CyberCP/bin
 chown -R root:root /usr/local/CyberCP
 # Ensure specific directories have correct ownership after global root chown
 chown -R lscpd:lscpd /usr/local/CyberCP/public/phpmyadmin/tmp
-chown -R cyberpanel:cyberpanel /usr/local/CyberCP/static
-chown -R cyberpanel:cyberpanel /usr/local/CyberCP/public/static
+chown -R lscpd:lscpd /usr/local/CyberCP/static
+chown -R lscpd:lscpd /usr/local/CyberCP/public/static
 
 # Ensure .env file exists before restarting lscpd (fixes Django 500 error)
 ENV_FILE="/usr/local/CyberCP/.env"
