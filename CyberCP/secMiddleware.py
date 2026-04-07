@@ -22,12 +22,19 @@ class secMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        from plogical.processUtilities import ProcessUtilities
-        from urllib.parse import urlparse
-        import re
 
+        ######
+
+        from plogical.processUtilities import ProcessUtilities
         FinalURL = request.build_absolute_uri().split('?')[0]
+
+        from urllib.parse import urlparse
         pathActual = urlparse(FinalURL).path
+
+        # Debug logging removed for performance
+
+        # Define webhook pattern for secure matching
+        import re
         webhook_pattern = re.compile(r'^/websites/[^/]+/(webhook|gitNotify)/?$')
         
         if pathActual == "/backup/localInitiate" or  pathActual == '/' or pathActual == '/verifyLogin' or pathActual == '/logout' or pathActual.startswith('/api')\
@@ -58,39 +65,32 @@ class secMiddleware:
 
         try:
             uID = request.session['userID']
+            admin = Administrator.objects.get(pk=uID)
             ipAddr = secMiddleware.get_client_ip(request)
 
             if ipAddr.find('.') > -1:
-                if request.session['ipAddr'] == ipAddr:
+                if request.session['ipAddr'] == ipAddr or admin.securityLevel == secMiddleware.LOW:
                     pass
                 else:
-                    admin = Administrator.objects.get(pk=uID)
-                    if admin.securityLevel == secMiddleware.LOW:
-                        pass
-                    else:
-                        del request.session['userID']
-                        del request.session['ipAddr']
-                        logging.writeToFile(secMiddleware.get_client_ip(request))
-                        final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
-                                     "errorMessage": "Session reuse detected, IPAddress logged."}
-                        final_json = json.dumps(final_dic)
-                        return HttpResponse(final_json)
+                    del request.session['userID']
+                    del request.session['ipAddr']
+                    logging.writeToFile(secMiddleware.get_client_ip(request))
+                    final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
+                                 "errorMessage": "Session reuse detected, IPAddress logged."}
+                    final_json = json.dumps(final_dic)
+                    return HttpResponse(final_json)
             else:
                 ipAddr = ':'.join(secMiddleware.get_client_ip(request).split(':')[:3])
-                if request.session['ipAddr'] == ipAddr:
+                if request.session['ipAddr'] == ipAddr or admin.securityLevel == secMiddleware.LOW:
                     pass
                 else:
-                    admin = Administrator.objects.get(pk=uID)
-                    if admin.securityLevel == secMiddleware.LOW:
-                        pass
-                    else:
-                        del request.session['userID']
-                        del request.session['ipAddr']
-                        logging.writeToFile(secMiddleware.get_client_ip(request))
-                        final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
-                                     "errorMessage": "Session reuse detected, IPAddress logged."}
-                        final_json = json.dumps(final_dic)
-                        return HttpResponse(final_json)
+                    del request.session['userID']
+                    del request.session['ipAddr']
+                    logging.writeToFile(secMiddleware.get_client_ip(request))
+                    final_dic = {'error_message': "Session reuse detected, IPAddress logged.",
+                                 "errorMessage": "Session reuse detected, IPAddress logged."}
+                    final_json = json.dumps(final_dic)
+                    return HttpResponse(final_json)
         except:
             pass
 
@@ -189,14 +189,11 @@ class secMiddleware:
                                    pathActual.find('saveSpamAssassinConfigurations') > -1 or 
                                    pathActual.find('docker') > -1 or pathActual.find('cloudAPI') > -1 or 
                                    pathActual.find('verifyLogin') > -1 or pathActual.find('submitUserCreation') > -1 or 
-                                   pathActual.find('/api/') > -1 or pathActual.find('aiscanner/scheduled-scans') > -1 or
-                                   pathActual.find('getDataFromConfigFile') > -1 or pathActual.find('saveConfigsToFile') > -1 or
-                                   pathActual.find('getRewriteRules') > -1 or pathActual.find('saveRewriteRules') > -1 or
-                                   pathActual.find('saveApacheConfigsToFile') > -1)
+                                   pathActual.find('/api/') > -1 or pathActual.find('aiscanner/scheduled-scans') > -1)
                     
                     if isAPIEndpoint:
                         # Skip validation for fields that contain legitimate code/scripts
-                        if key == 'content' or key == 'fileContent' or key == 'configData' or key == 'rewriteRules' or key == 'modSecRules' or key == 'contentNow' or key == 'emailMessage' or key == 'cronCommand' or key == 'commands' or key == 'MainDashboardCSS' or key == 'virtualHost':
+                        if key == 'content' or key == 'fileContent' or key == 'configData' or key == 'rewriteRules' or key == 'modSecRules' or key == 'contentNow' or key == 'emailMessage':
                             continue
 
                         # For API endpoints, still check for the most dangerous command injection characters
@@ -212,14 +209,14 @@ class secMiddleware:
                             final_json = json.dumps(final_dic)
                             return HttpResponse(final_json)
                         continue
-                    if key == 'MainDashboardCSS' or key == 'ownerPassword' or key == 'dbPassword' or key == 'scriptUrl' or key == 'CLAMAV_VIRUS' or key == "Rspamdserver" or key == 'smtpd_milters' \
+                    if key == 'MainDashboardCSS' or key == 'ownerPassword' or key == 'scriptUrl' or key == 'CLAMAV_VIRUS' or key == "Rspamdserver" or key == 'smtpd_milters' \
                             or key == 'non_smtpd_milters' or key == 'key' or key == 'cert' or key == 'recordContentAAAA' or key == 'backupDestinations'\
                             or key == 'ports' \
                             or key == 'imageByPass' or key == 'passwordByPass' or key == 'PasswordByPass' or key == 'cronCommand' \
                             or key == 'emailMessage' or key == 'configData' or key == 'rewriteRules' \
                             or key == 'modSecRules' or key == 'recordContentTXT' or key == 'SecAuditLogRelevantStatus' \
                             or key == 'fileContent' or key == 'commands' or key == 'gitHost' or key == 'ipv6' or key == 'contentNow' \
-                            or key == 'time_of_day' or key == 'notification_emails' or key == 'domains' or key == 'content' or key == 'virtualHost':
+                            or key == 'time_of_day' or key == 'notification_emails' or key == 'domains' or key == 'content':
                         continue
 
                     # Skip validation for API endpoints that need JSON structure characters

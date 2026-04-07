@@ -10,83 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import json
 import os
 from django.utils.translation import gettext_lazy as _
 
 # Load environment variables from .env file
-# Important: under systemd/lswsgi the working directory is not guaranteed,
-# so we must load `.env` from the project root explicitly.
 try:
     from dotenv import load_dotenv
-
-    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
+    load_dotenv()
 except ImportError:
     # dotenv not available, continue without it
     pass
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-def _read_mysql_password_file():
-    """
-    CyberPanel stores MySQL credentials in /etc/cyberpanel/mysqlPassword.
-    Same file phpMyAdmin / install scripts use. Format is either:
-    - Plain text: first line = root password (legacy)
-    - JSON: mysqluser, mysqlpassword, mysqlhost, mysqlport (remote or structured installs)
-
-    Django defaults DB_PASSWORD from env; if empty (common when .env is missing or not
-    loaded under lswsgi), fall back to this file so the panel does not connect with
-    "using password: NO" while phpMyAdmin still works via the file.
-    """
-    path = '/etc/cyberpanel/mysqlPassword'
-    if not os.path.isfile(path):
-        return None, None, None
-    try:
-        raw = open(path, 'r').read().strip()
-        if raw.startswith('{'):
-            data = json.loads(raw)
-            pw = data.get('mysqlpassword') or data.get('password')
-            host = data.get('mysqlhost')
-            port = data.get('mysqlport')
-            return pw, host, str(port) if port is not None else None
-        line = raw.split('\n', 1)[0].strip('\r\n')
-        return line, None, None
-    except Exception:
-        return None, None, None
-
-
-_FILE_PW, _FILE_HOST, _FILE_PORT = _read_mysql_password_file()
-
-# Resolve DB_* / ROOT_DB_* with file fallback when env left empty
-_DB_NAME = os.getenv('DB_NAME', 'cyberpanel')
-_DB_USER = os.getenv('DB_USER', 'cyberpanel')
-_DB_PASS = os.getenv('DB_PASSWORD', '') or ''
-if not _DB_PASS and _FILE_PW:
-    _DB_PASS = _FILE_PW
-
-_DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
-if 'DB_HOST' not in os.environ and _FILE_HOST:
-    _DB_HOST = _FILE_HOST
-
-_DB_PORT = os.getenv('DB_PORT', '3306')
-if 'DB_PORT' not in os.environ and _FILE_PORT:
-    _DB_PORT = _FILE_PORT
-
-_ROOT_DB_NAME = os.getenv('ROOT_DB_NAME', 'mysql')
-_ROOT_DB_USER = os.getenv('ROOT_DB_USER', 'root')
-_ROOT_DB_PASS = os.getenv('ROOT_DB_PASSWORD', '') or ''
-if not _ROOT_DB_PASS and _FILE_PW:
-    _ROOT_DB_PASS = _FILE_PW
-
-_ROOT_DB_HOST = os.getenv('ROOT_DB_HOST', '127.0.0.1')
-if 'ROOT_DB_HOST' not in os.environ and _FILE_HOST:
-    _ROOT_DB_HOST = _FILE_HOST
-
-_ROOT_DB_PORT = os.getenv('ROOT_DB_PORT', '3306')
-if 'ROOT_DB_PORT' not in os.environ and _FILE_PORT:
-    _ROOT_DB_PORT = _FILE_PORT
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -153,7 +89,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'CyberCP.secMiddleware.secMiddleware'
+    'CyberCP.secMiddleware.secMiddleware',
+    'CyberCP.phpmyadminMiddleware.PhpMyAdminAccessMiddleware'
 ]
 
 ROOT_URLCONF = 'CyberCP.urls'
@@ -172,6 +109,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'baseTemplate.context_processors.version_context',
                 'baseTemplate.context_processors.cosmetic_context',
+                'baseTemplate.context_processors.notification_preferences_context',
             ],
         },
     },
@@ -186,19 +124,19 @@ WSGI_APPLICATION = 'CyberCP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': _DB_NAME,
-        'USER': _DB_USER,
-        'PASSWORD': _DB_PASS,
-        'HOST': _DB_HOST,
-        'PORT': _DB_PORT,
+        'NAME': os.getenv('DB_NAME', 'cyberpanel'),
+        'USER': os.getenv('DB_USER', 'cyberpanel'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'SLTUIUxqhulwsh'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     },
     'rootdb': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': _ROOT_DB_NAME,
-        'USER': _ROOT_DB_USER,
-        'PASSWORD': _ROOT_DB_PASS,
-        'HOST': _ROOT_DB_HOST,
-        'PORT': _ROOT_DB_PORT,
+        'NAME': os.getenv('ROOT_DB_NAME', 'mysql'),
+        'USER': os.getenv('ROOT_DB_USER', 'root'),
+        'PASSWORD': os.getenv('ROOT_DB_PASSWORD', 'SLTUIUxqhulwsh'),
+        'HOST': os.getenv('ROOT_DB_HOST', 'localhost'),
+        'PORT': os.getenv('ROOT_DB_PORT', '3306'),
     },
 }
 DATABASE_ROUTERS = ['backup.backupRouter.backupRouter']
