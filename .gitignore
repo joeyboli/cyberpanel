@@ -1,1 +1,44 @@
-Nothing should be ignored since the changes only include source/config files (.sh, .py) without any build artifacts, dependencies, or temp files.
+```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+
+# Dependencies
+.venv/
+venv/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+.eggs/
+
+# System files
+.DS_Store
+Thumbs.db
+```

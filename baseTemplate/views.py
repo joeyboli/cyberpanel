@@ -36,8 +36,14 @@ BUILD = 5
 def renderBase(request):
     template = 'baseTemplate/homePage.html'
     cpuRamDisk = SystemInformation.cpuRamDisk()
+    systemInfo = SystemInformation.getSystemInformation()
     finaData = {'ramUsage': cpuRamDisk['ramUsage'], 'cpuUsage': cpuRamDisk['cpuUsage'],
-                'diskUsage': cpuRamDisk['diskUsage']}
+                'diskUsage': cpuRamDisk['diskUsage'], 
+                'ramTotalGB': round(systemInfo.get('ramTotalMB', 0) / 1024, 1),
+                'cpuCores': systemInfo.get('cpuCores', 0),
+                'diskTotalGB': systemInfo.get('diskTotalGB', 0),
+                'diskFreeGB': systemInfo.get('diskFreeGB', 0),
+                'uptime': systemInfo.get('uptime', 'N/A')}
     proc = httpProc(request, template, finaData)
     return proc.render()
 
@@ -196,15 +202,18 @@ def getSystemStatus(request):
             website_names = list(user_websites.values_list('domain', flat=True))
             if website_names:
                 total_databases = Databases.objects.filter(website__domain__in=website_names).count()
-                total_emails = EUsers.objects.filter(emailOwner__domainOwner__domain__in=website_names).count()
+                total_emails = EUsers.objects.filter(emailOwner__emailOwner__domain__in=website_names).count()
+            
+            # Get actual system RAM for display
+            systemInfo = SystemInformation.getSystemInformation()
             
             # Prepare response data matching the expected format
             user_data = {
                 'cpuUsage': min(100, int((total_websites * 5))),  # Estimate based on website count
                 'ramUsage': min(100, int((total_databases * 10) + (total_emails * 2))),  # Estimate based on resources
                 'diskUsage': disk_usage_percent,
-                'cpuCores': 2,  # Default for display
-                'ramTotalGB': 4.0,  # Default for display (4GB)
+                'cpuCores': systemInfo.get('cpuCores', 2),
+                'ramTotalGB': systemInfo.get('ramTotalGB', 4.0),
                 'diskTotalGB': int(total_disk_limit_gb),
                 'diskFreeGB': int(disk_free_gb),
                 'uptime': 'User Account Active'
