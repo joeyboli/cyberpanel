@@ -1486,8 +1486,11 @@ ExecStart=/usr/local/lscp/bin/lscpdctrl start
 ExecStop=/usr/local/lscp/bin/lscpdctrl stop
 PIDFile=/usr/local/lscp/logs/lscpd.pid
 Restart=on-failure
-RestartSec=5
-KillMode=control-group
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
 TasksMax=infinity
 
 [Install]
@@ -1500,6 +1503,9 @@ EOF
 
   systemctl stop lscpd
   pkill -9 lscpd
+  
+  # Give time for process to fully terminate
+  sleep 3
   
   # Ensure proper ownership before starting (critical for reboot persistence)
   # Only fix ownership if directories exist to prevent errors
@@ -1516,10 +1522,20 @@ EOF
     chown -R lscpd:lscpd /usr/local/lscp/cyberpanel/snappymail/
   fi
   
+  # Clear any stale PID files
+  rm -f /usr/local/lscp/logs/lscpd.pid 2>/dev/null || true
+  
   systemctl start lscpd
 
-  # Wait for restart to complete
-  sleep 5
+  # Wait for restart to complete and verify service is running
+  sleep 10
+  
+  # Verify lscpd service is active
+  if ! systemctl is-active --quiet lscpd; then
+    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: lscpd service failed to start, checking status..." | tee -a /var/log/cyberpanel_upgrade_debug.log
+    systemctl status lscpd 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
+    journalctl -u lscpd --no-pager -n 20 2>&1 | tee -a /var/log/cyberpanel_upgrade_debug.log
+  fi
 }
 
 Post_Install_Display_Final_Info() {

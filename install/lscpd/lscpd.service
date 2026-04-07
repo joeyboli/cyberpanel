@@ -8,7 +8,12 @@ ExecStart = /usr/local/lscp/bin/lscpdctrl start
 ExecStop = /usr/local/lscp/bin/lscpdctrl stop
 #ExecReload= /usr/local/lscp/bin/lscpdctrl restart
 
-KillMode=none
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
 PrivateTmp=false
 
 # do not want to be limited in anyway
@@ -17,4 +22,4 @@ TasksAccounting=false
 MemoryAccounting=false
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
