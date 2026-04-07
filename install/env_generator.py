@@ -183,8 +183,12 @@ LOG_LEVEL=INFO
     with open(env_file_path, 'w') as f:
         f.write(env_content)
     
-    # Set secure permissions (owner read/write only)
-    os.chmod(env_file_path, 0o600)
+    # Set secure permissions (owner read, group read - needed for lscpd user)
+    os.chmod(env_file_path, 0o640)
+    
+    # Set ownership to lscpd so the service can read it
+    import subprocess
+    subprocess.run(['chown', 'lscpd:lscpd', env_file_path], check=False)
     
     print(f"✓ Generated secure .env file at: {env_file_path}")
     print(f"✓ MySQL Root Password: {mysql_root_password}")

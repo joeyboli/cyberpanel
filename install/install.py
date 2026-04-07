@@ -588,7 +588,7 @@ class preFlightsChecks:
                 f.write("ROOT_DB_HOST=127.0.0.1\n")
                 f.write(f"SECRET_KEY='{generate_pass(50)}'\n")
                 f.write("ALLOWED_HOSTS=*\n")
-            os.chmod(env_path, 0o600)
+            os.chmod(env_path, 0o640)
             # Set ownership to lscpd so the service can read it
             subprocess.run(['chown', 'lscpd:lscpd', env_path], check=False)
             logging.InstallLog.writeToFile("✓ Created .env file in fallback mode with lscpd ownership")
