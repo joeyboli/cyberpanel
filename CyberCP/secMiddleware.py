@@ -191,11 +191,12 @@ class secMiddleware:
                                    pathActual.find('verifyLogin') > -1 or pathActual.find('submitUserCreation') > -1 or 
                                    pathActual.find('/api/') > -1 or pathActual.find('aiscanner/scheduled-scans') > -1 or
                                    pathActual.find('getDataFromConfigFile') > -1 or pathActual.find('saveConfigsToFile') > -1 or
-                                   pathActual.find('getRewriteRules') > -1 or pathActual.find('saveRewriteRules') > -1)
+                                   pathActual.find('getRewriteRules') > -1 or pathActual.find('saveRewriteRules') > -1 or
+                                   pathActual.find('saveApacheConfigsToFile') > -1)
                     
                     if isAPIEndpoint:
                         # Skip validation for fields that contain legitimate code/scripts
-                        if key == 'content' or key == 'fileContent' or key == 'configData' or key == 'rewriteRules' or key == 'modSecRules' or key == 'contentNow' or key == 'emailMessage':
+                        if key == 'content' or key == 'fileContent' or key == 'configData' or key == 'rewriteRules' or key == 'modSecRules' or key == 'contentNow' or key == 'emailMessage' or key == 'cronCommand' or key == 'commands' or key == 'MainDashboardCSS' or key == 'virtualHost':
                             continue
 
                         # For API endpoints, still check for the most dangerous command injection characters
@@ -218,7 +219,7 @@ class secMiddleware:
                             or key == 'emailMessage' or key == 'configData' or key == 'rewriteRules' \
                             or key == 'modSecRules' or key == 'recordContentTXT' or key == 'SecAuditLogRelevantStatus' \
                             or key == 'fileContent' or key == 'commands' or key == 'gitHost' or key == 'ipv6' or key == 'contentNow' \
-                            or key == 'time_of_day' or key == 'notification_emails' or key == 'domains' or key == 'content':
+                            or key == 'time_of_day' or key == 'notification_emails' or key == 'domains' or key == 'content' or key == 'virtualHost':
                         continue
 
                     # Skip validation for API endpoints that need JSON structure characters
