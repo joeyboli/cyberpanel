@@ -7499,10 +7499,7 @@ StrictHostKeyChecking no
         phps = PHPManager.findPHPVersions()
         apachePHPs = PHPManager.findApachePHPVersions()
 
-        if ACLManager.CheckForPremFeature('all'):
-            apachemanager = 1
-        else:
-            apachemanager = 0
+        apachemanager = 1
 
         proc = httpProc(request, 'websiteFunctions/ApacheManager.html',
                         {'domainName': self.domain, 'phps': phps, 'apachemanager': apachemanager, 'apachePHPs': apachePHPs})

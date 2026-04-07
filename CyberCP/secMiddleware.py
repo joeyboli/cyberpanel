@@ -189,7 +189,9 @@ class secMiddleware:
                                    pathActual.find('saveSpamAssassinConfigurations') > -1 or 
                                    pathActual.find('docker') > -1 or pathActual.find('cloudAPI') > -1 or 
                                    pathActual.find('verifyLogin') > -1 or pathActual.find('submitUserCreation') > -1 or 
-                                   pathActual.find('/api/') > -1 or pathActual.find('aiscanner/scheduled-scans') > -1)
+                                   pathActual.find('/api/') > -1 or pathActual.find('aiscanner/scheduled-scans') > -1 or
+                                   pathActual.find('getDataFromConfigFile') > -1 or pathActual.find('saveConfigsToFile') > -1 or
+                                   pathActual.find('getRewriteRules') > -1 or pathActual.find('saveRewriteRules') > -1)
                     
                     if isAPIEndpoint:
                         # Skip validation for fields that contain legitimate code/scripts
