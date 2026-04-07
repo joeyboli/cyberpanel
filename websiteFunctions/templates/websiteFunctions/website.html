@@ -688,18 +688,18 @@ canvas { display: block; }
         </div>
 
         <div id="cpu-usage-tab" class="tab-content active">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
-                <div id="cpuChart"></div>
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px; position: relative;">
+                <canvas id="cpuChart" style="width:100%;height:250px;"></canvas>
             </div>
         </div>
         <div id="memory-usage-tab" class="tab-content hidden">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
-                <div id="memoryChart"></div>
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px; position: relative;">
+                <canvas id="memoryChart" style="width:100%;height:250px;"></canvas>
             </div>
         </div>
         <div id="disk-usage-tab" class="tab-content hidden">
-             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px;">
-                <div id="diskChart"></div>
+             <div style="min-height: 250px; background: hsl(var(--muted) / 0.1); border-radius: 1rem; padding: 10px; position: relative;">
+                <canvas id="diskChart" style="width:100%;height:250px;"></canvas>
             </div>
         </div>
     </div>
@@ -1151,7 +1151,7 @@ function switchTab(tabId, tabButton) {
 
 {% block footer_scripts %}
 {{ block.super }}
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'websiteFunctions/js/resource-monitoring.js' %}"></script>
 <script>
 window.addEventListener('load', function() {
