@@ -1260,8 +1260,9 @@ if [[ -f /etc/cyberpanel/cyberpaneldb ]]; then
 else
     # Generate new password and set it in MySQL
     CYBERPANEL_DB_PASS=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 16)
+    # Drop both localhost and 127.0.0.1 users to avoid conflicts, then create only 127.0.0.1
     mysql -uroot -p"$MySQL_Password" -e \
-        "ALTER USER 'cyberpanel'@'localhost' IDENTIFIED BY '$CYBERPANEL_DB_PASS'; FLUSH PRIVILEGES;" 2>/dev/null
+        "DROP USER IF EXISTS 'cyberpanel'@'localhost'; DROP USER IF EXISTS 'cyberpanel'@'127.0.0.1'; CREATE USER 'cyberpanel'@'127.0.0.1' IDENTIFIED BY '$CYBERPANEL_DB_PASS'; GRANT ALL PRIVILEGES ON cyberpanel.* TO 'cyberpanel'@'127.0.0.1'; FLUSH PRIVILEGES;" 2>/dev/null
     echo "$CYBERPANEL_DB_PASS" > /etc/cyberpanel/cyberpaneldb
     chmod 600 /etc/cyberpanel/cyberpaneldb
 fi
