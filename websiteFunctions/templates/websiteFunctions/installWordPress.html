@@ -7,6 +7,9 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 <div ng-controller="installWordPressCTRL" class="w-full p-4 md:p-12">
+    <!-- Hidden domain name for JS -->
+    <span id="domainNamePage" style="display:none;">{{ domainName }}</span>
+    
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
         <div class="flex items-center gap-6">
