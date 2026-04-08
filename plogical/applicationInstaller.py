@@ -713,15 +713,7 @@ class ApplicationInstaller(multi.Thread):
                 self.permPath = website.path
             except BaseException as msg:
 
-                try:
-                    website = Websites.objects.get(domain=domainName)
-                except Websites.DoesNotExist:
-                    statusFile = open(tempStatusPath, 'w')
-                    statusFile.writelines(f'Website {domainName} does not exist. Please create the website first. [404]')
-                    statusFile.close()
-                    logging.writeToFile(f'WordPress installation failed: Website {domainName} not found')
-                    return 0
-                    
+                website = Websites.objects.get(domain=domainName)
                 externalApp = website.externalApp
                 self.masterDomain = website.domain
 
