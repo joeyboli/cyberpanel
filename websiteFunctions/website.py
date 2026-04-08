@@ -4717,7 +4717,25 @@ context /cyberpanel_suspension_page.html {
             if data['home'] == '0':
                 extraArgs['path'] = data['path']
 
-            background = ApplicationInstaller('wordpress', extraArgs)
+            # Check if website exists, if not create it first
+            try:
+                from websiteFunctions.models import Websites
+                website = Websites.objects.get(domain=data['domain'])
+                # Website exists, proceed with regular wordpress installation
+                background = ApplicationInstaller('wordpress', extraArgs)
+            except Websites.DoesNotExist:
+                # Website doesn't exist, use wordpressInstallNew to create it first
+                extraArgs['currentACL'] = currentACL
+                extraArgs['adminID'] = admin.pk
+                extraArgs['WPVersion'] = data.get('WPVersion', 'latest')
+                extraArgs['websiteOwner'] = data.get('websiteOwner', admin.userName)
+                extraArgs['package'] = data.get('package')
+                extraArgs['apacheBackend'] = data.get('apacheBackend', 0)
+                extraArgs['updates'] = data.get('AutomaticUpdates', 1)
+                extraArgs['Plugins'] = data.get('Plugins', 1)
+                extraArgs['Themes'] = data.get('Themes', 1)
+                background = ApplicationInstaller('wordpressInstallNew', extraArgs)
+            
             background.start()
 
             time.sleep(2)
