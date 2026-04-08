@@ -241,8 +241,16 @@ class ApplicationInstaller(multi.Thread):
                 dbName, dbUser, dbPassword = self.dbCreation(tempStatusPath, website.master)
                 self.permPath = website.path
 
-            except:
-                website = Websites.objects.get(domain=domainName)
+            except ChildDomains.DoesNotExist:
+                try:
+                    website = Websites.objects.get(domain=domainName)
+                except Websites.DoesNotExist:
+                    statusFile = open(tempStatusPath, 'w')
+                    statusFile.writelines(f'Website {domainName} does not exist. Please create the website first. [404]')
+                    statusFile.close()
+                    logging.writeToFile(f'Mautic installation failed: Website {domainName} not found')
+                    return 0
+                    
                 externalApp = website.externalApp
                 self.masterDomain = website.domain
 
@@ -1031,8 +1039,16 @@ class ApplicationInstaller(multi.Thread):
                 dbName, dbUser, dbPassword = self.dbCreation(tempStatusPath, website.master)
                 self.permPath = website.path
 
-            except:
-                website = Websites.objects.get(domain=domainName)
+            except ChildDomains.DoesNotExist:
+                try:
+                    website = Websites.objects.get(domain=domainName)
+                except Websites.DoesNotExist:
+                    statusFile = open(tempStatusPath, 'w')
+                    statusFile.writelines(f'Website {domainName} does not exist. Please create the website first. [404]')
+                    statusFile.close()
+                    logging.writeToFile(f'PrestaShop installation failed: Website {domainName} not found')
+                    return 0
+                    
                 externalApp = website.externalApp
                 self.masterDomain = website.domain
 
@@ -1219,8 +1235,16 @@ class ApplicationInstaller(multi.Thread):
                 dbName, dbUser, dbPassword = self.dbCreation(tempStatusPath, website.master)
                 self.permPath = website.path
 
-            except:
-                website = Websites.objects.get(domain=domainName)
+            except ChildDomains.DoesNotExist:
+                try:
+                    website = Websites.objects.get(domain=domainName)
+                except Websites.DoesNotExist:
+                    statusFile = open(tempStatusPath, 'w')
+                    statusFile.writelines(f'Website {domainName} does not exist. Please create the website first. [404]')
+                    statusFile.close()
+                    logging.writeToFile(f'Joomla installation failed: Website {domainName} not found')
+                    return 0
+                    
                 externalApp = website.externalApp
                 self.masterDomain = website.domain
 
@@ -1723,8 +1747,16 @@ class ApplicationInstaller(multi.Thread):
                 dbName, dbUser, dbPassword = self.dbCreation(tempStatusPath, website.master)
                 self.permPath = website.path
 
-            except:
-                website = Websites.objects.get(domain=domainName)
+            except ChildDomains.DoesNotExist:
+                try:
+                    website = Websites.objects.get(domain=domainName)
+                except Websites.DoesNotExist:
+                    statusFile = open(tempStatusPath, 'w')
+                    statusFile.writelines(f'Website {domainName} does not exist. Please create the website first. [404]')
+                    statusFile.close()
+                    logging.writeToFile(f'WHMCS installation failed: Website {domainName} not found')
+                    return 0
+                    
                 externalApp = website.externalApp
                 self.masterDomain = website.domain
 
