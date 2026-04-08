@@ -4,8 +4,6 @@
 {% block title %}{% trans "Remote Backup Configurations" %}{% endblock %}
 
 {% block header_scripts %}
-
-
 <script>
     function DeleteBackupConfigNow(url) {
         if (confirm('Are you sure you want to delete this backup configuration?')) {
@@ -16,75 +14,90 @@
 {% endblock %}
 
 {% block content %}
-<div class="backup-wrapper" ng-controller="RemoteBackupConfig">
-    <div class="backup-container">
-        <!-- Header Section -->
-        <div class="backup-section">
-            <h2 class="section-title">REMOTE BACKUP CONFIGURATIONS</h2>
-            <div class="info-alert">
-                <i class="fas fa-info-circle"></i>
-                Configure remote backup destinations for your WordPress sites. Supports SFTP and S3-compatible storage providers.
+<div class="w-full p-4 md:p-12" ng-controller="RemoteBackupConfig">
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-primary mb-4 flex items-center gap-4">
+            <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border p-2">
+                <i data-lucide="cloud" class="w-10 h-10 text-primary"></i>
             </div>
-        </div>
+            {% trans "Remote Backup Configurations" %}
+        </h1>
+        <p class="text-xl text-muted-foreground max-w-4xl">
+            {% trans "Configure remote backup destinations for your WordPress sites. Supports SFTP and S3-compatible storage providers." %}
+        </p>
+    </div>
 
-        <!-- Configuration Form -->
-        <div class="backup-section">
-            <h3 class="section-title">
-                CONFIGURE REMOTE BACKUPS
-                <img ng-hide="RemoteBackupLoading" src="{% static 'images/loading.gif' %}" class="loading-spinner">
-            </h3>
-            
-            <form name="websiteCreationForm">
-                <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Backup Type" %}</label>
-                        <select ng-model="RemoteBackuptype" ng-change="SelectRemoteBackuptype()" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
-                            <option>SFTP</option>
-                            <option>S3</option>
-                        </select>
-                    </div>
+    <!-- Configuration Form -->
+    <div class="bg-card rounded-2xl shadow-sm border border-border p-10 mb-8">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold flex items-center gap-3">
+                <i data-lucide="settings" class="w-8 h-8 text-primary"></i>
+                {% trans "Configure Remote Backups" %}
+                <span ng-hide="RemoteBackupLoading" class="animate-spin inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full ml-2"></span>
+            </h2>
+        </div>
+        
+        <form name="websiteCreationForm">
+            <div ng-hide="installationDetailsForm" class="space-y-8">
+                <div class="space-y-4">
+                    <label class="text-xl font-semibold flex items-center gap-2">
+                        <i data-lucide="folder" class="w-6 h-6 text-primary"></i>
+                        {% trans "Backup Type" %}
+                    </label>
+                    <select ng-model="RemoteBackuptype" ng-change="SelectRemoteBackuptype()" 
+                            class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
+                        <option>SFTP</option>
+                        <option>S3</option>
+                    </select>
                 </div>
 
                 <!-- SFTP Configuration -->
-                <div ng-hide="SFTPBackUpdiv">
-                    <div class="space-y-3 mb-6">
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Hostname" %}</label>
-                            <input name="Hostname" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Hostname"
-                                   placeholder="sftp.example.com" required>
-                        </div>
+                <div ng-hide="SFTPBackUpdiv" class="space-y-6 bg-secondary/10 rounded-2xl p-8 border border-border">
+                    <h3 class="text-2xl font-bold flex items-center gap-2">
+                        <i data-lucide="server" class="w-7 h-7 text-primary"></i>
+                        {% trans "SFTP Configuration" %}
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Hostname" %}</label>
+                        <input name="Hostname" type="text" ng-model="Hostname"
+                               class="w-full bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                               placeholder="sftp.example.com" required>
                     </div>
                     
-                    <div class="space-y-3 mb-6">
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Username" %}</label>
-                            <input name="Username" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Username"
-                                   placeholder="SFTP username" required>
-                        </div>
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Username" %}</label>
+                        <input name="Username" type="text" ng-model="Username"
+                               class="w-full bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                               placeholder="SFTP username" required>
                     </div>
                     
-                    <div class="space-y-3 mb-6">
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Password" %}</label>
-                            <input name="Password" type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Password"
-                                   placeholder="SFTP password" required>
-                        </div>
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Password" %}</label>
+                        <input name="Password" type="password" ng-model="Password"
+                               class="w-full bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                               placeholder="SFTP password" required>
                     </div>
                     
-                    <div class="space-y-3 mb-6">
-                        <div class="form-row">
-                            <label class="form-label">{% trans "Path" %}</label>
-                            <input name="path" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="path"
-                                   placeholder="/backups/wordpress" required>
-                        </div>
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Path" %}</label>
+                        <input name="path" type="text" ng-model="path"
+                               class="w-full bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                               placeholder="/backups/wordpress" required>
                     </div>
                 </div>
 
                 <!-- S3 Configuration -->
-                <div ng-hide="Selectprovider" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Provider" %}</label>
-                        <select ng-model="Providervalue" ng-change="SelectProvidertype()" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                <div ng-hide="Selectprovider" class="space-y-6 bg-secondary/10 rounded-2xl p-8 border border-border">
+                    <h3 class="text-2xl font-bold flex items-center gap-2">
+                        <i data-lucide="database" class="w-7 h-7 text-primary"></i>
+                        {% trans "S3 Configuration" %}
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <label class="text-xl font-semibold">{% trans "Provider" %}</label>
+                        <select ng-model="Providervalue" ng-change="SelectProvidertype()" 
+                                class="w-full bg-white border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all">
                             <option selected="selected">Amazon</option>
                             <option>Wasabi</option>
                             <option>Backblaze</option>
@@ -92,106 +105,110 @@
                     </div>
                 </div>
                 
-                <div ng-hide="S3keyNamediv" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Bucket Name" %}</label>
-                        <input name="S3keyName" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="S3keyName"
-                               placeholder="my-backup-bucket" required>
-                    </div>
+                <div ng-hide="S3keyNamediv" class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Bucket Name" %}</label>
+                    <input name="S3keyName" type="text" ng-model="S3keyName"
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                           placeholder="my-backup-bucket" required>
                 </div>
                 
-                <div ng-hide="EndpointURLdiv" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Endpoint URL" %}</label>
-                        <input name="EndpointURL" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="EndpointURL"
-                               placeholder="https://s3.amazonaws.com" required>
-                    </div>
+                <div ng-hide="EndpointURLdiv" class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Endpoint URL" %}</label>
+                    <input name="EndpointURL" type="text" ng-model="EndpointURL"
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                           placeholder="https://s3.amazonaws.com" required>
                 </div>
                 
-                <div ng-hide="Accesskeydiv" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Access Key" %}</label>
-                        <input name="Accesskey" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="Accesskey"
-                               placeholder="Your access key" required>
-                    </div>
+                <div ng-hide="Accesskeydiv" class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Access Key" %}</label>
+                    <input name="Accesskey" type="text" ng-model="Accesskey"
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                           placeholder="Your access key" required>
                 </div>
                 
-                <div ng-hide="SecretKeydiv" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label">{% trans "Secret Key" %}</label>
-                        <input name="SecretKey" type="password" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all" ng-model="SecretKey"
-                               placeholder="Your secret key" required>
-                    </div>
+                <div ng-hide="SecretKeydiv" class="space-y-4">
+                    <label class="text-xl font-semibold">{% trans "Secret Key" %}</label>
+                    <input name="SecretKey" type="password" ng-model="SecretKey"
+                           class="w-full bg-secondary/20 border border-border rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                           placeholder="Your secret key" required>
                 </div>
 
-                <div ng-hide="installationDetailsForm" class="space-y-3 mb-6">
-                    <div class="form-row">
-                        <label class="form-label"></label>
-                        <button type="button" ng-click="SaveBackupConfig()" class="btn-primary">
-                            <i class="fas fa-save"></i>
-                            {% trans "Save Configuration" %}
-                        </button>
-                    </div>
+                <div class="flex justify-center pt-6">
+                    <button type="button" ng-click="SaveBackupConfig()" 
+                            class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all flex items-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        {% trans "Save Configuration" %}
+                    </button>
                 </div>
-            </form>
+            </div>
+        </form>
+    </div>
+
+    <!-- Saved Configurations -->
+    <div class="bg-card rounded-2xl shadow-sm border border-border p-10">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold flex items-center gap-3">
+                <i data-lucide="archive" class="w-8 h-8 text-primary"></i>
+                {% trans "Saved Remote Configurations" %}
+            </h2>
         </div>
-
-        <!-- Saved Configurations -->
-        <div class="backup-section">
-            <h3 class="section-title">SAVED REMOTE CONFIGURATIONS</h3>
-            
-            {% if backupconfigs %}
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Backup Type</th>
-                                <th>Hostname</th>
-                                <th>Path / Bucket</th>
-                                <th>Actions</th>
+        
+        {% if backupconfigs %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-border">
+                            <th class="pb-4 text-xl font-semibold">{% trans "Backup Type" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Hostname" %}</th>
+                            <th class="pb-4 text-xl font-semibold">{% trans "Path / Bucket" %}</th>
+                            <th class="pb-4 text-xl font-semibold text-center">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        {% for sub in backupconfigs %}
+                            <tr class="hover:bg-secondary/10 transition-colors">
+                                <td class="py-6">
+                                    <span class="{% if sub.Type == 'SFTP' %}bg-blue-500/10 text-blue-700{% else %}bg-purple-500/10 text-purple-700{% endif %} px-4 py-2 rounded-lg text-lg font-bold">
+                                        {{ sub.Type }}
+                                    </span>
+                                </td>
+                                <td class="py-6">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="server" class="w-5 h-5 text-primary"></i>
+                                        <span class="text-xl font-bold">{{ sub.HostName }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-6">
+                                    <span class="text-lg text-muted-foreground">{{ sub.Path }}</span>
+                                </td>
+                                <td class="py-6">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <a href="{% url 'BackupfileConfig' %}?ID={{ sub.id }}" 
+                                           class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+                                            <i data-lucide="clock" class="w-4 h-4"></i>
+                                            {% trans "Schedule" %}
+                                        </a>
+                                        <button onclick="DeleteBackupConfigNow('{% url 'RemoteBackupConfig' %}?DeleteID={{ sub.id }}')"
+                                                class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            {% trans "Delete" %}
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for sub in backupconfigs %}
-                                <tr>
-                                    <td>
-                                        <span class="backup-type {{ sub.Type|lower }}">
-                                            {{ sub.Type }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <strong>{{ sub.HostName }}</strong>
-                                    </td>
-                                    <td>{{ sub.Path }}</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <a href="{% url 'BackupfileConfig' %}?ID={{ sub.id }}" 
-                                               class="btn-action btn-schedule">
-                                                <i class="fas fa-clock"></i>
-                                                Schedule Backups
-                                            </a>
-                                            <button onclick="DeleteBackupConfigNow('{% url 'RemoteBackupConfig' %}?DeleteID={{ sub.id }}')"
-                                                    class="btn-action btn-delete">
-                                                <i class="fas fa-trash"></i>
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-secondary/20 rounded-full mb-6">
+                    <i data-lucide="inbox" class="w-12 h-12 text-muted-foreground"></i>
                 </div>
-            {% else %}
-                <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <h3>No Remote Backup Configurations</h3>
-                    <p>Configure your first remote backup destination above.</p>
-                </div>
-            {% endif %}
-        </div>
+                <h3 class="text-2xl font-bold text-foreground mb-3">{% trans "No Remote Backup Configurations" %}</h3>
+                <p class="text-lg text-muted-foreground">{% trans "Configure your first remote backup destination above." %}</p>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
