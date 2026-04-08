@@ -11,9 +11,9 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
         <div class="flex items-center gap-6">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 relative">
-                <i data-lucide="layers" class="h-8 w-8"></i>
+                <i class="fa-solid fa-layer-group text-2xl"></i>
                 <span ng-hide="cyberPanelLoading" class="absolute -top-2 -right-2 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center animate-spin">
-                    <i data-lucide="loader-2" class="h-4 w-4"></i>
+                    <i class="fa-solid fa-spinner text-xs"></i>
                 </span>
             </div>
             <div>
@@ -30,7 +30,7 @@
         <div class="flex flex-col md:flex-row gap-6">
             <div class="relative flex-1 group">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors"></i>
+                    <i class="fa-solid fa-magnifying-glass text-xl text-muted-foreground group-focus-within:text-primary transition-colors"></i>
                 </div>
                 <input ng-change="searchWebsites()" placeholder="{% trans 'Search domains...' %}" 
                        ng-model="patternAdded" name="dom" type="text" 
@@ -63,19 +63,19 @@
                     </div>
                     <div class="flex flex-wrap items-center gap-4 text-lg text-muted-foreground font-medium">
                         <div class="flex items-center gap-2">
-                            <i data-lucide="folder" class="h-5 w-5"></i>
+                            <i class="fa-solid fa-folder text-base"></i>
                             <span>Master: <span class="text-foreground font-bold">{$ web.masterDomain $}</span></span>
                         </div>
                         <div class="h-1 w-1 rounded-full bg-border"></div>
                         <a target="_blank" rel="noopener" href="/filemanager/{$ web.masterDomain $}" class="flex items-center gap-2 text-primary hover:underline">
-                            <i data-lucide="folder-open" class="h-5 w-5"></i>
+                            <i class="fa-solid fa-folder-open text-base"></i>
                             {% trans "File Manager" %}
                         </a>
                     </div>
                 </div>
                 <a href="/websites/{$ web.masterDomain $}/{$ web.domain $}" target="_blank" rel="noopener"
                    class="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-lg font-bold shadow-lg hover:shadow-primary/20 transition-all w-full md:w-auto justify-center">
-                    <i data-lucide="settings" class="h-5 w-5"></i>
+                    <i class="fa-solid fa-gear text-base"></i>
                     {% trans "Manage" %}
                 </a>
             </div>
@@ -83,7 +83,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-secondary/20 rounded-2xl p-6">
                 <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-card border border-border flex items-center justify-center text-primary shadow-sm">
-                        <i data-lucide="network" class="h-6 w-6"></i>
+                        <i class="fa-solid fa-network-wired text-lg"></i>
                     </div>
                     <div>
                         <div class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">IP Address</div>
@@ -93,7 +93,7 @@
 
                 <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-card border border-border flex items-center justify-center text-primary shadow-sm">
-                        <i data-lucide="box" class="h-6 w-6"></i>
+                        <i class="fa-solid fa-box text-lg"></i>
                     </div>
                     <div>
                         <div class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Package</div>
@@ -103,7 +103,7 @@
 
                 <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-card border border-border flex items-center justify-center text-primary shadow-sm">
-                        <i data-lucide="user" class="h-6 w-6"></i>
+                        <i class="fa-solid fa-user text-lg"></i>
                     </div>
                     <div>
                         <div class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Owner</div>
@@ -113,7 +113,7 @@
 
                 <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-card border border-border flex items-center justify-center text-primary shadow-sm">
-                        <i data-lucide="shield-check" class="h-6 w-6"></i>
+                        <i class="fa-solid fa-shield-halved text-lg"></i>
                     </div>
                     <div>
                         <div class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">SSL Certificate</div>
@@ -130,13 +130,13 @@
                 <button class="flex items-center gap-2 px-6 py-3 bg-yellow-500/10 text-yellow-600 rounded-xl text-lg font-bold border border-yellow-500/20 hover:bg-yellow-500 hover:text-white transition-all" 
                         ng-click="initConvert(web.domain)" 
                         data-toggle="modal" data-target="#settings">
-                    <i data-lucide="arrow-up-circle" class="h-5 w-5"></i>
+                    <i class="fa-solid fa-circle-up text-base"></i>
                     {% trans "Convert to Website" %}
                 </button>
                 <button class="flex items-center gap-2 px-6 py-3 bg-destructive/10 text-destructive rounded-xl text-lg font-bold border border-destructive/20 hover:bg-destructive hover:text-white transition-all" 
                         ng-click="deleteDomainInit(web.domain)" 
                         data-toggle="modal" data-target="#DeleteChild">
-                    <i data-lucide="trash-2" class="h-5 w-5"></i>
+                    <i class="fa-solid fa-trash-can text-base"></i>
                     {% trans "Delete" %}
                 </button>
             </div>
@@ -144,9 +144,9 @@
     </div>
 
     <!-- Error message -->
-    <div id="listFail" class="mt-8 p-8 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive hidden">
+    <div id="listFail" class="mt-8 p-8 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive" style="display:none;">
         <div class="flex items-center gap-4">
-            <i data-lucide="alert-octagon" class="h-8 w-8"></i>
+            <i class="fa-solid fa-octagon-exclamation text-2xl"></i>
             <p class="text-xl font-bold">{% trans "Cannot list websites. Error message:" %} {$ errorMessage $}</p>
         </div>
     </div>
@@ -162,117 +162,121 @@
     </div>
 
     <!-- Delete Modal -->
-    <div id="DeleteChild" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm hidden overflow-y-auto" role="dialog">
-        <div class="bg-card w-full max-w-lg rounded-2xl border border-border shadow-2xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
-            <div class="flex items-center justify-between">
-                <h4 class="text-3xl font-bold text-foreground">
-                    {% trans "Delete Domain" %}
-                    <span ng-hide="cyberPanelLoading" class="animate-spin ml-2">
-                        <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
-                    </span>
-                </h4>
-                <button type="button" class="p-2 hover:bg-secondary rounded-full" data-dismiss="modal">
-                    <i data-lucide="x" class="h-6 w-6"></i>
-                </button>
-            </div>
-            <div class="space-y-6">
-                <label class="flex items-center gap-4 p-6 bg-destructive/5 rounded-2xl border border-destructive/20 cursor-pointer">
-                    <input ng-model="DeleteDocRoot" type="checkbox" id="deleteDocRoot" class="h-8 w-8 rounded border-border text-destructive focus:ring-destructive/20">
-                    <span class="text-xl font-bold text-foreground">{% trans "Delete Document Root" %}</span>
-                </label>
-                <div class="flex items-start gap-3 p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/20 text-yellow-700">
-                    <i data-lucide="alert-triangle" class="h-5 w-5 shrink-0 mt-0.5"></i>
-                    <p class="text-base font-medium">{% trans "Warning: This will permanently delete all files in the document root directory." %}</p>
+    <div id="DeleteChild" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="bg-card w-full rounded-2xl border border-border shadow-2xl p-8 space-y-8">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-3xl font-bold text-foreground">
+                        {% trans "Delete Domain" %}
+                        <span ng-hide="cyberPanelLoading" class="animate-spin ml-2 inline-block">
+                            <i class="fa-solid fa-spinner fa-spin text-primary text-xl"></i>
+                        </span>
+                    </h4>
+                    <button type="button" class="p-2 hover:bg-secondary rounded-full" data-dismiss="modal">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 pt-4">
-                <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all" data-dismiss="modal">{% trans "Cancel" %}</button>
-                <button type="button" class="flex-1 px-8 py-4 bg-destructive text-destructive-foreground rounded-xl text-xl font-bold transition-all shadow-lg" ng-click="deleteChildDomain()">{% trans "Delete Now" %}</button>
+                <div class="space-y-6">
+                    <label class="flex items-center gap-4 p-6 bg-destructive/5 rounded-2xl border border-destructive/20 cursor-pointer">
+                        <input ng-model="DeleteDocRoot" type="checkbox" id="deleteDocRoot" class="h-8 w-8 rounded border-border text-destructive focus:ring-destructive/20">
+                        <span class="text-xl font-bold text-foreground">{% trans "Delete Document Root" %}</span>
+                    </label>
+                    <div class="flex items-start gap-3 p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/20 text-yellow-700">
+                        <i class="fa-solid fa-triangle-exclamation text-lg shrink-0 mt-0.5"></i>
+                        <p class="text-base font-medium">{% trans "Warning: This will permanently delete all files in the document root directory." %}</p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4 pt-4">
+                    <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="button" class="flex-1 px-8 py-4 bg-destructive text-destructive-foreground rounded-xl text-xl font-bold transition-all shadow-lg" ng-click="deleteChildDomain()">{% trans "Delete Now" %}</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Convert to Website Modal -->
-    <div id="settings" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm hidden overflow-y-auto" role="dialog">
-        <div class="bg-card w-full max-w-2xl rounded-2xl border border-border shadow-2xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
-            <div class="flex items-center justify-between">
-                <h4 class="text-3xl font-bold text-foreground">
-                    {% trans "Convert to Website" %}
-                    <span ng-hide="cyberPanelLoading" class="animate-spin ml-2">
-                        <i data-lucide="loader-2" class="h-6 w-6 text-primary"></i>
-                    </span>
-                </h4>
-                <button type="button" class="p-2 hover:bg-secondary rounded-full" data-dismiss="modal">
-                    <i data-lucide="x" class="h-6 w-6"></i>
-                </button>
-            </div>
-            
-            <div class="max-h-[70vh] overflow-y-auto pr-2 space-y-8">
-                <form name="containerSettingsForm" class="space-y-8">
-                    <div ng-hide="installationDetailsForm" class="space-y-6">
-                        <div class="space-y-3">
-                            <label class="text-xl font-semibold text-foreground">{% trans "Domain Name" %}</label>
-                            <input name="dom" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl opacity-70" ng-model="domainName" readonly>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="settings" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="bg-card w-full rounded-2xl border border-border shadow-2xl p-8 space-y-8">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-3xl font-bold text-foreground">
+                        {% trans "Convert to Website" %}
+                        <span ng-hide="cyberPanelLoading" class="animate-spin ml-2 inline-block">
+                            <i class="fa-solid fa-spinner fa-spin text-primary text-xl"></i>
+                        </span>
+                    </h4>
+                    <button type="button" class="p-2 hover:bg-secondary rounded-full" data-dismiss="modal">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="max-h-[70vh] overflow-y-auto pr-2 space-y-8">
+                    <form name="containerSettingsForm" class="space-y-8">
+                        <div ng-hide="installationDetailsForm" class="space-y-6">
                             <div class="space-y-3">
-                                <label class="text-xl font-semibold text-foreground">{% trans "Select Owner" %}</label>
-                                <select ng-model="websiteOwner" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
-                                    <option value="">-- {% trans "Select an owner" %} --</option>
-                                    {% for items in owernList %}
-                                        <option>{{ items }}</option>
-                                    {% endfor %}
-                                </select>
+                                <label class="text-xl font-semibold text-foreground">{% trans "Domain Name" %}</label>
+                                <input name="dom" type="text" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl opacity-70" ng-model="domainName" readonly>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <label class="text-xl font-semibold text-foreground">{% trans "Select Owner" %}</label>
+                                    <select ng-model="websiteOwner" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
+                                        <option value="">-- {% trans "Select an owner" %} --</option>
+                                        {% for items in owernList %}
+                                            <option>{{ items }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="text-xl font-semibold text-foreground">{% trans "Select Package" %}</label>
+                                    <select ng-model="packageForWebsite" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
+                                        <option value="">-- {% trans "Select a package" %} --</option>
+                                        {% for items in packageList %}
+                                            <option>{{ items }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="space-y-3">
-                                <label class="text-xl font-semibold text-foreground">{% trans "Select Package" %}</label>
-                                <select ng-model="packageForWebsite" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
-                                    <option value="">-- {% trans "Select a package" %} --</option>
-                                    {% for items in packageList %}
-                                        <option>{{ items }}</option>
+                                <label class="text-xl font-semibold text-foreground">{% trans "Email" %}</label>
+                                <input type="email" name="email" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none" ng-model="adminEmail" placeholder="admin@example.com" required>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-xl font-semibold text-foreground">{% trans "Select PHP Version" %}</label>
+                                <select ng-model="phpSelection" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
+                                    {% for php in phps %}
+                                        <option>{{ php }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <label class="text-xl font-semibold text-foreground">{% trans "Email" %}</label>
-                            <input type="email" name="email" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none" ng-model="adminEmail" placeholder="admin@example.com" required>
+                        <div ng-hide="installationProgress" class="bg-secondary/30 rounded-2xl p-8 space-y-6">
+                            <div class="text-2xl font-bold text-foreground text-center">{$ currentStatus $}</div>
+                            <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
+                                <div id="installProgress" class="bg-primary h-full transition-all duration-300" style="width:0%"></div>
+                            </div>
+                            <div class="flex justify-center">
+                                <button type="button" ng-disabled="goBackDisable" ng-click="goBack()" class="px-6 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border flex items-center gap-2">
+                                    <i class="fa-solid fa-arrow-left text-base"></i>
+                                    {% trans "Go Back" %}
+                                </button>
+                            </div>
                         </div>
+                    </form>
+                </div>
 
-                        <div class="space-y-3">
-                            <label class="text-xl font-semibold text-foreground">{% trans "Select PHP Version" %}</label>
-                            <select ng-model="phpSelection" class="w-full p-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 outline-none">
-                                {% for php in phps %}
-                                    <option>{{ php }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div ng-hide="installationProgress" class="bg-secondary/30 rounded-2xl p-8 space-y-6">
-                        <div class="text-2xl font-bold text-foreground text-center">{$ currentStatus $}</div>
-                        <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
-                            <div id="installProgress" class="bg-primary h-full transition-all duration-300" style="width:0%"></div>
-                        </div>
-                        <div class="flex justify-center">
-                            <button type="button" ng-disabled="goBackDisable" ng-click="goBack()" class="px-6 py-3 bg-secondary text-foreground rounded-xl font-bold border border-border flex items-center gap-2">
-                                <i data-lucide="arrow-left" class="h-5 w-5"></i>
-                                {% trans "Go Back" %}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="flex flex-col md:flex-row gap-4 pt-4 border-t border-border/50">
-                <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all" data-dismiss="modal">{% trans "Cancel" %}</button>
-                <button type="button" class="flex-1 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg" ng-click="convert()">
-                    <i data-lucide="refresh-cw" class="h-6 w-6"></i>
-                    {% trans "Convert Now" %}
-                </button>
+                <div class="flex flex-col md:flex-row gap-4 pt-4 border-t border-border/50">
+                    <button type="button" class="flex-1 px-8 py-4 bg-secondary text-foreground rounded-xl text-xl font-bold border border-border transition-all" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="button" class="flex-1 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-xl font-bold transition-all shadow-lg flex items-center justify-center gap-3" ng-click="convert()">
+                        <i class="fa-solid fa-rotate text-base"></i>
+                        {% trans "Convert Now" %}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -282,8 +286,7 @@
 {% block footer_scripts %}
 <script>
     $(document).ready(function () {
-        // Simple helper to bridge Bootstrap data-toggle with our custom styles if needed
-        // but since we still load bootstrap.js via index.html, it should mostly work.
+        // Bootstrap modal handling
     });
 </script>
 {% endblock %}
