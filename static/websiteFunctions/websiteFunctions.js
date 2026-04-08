@@ -1014,6 +1014,10 @@ app.controller('deleteWebsiteControl', function ($scope, $http) {
 
     };
 
+    $scope.cancelDelete = function () {
+        $("#deleteWebsiteButton").fadeOut();
+    };
+
     $scope.deleteWebsiteFinal = function () {
 
         $("#deleteLoading").show();
