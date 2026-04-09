@@ -1,2 +1,4 @@
 .env
 cyberpanel_working/
+.idea/
+.DS_Store
