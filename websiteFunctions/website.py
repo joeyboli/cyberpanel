@@ -4625,15 +4625,25 @@ context /cyberpanel_suspension_page.html {
             else:
                 return ACLManager.loadErrorJson('deleteAlias', 0)
 
-            if ACLManager.AliasDomainCheck(currentACL, aliasDomain, self.domain) == 1:
-                pass
-            else:
-                return ACLManager.loadErrorJson('deleteAlias', 0)
-
-            ## Create Configurations
-
             execPath = "/usr/local/CyberCP/bin/python " + virtualHostUtilities.cyberPanel + "/plogical/virtualHostUtilities.py"
-            execPath = execPath + " deleteAlias --masterDomain " + self.domain + " --aliasDomain " + aliasDomain
+
+            masterWebsite = Websites.objects.get(domain=self.domain)
+            aliasChild = ChildDomains.objects.filter(
+                domain=aliasDomain, master=masterWebsite, alais=1
+            ).first()
+
+            if aliasChild is not None:
+                if ACLManager.checkOwnership(aliasDomain, admin, currentACL) != 1:
+                    return ACLManager.loadErrorJson('deleteAlias', 0)
+                # Same rows as Domain Aliases list (fetchDomains alias=1); not in aliasDomains.
+                execPath = execPath + " deleteDomain --virtualHostName " + aliasDomain + " --DeleteDocRoot 0"
+            else:
+                if ACLManager.AliasDomainCheck(currentACL, aliasDomain, self.domain) == 1:
+                    pass
+                else:
+                    return ACLManager.loadErrorJson('deleteAlias', 0)
+                execPath = execPath + " deleteAlias --masterDomain " + self.domain + " --aliasDomain " + aliasDomain
+
             output = ProcessUtilities.outputExecutioner(execPath)
 
             if output.find("1,None") > -1:
