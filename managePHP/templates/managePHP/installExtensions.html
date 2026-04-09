@@ -1,119 +1,116 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "Install PHP Extensions - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "Install PHP Extensions" %}{% endblock %}
 
 {% block header_scripts %}
-<style>
-    /* Custom styles for PHP Extensions - aligned to base design system */
-    .premium-alert {
-        background: hsl(var(--primary) / 0.05);
-        border: 1px solid hsl(var(--primary) / 0.1);
-        border-radius: var(--radius);
-        padding: 24px;
-    }
-    /* Ensure flat design - no shadows on cards */
-    .bg-card { box-shadow: none !important; }
+    <style>
+        /* Custom styles for PHP Extensions - aligned to base design system */
+        .premium-alert {
+            background: hsl(var(--primary) / 0.05);
+            border: 1px solid hsl(var(--primary) / 0.1);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
 
-    /* Table sticky header */
-    .table-sticky-header thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+        /* Ensure flat design - no shadows on cards */
+        .bg-card {
+            box-shadow: none !important;
+        }
 
-    /* Status badge animation */
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    .status-dot {
-        animation: pulse 2s infinite;
-    }
-</style>
+        /* Table sticky header */
+        .table-sticky-header thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Status badge animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .status-dot {
+            animation: pulse 2s infinite;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-{% load static %}
-{% get_current_language as LANGUAGE_CODE %}
+    {% load static %}
+    {% get_current_language as LANGUAGE_CODE %}
 
-<div class="w-full p-4 md:p-12 space-y-12" ng-controller="installExtensions">
+    <div class="w-full p-4 md:p-12 space-y-12" ng-controller="installExtensions">
 
-    <!-- Page Header - Full width -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
-        <div class="flex items-center gap-6">
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
-                <i data-lucide="puzzle" class="h-8 w-8"></i>
-            </div>
-            <div>
-                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
-                    {% trans "Install PHP Extensions" %}
-                </h1>
-                <p class="text-xl text-muted-foreground">
-                    {% trans "Install or uninstall PHP extensions to enhance your PHP functionality" %}
-                </p>
-                {% if apache %}
-                <a href="{% url 'installExtensions' %}?apache=apache" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
-                    <i data-lucide="feather" class="h-4 w-4"></i>
-                    {% trans "Manage Apache Extensions" %}
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <!-- PHP Version Selector - Flat design -->
-    <div class="bg-card rounded-2xl border border-border p-8">
-        <div class="flex flex-col md:flex-row md:items-center gap-6">
-            <div class="flex items-center gap-4">
-                <div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                   <i class="fa-brands fa-php"></i>
+        <!-- Page Header - Full width -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
+            <div class="flex items-center gap-6">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <i data-lucide="puzzle" class="h-8 w-8"></i>
                 </div>
-                <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
-            </div>
-
-            <div class="flex-1 relative max-w-md">
-                <select ng-disabled="phpSelectionDisabled"
-                        ng-change="fetchPHPDetails()"
-                        ng-model="phpSelection"
-                        class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
-                    {% for php in phps %}
-                        <option>{{ php }}</option>
-                    {% endfor %}
-                </select>
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                        {% trans "Install PHP Extensions" %}
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Install or uninstall PHP extensions to enhance your PHP functionality" %}
+                    </p>
                 </div>
-            </div>
-
-            <button type="button"
-                    ng-click="fetchPHPDetails()"
-                    ng-disabled="loadingExtensions"
-                    class="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-xl text-lg font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
-                <i data-lucide="refresh-cw" class="h-5 w-5 mr-2" ng-class="{'animate-spin': loadingExtensions}"></i>
-                {% trans "Load Extensions" %}
-            </button>
-        </div>
-    </div>
-
-    <!-- Extensions Table - Flat design -->
-    <div ng-hide="availableExtensions" class="bg-card rounded-2xl border border-border overflow-hidden">
-        <!-- Search Bar -->
-        <div class="p-6 border-b border-border bg-muted/30">
-            <div class="relative max-w-md">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
-                </div>
-                <input type="text"
-                       ng-model="extSearch"
-                       placeholder="{% trans 'Search extensions...' %}"
-                       class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
             </div>
         </div>
 
-        <!-- Table Content -->
-        <div class="overflow-x-auto table-sticky-header">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-muted/50 border-b border-border">
+        <!-- PHP Version Selector - Flat design -->
+        <div class="bg-card rounded-2xl border border-border p-8">
+            <div class="flex flex-col md:flex-row md:items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <i class="fa-brands fa-php"></i>
+                    </div>
+                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
+                </div>
+
+                <div class="flex-1 relative max-w-md">
+                    <select ng-disabled="phpSelectionDisabled"
+                            ng-change="fetchPHPDetails()"
+                            ng-model="phpSelection"
+                            class="w-full px-4 py-4 bg-secondary/20 border border-border rounded-xl text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none pr-10">
+                        {% for php in phps %}
+                            <option>{{ php }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <i class="fa-regular fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <span ng-show="!loadingExtensions"
+                      class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+            </div>
+        </div>
+
+        <!-- Extensions Table - Flat design -->
+        <div ng-hide="availableExtensions" class="bg-card rounded-2xl border border-border overflow-hidden">
+            <!-- Search Bar -->
+            <div class="p-6 border-b border-border bg-muted/30">
+                <div class="relative max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                    </div>
+                    <input type="text"
+                           ng-model="extSearch"
+                           placeholder="{% trans 'Search extensions...' %}"
+                           class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Table Content -->
+            <div class="overflow-x-auto table-sticky-header">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-muted/50 border-b border-border">
                     <tr>
                         <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "ID" %}</th>
                         <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "PHP Version" %}</th>
@@ -122,8 +119,8 @@
                         <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</th>
                         <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
                     </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
+                    </thead>
+                    <tbody class="divide-y divide-border">
                     <tr ng-repeat="record in records | filter:extSearch" class="transition-colors hover:bg-muted/30">
                         <!-- ID -->
                         <td class="px-4 py-3 font-mono text-foreground">#{$ record.id $}</td>
@@ -146,7 +143,8 @@
                             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold"
                                   ng-class="{'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': record.status=='Installed',
                                              'bg-destructive/10 text-destructive border border-destructive/20': record.status=='Not-Installed'}">
-                                <span class="h-2 w-2 rounded-full" ng-class="{'bg-emerald-500 status-dot': record.status=='Installed', 'bg-destructive': record.status=='Not-Installed'}"></span>
+                                <span class="h-2 w-2 rounded-full"
+                                      ng-class="{'bg-emerald-500 status-dot': record.status=='Installed', 'bg-destructive': record.status=='Not-Installed'}"></span>
                                 {$ record.status $}
                             </span>
                         </td>
@@ -165,85 +163,87 @@
                                         type="button"
                                         ng-click="uninstallExt(record.extensionName)"
                                         class="inline-flex items-center justify-center px-4 py-2 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-destructive/20">
-                                    <i data-lucide="trash-2" class="h-4 w-4 mr-2"></i>
+                                    <i class="fa-regular fa-trash"></i>
                                     {% trans "Uninstall" %}
                                 </button>
                             </div>
                         </td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div ng-if="(records | filter:extSearch).length === 0" class="p-16 text-center">
+                <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
+                    <i data-lucide="package-search" class="h-8 w-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-foreground">{% trans "No extensions found" %}</h3>
+                <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or load extensions for a different PHP version" %}</p>
+            </div>
         </div>
 
-        <!-- Empty State -->
-        <div ng-if="(records | filter:extSearch).length === 0" class="p-16 text-center">
-            <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
-                <i data-lucide="package-search" class="h-8 w-8"></i>
+        <!-- Log Output Panel - Flat design -->
+        <div ng-hide="request" class="bg-card rounded-2xl border border-border p-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <i data-lucide="terminal" class="h-5 w-5"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-foreground">{% trans "Installation Log" %}</h3>
+                </div>
+                <button ng-disabled="goback"
+                        type="button"
+                        ng-click="fetchPHPDetails()"
+                        class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
+                    <i data-lucide="arrow-left" class="h-4 w-4 mr-2"></i>
+                    {% trans "Go Back" %}
+                </button>
             </div>
-            <h3 class="text-xl font-bold text-foreground">{% trans "No extensions found" %}</h3>
-            <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or load extensions for a different PHP version" %}</p>
+            <div class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
+                {$ requestData $}
+            </div>
         </div>
+
+        <!-- Error Messages -->
+        <div class="space-y-4">
+            <div ng-hide="canNotFetch" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
+                        <p class="text-destructive/80">{% trans "Cannot fetch details. Error message:" %} {$
+                            errorMessage $}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-hide="canNotPerform" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
+                        <p class="text-destructive/80">{% trans "Cannot perform operation. Error message:" %} {$
+                            errorMessage $}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
+                        <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <!-- Log Output Panel - Flat design -->
-    <div ng-hide="request" class="bg-card rounded-2xl border border-border p-8">
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="terminal" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-xl font-bold text-foreground">{% trans "Installation Log" %}</h3>
-            </div>
-            <button ng-disabled="goback"
-                    type="button"
-                    ng-click="fetchPHPDetails()"
-                    class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
-                <i data-lucide="arrow-left" class="h-4 w-4 mr-2"></i>
-                {% trans "Go Back" %}
-            </button>
-        </div>
-        <div class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
-            {$ requestData $}
-        </div>
-    </div>
-
-    <!-- Error Messages -->
-    <div class="space-y-4">
-        <div ng-hide="canNotFetch" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
-            <div class="flex items-start gap-4">
-                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
-                <div>
-                    <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
-                    <p class="text-destructive/80">{% trans "Cannot fetch details. Error message:" %} {$ errorMessage $}</p>
-                </div>
-            </div>
-        </div>
-
-        <div ng-hide="canNotPerform" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
-            <div class="flex items-start gap-4">
-                <i data-lucide="circle-alert" class="h-6 w-6 text-destructive shrink-0"></i>
-                <div>
-                    <h4 class="font-bold text-destructive">{% trans "Error" %}</h4>
-                    <p class="text-destructive/80">{% trans "Cannot perform operation. Error message:" %} {$ errorMessage $}</p>
-                </div>
-            </div>
-        </div>
-
-        <div ng-hide="couldNotConnect" class="p-6 bg-destructive/10 border border-destructive/20 rounded-2xl">
-            <div class="flex items-start gap-4">
-                <i data-lucide="wifi-off" class="h-6 w-6 text-destructive shrink-0"></i>
-                <div>
-                    <h4 class="font-bold text-destructive">{% trans "Connection Error" %}</h4>
-                    <p class="text-destructive/80">{% trans "Could not connect. Please refresh this page." %}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
 
 {% endblock %}
 
 {% block footer_scripts %}
-<script src="{% static 'managePHP/managePHP.js' %}"></script>
+    <script src="{% static 'managePHP/managePHP.js' %}"></script>
 {% endblock %}

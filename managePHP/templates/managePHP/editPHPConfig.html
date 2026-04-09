@@ -12,7 +12,7 @@
         padding: 24px;
     }
     /* Ensure flat design - no shadows on cards */
-    .bg-card { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important; }
+    .bg-card { box-shadow: none !important; }
 
     /* Toggle switch styling - flat design */
     .toggle-switch {
@@ -80,8 +80,8 @@
         font-family: inherit;
     }
     .dark code {
-        background: hsl(var(--secondary));
-        color: hsl(var(--primary-foreground));
+        background: hsl(var(--secondary) / 0.5);
+        color: hsl(var(--foreground)) !important;
     }
     /* Active indicator for tabs */
     .tab-active-indicator {
@@ -94,13 +94,6 @@
         background: currentColor;
         border-radius: 99px;
         display: none;
-    }
-
-    .dark .bg-muted\/50 {
-        background-color: hsl(var(--secondary) / 0.4);
-    }
-    .dark .bg-background {
-        background-color: hsl(var(--card));
     }
 </style>
 {% endblock %}
@@ -118,10 +111,10 @@
                 <i data-lucide="code" class="h-8 w-8"></i>
             </div>
             <div>
-                <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+                <h1 class="text-4xl font-extrabold tracking-tight text-foreground dark:text-primary">
                     {% trans "Edit PHP Configurations" %}
                 </h1>
-                <p class="text-xl text-muted-foreground">
+                <p class="text-xl text-muted-foreground dark:text-foreground/70">
                     {% trans "Configure PHP settings to optimize your web applications performance" %}
                 </p>
                 {% if apache %}
@@ -135,20 +128,20 @@
     </div>
 
     <!-- Configuration Panel - Flat design -->
-    <div class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+    <div class="bg-card rounded-2xl border border-border overflow-hidden">
         <!-- Tabs Navigation -->
         <div class="flex items-center gap-4 p-3 bg-muted/50 border-b border-border overflow-x-auto">
             <button type="button"
                     ng-click="fetchPHPDetails(); setActiveTab('basic')"
-                    ng-class="{'bg-primary text-primary-foreground shadow-lg shadow-primary/20': activeTab === 'basic', 'text-muted-foreground hover:bg-muted': activeTab !== 'basic'}"
-                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap">
+                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'basic', 'text-muted-foreground hover:bg-muted': activeTab !== 'basic'}"
+                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap !shadow-none hover:!shadow-none">
                 <i data-lucide="sliders-horizontal" class="h-5 w-5"></i>
                 {% trans "Basic Settings" %}
             </button>
             <button type="button"
                     ng-click="fetchAdvancePHPDetails(); setActiveTab('advanced')"
-                    ng-class="{'bg-primary text-primary-foreground shadow-lg shadow-primary/20': activeTab === 'advanced', 'text-muted-foreground hover:bg-muted': activeTab !== 'advanced'}"
-                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap">
+                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'advanced', 'text-muted-foreground hover:bg-muted': activeTab !== 'advanced'}"
+                    class="relative px-8 py-4 rounded-xl text-lg font-bold transition-all flex items-center gap-3 whitespace-nowrap !shadow-none hover:!shadow-none">
                 <i data-lucide="file-code" class="h-5 w-5"></i>
                 {% trans "Advanced Editor" %}
             </button>
@@ -165,9 +158,9 @@
                     <div class="flex flex-col md:flex-row md:items-center gap-4">
                         <div class="flex items-center gap-3">
                             <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                                <i data-lucide="code" class="h-5 w-5"></i>
+                                <i class="fa-brands fa-php"></i>
                             </div>
-                            <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
+                            <label class="text-sm font-bold text-foreground dark:text-primary uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
                         </div>
                         <div class="flex-1 relative max-w-md">
                             <select ng-change="fetchPHPDetails()" ng-model="phpSelection"
@@ -198,8 +191,8 @@
                             <!-- display_errors -->
                             <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="text-lg font-bold text-foreground"><code>display_errors</code></div>
-                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Show PHP errors to visitors" %}</div>
+                                    <div class="text-lg font-bold text-foreground dark:text-primary"><code>display_errors</code></div>
+                                    <div class="text-sm text-muted-foreground dark:text-foreground/70 mt-0.5">{% trans "Show PHP errors to visitors" %}</div>
                                 </div>
                                 <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="display_errors" ng-model="display_errors">
@@ -210,8 +203,8 @@
                             <!-- file_uploads -->
                             <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="text-lg font-bold text-foreground"><code>file_uploads</code></div>
-                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow file uploads" %}</div>
+                                    <div class="text-lg font-bold text-foreground dark:text-primary"><code>file_uploads</code></div>
+                                    <div class="text-sm text-muted-foreground dark:text-foreground/70 mt-0.5">{% trans "Allow file uploads" %}</div>
                                 </div>
                                 <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="file_uploads" ng-model="file_uploads">
@@ -222,8 +215,8 @@
                             <!-- allow_url_fopen -->
                             <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="text-lg font-bold text-foreground"><code>allow_url_fopen</code></div>
-                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow opening URLs as files" %}</div>
+                                    <div class="text-lg font-bold text-foreground dark:text-primary"><code>allow_url_fopen</code></div>
+                                    <div class="text-sm text-muted-foreground dark:text-foreground/70 mt-0.5">{% trans "Allow opening URLs as files" %}</div>
                                 </div>
                                 <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="allow_url_fopen" ng-model="allow_url_fopen">
@@ -234,8 +227,8 @@
                             <!-- allow_url_include -->
                             <div class="flex items-center justify-between p-5 bg-background border border-border rounded-xl">
                                 <div>
-                                    <div class="text-lg font-bold text-foreground"><code>allow_url_include</code></div>
-                                    <div class="text-sm text-muted-foreground mt-0.5">{% trans "Allow including URLs" %}</div>
+                                    <div class="text-lg font-bold text-foreground dark:text-primary"><code>allow_url_include</code></div>
+                                    <div class="text-sm text-muted-foreground dark:text-foreground/70 mt-0.5">{% trans "Allow including URLs" %}</div>
                                 </div>
                                 <label class="toggle-switch shrink-0 scale-110">
                                     <input type="checkbox" id="allow_url_include" ng-model="allow_url_include">
@@ -256,51 +249,51 @@
 
                             <!-- memory_limit -->
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-foreground uppercase tracking-wider"><code>memory_limit</code></label>
+                                <label class="text-xs font-bold text-foreground dark:text-primary uppercase tracking-wider"><code>memory_limit</code></label>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <input ng-model="memory_limit" type="text" placeholder="128M"
                                            class="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground">
-                                    <span class="text-xs text-muted-foreground whitespace-nowrap">{% trans "Max memory per script" %}</span>
+                                    <span class="text-xs text-muted-foreground dark:text-foreground/70 whitespace-nowrap">{% trans "Max memory per script" %}</span>
                                 </div>
                             </div>
 
                             <!-- max_execution_time -->
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-foreground uppercase tracking-wider"><code>max_execution_time</code></label>
+                                <label class="text-xs font-bold text-foreground dark:text-primary uppercase tracking-wider"><code>max_execution_time</code></label>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <input ng-model="max_execution_time" type="text" placeholder="30"
                                            class="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground">
-                                    <span class="text-xs text-muted-foreground whitespace-nowrap">{% trans "Seconds" %}</span>
+                                    <span class="text-xs text-muted-foreground dark:text-foreground/70 whitespace-nowrap">{% trans "Seconds" %}</span>
                                 </div>
                             </div>
 
                             <!-- upload_max_filesize -->
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-foreground uppercase tracking-wider"><code>upload_max_filesize</code></label>
+                                <label class="text-xs font-bold text-foreground dark:text-primary uppercase tracking-wider"><code>upload_max_filesize</code></label>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <input ng-model="upload_max_filesize" type="text" placeholder="2M"
                                            class="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground">
-                                    <span class="text-xs text-muted-foreground whitespace-nowrap">{% trans "Max upload size" %}</span>
+                                    <span class="text-xs text-muted-foreground dark:text-foreground/70 whitespace-nowrap">{% trans "Max upload size" %}</span>
                                 </div>
                             </div>
 
                             <!-- post_max_size -->
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-foreground uppercase tracking-wider"><code>post_max_size</code></label>
+                                <label class="text-xs font-bold text-foreground dark:text-primary uppercase tracking-wider"><code>post_max_size</code></label>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <input ng-model="post_max_size" type="text" placeholder="8M"
                                            class="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground">
-                                    <span class="text-xs text-muted-foreground whitespace-nowrap">{% trans "Max POST size" %}</span>
+                                    <span class="text-xs text-muted-foreground dark:text-foreground/70 whitespace-nowrap">{% trans "Max POST size" %}</span>
                                 </div>
                             </div>
 
                             <!-- max_input_time -->
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-foreground uppercase tracking-wider"><code>max_input_time</code></label>
+                                <label class="text-xs font-bold text-foreground dark:text-primary uppercase tracking-wider"><code>max_input_time</code></label>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <input ng-model="max_input_time" type="text" placeholder="60"
                                            class="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground">
-                                    <span class="text-xs text-muted-foreground whitespace-nowrap">{% trans "Seconds" %}</span>
+                                    <span class="text-xs text-muted-foreground dark:text-foreground/70 whitespace-nowrap">{% trans "Seconds" %}</span>
                                 </div>
                             </div>
 
@@ -369,7 +362,7 @@
                             <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                                 <i data-lucide="code" class="h-5 w-5"></i>
                             </div>
-                            <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
+                            <label class="text-sm font-bold text-foreground dark:text-primary uppercase tracking-wider">{% trans "Select PHP Version" %}</label>
                         </div>
                         <div class="flex-1 relative max-w-md">
                             <select ng-change="fetchAdvancePHPDetails()" ng-model="phpSelection"
@@ -391,7 +384,7 @@
                     <div class="flex items-center justify-between p-4 bg-muted/50 border border-border rounded-xl">
                         <div class="flex items-center gap-3">
                             <i data-lucide="file-code" class="h-5 w-5 text-primary"></i>
-                            <span class="font-bold text-foreground">php.ini</span>
+                            <span class="font-bold text-foreground dark:text-primary">php.ini</span>
                         </div>
                         <button type="button" onclick="document.getElementById('config-textarea').select()"
                                 class="inline-flex items-center justify-center px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
