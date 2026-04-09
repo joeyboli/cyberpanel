@@ -825,6 +825,32 @@ class cyberPanel:
             logger.writeforCLI(str(msg), "Error", stack()[0][3])
             self.printStatus(0, str(msg))
 
+    def updateCyberPanel(self):
+        try:
+            BRANCH_NAME = "v2.4.5"
+            FORK_USER = "joeyboli"
+
+            print("Bootstrapping Upgrade from Fork: %s %s..." % (FORK_USER, BRANCH_NAME))
+
+            command = 'rm -f /usr/local/cyberpanel_upgrade.sh'
+            ProcessUtilities.executioner(command)
+
+            # Pull the fixed upgrade script
+            command = "wget -O /usr/local/cyberpanel_upgrade.sh https://raw.githubusercontent.com/%s/cyberpanel/%s/cyberpanel_upgrade.sh" % (FORK_USER, BRANCH_NAME)
+            ProcessUtilities.executioner(command)
+
+            command = 'chmod 700 /usr/local/cyberpanel_upgrade.sh'
+            ProcessUtilities.executioner(command)
+
+            command = '/usr/local/cyberpanel_upgrade.sh'
+            ProcessUtilities.executioner(command)
+
+            self.printStatus(1, 'None')
+
+        except BaseException as msg:
+            logger.writeforCLI(str(msg), "Error", stack()[0][3])
+            self.printStatus(0, str(msg))
+
 def main():
 
     parser = cliParser()
@@ -1331,7 +1357,7 @@ def main():
 
         command = '/usr/bin/cyberpanel_utility'
         ProcessUtilities.executioner(command)
-    elif args.function == 'upgrade' or args.function == 'update':
+    elif args.function == 'upgrade':
         if not os.path.exists('/usr/bin/cyberpanel_utility'):
             command = 'wget -q -O /usr/bin/cyberpanel_utility https://cyberpanel.sh/misc/cyberpanel_utility.sh'
             ProcessUtilities.executioner(command)
@@ -1341,6 +1367,8 @@ def main():
 
         command = '/usr/bin/cyberpanel_utility --upgrade'
         ProcessUtilities.executioner(command)
+    elif args.function == 'update':
+        cyberpanel.updateCyberPanel()
     elif args.function == 'help':
         if not os.path.exists('/usr/bin/cyberpanel_utility'):
             command = 'wget -q -O /usr/bin/cyberpanel_utility https://cyberpanel.sh/misc/cyberpanel_utility.sh'
