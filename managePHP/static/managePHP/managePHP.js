@@ -10,7 +10,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
     var extName = '';
 
     $scope.availableExtensions = true;
-    $scope.loadingExtensions = true;
+    $scope.loadingExtensions = false;
     $scope.canNotFetch = true;
     $scope.couldNotConnect = true;
     $scope.phpSelectionDisabled = false;
@@ -19,7 +19,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
     $scope.goback = true;
 
     $scope.fetchPHPDetails = function () {
-        $scope.loadingExtensions = false;
+        $scope.loadingExtensions = true;
         $scope.phpSelectionDisabled = false;
         populateCurrentRecords();
         $scope.request = true;
@@ -32,7 +32,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
         $scope.phpSelectionDisabled = true;
         $scope.requestData = "";
 
-        $scope.loadingExtensions = false;
+        $scope.loadingExtensions = true;
         $scope.availableExtensions = true;
         $scope.request = false;
         $scope.goback = true;
@@ -66,6 +66,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
             } else {
                 $scope.canNotPerform = false;
                 $scope.errorMessage = response.data.error_message;
+                $scope.loadingExtensions = false;
             }
 
         }
@@ -75,6 +76,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
             $scope.canNotFetch = true;
             $scope.couldNotConnect = false;
             $scope.canNotPerform = true;
+            $scope.loadingExtensions = false;
 
 
         }
@@ -90,7 +92,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
         $scope.requestData = "";
         $scope.goback = true;
 
-        $scope.loadingExtensions = false;
+        $scope.loadingExtensions = true;
         $scope.availableExtensions = true;
         $scope.request = false;
 
@@ -123,6 +125,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
             } else {
                 $scope.canNotPerform = false;
                 $scope.errorMessage = response.data.error_message;
+                $scope.loadingExtensions = false;
             }
 
         }
@@ -132,6 +135,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
             $scope.canNotFetch = true;
             $scope.couldNotConnect = false;
             $scope.canNotPerform = true;
+            $scope.loadingExtensions = false;
 
 
         }
@@ -141,6 +145,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
 
     function populateCurrentRecords() {
 
+        $scope.loadingExtensions = true;
         var phpSelection = $scope.phpSelection;
 
         var queryString = window.location.search;
@@ -176,7 +181,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
                 $scope.records = JSON.parse(response.data.data);
 
                 $scope.availableExtensions = false;
-                $scope.loadingExtensions = true;
+                $scope.loadingExtensions = false;
 
                 $scope.canNotFetch = true;
                 $scope.couldNotConnect = true;
@@ -186,6 +191,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
                 $scope.errorMessage = response.data.error_message;
                 $scope.canNotFetch = false;
                 $scope.couldNotConnect = true;
+                $scope.loadingExtensions = false;
             }
 
         }
@@ -194,6 +200,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
 
             $scope.canNotFetch = true;
             $scope.couldNotConnect = false;
+            $scope.loadingExtensions = false;
 
 
         }
@@ -227,7 +234,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
 
                 if (response.data.finished === 1) {
 
-                    $scope.loadingExtensions = true;
+                    $scope.loadingExtensions = false;
                     $scope.phpSelectionDisabled = false;
                     $scope.requestData = response.data.requestStatus;
                     $scope.goback = false;
@@ -242,6 +249,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
 
             } else {
 
+                $scope.loadingExtensions = false;
 
             }
 
@@ -251,6 +259,7 @@ app.controller('installExtensions', function ($scope, $http, $timeout) {
 
             $scope.canNotFetch = true;
             $scope.couldNotConnect = false;
+            $scope.loadingExtensions = false;
 
 
         }
