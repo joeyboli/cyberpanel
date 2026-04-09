@@ -11502,9 +11502,11 @@ app.controller('websitePages', function ($scope, $http, $timeout, $window) {
             $scope.DomainCreateForm = true;
 
         } else if (type == 'Addon Domain') {
-            $scope.DomainCreateForm = false;
-            $scope.webselection = true;
-            $scope.masterDomain = $('#defaultSite').html()
+            // Addon domains still need a master website selection.
+            // Keep the selector visible (same as Sub Domain) and preselect default site.
+            $scope.webselection = false;
+            $scope.masterDomain = $('#defaultSite').html();
+            $scope.DomainCreateForm = ($scope.masterDomain === '' || typeof $scope.masterDomain === 'undefined');
         }
     };
 
@@ -13020,9 +13022,11 @@ app.controller('manageAliasController', function ($scope, $http, $timeout, $wind
             $scope.DomainCreateForm = true;
 
         } else if (type == 'Addon Domain') {
-            $scope.DomainCreateForm = false;
-            $scope.webselection = true;
-            $scope.masterDomain = $('#defaultSite').html()
+            // Addon domains still need a master website selection.
+            // Keep the selector visible (same as Sub Domain) and preselect default site.
+            $scope.webselection = false;
+            $scope.masterDomain = $('#defaultSite').html();
+            $scope.DomainCreateForm = ($scope.masterDomain === '' || typeof $scope.masterDomain === 'undefined');
         }
     };
 
