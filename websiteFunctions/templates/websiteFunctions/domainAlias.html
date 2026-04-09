@@ -140,12 +140,12 @@
                             <td class="p-6 text-right">
                                 <div class="flex justify-end gap-3">
                                     <button class="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg font-bold hover:bg-primary hover:text-white transition-all border border-primary/20" 
-                                            ng-click="issueSSL(record.childDomain,record.path)">
+                                            ng-click="issueSSL(masterDomain, record.childDomain)">
                                         <i class="fa-solid fa-shield-halved"></i>
                                         {% trans "SSL" %}
                                     </button>
                                     <button class="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive rounded-lg font-bold hover:bg-destructive hover:text-white transition-all border border-destructive/20" 
-                                            ng-click="deleteChildDomain(record.childDomain)">
+                                            ng-click="removeAlias(masterDomain, record.childDomain)">
                                         <i class="fa-solid fa-trash-can"></i>
                                         {% trans "Delete" %}
                                     </button>
