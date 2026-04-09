@@ -833,17 +833,17 @@ class cyberPanel:
             print("Bootstrapping Upgrade from Fork: %s %s..." % (FORK_USER, BRANCH_NAME))
 
             command = 'rm -f /usr/local/cyberpanel_upgrade.sh'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             # Pull the fixed upgrade script
             command = "wget -O /usr/local/cyberpanel_upgrade.sh https://raw.githubusercontent.com/%s/cyberpanel/%s/cyberpanel_upgrade.sh" % (FORK_USER, BRANCH_NAME)
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             command = 'chmod 700 /usr/local/cyberpanel_upgrade.sh'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             command = '/usr/local/cyberpanel_upgrade.sh'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             self.printStatus(1, 'None')
 
@@ -1350,23 +1350,23 @@ def main():
     elif args.function == 'utility':
         if not os.path.exists('/usr/bin/cyberpanel_utility'):
             command = 'wget -q -O /usr/bin/cyberpanel_utility https://cyberpanel.sh/misc/cyberpanel_utility.sh'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             command = 'chmod 700 /usr/bin/cyberpanel_utility'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
         command = '/usr/bin/cyberpanel_utility'
-        ProcessUtilities.executioner(command)
+        ProcessUtilities.executioner(command, show_output=True)
     elif args.function == 'upgrade':
         if not os.path.exists('/usr/bin/cyberpanel_utility'):
             command = 'wget -q -O /usr/bin/cyberpanel_utility https://cyberpanel.sh/misc/cyberpanel_utility.sh'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
             command = 'chmod 700 /usr/bin/cyberpanel_utility'
-            ProcessUtilities.executioner(command)
+            ProcessUtilities.executioner(command, show_output=True)
 
         command = '/usr/bin/cyberpanel_utility --upgrade'
-        ProcessUtilities.executioner(command)
+        ProcessUtilities.executioner(command, show_output=True)
     elif args.function == 'update':
         cyberpanel.updateCyberPanel()
     elif args.function == 'help':

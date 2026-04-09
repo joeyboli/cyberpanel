@@ -106,10 +106,13 @@ class ProcessUtilities(multi.Thread):
             logging.writeToFile(str(msg) + "[stopLitespeed]")
 
     @staticmethod
-    def normalExecutioner(command, shell=False, User=None):
+    def normalExecutioner(command, shell=False, User=None, show_output=False):
         try:
 
-            f = open(os.devnull, 'w')
+            if not show_output:
+                f = open(os.devnull, 'w')
+            else:
+                f = None
 
             if User == None:
                 if shell == False:
@@ -370,7 +373,7 @@ class ProcessUtilities(multi.Thread):
             return "0" + str(msg)
 
     @staticmethod
-    def executioner(command, user=None, shell=False):
+    def executioner(command, user=None, shell=False, show_output=False):
         try:
             if os.path.exists(ProcessUtilities.debugPath):
                 logging.writeToFile(f"[executioner] Called with command: {command}, user: {user}, shell: {shell}")
@@ -378,7 +381,7 @@ class ProcessUtilities(multi.Thread):
             if getpass.getuser() == 'root':
                 if os.path.exists(ProcessUtilities.debugPath):
                     logging.writeToFile(f"[executioner] Running as root, using normalExecutioner")
-                ProcessUtilities.normalExecutioner(command, shell, user)
+                ProcessUtilities.normalExecutioner(command, shell, user, show_output=show_output)
                 return 1
 
             if os.path.exists(ProcessUtilities.debugPath):
@@ -390,6 +393,10 @@ class ProcessUtilities(multi.Thread):
             if not ret or len(ret) == 0:
                 logging.writeToFile("Empty response from lscpd for command: %s" % command)
                 return 0
+            
+            # Show output if requested
+            if show_output and len(ret) > 1:
+                print(ret[:-1])
             
             # Extract exit code from last character
             try:
