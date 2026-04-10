@@ -18,7 +18,6 @@
 
 {% block content %}
 {% load static %}
-{% get_current_language as LANGUAGE_CODE %}
 
 <div class="w-full p-4 md:p-12 space-y-12" ng-controller="litespeedStatus">
 
@@ -63,10 +62,6 @@
                     <p class="text-amber-700/80 dark:text-amber-400/80 mb-3">
                         {% trans "Your license does not include the CyberPanel bundle." %}
                     </p>
-                    <a href="https://cyberpanel.net/cyberpanel-enterprise/" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
-                        {% trans "Click here to upgrade" %}
-                        <i data-lucide="external-link" class="h-4 w-4 ml-2"></i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -208,69 +203,6 @@
     </div>
     {% endif %}
 
-    {% if OLS %}
-    <!-- Upgrade to Enterprise Card -->
-    <div class="bg-card rounded-2xl border border-border p-8" ng-controller="upgradeToEnterprise">
-        <h2 class="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
-            <i data-lucide="star" class="h-6 w-6 text-primary"></i>
-            {% trans "Upgrade to LiteSpeed Enterprise" %}
-        </h2>
-
-        <div class="space-y-6">
-            <div class="p-6 bg-secondary/10 border border-border rounded-xl space-y-4">
-                <div class="space-y-3">
-                    <label class="text-sm font-bold text-foreground uppercase tracking-wider">{% trans "LiteSpeed License Key (Optional for Trial)" %}</label>
-                    <input type="text" ng-model="enterpriseLicenseKey" class="w-full px-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Enter license key or leave blank for trial">
-                </div>
-
-                <div class="flex flex-wrap gap-3">
-                    <button ng-click="switchToEnterprise()" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
-                        <i data-lucide="zap" class="h-5 w-5 mr-2"></i>
-                        {% trans "Switch to Enterprise" %}
-                    </button>
-                    <button ng-click="showTrialConfirm()" class="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
-                        <i data-lucide="gift" class="h-5 w-5 mr-2"></i>
-                        {% trans "Get 15 Days Trial" %}
-                    </button>
-                </div>
-            </div>
-
-            <!-- Trial Confirmation Modal -->
-            <div ng-show="showTrialModal" class="p-6 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-4">
-                <h4 class="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
-                    <i data-lucide="alert-triangle" class="h-5 w-5"></i>
-                    {% trans "Confirm Trial Activation" %}
-                </h4>
-                <p class="text-amber-700/80 dark:text-amber-400/80">{% trans "Are you sure you want to activate the 15-day trial?" %}</p>
-                <div class="flex gap-3">
-                    <button ng-click="activateTrial()" class="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
-                        {% trans "Yes, Activate Trial" %}
-                    </button>
-                    <button ng-click="showTrialModal = false" class="px-6 py-2.5 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
-                        {% trans "Cancel" %}
-                    </button>
-                </div>
-                <div class="p-4 bg-muted/30 border border-border rounded-lg text-sm text-muted-foreground">
-                    <p class="font-bold mb-1">{% trans "Note:" %}</p>
-                    {% trans "If you select 15 days trial, there is no need to enter a license key. CyberPanel will automatically fetch a 15-day trial key for you. Make sure this server has not used a trial already." %}
-                </div>
-                <div class="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
-                    <p class="font-bold mb-1">{% trans "Important Warning:" %}</p>
-                    {% trans "You cannot revert back to OpenLiteSpeed if you choose not to purchase a LiteSpeed Enterprise license after the 15 day trial period. We recommend you test the Enterprise trial on a separate server." %}
-                </div>
-            </div>
-
-            <!-- Installation Progress -->
-            <div ng-show="installingEnterprise" class="p-6 bg-muted/30 border border-border rounded-xl">
-                <h4 class="font-bold text-foreground mb-4">{% trans "Installation Progress" %}</h4>
-                <div class="flex items-center gap-4">
-                    <div class="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    <span class="text-muted-foreground">{% trans "Installing LiteSpeed Enterprise..." %}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
     <!-- Action Alerts -->
     <div id="actionSuccess" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl hidden">
