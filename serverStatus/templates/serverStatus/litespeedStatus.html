@@ -1,6 +1,6 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "LiteSpeed Status - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "LiteSpeed Status" %}{% endblock %}
 
 {% block header_scripts %}
 <style>
@@ -127,11 +127,11 @@
 
         <!-- Action Buttons -->
         <div class="px-8 py-6 border-t border-border bg-muted/30 flex flex-wrap gap-4">
-            <button ng-click="restartLiteSpeed()" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
+            <button ng-click="restartLitespeed()" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
                 <i data-lucide="refresh-cw" class="h-5 w-5 mr-2"></i>
                 {% trans "Restart LiteSpeed" %}
             </button>
-            <button ng-click="stopLiteSpeed()" class="inline-flex items-center justify-center px-6 py-3 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
+            <button ng-click="stopLitespeed()" class="inline-flex items-center justify-center px-6 py-3 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
                 <i data-lucide="power" class="h-5 w-5 mr-2"></i>
                 {% trans "Stop LiteSpeed" %}
             </button>

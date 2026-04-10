@@ -1,317 +1,479 @@
-{% extends "baseTemplate/index.html" %}
-{% load i18n %}
-{% block title %}{% trans "Package Manager - CyberPanel" %}{% endblock %}
-
+{% extends "baseTemplate/index.html" %} {% load i18n %} {% block title %}{% trans "Package Manager" %}{% endblock %}
 {% block header_scripts %}
-<style>
-    /* Custom styles for Package Manager - aligned to base design system */
-    .premium-alert {
-        background: hsl(var(--primary) / 0.05);
-        border: 1px solid hsl(var(--primary) / 0.1);
-        border-radius: var(--radius);
-        padding: 24px;
-    }
-    /* Ensure flat design - no shadows on cards */
-    .bg-card { box-shadow: none !important; }
+    <style>
+        /* Custom styles for Package Manager - aligned to base design system */
+        .premium-alert {
+            background: hsl(var(--primary) / 0.05);
+            border: 1px solid hsl(var(--primary) / 0.1);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
 
-    /* Table sticky header */
-    .table-sticky-header thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+        /* Ensure flat design - no shadows on cards */
+        .bg-card {
+            box-shadow: none !important;
+        }
 
-    /* Lock toggle animation */
-    .lock-toggle {
-        transition: all 0.2s ease;
-    }
-    .lock-toggle:hover {
-        background: hsl(var(--muted) / 0.3);
-    }
-</style>
-{% endblock %}
+        /* Table sticky header */
+        .table-sticky-header thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-{% block content %}
-{% load static %}
-{% get_current_language as LANGUAGE_CODE %}
+        /* Lock toggle animation */
+        .lock-toggle {
+            transition: all 0.2s ease;
+        }
 
-<div class="w-full p-4 md:p-12 space-y-12" ng-controller="listOSPackages">
+        .lock-toggle:hover {
+            background: hsl(var(--muted) / 0.3);
+        }
+    </style>
+{% endblock %} {% block content %} {% load static %} {% get_current_language as
+LANGUAGE_CODE %}
 
-    <!-- Page Header - Full width -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
-        <div class="flex items-center gap-6">
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
-                <i data-lucide="package" class="h-8 w-8"></i>
-            </div>
-            <div>
-                <h1 class="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-                    {% trans "System Package Manager" %}
-                    <span ng-hide="cyberpanelLoading" class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-                </h1>
-                <p class="text-xl text-muted-foreground">
-                    {% trans "Manage system packages, updates, and dependencies using your system's package manager (apt/yum)" %}
-                </p>
-                <div class="mt-3 flex flex-wrap gap-3">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-bold">
-                        <i data-lucide="box" class="h-4 w-4"></i>
-                        {% trans "Total Packages:" %} <span class="text-foreground">{$ totalPackages || 0 $}</span>
-                    </div>
-                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/50 border border-border rounded-xl text-muted-foreground text-sm font-bold">
-                        <i data-lucide="eye" class="h-4 w-4"></i>
-                        {% trans "Showing:" %} <span class="text-foreground">{$ fetchedPackages || 0 $}</span>
+    <div class="w-full p-4 md:p-12 space-y-12" ng-controller="listOSPackages">
+        <!-- Page Header - Full width -->
+        <div
+                class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border"
+        >
+            <div class="flex items-center gap-6">
+                <div
+                        class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20"
+                >
+                    <i data-lucide="package" class="h-8 w-8"></i>
+                </div>
+                <div>
+                    <h1
+                            class="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3"
+                    >
+                        {% trans "System Package Manager" %}
+                        <span
+                                ng-hide="cyberpanelLoading"
+                                class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"
+                        ></span>
+                    </h1>
+                    <p class="text-xl text-muted-foreground">
+                        {% trans "Manage system packages, updates, and dependencies using your
+          system's package manager (apt/yum)" %}
+                    </p>
+                    <div class="mt-3 flex flex-wrap gap-3">
+                        <div
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-bold"
+                        >
+                            <i data-lucide="box" class="h-5 w-5"></i>
+                            {% trans "Total Packages:" %}
+                            <span class="text-foreground">{$ totalPackages || 0 $}</span>
+                        </div>
+                        <div
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/50 border border-border rounded-xl text-muted-foreground text-sm font-bold"
+                        >
+                            <i data-lucide="eye" class="h-5 w-5"></i>
+                            {% trans "Showing:" %}
+                            <span class="text-foreground">{$ fetchedPackages || 0 $}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Tabs Container - Flat design -->
-    <div class="bg-card rounded-2xl border border-border overflow-hidden">
-        <!-- Tab Navigation -->
-        <div class="flex items-center gap-2 p-2 bg-muted/30 border-b border-border overflow-x-auto">
-            <button type="button"
-                    ng-click="fetchPackages('upgrade'); setActiveTab('updates')"
-                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'updates'}"
-                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-                {% trans "Available Updates" %}
-                <span ng-if="activeTab === 'updates'" class="tab-active-indicator"></span>
-            </button>
-            <button type="button"
-                    ng-click="fetchPackages(); setActiveTab('all')"
-                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'all'}"
-                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="list" class="h-4 w-4"></i>
-                {% trans "All Packages" %}
-                <span ng-if="activeTab === 'all'" class="tab-active-indicator"></span>
-            </button>
-            <button type="button"
-                    ng-click="fetchPackages('CyberPanel'); setActiveTab('cyberpanel')"
-                    ng-class="{'bg-primary text-primary-foreground': activeTab === 'cyberpanel'}"
-                    class="relative px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="shield" class="h-4 w-4"></i>
-                {% trans "CyberPanel Packages" %}
-                <span ng-if="activeTab === 'cyberpanel'" class="tab-active-indicator"></span>
-            </button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="p-8">
-            <!-- Controls Bar -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                <div class="relative w-full md:w-96">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
-                    </div>
-                    <input type="text" ng-model="packSearch" placeholder="{% trans 'Search packages...' %}"
-                           class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
-                </div>
-
-                <div class="flex flex-wrap items-center gap-3">
-                    <select ng-model="recordsToShow" ng-change="fetchPackages(currentTab)"
-                            class="px-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none appearance-none pr-10">
-                        <option value="10">10 {% trans "per page" %}</option>
-                        <option value="50">50 {% trans "per page" %}</option>
-                        <option value="100">100 {% trans "per page" %}</option>
-                        <option value="500">500 {% trans "per page" %}</option>
-                    </select>
-
-                    <button type="button" ng-click="updatePackage('all')" ng-show="currentTab === 'upgrade'"
-                            class="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all hover:opacity-90">
-                        <i data-lucide="download" class="h-5 w-5 mr-2"></i>
-                        {% trans "Update All" %}
-                    </button>
-                </div>
+        <!-- Tabs Container - Flat design -->
+        <div class="bg-card rounded-2xl border border-border overflow-hidden">
+            <!-- Tab Navigation -->
+            <div
+                    class="flex items-center gap-2 p-2 bg-muted/30 border-b border-border overflow-x-auto"
+            >
+                <button
+                        type="button"
+                        ng-click="fetchPackages('upgrade'); setActiveTab('updates')"
+                        ng-class="{'bg-primary text-primary-foreground': activeTab === 'updates'}"
+                        class="relative px-8 py-4 rounded-xl text-base font-bold transition-all flex items-center gap-3 whitespace-nowrap"
+                >
+                    <i data-lucide="refresh-cw" class="h-5 w-5"></i>
+                    {% trans "Available Updates" %}
+                    <span
+                            ng-if="activeTab === 'updates'"
+                            class="tab-active-indicator"
+                    ></span>
+                </button>
+                <button
+                        type="button"
+                        ng-click="fetchPackages(); setActiveTab('all')"
+                        ng-class="{'bg-primary text-primary-foreground': activeTab === 'all'}"
+                        class="relative px-8 py-4 rounded-xl text-base font-bold transition-all flex items-center gap-3 whitespace-nowrap"
+                >
+                    <i data-lucide="list" class="h-5 w-5"></i>
+                    {% trans "All Packages" %}
+                    <span ng-if="activeTab === 'all'" class="tab-active-indicator"></span>
+                </button>
+                <button
+                        type="button"
+                        ng-click="fetchPackages('CyberPanel'); setActiveTab('cyberpanel')"
+                        ng-class="{'bg-primary text-primary-foreground': activeTab === 'cyberpanel'}"
+                        class="relative px-8 py-4 rounded-xl text-base font-bold transition-all flex items-center gap-3 whitespace-nowrap"
+                >
+                    <i data-lucide="shield" class="h-5 w-5"></i>
+                    {% trans "CyberPanel Packages" %}
+                    <span
+                            ng-if="activeTab === 'cyberpanel'"
+                            class="tab-active-indicator"
+                    ></span>
+                </button>
             </div>
 
-            <!-- Alert for important info -->
-            <div ng-show="currentTab === 'upgrade' && totalPackages > 0" class="p-6 bg-primary/10 border border-primary/20 rounded-2xl mb-6">
-                <div class="flex items-start gap-4">
-                    <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
-                    <div>
-                        <h4 class="font-bold text-primary">{% trans "Important" %}</h4>
-                        <p class="text-primary/80">{% trans "Always backup your system before performing major updates. Some updates may require system restart." %}</p>
+            <!-- Tab Content -->
+            <div class="p-8">
+                <!-- Controls Bar -->
+                <div
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+                >
+                    <div class="relative w-full md:w-96">
+                        <div
+                                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                        >
+                            <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+                        </div>
+                        <input
+                                type="text"
+                                ng-model="packSearch"
+                                placeholder="{% trans 'Search packages...' %}"
+                                class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        />
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select
+                                ng-model="recordsToShow"
+                                ng-change="fetchPackages(currentTab)"
+                                class="px-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none appearance-none pr-10"
+                        >
+                            <option value="" disabled ng-if="!recordsToShow">
+                                Select records per page
+                            </option>
+
+                            <option value="10">10 per page</option>
+                            <option value="50">50 per page</option>
+                            <option value="100">100 per page</option>
+                            <option value="500">500 per page</option>
+                        </select>
+
+                        <button
+                                type="button"
+                                ng-click="updatePackage('all')"
+                                ng-show="currentTab === 'upgrade'"
+                                class="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all hover:opacity-90"
+                        >
+                            <i data-lucide="download" class="h-5 w-5 mr-2"></i>
+                            {% trans "Update All" %}
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Package Table - Flat design -->
-            <div class="overflow-x-auto table-sticky-header" ng-show="allPackages.length > 0">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-muted/50 border-b border-border">
+                <!-- Alert for important info -->
+                <div
+                        ng-show="currentTab === 'upgrade' && totalPackages > 0"
+                        class="p-6 bg-primary/10 border border-primary/20 rounded-2xl mb-6"
+                >
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="info" class="h-6 w-6 text-primary shrink-0"></i>
+                        <div>
+                            <h4 class="font-bold text-primary">{% trans "Important" %}</h4>
+                            <p class="text-primary/80">
+                                {% trans "Always backup your system before performing major
+              updates. Some updates may require system restart." %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Package Table - Flat design -->
+                <div
+                        class="overflow-x-auto table-sticky-header"
+                        ng-show="allPackages.length > 0"
+                >
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-muted/50 border-b border-border">
                         <tr>
-                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Package" %}</th>
-                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Current Version" %}</th>
-                            <th ng-show="currentTab === 'upgrade'" class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "New Version" %}</th>
-                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Status" %}</th>
-                            <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
+                            <th
+                                    class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+                            >
+                                {% trans "Package" %}
+                            </th>
+                            <th
+                                    class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+                            >
+                                {% trans "Current Version" %}
+                            </th>
+                            <th
+                                    ng-show="currentTab === 'upgrade'"
+                                    class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+                            >
+                                {% trans "New Version" %}
+                            </th>
+                            <th
+                                    class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+                            >
+                                {% trans "Status" %}
+                            </th>
+                            <th
+                                    class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right"
+                            >
+                                {% trans "Actions" %}
+                            </th>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border">
-                        <tr ng-repeat="package in allPackages | filter:packSearch" class="transition-colors hover:bg-muted/30">
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                        <tr
+                                ng-repeat="package in allPackages | filter:packSearch"
+                                class="transition-colors hover:bg-muted/30"
+                        >
                             <!-- Package Name -->
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20">
-                                        <i data-lucide="package" class="h-5 w-5"></i>
+                                    <div
+                                            class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20"
+                                    >
+                                        <i class="fa-regular fa-cube text-base"></i>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-foreground">{$ package.package $}</div>
-                                        <span ng-if="package.type" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-secondary/50 border border-border text-secondary-foreground">
-                                            {$ package.type $}
-                                        </span>
+                                        <div class="font-bold text-foreground">
+                                            {$ package.package $}
+                                        </div>
+                                        <span
+                                                ng-if="package.type"
+                                                class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-secondary/50 border border-border text-secondary-foreground"
+                                        >
+                      {$ package.type $}
+                    </span>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Current Version -->
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center px-3 py-1.5 bg-muted border border-border rounded-lg text-sm font-mono">{$ package.version $}</span>
+                <span
+                        class="inline-flex items-center px-3 py-1.5 bg-muted border border-border rounded-lg text-sm font-mono"
+                >{$ package.version $}</span
+                >
                             </td>
 
                             <!-- New Version (Updates tab only) -->
                             <td ng-show="currentTab === 'upgrade'" class="px-4 py-3">
-                                <span ng-if="package.upgrade" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-sm font-bold text-emerald-600">
-                                    <i data-lucide="arrow-up" class="h-3.5 w-3.5"></i>
-                                    {$ package.upgrade $}
-                                </span>
-                                <span ng-if="!package.upgrade" class="text-muted-foreground">-</span>
+                <span
+                        ng-if="package.upgrade"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-sm font-bold text-emerald-600"
+                >
+                  <i class="fa-regular fa-arrow-up text-sm"></i>
+                  {$ package.upgrade $}
+                </span>
+                                <span ng-if="!package.upgrade" class="text-muted-foreground"
+                                >-</span
+                                >
                             </td>
 
                             <!-- Lock Status -->
                             <td class="px-4 py-3">
-                                <button type="button" class="lock-toggle p-2.5 rounded-xl transition-all"
+                                <button
+                                        type="button"
+                                        class="lock-toggle p-2.5 rounded-xl transition-all"
                                         ng-class="{'text-amber-600 hover:bg-amber-500/10': package.lock == 1, 'text-emerald-600 hover:bg-emerald-500/10': package.lock == 0}"
                                         ng-click="lockStatus(package.package, package.lock == 1 ? 1 : 0)"
-                                        title="{$ package.lock == 1 ? 'Unlock package' : 'Lock package' $}">
-                                    <i data-lucide="{$ package.lock == 1 ? 'lock' : 'lock-open' $}" class="h-5 w-5"></i>
+                                        title="{$ package.lock == 1 ? 'Unlock package' : 'Lock package' $}"
+                                >
+                                    <i
+                                            class="fa-regular {$ package.lock == 1 ? 'fa-lock' : 'fa-lock-open' $} text-lg"
+                                    ></i>
                                 </button>
                             </td>
 
                             <!-- Actions -->
                             <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button type="button" ng-click="showPackageDetails(package.package)"
-                                            class="inline-flex items-center justify-center px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted">
-                                        <i data-lucide="info" class="h-4 w-4 mr-2"></i>
+                                    <button
+                                            type="button"
+                                            ng-click="fetchPackageDetails(package.package); showDetails = true; selectedPackage = package.package"
+                                            class="inline-flex items-center justify-center px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-bold transition-all border border-border hover:bg-muted"
+                                    >
+                                        <i class="fa-regular fa-circle-info text-sm"></i>
                                         {% trans "Details" %}
                                     </button>
-                                    <button type="button" ng-click="showUpdateModal(package.package)"
+                                    <button
+                                            type="button"
+                                            ng-click="showUpdateModal(package.package)"
                                             ng-show="currentTab === 'upgrade' || currentTab === 'cyberpanel'"
-                                            class="inline-flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90">
-                                        <i data-lucide="download" class="h-4 w-4 mr-2"></i>
+                                            class="inline-flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90"
+                                    >
+                                        <i class="fa-regular fa-arrow-down text-sm"></i>
                                         {% trans "Update" %}
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Empty State -->
-            <div class="p-16 text-center" ng-show="allPackages.length === 0 && cyberpanelLoading">
-                <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
-                    <i data-lucide="package-search" class="h-8 w-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-foreground">{% trans "No packages found" %}</h3>
-                <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or check your connection" %}</p>
-            </div>
-
-            <!-- Pagination -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-6 border-t border-border" ng-show="allPackages.length > 0">
-                <div class="text-sm text-muted-foreground">
-                    {% trans "Showing" %} <span class="font-bold text-foreground">{$ ((currentPage - 1) * recordsToShow) + 1 $}</span> -
-                    <span class="font-bold text-foreground">{$ Math.min(currentPage * recordsToShow, totalPackages) $}</span>
-                    {% trans "of" %} <span class="font-bold text-foreground">{$ totalPackages $}</span> {% trans "packages" %}
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <span class="text-sm text-muted-foreground">{% trans "Page:" %}</span>
-                    <select ng-model="currentPage" ng-change="fetchPackages(currentTab)"
-                            class="px-4 py-2 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none">
-                        <option ng-repeat="page in pagination" value="{$ $index + 1 $}">
-                            {$ $index + 1 $}
-                        </option>
-                    </select>
-                    <span class="text-sm text-muted-foreground">{% trans "of" %} {$ pagination.length $}</span>
+                <!-- Empty State -->
+                <div
+                        class="p-16 text-center"
+                        ng-show="allPackages.length === 0 && cyberpanelLoading"
+                >
+                    <div
+                            class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border"
+                    >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-foreground">
+                        {% trans "No packages found" %}
+                    </h3>
+                    <p class="text-sm text-muted-foreground mt-1">
+                        {% trans "Try adjusting your search criteria or check your connection" %}
+                    </p>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-6 border-t border-border"
+                        ng-show="allPackages.length > 0"
+                >
+                    <div class="text-sm text-muted-foreground">
+                        {% trans "Showing" %}
+                        <span class="font-bold text-foreground"
+                        >{$ ((currentPage - 1) * recordsToShow) + 1 $}</span
+                        >
+                        -
+                        <span class="font-bold text-foreground"
+                        >{$ Math.min(currentPage * recordsToShow, totalPackages) $}</span
+                        >
+                        {% trans "of" %}
+                        <span class="font-bold text-foreground">{$ totalPackages $}</span> {% trans "packages" %}
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-muted-foreground">{% trans "Page:" %}</span>
+                        <select
+                                ng-model="currentPage"
+                                ng-change="fetchPackages(currentTab)"
+                                class="px-4 py-2 bg-secondary/20 border border-border rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/20 outline-none"
+                        >
+                            <option ng-repeat="page in pagination" value="{$ $index + 1 $}">
+                                {$ $index + 1 $}
+                            </option>
+                        </select>
+                        <span class="text-sm text-muted-foreground"
+                        >{% trans "of" %} {$ pagination.length $}</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Package Details Modal - Flat design -->
+        <div
+                ng-show="showDetails"
+                class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6"
+                ng-click="closeModal($event)"
+        >
+            <div
+                    class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden"
+                    ng-click="$event.stopPropagation()"
+            >
+                <div class="flex items-center justify-between p-6 border-b border-border">
+                    <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
+                        <i class="fa-regular fa-circle-info text-sm"></i>
+                        {% trans "Package Details:" %}
+                        <span class="text-primary">{$ selectedPackage $}</span>
+                    </h3>
+                    <button
+                            type="button"
+                            class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all"
+                            ng-click="closeDetails()"
+                    >
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div
+                            class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-foreground max-h-96 overflow-y-auto whitespace-pre-wrap"
+                    >
+                        {$ packageDetails $}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Progress Modal - Flat design -->
+        <div
+                ng-show="showUpdate"
+                class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6"
+                ng-click="closeModal($event)"
+        >
+            <div
+                    class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden"
+                    ng-click="$event.stopPropagation()"
+            >
+                <div class="flex items-center justify-between p-6 border-b border-border">
+                    <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
+                        <i data-lucide="download" class="h-6 w-6 text-primary"></i>
+                        {% trans "Updating Package:" %}
+                        <span class="text-primary">{$ updatingPackage $}</span>
+                        <span
+                                ng-hide="cyberpanelLoading"
+                                class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"
+                        ></span>
+                    </h3>
+                    <button
+                            type="button"
+                            class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all"
+                            ng-click="closeUpdate()"
+                            ng-disabled="!updateComplete"
+                    >
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div
+                            class="p-4 bg-card border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap"
+                    >
+                        {$ requestData $}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Package Details Modal - Flat design -->
-    <div ng-show="showDetails" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6" ng-click="closeModal($event)">
-        <div class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden" ng-click="$event.stopPropagation()">
-            <div class="flex items-center justify-between p-6 border-b border-border">
-                <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
-                    <i data-lucide="info" class="h-6 w-6 text-primary"></i>
-                    {% trans "Package Details:" %} <span class="text-primary">{$ selectedPackage $}</span>
-                </h3>
-                <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" ng-click="closeDetails()">
-                    <i data-lucide="x" class="h-5 w-5"></i>
-                </button>
-            </div>
-            <div class="p-6">
-                <div class="p-4 bg-muted/30 border border-border rounded-xl font-mono text-sm text-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
-                    {$ packageDetails $}
-                </div>
-            </div>
-        </div>
-    </div>
+    <script>
+        // Tab switching functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            const scope = angular
+                .element(document.querySelector('[ng-controller="listOSPackages"]'))
+                .scope();
+            if (scope) {
+                scope.setActiveTab = function (tab) {
+                    scope.activeTab = tab;
+                    scope.$apply();
+                };
+                // Initialize active tab
+                scope.activeTab = "updates";
+            }
+        });
 
-    <!-- Update Progress Modal - Flat design -->
-    <div ng-show="showUpdate" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-6" ng-click="closeModal($event)">
-        <div class="bg-card w-full max-w-3xl rounded-2xl border border-border overflow-hidden" ng-click="$event.stopPropagation()">
-            <div class="flex items-center justify-between p-6 border-b border-border">
-                <h3 class="text-xl font-bold text-foreground flex items-center gap-3">
-                    <i data-lucide="download" class="h-6 w-6 text-primary"></i>
-                    {% trans "Updating Package:" %} <span class="text-primary">{$ updatingPackage $}</span>
-                    <span ng-hide="cyberpanelLoading" class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-                </h3>
-                <button type="button" class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all" ng-click="closeUpdate()" ng-disabled="!updateComplete">
-                    <i data-lucide="x" class="h-5 w-5"></i>
-                </button>
-            </div>
-            <div class="p-6">
-                <div class="p-4 bg-card border border-border rounded-xl font-mono text-sm text-muted-foreground max-h-96 overflow-y-auto whitespace-pre-wrap">
-                    {$ requestData $}
-                </div>
-            </div>
-        </div>
-    </div>
+        // Modal close on escape key
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") {
+                const scope = angular
+                    .element(document.querySelector('[ng-controller="listOSPackages"]'))
+                    .scope();
+                if (scope) {
+                    if (scope.showDetails) scope.closeDetails();
+                    if (scope.showUpdate && scope.updateComplete) scope.closeUpdate();
+                    scope.$apply();
+                }
+            }
+        });
+    </script>
 
-</div>
-
-<script>
-// Tab switching functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const scope = angular.element(document.querySelector('[ng-controller="listOSPackages"]')).scope();
-    if (scope) {
-        scope.setActiveTab = function(tab) {
-            scope.activeTab = tab;
-            scope.$apply();
-        };
-        // Initialize active tab
-        scope.activeTab = 'updates';
-    }
-});
-
-// Modal close on escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const scope = angular.element(document.querySelector('[ng-controller="listOSPackages"]')).scope();
-        if (scope) {
-            if (scope.showDetails) scope.closeDetails();
-            if (scope.showUpdate && scope.updateComplete) scope.closeUpdate();
-            scope.$apply();
-        }
-    }
-});
-</script>
-
-{% endblock %}
-
-{% block footer_scripts %}
-<script src="{% static 'serverStatus/serverStatus.js' %}"></script>
+{% endblock %} {% block footer_scripts %}
+    <script src="{% static 'serverStatus/serverStatus.js' %}"></script>
 {% endblock %}

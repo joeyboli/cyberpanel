@@ -636,7 +636,7 @@ app.controller('servicesManager', function ($scope, $http) {
         function ListInitialDatas(response) {
             console.log(response.data);
 
-            if (response.data.serviceAction == 1) {
+            if (response.data.serviceAction === 1) {
                 setTimeout(function () {
                     getServiceStatus();
                     $scope.ActionSuccessfull = true;
@@ -780,68 +780,77 @@ app.controller('lswsSwitch', function ($scope, $http, $timeout, $window) {
 
 app.controller('topProcesses', function ($scope, $http, $timeout) {
 
-    $scope.cyberPanelLoading = true;
+    // ===== UI STATES =====
+    $scope.initialLoad = true;     // first-ever load
+    $scope.refreshing = false;     // background refresh indicator
+    $scope.cyberPanelLoading = false; // optional legacy flag (can remove later)
 
-    $scope.topProcessesStatus = function () {
+    let refreshPromise;
 
-        $scope.cyberPanelLoading = false;
+    // ===== CORE FETCH FUNCTION =====
+    $scope.topProcessesStatus = function (isRefresh = false) {
 
-        url = "/serverstatus/topProcessesStatus";
+        // differentiate initial load vs soft refresh
+        if (isRefresh) {
+            $scope.refreshing = true;
+        } else {
+            $scope.initialLoad = true;
+        }
 
-        var data = {};
+        const url = "/serverstatus/topProcessesStatus";
 
-        var config = {
+        const data = {};
+        const config = {
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
             }
         };
 
-        $http.post(url, data, config).then(ListInitialDatas, cantLoadInitialDatas);
+        $http.post(url, data, config).then(handleSuccess, handleError);
 
+        function handleSuccess(response) {
 
-        function ListInitialDatas(response) {
-            $scope.cyberPanelLoading = true;
             if (response.data.status === 1) {
+
                 $scope.processes = JSON.parse(response.data.data);
 
-                //CPU Details
+                // CPU Details
                 $scope.cores = response.data.cores;
                 $scope.modelName = response.data.modelName;
                 $scope.cpuMHZ = response.data.cpuMHZ;
                 $scope.cacheSize = response.data.cacheSize;
 
-                //CPU Load
+                // CPU Load
                 $scope.cpuNow = response.data.cpuNow;
                 $scope.cpuOne = response.data.cpuOne;
                 $scope.cpuFive = response.data.cpuFive;
                 $scope.cpuFifteen = response.data.cpuFifteen;
 
-                //CPU Time spent
+                // CPU Time
                 $scope.ioWait = response.data.ioWait;
                 $scope.idleTime = response.data.idleTime;
                 $scope.hwInterrupts = response.data.hwInterrupts;
                 $scope.Softirqs = response.data.Softirqs;
 
-                //Memory
+                // Memory
                 $scope.totalMemory = response.data.totalMemory;
                 $scope.freeMemory = response.data.freeMemory;
                 $scope.usedMemory = response.data.usedMemory;
                 $scope.buffCache = response.data.buffCache;
 
-                //Swap
+                // Swap
                 $scope.swapTotalMemory = response.data.swapTotalMemory;
                 $scope.swapFreeMemory = response.data.swapFreeMemory;
                 $scope.swapUsedMemory = response.data.swapUsedMemory;
                 $scope.swapBuffCache = response.data.swapBuffCache;
 
-                //Processes
+                // Processes
                 $scope.totalProcesses = response.data.totalProcesses;
                 $scope.runningProcesses = response.data.runningProcesses;
                 $scope.sleepingProcesses = response.data.sleepingProcesses;
                 $scope.stoppedProcesses = response.data.stoppedProcesses;
                 $scope.zombieProcesses = response.data.zombieProcesses;
 
-                $timeout($scope.topProcessesStatus, 3000);
             } else {
                 new PNotify({
                     title: 'Operation Failed!',
@@ -850,48 +859,61 @@ app.controller('topProcesses', function ($scope, $http, $timeout) {
                 });
             }
 
+            // reset UI states AFTER success
+            $scope.initialLoad = false;
+            $scope.refreshing = false;
+            $scope.cyberPanelLoading = false;
+
+            // schedule next refresh
+            refreshPromise = $timeout(function () {
+                $scope.topProcessesStatus(true);
+            }, 3000);
         }
 
-        function cantLoadInitialDatas(response) {
-            $scope.cyberPanelLoading = true;
+        function handleError() {
+
+            $scope.initialLoad = false;
+            $scope.refreshing = false;
+            $scope.cyberPanelLoading = false;
+
             new PNotify({
                 title: 'Operation Failed!',
                 text: 'Could not connect to server, please refresh this page',
                 type: 'error'
             });
+
         }
-
     };
-    $scope.topProcessesStatus();
 
+    // start loop
+    $scope.topProcessesStatus(false);
+
+    // ===== KILL PROCESS =====
     $scope.killProcess = function (pid) {
 
-        $scope.cyberPanelLoading = false;
+        const url = "/serverstatus/killProcess";
 
-        url = "/serverstatus/killProcess";
+        const data = {pid: pid};
 
-        var data = {
-            pid: pid
-        };
-
-        var config = {
+        const config = {
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
             }
         };
 
+        $http.post(url, data, config).then(success, error);
 
-        $http.post(url, data, config).then(ListInitialDatas, cantLoadInitialDatas);
-
-
-        function ListInitialDatas(response) {
-            $scope.cyberPanelLoading = true;
+        function success(response) {
             if (response.data.status === 1) {
                 new PNotify({
                     title: 'Success',
                     text: 'Process successfully killed.',
                     type: 'success'
                 });
+
+                // optional immediate refresh (soft)
+                $scope.topProcessesStatus(true);
+
             } else {
                 new PNotify({
                     title: 'Operation Failed!',
@@ -899,23 +921,25 @@ app.controller('topProcesses', function ($scope, $http, $timeout) {
                     type: 'error'
                 });
             }
-
         }
 
-        function cantLoadInitialDatas(response) {
-            $scope.cyberPanelLoading = true;
+        function error() {
             new PNotify({
                 title: 'Operation Failed!',
                 text: 'Could not connect to server, please refresh this page',
                 type: 'error'
             });
         }
-
     };
 
-});
+    // cleanup (important)
+    $scope.$on('$destroy', function () {
+        if (refreshPromise) {
+            $timeout.cancel(refreshPromise);
+        }
+    });
 
-///
+});
 
 
 app.controller('listOSPackages', function ($scope, $http, $timeout) {

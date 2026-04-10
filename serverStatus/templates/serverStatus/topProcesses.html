@@ -1,371 +1,640 @@
-{% extends "baseTemplate/index.html" %}
-{% load i18n %}
-{% block title %}{% trans "Top Processes - CyberPanel" %}{% endblock %}
-
-{% block header_scripts %}
+{% extends "baseTemplate/index.html" %} {% load i18n %} {% block title %}{%
+trans "Top Processes" %}{% endblock %} {% block header_scripts %}
 <style>
-    /* Custom styles for Top Processes - aligned to base design system */
-    .premium-alert {
-        background: hsl(var(--primary) / 0.05);
-        border: 1px solid hsl(var(--primary) / 0.1);
-        border-radius: var(--radius);
-        padding: 24px;
-    }
-    /* Ensure flat design - no shadows on cards */
-    .bg-card { box-shadow: none !important; }
+  /* Custom styles for Top Processes - aligned to base design system */
+  .premium-alert {
+    background: hsl(var(--primary) / 0.05);
+    border: 1px solid hsl(var(--primary) / 0.1);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  /* Ensure flat design - no shadows on cards */
+  .bg-card {
+    box-shadow: none !important;
+  }
 
-    /* Table sticky header */
-    .table-sticky-header thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+  /* Table sticky header */
+  .table-sticky-header thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-    /* CPU usage bar animation */
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+  /* CPU usage bar animation */
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
     }
-    .refresh-dot {
-        animation: pulse 1.5s infinite;
+    50% {
+      opacity: 0.5;
     }
+  }
+  .refresh-dot {
+    animation: pulse 1.5s infinite;
+  }
 </style>
-{% endblock %}
-
-{% block content %}
-{% load static %}
-{% get_current_language as LANGUAGE_CODE %}
+{% endblock %} {% block content %} {% load static %} {% get_current_language as
+LANGUAGE_CODE %}
 
 <div class="w-full p-4 md:p-12 space-y-12" ng-controller="topProcesses">
-
-    <!-- Page Header - Full width -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border">
-        <div class="flex items-center gap-6">
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
-                <i data-lucide="cpu" class="h-8 w-8"></i>
-            </div>
-            <div>
-                <h1 class="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-                    {% trans "System Processes Monitor" %}
-                </h1>
-                <p class="text-xl text-muted-foreground">
-                    {% trans "Real-time monitoring of system processes, CPU usage, memory consumption, and resource allocation" %}
-                </p>
-                <div class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-600 text-sm font-bold">
-                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 refresh-dot"></span>
-                    {% trans "Auto-refresh every 3 seconds" %}
-                </div>
-            </div>
+  <!-- Page Header - Full width -->
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 bg-card rounded-2xl border border-border"
+  >
+    <div class="flex items-center gap-6">
+      <div
+        class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20"
+      >
+        <i data-lucide="cpu" class="h-8 w-8"></i>
+      </div>
+      <div>
+        <h1
+          class="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3"
+        >
+          {% trans "System Processes Monitor" %}
+        </h1>
+        <p class="text-xl text-muted-foreground">
+          {% trans "Real-time monitoring of system processes, CPU usage, memory
+          consumption, and resource allocation" %}
+        </p>
+        <div
+          class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-600 text-sm font-bold"
+        >
+          <span
+            class="h-2.5 w-2.5 rounded-full bg-emerald-500 refresh-dot"
+          ></span>
+          {% trans "Auto-refresh every 3 seconds" %}
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div
+    ng-show="!cyberPanelLoading"
+    class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center"
+  >
+    <div class="bg-card rounded-2xl border border-border p-8 text-center">
+      <div
+        class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"
+      ></div>
+      <p class="text-lg font-bold text-foreground">
+        {% trans "Loading processes..." %}
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Grid - Full width -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- CPU Information -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="cpu" class="h-5 w-5"></i>
+        </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "CPU Information" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cores || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Cores" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cpuMHZ || '-' $}<span class="text-sm text-muted-foreground">
+              MHz</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Frequency" %}
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t border-border space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">{% trans "Model:" %}</span>
+          <span class="font-semibold text-foreground"
+            >{$ modelName || '-' $}</span
+          >
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">{% trans "Cache:" %}</span>
+          <span class="font-semibold text-foreground"
+            >{$ cacheSize || '-' $}</span
+          >
+        </div>
+      </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div ng-show="!cyberPanelLoading" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-        <div class="bg-card rounded-2xl border border-border p-8 text-center">
-            <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-lg font-bold text-foreground">{% trans "Loading processes..." %}</p>
+    <!-- Process Statistics -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="activity" class="h-5 w-5"></i>
         </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "Process Statistics" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ totalProcesses || '0' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Total" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-emerald-600">
+            {$ runningProcesses || '0' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Running" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-primary">
+            {$ sleepingProcesses || '0' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Sleeping" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-destructive">
+            <span ng-if="zombieProcesses > 0">{$ zombieProcesses $}</span>
+            <span ng-if="!zombieProcesses || zombieProcesses == 0">0</span>
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Zombie" %}
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Stats Grid - Full width -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- CPU Information -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="cpu" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "CPU Information" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cores || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Cores" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cpuMHZ || '-' $}<span class="text-sm text-muted-foreground"> MHz</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Frequency" %}</div>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-border space-y-2">
-                <div class="flex justify-between text-sm">
-                    <span class="text-muted-foreground">{% trans "Model:" %}</span>
-                    <span class="font-semibold text-foreground">{$ modelName || '-' $}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <span class="text-muted-foreground">{% trans "Cache:" %}</span>
-                    <span class="font-semibold text-foreground">{$ cacheSize || '-' $}</span>
-                </div>
-            </div>
+    <!-- CPU Load Average -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="trending-up" class="h-5 w-5"></i>
         </div>
-
-        <!-- Process Statistics -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="activity" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "Process Statistics" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ totalProcesses || '0' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Total" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-emerald-600">{$ runningProcesses || '0' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Running" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-primary">{$ sleepingProcesses || '0' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Sleeping" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-destructive">
-                        <span ng-if="zombieProcesses > 0">{$ zombieProcesses $}</span>
-                        <span ng-if="!zombieProcesses || zombieProcesses == 0">0</span>
-                    </div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Zombie" %}</div>
-                </div>
-            </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "CPU Load Average" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cpuOne || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "1 Min" %}
+          </div>
         </div>
-
-        <!-- CPU Load Average -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="trending-up" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "CPU Load Average" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cpuOne || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "1 Min" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cpuFive || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "5 Min" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cpuFifteen || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "15 Min" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ cpuNow || '-' $}<span class="text-sm text-muted-foreground">%</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Current" %}</div>
-                </div>
-            </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cpuFive || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "5 Min" %}
+          </div>
         </div>
-
-        <!-- Memory Usage -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="memory-stick" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "Memory Usage" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ totalMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Total" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-emerald-600">{$ freeMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Free" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-destructive">{$ usedMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Used" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ buffCache || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Buff/Cache" %}</div>
-                </div>
-            </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cpuFifteen || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "15 Min" %}
+          </div>
         </div>
-
-        <!-- Swap Memory -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="hard-drive" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "Swap Memory" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ swapTotalMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Total" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-emerald-600">{$ swapFreeMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Free" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-destructive">{$ swapUsedMemory || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Used" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ swapBuffCache || '-' $}</div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Available" %}</div>
-                </div>
-            </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ cpuNow || '-' $}<span class="text-sm text-muted-foreground"
+              >%</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Current" %}
+          </div>
         </div>
-
-        <!-- CPU Time Distribution -->
-        <div class="p-6 bg-card rounded-2xl border border-border">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <i data-lucide="clock" class="h-5 w-5"></i>
-                </div>
-                <h3 class="text-lg font-bold text-foreground">{% trans "CPU Time Distribution" %}</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ ioWait || '-' $}<span class="text-sm text-muted-foreground">%</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "I/O Wait" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ idleTime || '-' $}<span class="text-sm text-muted-foreground">%</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Idle Time" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ hwInterrupts || '-' $}<span class="text-sm text-muted-foreground">%</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "HW Interrupts" %}</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-extrabold text-foreground">{$ Softirqs || '-' $}<span class="text-sm text-muted-foreground">%</span></div>
-                    <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider">{% trans "Soft IRQs" %}</div>
-                </div>
-            </div>
-        </div>
-
+      </div>
     </div>
 
-    <!-- Process List Table - Full width, Flat design -->
-    <div class="bg-card rounded-2xl border border-border overflow-hidden">
-        <!-- Table Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-6 py-4 bg-muted/30 border-b border-border">
-            <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
-                <i data-lucide="list" class="h-6 w-6 text-primary"></i>
-                {% trans "Running Processes" %}
-            </h2>
-            <div class="relative w-full md:w-80">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
-                </div>
-                <input type="text" ng-model="search" placeholder="{% trans 'Search processes...' %}"
-                       class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
-            </div>
+    <!-- Memory Usage -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="memory-stick" class="h-5 w-5"></i>
         </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "Memory Usage" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ totalMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Total" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-emerald-600">
+            {$ freeMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Free" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-destructive">
+            {$ usedMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Used" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ buffCache || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Buff/Cache" %}
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Table Content -->
-        <div class="overflow-x-auto table-sticky-header">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-muted/50 border-b border-border">
-                    <tr>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "PID" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "User" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "State" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "CPU %" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Memory %" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "VIRT" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "RES" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Time" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider">{% trans "Command" %}</th>
-                        <th class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right">{% trans "Actions" %}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
-                    <tr ng-repeat="process in processes | filter:search" class="transition-colors hover:bg-muted/30">
-                        <td class="px-4 py-3">
-                            <span class="font-bold text-primary font-mono">{$ process.PID $}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center gap-3">
-                                <div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm border border-primary/20">
-                                    {$ process.User.charAt(0).toUpperCase() $}
-                                </div>
-                                <span class="font-semibold text-foreground">{$ process.User $}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold"
-                                  ng-class="{'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.S == 'R',
+    <!-- Swap Memory -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="hard-drive" class="h-5 w-5"></i>
+        </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "Swap Memory" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ swapTotalMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Total" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-emerald-600">
+            {$ swapFreeMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Free" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-destructive">
+            {$ swapUsedMemory || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Used" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ swapBuffCache || '-' $}
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Available" %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CPU Time Distribution -->
+    <div class="p-6 bg-card rounded-2xl border border-border">
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20"
+        >
+          <i data-lucide="clock" class="h-5 w-5"></i>
+        </div>
+        <h3 class="text-lg font-bold text-foreground">
+          {% trans "CPU Time Distribution" %}
+        </h3>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ ioWait || '-' $}<span class="text-sm text-muted-foreground"
+              >%</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "I/O Wait" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ idleTime || '-' $}<span class="text-sm text-muted-foreground"
+              >%</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Idle Time" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ hwInterrupts || '-' $}<span class="text-sm text-muted-foreground"
+              >%</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "HW Interrupts" %}
+          </div>
+        </div>
+        <div>
+          <div class="text-2xl font-extrabold text-foreground">
+            {$ Softirqs || '-' $}<span class="text-sm text-muted-foreground"
+              >%</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+          >
+            {% trans "Soft IRQs" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Process List Table - Full width, Flat design -->
+  <div class="bg-card rounded-2xl border border-border overflow-hidden">
+    <!-- Table Header -->
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-6 py-4 bg-muted/30 border-b border-border"
+    >
+      <h2 class="text-2xl font-bold text-foreground flex items-center gap-3">
+        <i data-lucide="list" class="h-6 w-6 text-primary"></i>
+        {% trans "Running Processes" %}
+      </h2>
+      <div class="relative w-full md:w-80">
+        <div
+          class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+        >
+          <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+        </div>
+        <input
+          type="text"
+          ng-model="search"
+          placeholder="{% trans 'Search processes...' %}"
+          class="w-full pl-12 pr-4 py-3 bg-secondary/20 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+        />
+      </div>
+    </div>
+
+    <!-- Table Content -->
+    <div class="overflow-x-auto table-sticky-header">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-muted/50 border-b border-border">
+          <tr>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "PID" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "User" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "State" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "CPU %" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "Memory %" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "VIRT" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "RES" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "Time" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider"
+            >
+              {% trans "Command" %}
+            </th>
+            <th
+              class="px-4 py-4 text-sm font-bold text-muted-foreground uppercase tracking-wider text-right"
+            >
+              {% trans "Actions" %}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr
+            ng-repeat="process in processes | filter:search"
+            class="transition-colors hover:bg-muted/30"
+          >
+            <td class="px-4 py-3">
+              <span class="font-bold text-primary font-mono"
+                >{$ process.PID $}</span
+              >
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
+                <div
+                  class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm border border-primary/20"
+                >
+                  {$ process.User.charAt(0).toUpperCase() $}
+                </div>
+                <span class="font-semibold text-foreground"
+                  >{$ process.User $}</span
+                >
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <span
+                class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold"
+                ng-class="{'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.S == 'R',
                                              'bg-primary/10 text-primary border border-primary/20': process.S == 'S',
                                              'bg-amber-500/10 text-amber-600 border border-amber-500/20': process.S == 'T',
-                                             'bg-destructive/10 text-destructive border border-destructive/20': process.S == 'Z'}">
-                                <span ng-if="process.S == 'R'">{% trans "Running" %}</span>
-                                <span ng-if="process.S == 'S'">{% trans "Sleeping" %}</span>
-                                <span ng-if="process.S == 'T'">{% trans "Stopped" %}</span>
-                                <span ng-if="process.S == 'Z'">{% trans "Zombie" %}</span>
-                                <span ng-if="process.S != 'R' && process.S != 'S' && process.S != 'T' && process.S != 'Z'">{$ process.S $}</span>
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
-                                <div class="w-16 h-2 bg-muted rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary rounded-full transition-all duration-300" ng-style="{'width': process.CPU + '%'}"></div>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold"
-                                      ng-class="{'bg-destructive/10 text-destructive border border-destructive/20': process.CPU > 80,
+                                             'bg-destructive/10 text-destructive border border-destructive/20': process.S == 'Z'}"
+              >
+                <span ng-if="process.S == 'R'">{% trans "Running" %}</span>
+                <span ng-if="process.S == 'S'">{% trans "Sleeping" %}</span>
+                <span ng-if="process.S == 'T'">{% trans "Stopped" %}</span>
+                <span ng-if="process.S == 'Z'">{% trans "Zombie" %}</span>
+                <span
+                  ng-if="process.S != 'R' && process.S != 'S' && process.S != 'T' && process.S != 'Z'"
+                  >{$ process.S $}</span
+                >
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <div class="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-primary rounded-full transition-all duration-300"
+                    ng-style="{'width': process.CPU + '%'}"
+                  ></div>
+                </div>
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold"
+                  ng-class="{'bg-destructive/10 text-destructive border border-destructive/20': process.CPU > 80,
                                                  'bg-amber-500/10 text-amber-600 border border-amber-500/20': process.CPU > 50 && process.CPU <= 80,
-                                                 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.CPU <= 50}">
-                                    {$ process.CPU $}%
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold"
-                                  ng-class="{'bg-destructive/10 text-destructive border border-destructive/20': process.MEM > 20,
+                                                 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.CPU <= 50}"
+                >
+                  {$ process.CPU $}%
+                </span>
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <span
+                class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold"
+                ng-class="{'bg-destructive/10 text-destructive border border-destructive/20': process.MEM > 20,
                                              'bg-amber-500/10 text-amber-600 border border-amber-500/20': process.MEM > 10 && process.MEM <= 20,
-                                             'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.MEM <= 10}">
-                                {$ process.MEM $}%
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="font-mono text-sm text-foreground">{$ process.VIRT $}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="font-mono text-sm text-foreground">{$ process.RES $}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="font-mono text-sm text-foreground">{$ process.Time $}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-mono text-sm text-foreground max-w-xs truncate" title="{$ process.Command $}">
-                                {$ process.Command $}
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <button ng-click="killProcess(process.PID)"
-                                    class="inline-flex items-center justify-center px-4 py-2 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90 border border-destructive/20">
-                                <i data-lucide="x" class="h-4 w-4 mr-2"></i>
-                                {% trans "Kill" %}
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Empty State -->
-        <div ng-if="processes.length === 0" class="p-16 text-center">
-            <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border">
-                <i data-lucide="activity" class="h-8 w-8"></i>
-            </div>
-            <h3 class="text-xl font-bold text-foreground">{% trans "No processes found" %}</h3>
-            <p class="text-sm text-muted-foreground mt-1">{% trans "Try adjusting your search criteria or refresh the page" %}</p>
-        </div>
+                                             'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20': process.MEM <= 10}"
+              >
+                {$ process.MEM $}%
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="font-mono text-sm text-foreground"
+                >{$ process.VIRT $}</span
+              >
+            </td>
+            <td class="px-4 py-3">
+              <span class="font-mono text-sm text-foreground"
+                >{$ process.RES $}</span
+              >
+            </td>
+            <td class="px-4 py-3">
+              <span class="font-mono text-sm text-foreground"
+                >{$ process.Time $}</span
+              >
+            </td>
+            <td class="px-4 py-3">
+              <div
+                class="font-mono text-sm text-foreground max-w-xs truncate"
+                title="{$ process.Command $}"
+              >
+                {$ process.Command $}
+              </div>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button
+                ng-click="killProcess(process.PID)"
+                class="inline-flex items-center justify-center px-4 py-2 bg-destructive text-destructive-foreground rounded-xl text-sm font-bold transition-all hover:opacity-90 border border-destructive/20"
+              >
+                <i data-lucide="x" class="h-4 w-4 mr-2"></i>
+                {% trans "Kill" %}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <!-- Empty State -->
+    <div ng-if="processes.length === 0" class="p-16 text-center">
+      <div
+        class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground/40 mb-4 border border-border"
+      >
+        <i data-lucide="activity" class="h-8 w-8"></i>
+      </div>
+      <h3 class="text-xl font-bold text-foreground">
+        {% trans "No processes found" %}
+      </h3>
+      <p class="text-sm text-muted-foreground mt-1">
+        {% trans "Try adjusting your search criteria or refresh the page" %}
+      </p>
+    </div>
+  </div>
 </div>
 
-{% endblock %}
-
-{% block footer_scripts %}
+{% endblock %} {% block footer_scripts %}
 <script src="{% static 'serverStatus/serverStatus.js' %}"></script>
 {% endblock %}
