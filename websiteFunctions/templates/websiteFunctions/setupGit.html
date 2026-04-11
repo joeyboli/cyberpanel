@@ -20,11 +20,8 @@
                 <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
                     {% trans "Git Management" %}
                 </h1>
-                <p class="text-xl text-muted-foreground">{% trans "Attach git repositories to your websites." %}</p>
+                <p class="text-xl text-muted-foreground">{% trans "Attach git repositories to" %} <span id="domainNamePage" class="font-bold text-foreground">{{ domainName }}</span>.</p>
             </div>
-        </div>
-        <div class="text-2xl font-bold text-primary px-6 py-2 bg-primary/10 rounded-full border border-primary/20">
-            {{ domainName }}
         </div>
     </div>
 
@@ -101,15 +98,7 @@
                             </button>
                         </div>
 
-                        <!-- Progress Indicators -->
                         <div class="space-y-6">
-                            <div ng-hide="installProg" class="p-8 bg-secondary/20 rounded-2xl space-y-6">
-                                <h2 class="text-2xl font-bold text-foreground text-center">{$ currentStatus $}</h2>
-                                <div class="w-full bg-secondary/40 h-4 rounded-full overflow-hidden">
-                                    <div id="installProgress" class="bg-primary h-full transition-all duration-300" style="width:0%"></div>
-                                </div>
-                            </div>
-
                             <div ng-hide="installationFailed" class="flex items-center gap-4 p-6 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive">
                                 <i data-lucide="alert-circle" class="h-6 w-6 shrink-0"></i>
                                 <span class="text-lg font-semibold">{% trans "Error message:" %} {$ errorMessage $}</span>
