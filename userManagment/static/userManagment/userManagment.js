@@ -6,22 +6,11 @@
 /* Java script code to create account */
 app.controller('createUserCtr', function ($scope, $http) {
 
-    $scope.acctsLimit = true;
-    $scope.webLimits = true;
-    $scope.userCreated = true;
-    $scope.userCreationFailed = true;
-    $scope.couldNotConnect = true;
     $scope.userCreationLoading = true;
-    $scope.combinedLength = true;
 
     $scope.createUserFunc = function () {
 
-        $scope.webLimits = false;
-        $scope.userCreated = true;
-        $scope.userCreationFailed = true;
-        $scope.couldNotConnect = true;
         $scope.userCreationLoading = false;
-        $scope.combinedLength = true;
 
 
         var firstName = $scope.firstName;
@@ -60,24 +49,26 @@ app.controller('createUserCtr', function ($scope, $http) {
 
             if (response.data.createStatus == 1) {
 
-                $scope.userCreated = false;
-                $scope.userCreationFailed = true;
-                $scope.couldNotConnect = true;
                 $scope.userCreationLoading = true;
+
+                new PNotify({
+                    title: 'Success!',
+                    text: 'Account with username: ' + userName + ' is successfully created.',
+                    type: 'success'
+                });
 
                 $scope.userName = userName;
 
 
             } else {
 
-                $scope.acctsLimit = false;
-                $scope.webLimits = false;
-                $scope.userCreated = true;
-                $scope.userCreationFailed = false;
-                $scope.couldNotConnect = true;
                 $scope.userCreationLoading = true;
 
-                $scope.errorMessage = response.data.error_message;
+                new PNotify({
+                    title: 'Error!',
+                    text: 'Cannot create user. Error message: ' + response.data.error_message,
+                    type: 'error'
+                });
 
 
             }
@@ -87,12 +78,13 @@ app.controller('createUserCtr', function ($scope, $http) {
 
         function cantLoadInitialDatas(response) {
 
-            $scope.acctsLimit = false;
-            $scope.webLimits = false;
-            $scope.userCreated = true;
-            $scope.userCreationFailed = true;
-            $scope.couldNotConnect = false;
             $scope.userCreationLoading = true;
+
+            new PNotify({
+                title: 'Error!',
+                text: 'Could not connect to server. Please refresh this page.',
+                type: 'error'
+            });
 
 
         }
@@ -137,11 +129,6 @@ app.controller('modifyUser', function ($scope, $http) {
     $scope.userModificationLoading = true;
     $scope.acctDetailsFetched = true;
     $scope.userAccountsLimit = true;
-    $scope.userModified = true;
-    $scope.canotModifyUser = true;
-    $scope.couldNotConnect = true;
-    $scope.canotFetchDetails = true;
-    $scope.detailsFetched = true;
     $scope.accountTypeView = true;
     $scope.websitesLimit = true;
     $scope.qrHidden = true;
@@ -180,9 +167,17 @@ app.controller('modifyUser', function ($scope, $http) {
             try {
                 document.execCommand('copy');
                 // Show success feedback (you can add a toast notification here if available)
-                alert('Secret key copied to clipboard!');
+                new PNotify({
+                    title: 'Success!',
+                    text: 'Secret key copied to clipboard!',
+                    type: 'success'
+                });
             } catch (err) {
-                alert('Failed to copy secret key. Please copy it manually.');
+                new PNotify({
+                    title: 'Error!',
+                    text: 'Failed to copy secret key. Please copy it manually.',
+                    type: 'error'
+                });
             }
             
             // Remove the temporary element
@@ -247,27 +242,20 @@ app.controller('modifyUser', function ($scope, $http) {
 
                 $scope.userModificationLoading = true;
                 $scope.acctDetailsFetched = false;
-                $scope.userModified = true;
-                $scope.canotModifyUser = true;
-                $scope.couldNotConnect = true;
-                $scope.canotFetchDetails = true;
-                $scope.detailsFetched = false;
                 $scope.userAccountsLimit = true;
                 $scope.websitesLimit = true;
+
 
             } else {
                 $scope.userModificationLoading = true;
                 $scope.acctDetailsFetched = true;
                 $scope.userAccountsLimit = true;
-                $scope.userModified = true;
-                $scope.canotModifyUser = true;
-                $scope.couldNotConnect = true;
-                $scope.canotFetchDetails = false;
-                $scope.detailsFetched = true;
 
-
-                $scope.errorMessage = response.data.error_message;
-
+                new PNotify({
+                    title: 'Error!',
+                    text: 'Cannot fetch details. Error message: ' + response.data.error_message,
+                    type: 'error'
+                });
 
             }
 
@@ -279,11 +267,12 @@ app.controller('modifyUser', function ($scope, $http) {
             $scope.userModificationLoading = true;
             $scope.acctDetailsFetched = true;
             $scope.userAccountsLimit = true;
-            $scope.userModified = true;
-            $scope.canotModifyUser = true;
-            $scope.couldNotConnect = false;
-            $scope.canotFetchDetails = true;
-            $scope.detailsFetched = true;
+
+            new PNotify({
+                title: 'Error!',
+                text: 'Could not connect to server. Please refresh this page.',
+                type: 'error'
+            });
 
 
         }
@@ -296,11 +285,6 @@ app.controller('modifyUser', function ($scope, $http) {
 
         $scope.userModificationLoading = false;
         $scope.acctDetailsFetched = false;
-        $scope.userModified = true;
-        $scope.canotModifyUser = true;
-        $scope.couldNotConnect = true;
-        $scope.canotFetchDetails = true;
-        $scope.detailsFetched = true;
 
 
         var accountUsername = $scope.accountUsername;
@@ -342,15 +326,15 @@ app.controller('modifyUser', function ($scope, $http) {
 
                 $scope.userModificationLoading = true;
                 $scope.acctDetailsFetched = true;
-                $scope.userModified = false;
-                $scope.canotModifyUser = true;
-                $scope.couldNotConnect = true;
-                $scope.canotFetchDetails = true;
-                $scope.detailsFetched = true;
                 $scope.userAccountsLimit = true;
                 $scope.accountTypeView = true;
                 $scope.websitesLimit = true;
 
+                new PNotify({
+                    title: 'Success!',
+                    text: 'Account with username: ' + accountUsername + ' is successfully modified.',
+                    type: 'success'
+                });
 
                 $scope.userName = accountUsername;
 
@@ -359,15 +343,12 @@ app.controller('modifyUser', function ($scope, $http) {
 
                 $scope.userModificationLoading = true;
                 $scope.acctDetailsFetched = false;
-                $scope.userModified = true;
-                $scope.canotModifyUser = false;
-                $scope.couldNotConnect = true;
-                $scope.canotFetchDetails = true;
-                $scope.detailsFetched = true;
 
-
-                $scope.errorMessage = response.data.error_message;
-
+                new PNotify({
+                    title: 'Error!',
+                    text: 'Cannot modify user. Error message: ' + response.data.error_message,
+                    type: 'error'
+                });
 
             }
 
@@ -378,11 +359,12 @@ app.controller('modifyUser', function ($scope, $http) {
 
             $scope.userModificationLoading = true;
             $scope.acctDetailsFetched = true;
-            $scope.userModified = true;
-            $scope.canotModifyUser = true;
-            $scope.couldNotConnect = false;
-            $scope.canotFetchDetails = true;
-            $scope.detailsFetched = true;
+
+            new PNotify({
+                title: 'Error!',
+                text: 'Could not connect to server. Please refresh this page.',
+                type: 'error'
+            });
 
 
         }
@@ -429,10 +411,6 @@ app.controller('deleteUser', function ($scope, $http) {
 
 
     $scope.deleteUserButton = true;
-    $scope.deleteFailure = true;
-    $scope.deleteSuccess = true;
-    $scope.couldNotConnect = true;
-
 
     $scope.deleteUser = function () {
         $scope.deleteUserButton = false;
@@ -465,21 +443,24 @@ app.controller('deleteUser', function ($scope, $http) {
             if (response.data.deleteStatus === 1) {
 
                 $scope.deleteUserButton = true;
-                $scope.deleteFailure = true;
-                $scope.deleteSuccess = false;
-                $scope.couldNotConnect = true;
+
+                new PNotify({
+                    title: 'Success!',
+                    text: 'User ' + accountUsername + ' has been successfully deleted.',
+                    type: 'success'
+                });
 
                 $scope.deletedUser = accountUsername;
 
 
             } else {
                 $scope.deleteUserButton = true;
-                $scope.deleteFailure = false;
-                $scope.deleteSuccess = true;
-                $scope.couldNotConnect = true;
-                $scope.deleteUserButton = true;
 
-                $scope.errorMessage = response.data.error_message;
+                new PNotify({
+                    title: 'Error!',
+                    text: 'Cannot delete user. Error message: ' + response.data.error_message,
+                    type: 'error'
+                });
 
             }
 
@@ -489,10 +470,12 @@ app.controller('deleteUser', function ($scope, $http) {
         function cantLoadInitialDatas(response) {
 
             $scope.deleteUserButton = true;
-            $scope.deleteFailure = true;
-            $scope.deleteSuccess = true;
-            $scope.couldNotConnect = false;
-            $scope.deleteUserButton = true;
+
+            new PNotify({
+                title: 'Error!',
+                text: 'Could not connect to the server. Please refresh this page.',
+                type: 'error'
+            });
 
 
         }
@@ -965,11 +948,6 @@ app.controller('modifyACLCtrl', function ($scope, $http) {
 
 
             if (response.data.status === 1) {
-                new PNotify({
-                    title: 'Success!',
-                    text: 'Current settings successfully fetched',
-                    type: 'success'
-                });
 
                 $scope.aclDetails = false;
 
@@ -1575,11 +1553,6 @@ app.controller('listTableUsers', function ($scope, $http) {
                         lucide.createIcons();
                     }
                 }, 100);
-                new PNotify({
-                    title: 'Success!',
-                    text: 'Users successfully fetched!',
-                    type: 'success'
-                });
 
             } else {
                 new PNotify({

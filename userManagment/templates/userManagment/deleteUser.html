@@ -96,23 +96,6 @@
  </button>
  </div>
 
- <!-- Notifications -->
- <div class="space-y-3">
- <div ng-hide="deleteFailure" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
- <i data-lucide="alert-circle" class="h-5 w-5"></i>
- <span>{% trans "Cannot delete user. Error message:" %} {$ errorMessage $}</span>
- </div>
-
- <div ng-hide="deleteSuccess" class="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center gap-3">
- <i data-lucide="check-circle" class="h-5 w-5"></i>
- <span>{% trans "User" %} <strong>{$ deletedUser $}</strong> {% trans "has been successfully deleted" %}</span>
- </div>
-
- <div ng-hide="couldNotConnect" class="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3">
- <i data-lucide="wifi-off" class="h-5 w-5"></i>
- <span>{% trans "Could not connect to the server. Please refresh this page." %}</span>
- </div>
- </div>
  </form>
  </div>
  </div>

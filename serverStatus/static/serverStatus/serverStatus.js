@@ -164,11 +164,6 @@ app.controller('litespeedStatus', function ($scope, $http) {
             if (response.data.status === 1) {
                 $scope.cpLoading = true;
                 $scope.fetchedData = false;
-                new PNotify({
-                    title: 'Success!',
-                    text: 'Status successfully fetched',
-                    type: 'success'
-                });
                 $scope.lsSerial = response.data.lsSerial;
                 $scope.lsexpiration = response.data.lsexpiration;
             } else {
