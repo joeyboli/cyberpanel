@@ -1,1 +1,4 @@
-(filemanager/templates/filemanager/index.html is a source file, so no need to add to .gitignore)
+cyberpanel_working/
+.env
+.idea/*
+.idea/workspace.xml
