@@ -867,7 +867,7 @@ app.controller('topProcesses', function ($scope, $http, $timeout) {
             // schedule next refresh
             refreshPromise = $timeout(function () {
                 $scope.topProcessesStatus(true);
-            }, 3000);
+            }, 10000);
         }
 
         function handleError() {

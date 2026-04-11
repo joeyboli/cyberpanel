@@ -104,11 +104,6 @@
     <script src="{% static 'baseTemplate/custom-js/pnotify.custom.min.js' %}?v={{ CP_VERSION }}"></script>
 
     <style>
-      /* ============================================================
-         CYBERPANEL — DESIGN SYSTEM
-         Aesthetic: Deep Navy Control Center
-         Palette: Navy base · Cyan-teal accent · Amber highlights
-      ============================================================ */
 
       :root {
         /* Light Mode — clean slate with LIGHT sidebar */
@@ -908,6 +903,76 @@
 
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-color: hsl(var(--muted-foreground)) transparent transparent transparent !important;
+}
+
+
+
+.ui-pnotify {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* MAIN CONTAINER */
+.ui-pnotify-container {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  padding: 14px 16px !important;
+}
+
+/* TITLE */
+.ui-pnotify-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: hsl(var(--foreground));
+  margin-bottom: 4px;
+}
+
+/* TEXT */
+.ui-pnotify-text {
+  font-size: 13px;
+  color: hsl(var(--muted-foreground));
+}
+
+/* ICON ALIGNMENT */
+.ui-pnotify-icon {
+  color: hsl(var(--accent-cyan));
+}
+
+/* SUCCESS */
+.brighttheme-success {
+  border-left: 3px solid hsl(var(--accent-cyan)) !important;
+}
+
+/* ERROR */
+.brighttheme-error {
+  border-left: 3px solid hsl(var(--destructive)) !important;
+}
+
+/* INFO */
+.brighttheme-info {
+  border-left: 3px solid hsl(var(--ring)) !important;
+}
+
+/* WARNING / NOTICE */
+.brighttheme-notice {
+  border-left: 3px solid hsl(var(--accent-amber)) !important;
+}
+
+/* CLOSE BUTTON */
+.brighttheme-icon-closer {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.7;
+}
+
+.brighttheme-icon-closer:hover {
+  opacity: 1;
+}
+
+.ui-pnotify-container {
+  backdrop-filter: blur(10px);
+  background: hsl(var(--card) / 0.85);
 }
 
     </style>
