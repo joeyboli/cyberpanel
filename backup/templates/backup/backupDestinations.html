@@ -12,7 +12,8 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 p-8 bg-card rounded-2xl border border-border/50 shadow-sm">
             <div class="flex items-center gap-6">
                 <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
-                    <i data-lucide="map-pin" class="h-8 w-8"></i>
+                <i data-lucide="archive" class="h-8 w-8"></i>
+
                 </div>
                 <div>
                     <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
@@ -27,20 +28,6 @@
                 <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <span class="text-sm font-medium text-primary">{% trans "Processing..." %}</span>
             </div>
-        </div>
-
-        <!-- Promo Banner -->
-        <div class="flex flex-col md:flex-row items-center justify-between p-8 bg-primary text-primary-foreground rounded-2xl shadow-xl shadow-primary/20 gap-6">
-            <div class="flex items-center gap-4 text-center md:text-left">
-                <div class="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <i data-lucide="shield-check" class="h-6 w-6"></i>
-                </div>
-                <p class="text-xl font-bold">{% trans "Configure automatic backups to our secure servers in 60 seconds" %}</p>
-            </div>
-            <a href="/backup/OneClickBackups" class="inline-flex items-center gap-3 px-8 py-4 bg-white text-primary rounded-xl text-lg font-bold transition-all shadow-lg hover:opacity-90">
-                <i data-lucide="rocket" class="h-5 w-5"></i>
-                {% trans "Set-up now" %}
-            </a>
         </div>
 
         <!-- Main Configuration Card -->
@@ -67,7 +54,6 @@
                                     class="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all border-2" 
                                     ng-class="destinationType === 'local' ? 'bg-primary text-primary-foreground border-primary shadow-lg' : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-primary'" 
                                     ng-click="destinationType = 'local'; fetchDetails()">
-                                <i data-lucide="hard-drive" class="h-6 w-6"></i>
                                 {% trans "Local Storage" %}
                             </button>
                             <button type="button" 

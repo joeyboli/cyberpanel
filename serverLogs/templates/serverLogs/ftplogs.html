@@ -1,6 +1,6 @@
 {% extends "baseTemplate/index.html" %}
 {% load i18n %}
-{% block title %}{% trans "FTP Logs - CyberPanel" %}{% endblock %}
+{% block title %}{% trans "FTP Logs" %}{% endblock %}
 
 {% block header_scripts %}
 <style>
@@ -17,7 +17,7 @@
     /* Log viewer styling */
     .log-viewer {
         background: hsl(var(--background));
-        color: hsl(var(--accent));
+        color: hsl(var(--muted-foreground));
         font-family: 'DM Mono', monospace;
         font-size: 14px;
         line-height: 1.6;

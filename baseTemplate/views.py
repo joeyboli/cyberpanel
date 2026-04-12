@@ -50,7 +50,7 @@ def renderBase(request):
 
 @ensure_csrf_cookie
 def versionManagement(request):
-    getVersion = requests.get('https://cyberpanel.net/version.txt')
+    getVersion = requests.get('https://raw.githubusercontent.com/joeyboli/cyberpanel/refs/heads/v2.4.5/version.txt')
     latest = getVersion.json()
     latestVersion = latest['version']
     latestBuild = latest['build']
@@ -262,7 +262,7 @@ def getLoadAverage(request):
 def versionManagment(request):
     ## Get latest version
 
-    getVersion = requests.get('https://cyberpanel.net/version.txt')
+    getVersion = requests.get('https://raw.githubusercontent.com/joeyboli/cyberpanel/refs/heads/v2.4.5/version.txt')
     latest = getVersion.json()
     latestVersion = latest['version']
     latestBuild = latest['build']
@@ -375,7 +375,7 @@ def upgradeVersion(request):
     try:
 
         vers = version.objects.get(pk=1)
-        getVersion = requests.get('https://cyberpanel.net/version.txt')
+        getVersion = requests.get('https://raw.githubusercontent.com/joeyboli/cyberpanel/refs/heads/v2.4.5/version.txt')
         latest = getVersion.json()
         vers.currentVersion = latest['version']
         vers.build = latest['build']
