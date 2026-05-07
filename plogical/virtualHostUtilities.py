@@ -566,6 +566,14 @@ local_name %s {
 
             postFixPath = '/etc/postfix/main.cf'
 
+            # Postfix may not be installed even if Dovecot is present.
+            # Avoid crashing website creation when /etc/postfix/main.cf is missing.
+            if not os.path.exists(postFixPath):
+                logging.CyberCPLogFileWriter.writeToFile(
+                    f"setupAutoDiscover: {postFixPath} not found, skipping postfix TLS SNI configuration"
+                )
+                return
+
             postFixContent = open(postFixPath, 'r').read()
 
             if postFixContent.find('tls_server_sni_maps') == -1:
